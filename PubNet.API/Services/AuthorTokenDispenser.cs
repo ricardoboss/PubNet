@@ -13,26 +13,25 @@ public class AuthorTokenDispenser
         _db = db;
     }
 
-    public async Task<AuthorToken> Dispense(string name, Author owner, TimeSpan lifetime, int length = 128, bool save = true)
+    public async Task<AuthorToken> Dispense(string name, Author owner, TimeSpan lifetime)
     {
+        const int tokenLength = 128;
+
         using var rng = RandomNumberGenerator.Create();
-        var buffer = new byte[length];
+        var buffer = new byte[tokenLength];
         rng.GetNonZeroBytes(buffer);
 
         var token = new AuthorToken
         {
-            OwnerId = owner.Id,
+            Owner = owner,
             Name = name,
-            Value = Convert.ToBase64String(buffer),
-            ExpiresAtUtc = DateTimeOffset.UtcNow.Add(lifetime)
+            Value = buffer,
+            ExpiresAtUtc = DateTimeOffset.UtcNow.Add(lifetime),
         };
 
-        owner.Tokens.Add(token);
+        _db.Tokens.Add(token);
 
-        if (save)
-        {
-            await _db.SaveChangesAsync();
-        }
+        await _db.SaveChangesAsync();
 
         return token;
     }

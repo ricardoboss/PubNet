@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,8 +7,7 @@ namespace PubNet.API.Models;
 [Index("Email", IsUnique = true)]
 public class Author
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [JsonIgnore]
     public int Id { get; set; }
 
     public string Name { get; set; }
@@ -27,10 +25,10 @@ public class Author
     public DateTimeOffset RegisteredAtUtc { get; set; }
 
     [JsonIgnore]
-    [ForeignKey(nameof(AuthorToken.Id))]
+    [InverseProperty(nameof(AuthorToken.Owner))]
     public List<AuthorToken> Tokens { get; set; } = new();
 
     [JsonIgnore]
-    [ForeignKey(nameof(Package.Id))]
+    [InverseProperty(nameof(Package.Author))]
     public List<Package> Packages { get; set; } = new();
 }

@@ -1,6 +1,14 @@
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PubNet.API.Contexts;
+using PubNet.API.Controllers;
+using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Models;
 using PubNet.API.Services;
@@ -27,7 +35,30 @@ try
     // used for verifying and creating password hashes
     builder.Services.AddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
 
+    // used to manage author tokens
     builder.Services.AddSingleton<AuthorTokenDispenser>();
+
+    // data protection is used to encrypt bearer tokens
+    builder.Services.AddDataProtection()
+        .UseCryptographicAlgorithms(new()
+        {
+            EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
+            ValidationAlgorithm = ValidationAlgorithm.HMACSHA256,
+        });
+    builder.Services.AddSingleton<BearerTokenManager>();
+
+    // needed to dynamically generate uris to controller actions
+    builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+    builder.Services.AddScoped<IUrlHelper>(services => {
+        var actionContext = services.GetRequiredService<IActionContextAccessor>().ActionContext;
+        var factory = services.GetRequiredService<IUrlHelperFactory>();
+        return factory.GetUrlHelper(actionContext ?? throw new InvalidOperationException("Unable to get ActionContext"));
+    });
+
+    builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
+
+    builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
 
     builder.Services.AddControllers();
 
@@ -52,6 +83,17 @@ try
     //     })
     //     ;
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins(builder.Configuration.GetRequiredSection("AllowedOrigins").GetChildren().Select(s => s.Value!).ToArray());
+            policy.AllowCredentials();
+            policy.AllowAnyHeader();
+            policy.AllowAnyMethod();
+        });
+    });
+
     var app = builder.Build();
 
     app.UseSerilogRequestLogging(options =>
@@ -73,15 +115,17 @@ try
 
     app.UseHttpsRedirection();
 
+    app.UseCors();
+
     // app.UseAuthentication();
     // app.UseAuthorization();
 
     app.UsePathBase("/api");
 
-    app.MapControllers();
-
-    app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
     app.UseMiddleware<ClientExceptionFormatterMiddleware>();
+    app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
+
+    app.MapControllers();
 
     app.Run();
 }

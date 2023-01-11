@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Microsoft.Extensions.Primitives;
 using PubNet.API.Contexts;
+using PubNet.API.DTO;
 using PubNet.API.Extensions;
 using PubNet.API.Services;
 
@@ -10,51 +12,52 @@ public class ApplicationRequestContextEnricherMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly PubNetContext _db;
+    private readonly BearerTokenManager _bearerTokenManager;
 
-    public ApplicationRequestContextEnricherMiddleware(RequestDelegate next, PubNetContext db)
+    public ApplicationRequestContextEnricherMiddleware(RequestDelegate next, PubNetContext db, BearerTokenManager bearerTokenManager)
     {
         _next = next;
         _db = db;
+        _bearerTokenManager = bearerTokenManager;
     }
 
-    public async Task Invoke(HttpContext context, ApplicationRequestContext requestContext)
+    public async Task Invoke(HttpContext httpContext, ApplicationRequestContext requestContext)
     {
-        if (context.Request.Headers.Accept.Count > 0)
+        if (httpContext.Request.Headers.Accept.Count > 0)
         {
-            EnrichAcceptContext(context.Request.Headers.Accept, requestContext);
+            EnrichAcceptContext(httpContext.Request.Headers.Accept, requestContext);
         }
 
-        if (context.Request.Headers.Authorization.Count > 0)
+        if (httpContext.Request.Headers.Authorization.Count > 0)
         {
-            EnrichAuthContext(context.Request.Headers.Authorization.First()!, requestContext);
+            EnrichAuthContext(httpContext.Request.Headers.Authorization.First()!, requestContext);
         }
 
-        await _next.Invoke(context);
+        await _next.Invoke(httpContext);
     }
 
     private void EnrichAuthContext(string authorization, ApplicationRequestContext requestContext)
     {
-        if (!authorization.StartsWith("Bearer "))
-        {
-            return;
-        }
+        const string bearerPrefix = "Bearer ";
+        if (!authorization.StartsWith(bearerPrefix))
+            throw new BearerTokenException("Unsupported authorization type");
 
-        // base64 encoded token
-        var bearer = authorization["Bearer ".Length..];
+        var token = authorization[bearerPrefix.Length..];
+        var result = _bearerTokenManager.Verify(token, out var authorToken);
+        if (result == BearerTokenManager.VerifyResult.InvalidFormat)
+            throw new BearerTokenException("Invalid Bearer token format");
 
-        // concatenated login data (username:token)
-        var base64decoded = Encoding.UTF8.GetString(Convert.FromBase64String(bearer));
+        if (result is BearerTokenManager.VerifyResult.UnknownAuthor or BearerTokenManager.VerifyResult.UnknownToken)
+            throw new BearerTokenException("Token not found. Get a new token at [POST /author/token] or register an account at [POST /author]");
 
-        var (username, token, _) = base64decoded.Split(':', 2);
+        if (result == BearerTokenManager.VerifyResult.ExpiredToken)
+            throw new BearerTokenException("Token expired. Get a new token at [POST /author/token]");
 
-        var author = _db.Authors.FirstOrDefault(a => a.Email == username);
-        var authorToken = author?.Tokens.FirstOrDefault(t => t.Value == token);
-        if (authorToken == null || !authorToken.IsValid())
-        {
-            return;
-        }
+        if (result != BearerTokenManager.VerifyResult.Ok)
+            throw new BearerTokenException("Unknown error verifying Bearer token");
 
-        requestContext.Author = author;
+        Debug.Assert(authorToken is not null, "authorToken is not null");
+
         requestContext.AuthorToken = authorToken;
     }
 

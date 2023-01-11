@@ -17,12 +17,17 @@
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.1-dev-00293" />
+        <PackageReference Include="SharpCompress" Version="0.32.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="YamlDotNet" Version="12.3.1" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
+      </Content>
+      <Content Include="..\.gitignore">
+        <Link>.gitignore</Link>
       </Content>
     </ItemGroup>
 

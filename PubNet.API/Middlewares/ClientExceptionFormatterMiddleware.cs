@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Authentication;
 using PubNet.API.DTO;
 
 namespace PubNet.API.Middlewares;
@@ -33,16 +34,18 @@ public class ClientExceptionFormatterMiddleware
             return;
         }
 
-        if (e is BearerTokenException)
+        if (e is BearerTokenException or InvalidCredentialException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             context.Response.Headers.WWWAuthenticate = new[]
             {
-                $"Bearer realm=\"pub\", message=\"{e.Message}\""
+                $"Bearer realm=\"pub\", message=\"{e.Message}\"",
             };
         }
-
-        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        else
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        }
 
         var exceptionClass = e.GetType().Name;
         var errorMessage = $"Error ({exceptionClass}): {e.Message}";

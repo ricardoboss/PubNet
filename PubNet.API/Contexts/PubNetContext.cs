@@ -11,16 +11,9 @@ public class PubNetContext : DbContext
 
     public DbSet<AuthorToken> Tokens { get; set; }
 
+    public DbSet<PendingArchive> PendingArchives { get; set; }
+
     public PubNetContext(DbContextOptions<PubNetContext> options) : base(options)
     {
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<AuthorToken>().HasOne(t => t.Owner).WithMany(a  => a .Tokens);
-        modelBuilder.Entity<Package>().HasOne(p => p.Author).WithMany(a => a.Packages);
-        modelBuilder.Entity<Package>().HasMany(p => p.Versions);
     }
 }

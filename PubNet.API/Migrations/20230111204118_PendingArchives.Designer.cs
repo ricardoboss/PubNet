@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PubNet.API.Contexts;
 
@@ -10,9 +11,11 @@ using PubNet.API.Contexts;
 namespace PubNet.API.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    partial class PackagesContextModelSnapshot : ModelSnapshot
+    [Migration("20230111204118_PendingArchives")]
+    partial class PendingArchives
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
@@ -94,7 +97,7 @@ namespace PubNet.API.Migrations
                     b.Property<bool>("IsDiscontinued")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("LatestId")
+                    b.Property<int>("LatestId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -122,22 +125,16 @@ namespace PubNet.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ArchiveSha256")
+                    b.Property<string>("Archive_Sha256")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "archive_sha256");
+                        .HasColumnType("TEXT");
 
-                    b.Property<string>("ArchiveUrl")
+                    b.Property<string>("Archive_Url")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "archive_url");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("PackageId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("PublishedAtUtc")
-                        .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "published");
 
                     b.Property<string>("Pubspec")
                         .IsRequired()
@@ -165,9 +162,6 @@ namespace PubNet.API.Migrations
 
                     b.Property<string>("ArchivePath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset>("UploadedAtUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("UploaderId")
@@ -201,7 +195,9 @@ namespace PubNet.API.Migrations
 
                     b.HasOne("PubNet.API.Models.PackageVersion", "Latest")
                         .WithMany()
-                        .HasForeignKey("LatestId");
+                        .HasForeignKey("LatestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
 

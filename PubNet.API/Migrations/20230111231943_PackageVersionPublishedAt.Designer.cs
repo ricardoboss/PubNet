@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PubNet.API.Contexts;
 
@@ -10,9 +11,11 @@ using PubNet.API.Contexts;
 namespace PubNet.API.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    partial class PackagesContextModelSnapshot : ModelSnapshot
+    [Migration("20230111231943_PackageVersionPublishedAt")]
+    partial class PackageVersionPublishedAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");

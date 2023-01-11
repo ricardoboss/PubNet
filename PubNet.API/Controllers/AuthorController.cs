@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
@@ -16,14 +17,16 @@ public class AuthorController : ControllerBase
     private readonly PubNetContext _db;
     private readonly IPasswordHasher<Author> _passwordHasher;
     private readonly AuthorTokenDispenser _tokenDispenser;
+    private readonly BearerTokenManager _bearerTokenManager;
 
     public AuthorController(ILogger<AuthorController> logger, PubNetContext db, IPasswordHasher<Author> passwordHasher,
-        AuthorTokenDispenser tokenDispenser)
+        AuthorTokenDispenser tokenDispenser, BearerTokenManager bearerTokenManager)
     {
         _logger = logger;
         _db = db;
         _passwordHasher = passwordHasher;
         _tokenDispenser = tokenDispenser;
+        _bearerTokenManager = bearerTokenManager;
     }
 
     [HttpGet("{email}")]
@@ -33,7 +36,7 @@ public class AuthorController : ControllerBase
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorEmail"] = email
+                   ["AuthorEmail"] = email,
                }))
         {
             var author = await GetAuthorFromEmail(email);
@@ -43,25 +46,25 @@ public class AuthorController : ControllerBase
     }
 
     [HttpGet("{email}/packages")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Package>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackagesResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPackages(string email)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorEmail"] = email
+                   ["AuthorEmail"] = email,
                }))
         {
             var author = await GetAuthorFromEmail(email);
 
-            return author is null ? NotFound() : Ok(author.Packages);
+            return author is null ? NotFound() : Ok(new PackagesResponse(author.Packages));
         }
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     public async Task<IActionResult> Register([FromBody] RegisterRequest dto)
     {
         var author = await _db.Authors.FirstOrDefaultAsync(a => a.Email == dto.Email);
@@ -93,18 +96,14 @@ public class AuthorController : ControllerBase
 
     [HttpPatch]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     public async Task<IActionResult> Edit([FromBody] EditAuthorRequest dto, [FromServices] ApplicationRequestContext context)
     {
-        var author = context.Author;
-        if (author is null)
-        {
-            throw new BearerTokenException("Missing token or token invalid. Get a new token at " + CreatedAtAction("Get", null));
-        }
+        var author = context.RequireAuthor();
 
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorEmail"] = author.Email
+                   ["AuthorEmail"] = author.Email,
                }))
         {
             if (dto.Name is not null && author.Name != dto.Name)
@@ -128,22 +127,23 @@ public class AuthorController : ControllerBase
     }
 
     [HttpPost("token")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorToken))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BearerTokenResponse))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     public async Task<IActionResult> Token([FromBody] CreateTokenRequest dto)
     {
         var author = await RequireAuthorFromEmail(dto.Email);
 
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorEmail"] = author.Email
+                   ["AuthorEmail"] = author.Email,
                }))
         {
             await VerifyPassword(author, dto.Password);
 
-            var token = await _tokenDispenser.Dispense(dto.Name, author, TimeSpan.FromDays(30));
+            var authorToken = await _tokenDispenser.Dispense(dto.Name, author, TimeSpan.FromDays(30));
+            var bearer = _bearerTokenManager.Generate(authorToken);
 
-            return Ok(token);
+            return Ok(new BearerTokenResponse(bearer, authorToken.ExpiresAtUtc));
         }
     }
 
@@ -161,13 +161,16 @@ public class AuthorController : ControllerBase
         {
             _logger.LogInformation("Wrong password for {@Author}", author);
 
-            throw new UnauthorizedAccessException();
+            throw new InvalidCredentialException("Password verification failed");
         }
     }
 
     private async Task<Author?> GetAuthorFromEmail(string email)
     {
-        return await _db.Authors.FirstOrDefaultAsync(a => a.Email == email);
+        return await _db.Authors
+            .Where(a => a.Email == email)
+            .Include(a => a.Packages)
+            .FirstOrDefaultAsync();
     }
 
     private async Task<Author> RequireAuthorFromEmail(string email)
@@ -175,28 +178,9 @@ public class AuthorController : ControllerBase
         var author = await GetAuthorFromEmail(email);
         if (author is null)
         {
-            throw new UnauthorizedAccessException();
+            throw new InvalidCredentialException($"No user with email '{email}' exists");
         }
 
         return author;
-    }
-
-    private async Task<Author> RequireAuthorFromToken(string token)
-    {
-        var authorToken = await _db.Tokens
-            .Where(t => t.Value == token)
-            .Include(t => t.Owner)
-            .FirstOrDefaultAsync();
-        if (authorToken is null || authorToken.Owner is null)
-        {
-            throw new BearerTokenException("Token or owner not found");
-        }
-
-        if (!authorToken.IsValid())
-        {
-            throw new BearerTokenException("Token expired");
-        }
-
-        return authorToken.Owner;
     }
 }
