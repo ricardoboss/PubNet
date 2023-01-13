@@ -45,16 +45,13 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
     }
 
     /// <inheritdoc />
-    public FileResult ReadArchive(string name, string version)
+    public Stream ReadArchive(string name, string version)
     {
         var path = GetArchivePath(name, version);
 
         if (!File.Exists(path))
             throw new FileNotFoundException("Archive file not found.", path);
 
-        return new PhysicalFileResult(path, "application/octet-stream")
-        {
-            FileDownloadName = $"{name}-{version}.tar.gz",
-        };
+        return File.OpenRead(path);
     }
 }

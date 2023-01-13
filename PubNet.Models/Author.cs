@@ -33,9 +33,9 @@ public class Author
 
     [JsonIgnore]
     [InverseProperty(nameof(AuthorToken.Owner))]
-    public List<AuthorToken> Tokens { get; set; } = new();
+    public ICollection<AuthorToken> Tokens { get; set; } = new List<AuthorToken>();
 
     [JsonIgnore]
     [InverseProperty(nameof(Package.Author))]
-    public List<Package> Packages { get; set; } = new();
+    public ICollection<Package> Packages { get; set; } = new List<Package>();
 }

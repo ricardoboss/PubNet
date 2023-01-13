@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
+using PubNet.API.Models;
+using PubNet.API.Services;
+using PubNet.API.Utils;
+using PubNet.API.WorkerTasks;
 using PubNet.Models;
 using SharpCompress.Readers;
 using YamlDotNet.Serialization;
@@ -18,12 +22,14 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
     private readonly ILogger<StorageController> _logger;
     private readonly PubNetContext _db;
     private readonly IPackageStorageProvider _storageProvider;
+    private readonly WorkerTaskQueue _workerTaskQueue;
 
-    public StorageController(ILogger<StorageController> logger, PubNetContext db, IPackageStorageProvider storageProvider)
+    public StorageController(ILogger<StorageController> logger, PubNetContext db, IPackageStorageProvider storageProvider, WorkerTaskQueue workerTaskQueue)
     {
         _logger = logger;
         _db = db;
         _storageProvider = storageProvider;
+        _workerTaskQueue = workerTaskQueue;
     }
 
     [HttpPost("upload")]
@@ -93,43 +99,25 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
         if (pending is null)
             return StatusCode(StatusCodes.Status424FailedDependency, new ErrorResponse(new("invalid-id", "An invalid pending id was provided")));
 
-        var unpackedArchivePath = pending.ArchivePath[..^".tar.gz".Length];
-        Directory.CreateDirectory(unpackedArchivePath);
-
-        await using (var fileStream = System.IO.File.OpenRead(pending.ArchivePath))
-        using (var reader = ReaderFactory.Open(fileStream))
-        {
-            while (reader.MoveToNextEntry())
-            {
-                if (!reader.Entry.IsDirectory) {
-                    reader.WriteEntryToDirectory(unpackedArchivePath, new()
-                    {
-                        ExtractFullPath = true,
-                        Overwrite = true,
-                    });
-                }
-            }
-        }
+        var unpackedArchivePath = pending.UnpackedArchivePath;
+        await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
+            ArchiveHelper.UnpackInto(archiveStream, unpackedArchivePath);
 
         try
         {
-            var pubSpecPath = Path.Combine(unpackedArchivePath, "pubspec.yaml");
-            if (!System.IO.File.Exists(pubSpecPath))
-                return UnprocessableEntity(new ErrorResponse(new("missing-pubspec", "The package archive is missing a pubspec.yaml")));
-
-            var pubSpecText = await System.IO.File.ReadAllTextAsync(pubSpecPath);
-            var yamlDeser = new DeserializerBuilder()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                .Build();
-
             PubSpec pubSpec;
             try
             {
-                pubSpec = yamlDeser.Deserialize<PubSpec>(pubSpecText);
+                pubSpec = await GetPubSpec(unpackedArchivePath);
+            }
+            catch (FileNotFoundException)
+            {
+                return UnprocessableEntity(new ErrorResponse(new("missing-pubspec", "The package archive is missing a pubspec.yaml")));
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorResponse(new("invalid-pubspec", $"An error occurred while parsing the pubspec.yaml: {ex.Message}")));
+                return BadRequest(new ErrorResponse(new("invalid-pubspec",
+                    $"An error occurred while parsing the pubspec.yaml: {ex.Message}")));
             }
 
             var packageName = pubSpec.Name;
@@ -150,7 +138,7 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
                 {
                     Author = pending.Uploader.Owner,
                     Name = packageName,
-                    Versions = new(),
+                    Versions = new List<PackageVersion>(),
                     IsDiscontinued = false,
                     ReplacedBy = null,
                     Latest = null,
@@ -174,6 +162,7 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
             var packageVersion = new PackageVersion
             {
                 Pubspec = JsonSerializer.Serialize(pubSpec),
+                PackageName = packageName,
                 Version = packageVersionId,
                 ArchiveUrl = GenerateFullyQualified(Request, $"/api/packages/{packageName}/versions/{packageVersionId}.tar.gz"),
                 ArchiveSha256 = archiveSha256,
@@ -188,6 +177,8 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
 
             System.IO.File.Delete(pending.ArchivePath);
 
+            _workerTaskQueue.Enqueue(new PubSpecAnalyzerTask(packageName, packageVersionId));
+
             Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
             return Ok(new SuccessResponse(new($"Successfully uploaded {packageName} version {packageVersionId}! " + GenerateFullyQualified(Request, $"/api/packages/{packageName}/versions/{packageVersionId}"))));
         }
@@ -197,6 +188,20 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
             if (Directory.Exists(unpackedArchivePath))
                 Directory.Delete(unpackedArchivePath, true);
         }
+    }
+
+    private static async Task<PubSpec> GetPubSpec(string workingDirectory)
+    {
+        var pubSpecPath = Path.Combine(workingDirectory, "pubspec.yaml");
+        if (!System.IO.File.Exists(pubSpecPath))
+            throw new FileNotFoundException("pubspec.yaml not found in working directory", pubSpecPath);
+
+        var pubSpecText = await System.IO.File.ReadAllTextAsync(pubSpecPath);
+        var yamlDeser = new DeserializerBuilder()
+            .WithNamingConvention(UnderscoredNamingConvention.Instance)
+            .Build();
+
+        return yamlDeser.Deserialize<PubSpec>(pubSpecText);
     }
 
     /// <inheritdoc />

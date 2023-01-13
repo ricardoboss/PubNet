@@ -103,7 +103,12 @@ public class PackagesController : ControllerBase
     {
         try
         {
-            return _storageProvider.ReadArchive(name, version);
+            var stream = _storageProvider.ReadArchive(name, version);
+
+            return new FileStreamResult(stream, "application/octet-stream")
+            {
+                FileDownloadName = $"{name}-{version}.tar.gz",
+            };
         }
         catch (Exception ex)
         {

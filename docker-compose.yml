@@ -9,3 +9,20 @@ services:
       POSTGRES_PASSWORD: "pubnet"
     ports:
       - "5432:5432"
+
+  seq:
+    image: datalust/seq
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+    ports:
+      - "5380:80"
+      - "5341:5341"
+
+  api:
+    build:
+      context: ./PubNet.API
+      target: final
+    ports:
+      - "80:80"
+      - "443:443"

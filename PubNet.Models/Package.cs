@@ -17,7 +17,7 @@ public class Package
     public PackageVersion? Latest { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public List<PackageVersion> Versions { get; set; } = new();
+    public ICollection<PackageVersion> Versions { get; set; } = new List<PackageVersion>();
 
     [JsonIgnore]
     public int? AuthorId { get; set; }

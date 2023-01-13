@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PubNet.API.Models;
 using PubNet.Models;
 
 namespace PubNet.API.Contexts;
@@ -7,11 +8,15 @@ public class PubNetContext : DbContext
 {
     public DbSet<Package> Packages { get; set; }
 
+    public DbSet<PackageVersion> PackageVersions { get; set; }
+
     public DbSet<Author> Authors { get; set; }
 
     public DbSet<AuthorToken> Tokens { get; set; }
 
     public DbSet<PendingArchive> PendingArchives { get; set; }
+
+    public DbSet<PackageVersionAnalysis> PackageVersionAnalyses { get; set; }
 
     public PubNetContext(DbContextOptions<PubNetContext> options) : base(options)
     {
@@ -67,5 +72,9 @@ public class PubNetContext : DbContext
         modelBuilder.Entity<PackageVersion>()
             .Property(v => v.Pubspec)
             .HasColumnType("json");
+
+        modelBuilder.Entity<PackageVersionAnalysis>()
+            .Navigation(a => a.Version)
+            .AutoInclude();
     }
 }

@@ -121,8 +121,8 @@ public partial class AuthorController : ControllerBase
             Website = dto.Website,
             Inactive = false,
             RegisteredAtUtc = DateTimeOffset.UtcNow,
-            Packages = new(),
-            Tokens = new(),
+            Packages = new List<Package>(),
+            Tokens = new List<AuthorToken>(),
         };
 
         author.PasswordHash = _passwordHasher.HashPassword(author, dto.Password);

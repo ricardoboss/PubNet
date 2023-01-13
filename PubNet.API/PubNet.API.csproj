@@ -25,6 +25,7 @@
         </PackageReference>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.1-dev-00293" />
+        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.3-dev-00260" />
         <PackageReference Include="SharpCompress" Version="0.32.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="YamlDotNet" Version="12.3.1" />
@@ -37,11 +38,24 @@
       <Content Include="..\.gitignore">
         <Link>.gitignore</Link>
       </Content>
+      <Content Remove="packages\**" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
       <ProjectReference Include="..\PubNet.Models\PubNet.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="packages\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="packages\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="packages\**" />
     </ItemGroup>
 
 </Project>

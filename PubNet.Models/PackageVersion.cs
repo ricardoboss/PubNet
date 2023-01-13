@@ -8,6 +8,8 @@ public class PackageVersion
     [JsonIgnore]
     public int Id { get; set; }
 
+    public string PackageName { get; set; }
+
     public string Version { get; set; }
 
     public bool Retracted { get; set; }
