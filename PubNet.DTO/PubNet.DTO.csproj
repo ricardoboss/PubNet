@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>PubNet.API.DTO</AssemblyName>
         <RootNamespace>PubNet.API.DTO</RootNamespace>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
