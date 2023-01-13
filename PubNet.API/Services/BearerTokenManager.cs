@@ -68,15 +68,11 @@ public class BearerTokenManager
         Array.Copy(decrypted, emailBuffer, emailBuffer.Length);
         var email = Encoding.UTF8.GetString(emailBuffer);
         var author = _db.Authors.Where(a => a.Email == email).Include(a => a.Tokens).FirstOrDefault();
-        if (author is null)
-        {
-            return VerifyResult.UnknownAuthor;
-        }
+        if (author is null) return VerifyResult.UnknownAuthor;
 
         var tokenValue = new byte[decrypted.Length - emailBuffer.Length - 1];
         Array.Copy(decrypted, nullIndex + 1, tokenValue, 0, tokenValue.Length);
         authorToken = author.Tokens.FirstOrDefault(t => t.Value.SequenceEqual(tokenValue));
-
         if (authorToken is null) return VerifyResult.UnknownToken;
 
         return !authorToken.IsValid() ? VerifyResult.ExpiredToken : VerifyResult.Ok;

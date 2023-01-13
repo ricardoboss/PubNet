@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
@@ -24,16 +23,42 @@ public class PackagesController : ControllerBase
         _storageProvider = storageProvider;
     }
 
-    [HttpGet]
+    [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackagesResponse))]
-    [OutputCache(VaryByQueryKeys = new []{ "q" })]
-    public IActionResult Get([FromQuery] string? q = null)
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+    [ResponseCache(VaryByQueryKeys = new []{ "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 300)]
+    public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
     {
-        IEnumerable<Package> packages = _db.Packages;
+        const int maxLimit = 1000;
+
+        IQueryable<Package> packages = _db.Packages
+            .Where(p => p.Latest != null)
+            .Include(p => p.Latest)
+            .OrderByDescending(p => p.Latest!.PublishedAtUtc)
+        ;
 
         if (q != null)
         {
             packages = packages.Where(p => p.Name.StartsWith(q));
+        }
+
+        if (before.HasValue)
+        {
+            if (!limit.HasValue)
+            {
+                return BadRequest(new ErrorResponse(new("invalid-query", "Query parameter 'limit' is mandatory if 'before' is given")));
+            }
+
+            var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
+
+            packages = packages.Where(p => p.Latest!.PublishedAtUtc < publishedAtUpperLimit);
+        }
+
+        if (limit.HasValue)
+        {
+            var resultLimit = Math.Min(limit.Value, maxLimit);
+
+            packages = packages.Take(resultLimit);
         }
 
         return Ok(new PackagesResponse(packages));
@@ -71,7 +96,6 @@ public class PackagesController : ControllerBase
             return packageVersion is null ? NotFound() : Ok(packageVersion);
         }
     }
-
 
     [HttpGet("{name}/versions/{version}.tar.gz")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]

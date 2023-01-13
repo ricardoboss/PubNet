@@ -15,11 +15,13 @@ public class ApplicationRequestContext
 
     public AuthorToken RequireAuthorToken()
     {
-        return AuthorToken ?? throw new BearerTokenException("Missing 'Authenticate' header. Get a token at [POST /author/token] and send it as a Bearer token");
+        return AuthorToken ?? throw MissingHeader;
     }
 
     public Author RequireAuthor()
     {
-        return Author ?? throw new BearerTokenException("Missing 'Authenticate' header. Get a token at [POST /author/token] and send it as a Bearer token");
+        return Author ?? throw MissingHeader;
     }
+
+    private BearerTokenException MissingHeader => new("Missing authentication. Acquire a Bearer token at [POST /authors/{username}/tokens] and send it in the 'Authenticate' header.");
 }

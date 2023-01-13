@@ -5,10 +5,13 @@ using Microsoft.EntityFrameworkCore;
 namespace PubNet.API.Models;
 
 [Index("Email", IsUnique = true)]
+[Index("Username", IsUnique = true)]
 public class Author
 {
     [JsonIgnore]
     public int Id { get; set; }
+
+    public string Username { get; set; }
 
     public string Name { get; set; }
 

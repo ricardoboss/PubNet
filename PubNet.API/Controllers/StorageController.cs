@@ -122,7 +122,16 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
 
-            var pubSpec = yamlDeser.Deserialize<PubSpec>(pubSpecText);
+            PubSpec pubSpec;
+            try
+            {
+                pubSpec = yamlDeser.Deserialize<PubSpec>(pubSpecText);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponse(new("invalid-pubspec", $"An error occurred while parsing the pubspec.yaml: {ex.Message}")));
+            }
+
             var packageName = pubSpec.Name;
             if (packageName is null)
                 return UnprocessableEntity(new ErrorResponse(new("invalid-pubspec", "The pubspec.yaml is missing a package name")));

@@ -48,10 +48,10 @@ public class ApplicationRequestContextEnricherMiddleware
             throw new BearerTokenException("Invalid Bearer token format");
 
         if (result is BearerTokenManager.VerifyResult.UnknownAuthor or BearerTokenManager.VerifyResult.UnknownToken)
-            throw new BearerTokenException("Token not found. Get a new token at [POST /author/token] or register an account at [POST /author]");
+            throw new BearerTokenException("Token not found. Get a new token at [POST /authors/{username}/tokens] or register an account at [POST /author]");
 
         if (result == BearerTokenManager.VerifyResult.ExpiredToken)
-            throw new BearerTokenException("Token expired. Get a new token at [POST /author/token]");
+            throw new BearerTokenException("Token expired. Get a new token at [POST /authors/{username}/tokens]");
 
         if (result != BearerTokenManager.VerifyResult.Ok)
             throw new BearerTokenException("Unknown error verifying Bearer token");

@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: "pubnet"
+      POSTGRES_PASSWORD: "pubnet"
+    ports:
+      - "5432:5432"

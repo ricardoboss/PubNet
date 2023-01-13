@@ -22,6 +22,9 @@ public class PackageVersion
     [JsonPropertyName("published")]
     public DateTimeOffset PublishedAtUtc { get; set; }
 
+    [JsonPropertyName("published_millis")]
+    public long PublishedAtMillis => PublishedAtUtc.ToUnixTimeMilliseconds();
+
     [JsonIgnore]
     [Column(TypeName = "json")]
     public string Pubspec { get; set; }

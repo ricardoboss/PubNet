@@ -1,3 +1,3 @@
 ﻿namespace PubNet.API.DTO;
 
-public record CreateTokenRequest(string Name, string Email, string Password);
+public record CreateTokenRequest(string TokenName, string Password);

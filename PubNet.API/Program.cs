@@ -26,7 +26,7 @@ try
 
     builder.Services.AddDbContext<PubNetContext>(options =>
     {
-        options.UseSqlite(builder.Configuration.GetConnectionString("PubNet"));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"));
     }, ServiceLifetime.Singleton);
 
     // used to store request-specific data in a single place
@@ -94,6 +94,8 @@ try
         });
     });
 
+    builder.Services.AddResponseCaching();
+
     var app = builder.Build();
 
     app.UseSerilogRequestLogging(options =>
@@ -116,6 +118,8 @@ try
     app.UseHttpsRedirection();
 
     app.UseCors();
+
+    app.UseResponseCaching();
 
     // app.UseAuthentication();
     // app.UseAuthorization();

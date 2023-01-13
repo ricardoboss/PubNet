@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace PubNet.API.Models;
 
 [Index("Value", IsUnique = true)]
+[Index("Name", "OwnerId", IsUnique = true)]
 public class AuthorToken
 {
     [JsonIgnore]

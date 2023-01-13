@@ -18,11 +18,12 @@ public class Package
 
     public PackageVersion? Latest { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public List<PackageVersion> Versions { get; set; } = new();
 
     [JsonIgnore]
-    public int AuthorId { get; set; }
+    public int? AuthorId { get; set; }
 
     [JsonIgnore]
-    public Author Author { get; set; }
+    public Author? Author { get; set; }
 }

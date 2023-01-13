@@ -67,6 +67,10 @@ public class PubSpec
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("platforms")]
     public Dictionary<string, string?>? Platforms { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonPropertyName("flutter")]
+    public Dictionary<string, string?>? Flutter { get; set; }
 }
 
 public class PubSpecScreenshot
