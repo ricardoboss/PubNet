@@ -1,6 +1,6 @@
 bin/
 obj/
-/packages/
 riderModule.iml
 /_ReSharper.Caches/
 *.db*
+/PubNet.API/packages/
