@@ -1,9 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 
-namespace PubNet.API.Models;
+namespace PubNet.Models;
 
-[Index("Name", IsUnique = true)]
 public class Package
 {
     [JsonIgnore]
@@ -24,6 +22,5 @@ public class Package
     [JsonIgnore]
     public int? AuthorId { get; set; }
 
-    [JsonIgnore]
     public Author? Author { get; set; }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
-using PubNet.API.Models;
+using PubNet.Models;
 
 namespace PubNet.API.Services;
 

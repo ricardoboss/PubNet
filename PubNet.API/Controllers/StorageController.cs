@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
-using PubNet.API.Models;
+using PubNet.Models;
 using SharpCompress.Readers;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;

@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using PubNet.API.Contexts;
-using PubNet.API.Models;
+using PubNet.Models;
 
 namespace PubNet.API.Services;
 

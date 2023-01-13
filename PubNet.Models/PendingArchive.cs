@@ -1,4 +1,4 @@
-﻿namespace PubNet.API.Models;
+﻿namespace PubNet.Models;
 
 public class PendingArchive
 {

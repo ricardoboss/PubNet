@@ -154,9 +154,25 @@ namespace PubNet.API.Migrations
                 column: "PackageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PackageVersion_PublishedAtUtc",
+                table: "PackageVersion",
+                column: "PublishedAtUtc",
+                descending: new bool[0]);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PackageVersion_Version",
+                table: "PackageVersion",
+                column: "Version");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PendingArchives_UploaderId",
                 table: "PendingArchives",
                 column: "UploaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tokens_Name",
+                table: "Tokens",
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tokens_Name_OwnerId",
@@ -168,12 +184,6 @@ namespace PubNet.API.Migrations
                 name: "IX_Tokens_OwnerId",
                 table: "Tokens",
                 column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tokens_Value",
-                table: "Tokens",
-                column: "Value",
-                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Packages_PackageVersion_LatestId",

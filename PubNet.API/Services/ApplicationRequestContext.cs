@@ -1,5 +1,5 @@
 ﻿using PubNet.API.DTO;
-using PubNet.API.Models;
+using PubNet.Models;
 
 namespace PubNet.API.Services;
 

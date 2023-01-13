@@ -1,8 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PubNet.API.Models;
+namespace PubNet.Models;
 
 public class PackageVersion
 {
@@ -26,7 +25,6 @@ public class PackageVersion
     public long PublishedAtMillis => PublishedAtUtc.ToUnixTimeMilliseconds();
 
     [JsonIgnore]
-    [Column(TypeName = "json")]
     public string Pubspec { get; set; }
 
     [JsonPropertyName("pubspec")]

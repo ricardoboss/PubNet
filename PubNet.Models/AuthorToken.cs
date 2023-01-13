@@ -1,10 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 
-namespace PubNet.API.Models;
+namespace PubNet.Models;
 
-[Index("Value", IsUnique = true)]
-[Index("Name", "OwnerId", IsUnique = true)]
 public class AuthorToken
 {
     [JsonIgnore]

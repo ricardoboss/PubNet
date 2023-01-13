@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
-using PubNet.API.Models;
+using PubNet.Models;
 using PubNet.API.Services;
 
 namespace PubNet.API.Controllers;
@@ -33,7 +33,6 @@ public class PackagesController : ControllerBase
 
         IQueryable<Package> packages = _db.Packages
             .Where(p => p.Latest != null)
-            .Include(p => p.Latest)
             .OrderByDescending(p => p.Latest!.PublishedAtUtc)
         ;
 

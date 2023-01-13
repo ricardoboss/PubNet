@@ -1,20 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
 
-namespace PubNet.API.Models;
+namespace PubNet.Models;
 
-[Index("Email", IsUnique = true)]
-[Index("Username", IsUnique = true)]
 public class Author
 {
     [JsonIgnore]
+    [Key]
     public int Id { get; set; }
 
+    [Required]
     public string Username { get; set; }
 
+    [Required]
     public string Name { get; set; }
 
+    [JsonIgnore]
+    [Required]
+    [EmailAddress]
     public string Email { get; set; }
 
     [JsonIgnore]

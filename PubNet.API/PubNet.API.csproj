@@ -8,6 +8,14 @@
         <UserSecretsId>0e9483c9-0c63-4fb0-bcaa-414561d567ba</UserSecretsId>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DefineConstants>TRACE;EFCORE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DefineConstants>TRACE;EFCORE</DefineConstants>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
@@ -29,6 +37,11 @@
       <Content Include="..\.gitignore">
         <Link>.gitignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
+      <ProjectReference Include="..\PubNet.Models\PubNet.Models.csproj" />
     </ItemGroup>
 
 </Project>

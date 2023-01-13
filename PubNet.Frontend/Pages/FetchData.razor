@@ -1,0 +1,49 @@
+﻿@page "/fetchdata"
+@using PubNet.API.DTO
+@inject HttpClient Http
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (packages == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Latest Version</th>
+            <th>Published At</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var package in packages.Packages)
+        {
+            <tr>
+                <td>@package.Name</td>
+                <td>@package.Author?.Name</td>
+                <td>@package.Latest?.Version</td>
+                <td>@package.Latest?.PublishedAtUtc.ToLocalTime()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private PackagesResponse? packages;
+
+    protected override async Task OnInitializedAsync()
+    {
+        packages = await Http.GetFromJsonAsync<PackagesResponse>("https://localhost:44365/packages");
+    }
+}

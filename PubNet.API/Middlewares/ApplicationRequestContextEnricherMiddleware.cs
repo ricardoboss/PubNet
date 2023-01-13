@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using Microsoft.Extensions.Primitives;
-using PubNet.API.Contexts;
 using PubNet.API.DTO;
 using PubNet.API.Extensions;
 using PubNet.API.Services;
@@ -11,13 +9,11 @@ namespace PubNet.API.Middlewares;
 public class ApplicationRequestContextEnricherMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly PubNetContext _db;
     private readonly BearerTokenManager _bearerTokenManager;
 
-    public ApplicationRequestContextEnricherMiddleware(RequestDelegate next, PubNetContext db, BearerTokenManager bearerTokenManager)
+    public ApplicationRequestContextEnricherMiddleware(RequestDelegate next, BearerTokenManager bearerTokenManager)
     {
         _next = next;
-        _db = db;
         _bearerTokenManager = bearerTokenManager;
     }
 

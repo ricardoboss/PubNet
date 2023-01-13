@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace PubNet.API.Models;
+namespace PubNet.Models;
 
 public class PubSpec
 {
@@ -71,13 +71,4 @@ public class PubSpec
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("flutter")]
     public Dictionary<string, string?>? Flutter { get; set; }
-}
-
-public class PubSpecScreenshot
-{
-    [JsonPropertyName("desciption")]
-    public string? Description { get; set; }
-
-    [JsonPropertyName("path")]
-    public string? Path { get; set; }
 }

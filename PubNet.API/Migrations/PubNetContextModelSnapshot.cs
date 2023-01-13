@@ -22,7 +22,7 @@ namespace PubNet.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("PubNet.API.Models.Author", b =>
+            modelBuilder.Entity("PubNet.Models.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,7 +66,7 @@ namespace PubNet.API.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.AuthorToken", b =>
+            modelBuilder.Entity("PubNet.Models.AuthorToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,10 +90,9 @@ namespace PubNet.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("Name");
 
-                    b.HasIndex("Value")
-                        .IsUnique();
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("Name", "OwnerId")
                         .IsUnique();
@@ -101,7 +100,7 @@ namespace PubNet.API.Migrations
                     b.ToTable("Tokens");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.Package", b =>
+            modelBuilder.Entity("PubNet.Models.Package", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +136,7 @@ namespace PubNet.API.Migrations
                     b.ToTable("Packages");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.PackageVersion", b =>
+            modelBuilder.Entity("PubNet.Models.PackageVersion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -177,10 +176,15 @@ namespace PubNet.API.Migrations
 
                     b.HasIndex("PackageId");
 
+                    b.HasIndex("PublishedAtUtc")
+                        .IsDescending();
+
+                    b.HasIndex("Version");
+
                     b.ToTable("PackageVersion");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.PendingArchive", b =>
+            modelBuilder.Entity("PubNet.Models.PendingArchive", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -205,9 +209,9 @@ namespace PubNet.API.Migrations
                     b.ToTable("PendingArchives");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.AuthorToken", b =>
+            modelBuilder.Entity("PubNet.Models.AuthorToken", b =>
                 {
-                    b.HasOne("PubNet.API.Models.Author", "Owner")
+                    b.HasOne("PubNet.Models.Author", "Owner")
                         .WithMany("Tokens")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -216,13 +220,13 @@ namespace PubNet.API.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.Package", b =>
+            modelBuilder.Entity("PubNet.Models.Package", b =>
                 {
-                    b.HasOne("PubNet.API.Models.Author", "Author")
+                    b.HasOne("PubNet.Models.Author", "Author")
                         .WithMany("Packages")
                         .HasForeignKey("AuthorId");
 
-                    b.HasOne("PubNet.API.Models.PackageVersion", "Latest")
+                    b.HasOne("PubNet.Models.PackageVersion", "Latest")
                         .WithMany()
                         .HasForeignKey("LatestId");
 
@@ -231,16 +235,16 @@ namespace PubNet.API.Migrations
                     b.Navigation("Latest");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.PackageVersion", b =>
+            modelBuilder.Entity("PubNet.Models.PackageVersion", b =>
                 {
-                    b.HasOne("PubNet.API.Models.Package", null)
+                    b.HasOne("PubNet.Models.Package", null)
                         .WithMany("Versions")
                         .HasForeignKey("PackageId");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.PendingArchive", b =>
+            modelBuilder.Entity("PubNet.Models.PendingArchive", b =>
                 {
-                    b.HasOne("PubNet.API.Models.AuthorToken", "Uploader")
+                    b.HasOne("PubNet.Models.AuthorToken", "Uploader")
                         .WithMany()
                         .HasForeignKey("UploaderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -249,14 +253,14 @@ namespace PubNet.API.Migrations
                     b.Navigation("Uploader");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.Author", b =>
+            modelBuilder.Entity("PubNet.Models.Author", b =>
                 {
                     b.Navigation("Packages");
 
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("PubNet.API.Models.Package", b =>
+            modelBuilder.Entity("PubNet.Models.Package", b =>
                 {
                     b.Navigation("Versions");
                 });

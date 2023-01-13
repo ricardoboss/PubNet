@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
-using PubNet.API.Models;
+using PubNet.Models;
 using PubNet.API.Services;
 
 namespace PubNet.API.Controllers;

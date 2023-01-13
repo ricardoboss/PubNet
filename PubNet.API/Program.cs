@@ -10,7 +10,7 @@ using PubNet.API.Contexts;
 using PubNet.API.Controllers;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
-using PubNet.API.Models;
+using PubNet.Models;
 using PubNet.API.Services;
 using Serilog;
 
