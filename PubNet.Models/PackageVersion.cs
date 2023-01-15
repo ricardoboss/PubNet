@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace PubNet.Models;
 
@@ -26,12 +25,6 @@ public class PackageVersion
     [JsonPropertyName("published_millis")]
     public long PublishedAtMillis => PublishedAtUtc.ToUnixTimeMilliseconds();
 
-    [JsonIgnore]
-    public string Pubspec { get; set; }
-
     [JsonPropertyName("pubspec")]
-    public PubSpec? PubspecJson => JsonSerializer.Deserialize<PubSpec>(Pubspec, new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = true,
-    }) ?? null;
+    public PubSpec? PubSpec { set; get; }
 }

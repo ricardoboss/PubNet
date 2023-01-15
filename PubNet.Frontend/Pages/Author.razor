@@ -1,0 +1,102 @@
+﻿@page "/author/{Username}"
+@using PubNet.API.DTO
+@inject HttpClient Http
+
+<PageTitle>Author: @Username</PageTitle>
+
+<h1>Author: @Username</h1>
+
+@if (AuthorModel is null && Error is null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (Error is not null)
+{
+    <p>
+        <strong>An error ocurred:</strong> @Error
+    </p>
+}
+else if (AuthorModel is not null)
+{
+    <p>Name: @AuthorModel.Name</p>
+    <p>Registered since: @AuthorModel.RegisteredAtUtc</p>
+
+     @if (AuthorModel.Website is not null)
+     {
+         <p>Website: <a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a></p>
+     }
+
+    if (AuthorPackages is null && PackagesError is null)
+    {
+        <p>
+            <em>Loading packages...</em>
+        </p>
+    }
+    else if (PackagesError is not null)
+    {
+        <p>
+            <strong>An error ocurred while loading the author packages:</strong> @PackagesError
+        </p>
+    }
+    else if (AuthorPackages is not null)
+    {
+        <h2>Packages</h2>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Latest Version</th>
+                <th>Published At</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var package in AuthorPackages)
+            {
+                <tr>
+                    <td><NavLink href="@("/package/" + package.Name)">@package.Name</NavLink></td>
+                    <td>@package.Latest?.Version</td>
+                    <td>@package.Latest?.PublishedAtUtc</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}
+
+@code
+{
+    [Parameter]
+    public string? Username { get; set; }
+
+    private Models.Author? AuthorModel { get; set; }
+    private string? Error { get; set; }
+
+    private IEnumerable<Models.Package>? AuthorPackages { get; set; }
+    private string? PackagesError { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Error = null;
+            AuthorModel = await Http.GetFromJsonAsync<Models.Author>($"authors/{Username}");
+
+            var response = await Http.GetFromJsonAsync<PackagesResponse>($"authors/{Username}/packages");
+            if (response is not null)
+            {
+                AuthorPackages = response.Packages;
+            }
+            else
+            {
+                PackagesError = "Failed loading authors packages";
+            }
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
+        }
+    }
+}

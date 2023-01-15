@@ -4,6 +4,9 @@ namespace PubNet.Models;
 
 public class PubSpec
 {
+    [JsonIgnore]
+    public int Id { get; set; }
+
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 

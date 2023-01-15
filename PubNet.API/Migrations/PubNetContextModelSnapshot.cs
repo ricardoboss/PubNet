@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.API.Contexts;
+using PubNet.Models;
 
 #nullable disable
 
@@ -64,6 +65,9 @@ namespace PubNet.API.Migrations
                     b.Property<int>("UploaderId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UploaderId");
@@ -79,26 +83,56 @@ namespace PubNet.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Inactive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
+                    b.Property<string>("NormalizedEmail")
                         .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset>("RegisteredAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("text");
 
                     b.Property<string>("Website")
@@ -109,7 +143,7 @@ namespace PubNet.API.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("Username")
+                    b.HasIndex("UserName")
                         .IsUnique();
 
                     b.ToTable("Authors");
@@ -210,13 +244,13 @@ namespace PubNet.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<PubSpec>("PubSpec")
+                        .HasColumnType("json")
+                        .HasAnnotation("Relational:JsonPropertyName", "pubspec");
+
                     b.Property<DateTimeOffset>("PublishedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasAnnotation("Relational:JsonPropertyName", "published");
-
-                    b.Property<string>("Pubspec")
-                        .IsRequired()
-                        .HasColumnType("json");
 
                     b.Property<bool>("Retracted")
                         .HasColumnType("boolean");

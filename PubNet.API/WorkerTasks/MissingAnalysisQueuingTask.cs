@@ -14,7 +14,7 @@ public class MissingAnalysisQueuingTask : BaseWorkerTask
     public override async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         _logger ??= services.GetRequiredService<ILogger<MissingAnalysisQueuingTask>>();
-        _db ??= services.GetRequiredService<PubNetContext>();
+        _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
         _taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
         await EnqueueMissingAnalyses(_db, _logger, _taskQueue, cancellationToken);
@@ -27,7 +27,15 @@ public class MissingAnalysisQueuingTask : BaseWorkerTask
     {
         var versionsWithoutAnalysis = await db.PackageVersions
             .Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
-            .ToListAsync(cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken);
+
+        // TODO: make current task batch available to tasks (analyzer tasks have already been dequeued by now)
+        // versionsWithoutAnalysis = versionsWithoutAnalysis
+        //     .Where(v => !taskQueue.Any(t =>
+        //         t is PubSpecAnalyzerTask existing && existing.Package == v.PackageName &&
+        //         existing.Version == v.Version)
+        //     )
+        //     .ToList();
 
         if (versionsWithoutAnalysis.Count == 0)
         {

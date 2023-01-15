@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
@@ -10,6 +11,7 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("packages")]
+[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
 public class PackagesController : ControllerBase
 {
     private readonly ILogger<PackagesController> _logger;
@@ -66,33 +68,70 @@ public class PackagesController : ControllerBase
     [HttpGet("{name}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Package))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByName(string name)
+    public async Task<IActionResult> GetByName(string name, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
                    ["PackageName"] = name,
                }))
         {
-            var package = await _db.Packages.Where(p => p.Name == name).Include(p => p.Versions).FirstOrDefaultAsync();
+            var package = await _db.Packages
+                .Where(p => p.Name == name)
+                .Include(p => p.Versions)
+                .FirstOrDefaultAsync(cancellationToken);
 
             return package is null ? NotFound() : Ok(package);
+        }
+    }
+
+    [Authorize]
+    [HttpDelete("{name}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteByName(string name, CancellationToken cancellationToken = default)
+    {
+        using (_logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["PackageName"] = name,
+               }))
+        {
+            var package = await _db.Packages
+                .Where(p => p.Name == name)
+                .Include(p => p.Versions)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (package is null) return NotFound();
+
+            _db.Packages.Remove(package);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
         }
     }
 
     [HttpGet("{name}/versions/{version}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersion))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetVersion(string name, string version)
+    public async Task<IActionResult> GetVersion(string name, string version, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
                    ["PackageName"] = name,
                }))
         {
-            var package = await _db.Packages.Where(p => p.Name == name).Include(p => p.Versions).FirstOrDefaultAsync();
+            var package = await _db.Packages
+                .Where(p => p.Name == name)
+                .Include(p => p.Versions)
+                .FirstOrDefaultAsync(cancellationToken);
+
             var packageVersion = package?.Versions.FirstOrDefault(v => v.Version == version);
 
-            return packageVersion is null ? NotFound() : Ok(packageVersion);
+            if (packageVersion is null)
+                return NotFound();
+
+            Response.Headers.ContentType = "application/vnd.pub.v2+json";
+            return Ok(packageVersion);
         }
     }
 
@@ -121,10 +160,11 @@ public class PackagesController : ControllerBase
     [HttpGet("versions/new")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-    public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context)
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
         var authorToken = context.RequireAuthorToken();
-        var response = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, authorToken);
+        var response = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, authorToken, cancellationToken);
         return Ok(response);
     }
 }

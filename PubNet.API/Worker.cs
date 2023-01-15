@@ -31,7 +31,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!TimeSpan.TryParse(_configuration.GetRequiredSection("Worker:SleepInterval").Value!, out var sleepDuration))
+        if (!TimeSpan.TryParse(_configuration.GetRequiredSection("Worker:Interval").Value!, out var interval))
         {
             _logger.LogCritical("Failed to parse Worker:SleepInterval value. Check your configuration");
 
@@ -40,6 +40,7 @@ public class Worker : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
+            var start = DateTime.Now;
             try
             {
                 if (_taskQueue.IsEmpty)
@@ -61,9 +62,12 @@ public class Worker : BackgroundService
             }
             finally
             {
-                _logger.LogInformation("Worker is sleeping until {WakeTime}", DateTime.Now.Add(sleepDuration));
+                var runDuration = DateTime.Now - start;
+                var timeLeftInInterval = interval - runDuration;
 
-                await Task.Delay(sleepDuration, stoppingToken);
+                _logger.LogInformation("Worker is sleeping until {WakeTime}", DateTime.Now.Add(timeLeftInInterval));
+
+                await Task.Delay(timeLeftInInterval, stoppingToken);
             }
         }
     }
@@ -135,44 +139,34 @@ public class Worker : BackgroundService
 
     private void HandleTaskResult(IWorkerTask task, WorkerTaskResult result, Stopwatch stopwatch)
     {
-        switch (result)
+        if (result.IsSuccess())
         {
-            case WorkerTaskResult.Done:
-            case WorkerTaskResult.Requeue:
-                task.Tries = 0;
+            task.Tries = 0;
 
-                _logger.LogDebug("Task {TaskName} ran successfully in {Elapsed}ms",
-                    task.Name, stopwatch.Elapsed.TotalMilliseconds);
-
-                if (result != WorkerTaskResult.Requeue)
-                    return;
-
-                _logger.LogTrace("Re-queuing task {TaskName}", task.Name);
-
-                _taskQueue.Enqueue(task);
-
-                return;
-            case WorkerTaskResult.FailedRecoverable:
-                task.Tries++;
-
-                _logger.LogError("Task failed after {Elapsed}ms (recoverable). Re-queueing task",
-                    stopwatch.Elapsed.TotalMilliseconds);
-
-                if (task.Tries > MaxTries)
-                {
-                    _logger.LogError("Not re-queueing task due to it having reached the maximum number of tries ({MaxTries})", MaxTries);
-
-                    return;
-                }
-
-                _taskQueue.Enqueue(task);
-                return;
-            case WorkerTaskResult.Failed:
-                _logger.LogError("Task failed after {Elapsed}ms (fatal). Not re-queueing",
-                    stopwatch.Elapsed.TotalMilliseconds);
-                return;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(result), result, "Unimplemented worker result");
+            _logger.LogDebug("Task {TaskName} succeeded in {Elapsed}ms", task.Name,
+                stopwatch.Elapsed.TotalMilliseconds);
         }
+        else
+        {
+            task.Tries++;
+
+            _logger.LogError("Task {TaskName} failed after {Elapsed}ms", task.Name,
+                stopwatch.Elapsed.TotalMilliseconds);
+        }
+
+        if (!result.IndicatesRequeue())
+        {
+            return;
+        }
+
+        if (task.Tries > MaxTries)
+        {
+            _logger.LogError(
+                "Not re-queueing task due to it having reached the maximum number of tries ({MaxTries})", MaxTries);
+
+            return;
+        }
+
+        _taskQueue.Enqueue(task);
     }
 }

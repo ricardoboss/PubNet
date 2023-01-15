@@ -1,28 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 namespace PubNet.Models;
 
-public class Author
+public class Author : IdentityUser<int>
 {
     [JsonIgnore]
     [Key]
     public int Id { get; set; }
 
     [Required]
-    public string Username { get; set; }
-
-    [Required]
     public string Name { get; set; }
-
-    [JsonIgnore]
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
-
-    [JsonIgnore]
-    public string PasswordHash { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Website { get; set; }

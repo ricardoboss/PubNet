@@ -6,13 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.API.Contexts;
+using PubNet.Models;
 
 #nullable disable
 
 namespace PubNet.API.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    [Migration("20230113025827_InitialCreate")]
+    [Migration("20230115011321_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,6 +26,58 @@ namespace PubNet.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("PubNet.API.Models.PackageVersionAnalysis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DocumentationLink")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("Formatted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("VersionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VersionId");
+
+                    b.ToTable("PackageVersionAnalyses");
+                });
+
+            modelBuilder.Entity("PubNet.API.Models.PendingArchive", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ArchivePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UploadedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UploaderId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UploaderId");
+
+                    b.ToTable("PendingArchives");
+                });
+
             modelBuilder.Entity("PubNet.Models.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -33,26 +86,56 @@ namespace PubNet.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Inactive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
+                    b.Property<string>("NormalizedEmail")
                         .HasColumnType("text");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset>("RegisteredAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("text");
 
                     b.Property<string>("Website")
@@ -63,7 +146,7 @@ namespace PubNet.API.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("Username")
+                    b.HasIndex("UserName")
                         .IsUnique();
 
                     b.ToTable("Authors");
@@ -160,13 +243,17 @@ namespace PubNet.API.Migrations
                     b.Property<int?>("PackageId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("PackageName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<PubSpec>("PubSpec")
+                        .HasColumnType("json")
+                        .HasAnnotation("Relational:JsonPropertyName", "pubspec");
+
                     b.Property<DateTimeOffset>("PublishedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasAnnotation("Relational:JsonPropertyName", "published");
-
-                    b.Property<string>("Pubspec")
-                        .IsRequired()
-                        .HasColumnType("json");
 
                     b.Property<bool>("Retracted")
                         .HasColumnType("boolean");
@@ -184,32 +271,29 @@ namespace PubNet.API.Migrations
 
                     b.HasIndex("Version");
 
-                    b.ToTable("PackageVersion");
+                    b.ToTable("PackageVersions");
                 });
 
-            modelBuilder.Entity("PubNet.Models.PendingArchive", b =>
+            modelBuilder.Entity("PubNet.API.Models.PackageVersionAnalysis", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.HasOne("PubNet.Models.PackageVersion", "Version")
+                        .WithMany()
+                        .HasForeignKey("VersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Navigation("Version");
+                });
 
-                    b.Property<string>("ArchivePath")
-                        .IsRequired()
-                        .HasColumnType("text");
+            modelBuilder.Entity("PubNet.API.Models.PendingArchive", b =>
+                {
+                    b.HasOne("PubNet.Models.AuthorToken", "Uploader")
+                        .WithMany()
+                        .HasForeignKey("UploaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTimeOffset>("UploadedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("UploaderId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UploaderId");
-
-                    b.ToTable("PendingArchives");
+                    b.Navigation("Uploader");
                 });
 
             modelBuilder.Entity("PubNet.Models.AuthorToken", b =>
@@ -243,17 +327,6 @@ namespace PubNet.API.Migrations
                     b.HasOne("PubNet.Models.Package", null)
                         .WithMany("Versions")
                         .HasForeignKey("PackageId");
-                });
-
-            modelBuilder.Entity("PubNet.Models.PendingArchive", b =>
-                {
-                    b.HasOne("PubNet.Models.AuthorToken", "Uploader")
-                        .WithMany()
-                        .HasForeignKey("UploaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Uploader");
                 });
 
             modelBuilder.Entity("PubNet.Models.Author", b =>

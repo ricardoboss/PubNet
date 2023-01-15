@@ -12,7 +12,7 @@ public class CleanupOldPendingArchivesTask : BaseWorkerTask
 
     public override async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
     {
-        _db ??= services.GetRequiredService<PubNetContext>();
+        _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
         _logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
         _configuration ??= services.GetRequiredService<IConfiguration>();
 

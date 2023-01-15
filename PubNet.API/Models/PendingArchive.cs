@@ -6,6 +6,8 @@ public class PendingArchive
 {
     public int Id { get; set; }
 
+    public Guid Uuid { get; set; }
+
     public string ArchivePath { get; set; }
 
     public string UnpackedArchivePath => ArchivePath[..^".tar.gz".Length];

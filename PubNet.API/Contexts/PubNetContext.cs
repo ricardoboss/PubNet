@@ -32,7 +32,7 @@ public class PubNetContext : DbContext
             .IsUnique();
 
         modelBuilder.Entity<Author>()
-            .HasIndex(a => a.Username)
+            .HasIndex(a => a.UserName)
             .IsUnique();
 
         modelBuilder.Entity<AuthorToken>()
@@ -70,7 +70,7 @@ public class PubNetContext : DbContext
             .HasIndex(p => p.Version);
 
         modelBuilder.Entity<PackageVersion>()
-            .Property(v => v.Pubspec)
+            .Property(v => v.PubSpec)
             .HasColumnType("json");
 
         modelBuilder.Entity<PackageVersionAnalysis>()

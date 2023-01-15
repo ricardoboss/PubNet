@@ -5,5 +5,5 @@ namespace PubNet.API.Interfaces;
 
 public interface IUploadEndpointGenerator
 {
-    public Task<UploadEndpointData> GenerateUploadEndpointData(HttpRequest request, AuthorToken authorToken);
+    public Task<UploadEndpointData> GenerateUploadEndpointData(HttpRequest request, AuthorToken authorToken, CancellationToken cancellationToken = default);
 }

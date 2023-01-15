@@ -18,29 +18,28 @@ public partial class AuthorController : ControllerBase
     private readonly PubNetContext _db;
     private readonly IPasswordHasher<Author> _passwordHasher;
     private readonly AuthorTokenDispenser _tokenDispenser;
-    private readonly BearerTokenManager _bearerTokenManager;
 
     public AuthorController(ILogger<AuthorController> logger, PubNetContext db, IPasswordHasher<Author> passwordHasher,
-        AuthorTokenDispenser tokenDispenser, BearerTokenManager bearerTokenManager)
+        AuthorTokenDispenser tokenDispenser)
     {
         _logger = logger;
         _db = db;
         _passwordHasher = passwordHasher;
         _tokenDispenser = tokenDispenser;
-        _bearerTokenManager = bearerTokenManager;
     }
 
     [HttpGet("{username}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Get(string username)
+    [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+    public async Task<IActionResult> Get(string username, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
                    ["AuthorUsername"] = username,
                }))
         {
-            var author = await GetAuthorFromUsername(username);
+            var author = await _db.Authors.FirstOrDefaultAsync(a => a.UserName == username, cancellationToken);
 
             return author is null ? NotFound() : Ok(author);
         }
@@ -50,7 +49,7 @@ public partial class AuthorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete([FromQuery] string username, [FromBody] DeleteAuthorRequest dto, [FromServices] ApplicationRequestContext context)
+    public async Task<IActionResult> Delete([FromQuery] string username, [FromBody] DeleteAuthorRequest dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
         var author = context.RequireAuthor();
 
@@ -59,21 +58,21 @@ public partial class AuthorController : ControllerBase
                    ["AuthorUsername"] = username,
                }))
         {
-            if (username != author.Username)
+            if (username != author.UserName)
             {
                 return Unauthorized(UsernameMismatch);
             }
 
-            await VerifyPassword(author, dto.Password);
+            await VerifyPassword(author, dto.Password, cancellationToken);
 
-            if (dto.Confirmation != author.Username)
+            if (dto.Confirmation != author.UserName)
             {
                 return Unauthorized(new ErrorResponse(new("invalid-confirmation", "The confirmation must match your username")));
             }
 
             _db.Tokens.RemoveRange(author.Tokens);
             _db.Authors.Remove(author);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
 
             return Ok(new SuccessResponse(new($"Author '{username}' successfully deleted.")));
         }
@@ -82,14 +81,18 @@ public partial class AuthorController : ControllerBase
     [HttpGet("{username}/packages")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackagesResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPackages(string username)
+    [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+    public async Task<IActionResult> GetPackages(string username, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
                    ["AuthorUsername"] = username,
                }))
         {
-            var author = await GetAuthorFromUsername(username);
+            var author = await _db.Authors
+                .Where(a => a.UserName == username)
+                .Include(a => a.Packages)
+                .FirstOrDefaultAsync(cancellationToken);
 
             return author is null ? NotFound() : Ok(new PackagesResponse(author.Packages));
         }
@@ -99,9 +102,9 @@ public partial class AuthorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest dto)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest dto, CancellationToken cancellationToken = default)
     {
-        if (_db.Authors.Any(a => a.Username == dto.Username))
+        if (_db.Authors.Any(a => a.UserName == dto.Username))
         {
             return UnprocessableEntity(new ErrorResponse(new("username-already-in-use",
                 "The username you provided is already in use.")));
@@ -115,7 +118,7 @@ public partial class AuthorController : ControllerBase
 
         var author = new Author
         {
-            Username = dto.Username,
+            UserName = dto.Username,
             Email = dto.Email,
             Name = dto.Name,
             Website = dto.Website,
@@ -128,24 +131,24 @@ public partial class AuthorController : ControllerBase
         author.PasswordHash = _passwordHasher.HashPassword(author, dto.Password);
 
         _db.Authors.Add(author);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(cancellationToken);
 
-        return CreatedAtAction("Get", new { username = author.Username }, author);
+        return CreatedAtAction("Get", new { username = author.UserName }, author);
     }
 
     [HttpPatch("{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-    public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto, [FromServices] ApplicationRequestContext context)
+    public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
         var author = context.RequireAuthor();
 
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorUsername"] = author.Username,
+                   ["AuthorUsername"] = author.UserName,
                }))
         {
-            if (username != author.Username)
+            if (username != author.UserName)
             {
                 return Unauthorized(UsernameMismatch);
             }
@@ -164,7 +167,7 @@ public partial class AuthorController : ControllerBase
                 author.Website = dto.Website;
             }
 
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
 
             return NoContent();
         }
@@ -173,22 +176,22 @@ public partial class AuthorController : ControllerBase
     [HttpGet("{username}/tokens")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BearerTokenResponse>))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-    public IActionResult GetTokens(string username, ApplicationRequestContext context)
+    public IActionResult GetTokens(string username, [FromServices] ApplicationRequestContext context, [FromServices] BearerTokenManager bearerTokenManager)
     {
         var author = context.RequireAuthor();
 
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorUsername"] = author.Username,
+                   ["AuthorUsername"] = author.UserName!,
                }))
         {
-            if (username != author.Username)
+            if (username != author.UserName)
             {
                 return Unauthorized(UsernameMismatch);
             }
 
             var tokens = author.Tokens
-                .Select(t => new BearerTokenResponse(t.Name, _bearerTokenManager.Generate(t), t.ExpiresAtUtc));
+                .Select(t => new BearerTokenResponse(t.Name, bearerTokenManager.Generate(t), t.ExpiresAtUtc));
 
             return Ok(tokens);
         }
@@ -199,20 +202,20 @@ public partial class AuthorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CreateToken(string username, [FromBody] CreateTokenRequest dto, [FromServices] ApplicationRequestContext context)
+    public async Task<IActionResult> CreateToken(string username, [FromBody] CreateTokenRequest dto, [FromServices] BearerTokenManager bearerTokenManager, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
                {
                    ["AuthorUsername"] = username,
                }))
         {
-            var author = await GetAuthorFromUsername(username);
+            var author = await _db.Authors.FirstOrDefaultAsync(a => a.UserName == username, cancellationToken);
             if (author is null)
             {
                 return NotFound();
             }
 
-            await VerifyPassword(author, dto.Password);
+            await VerifyPassword(author, dto.Password, cancellationToken);
 
             if (!TokenNameRegex().IsMatch(dto.TokenName))
             {
@@ -225,7 +228,7 @@ public partial class AuthorController : ControllerBase
             }
 
             var authorToken = await _tokenDispenser.Dispense(dto.TokenName, author, TimeSpan.FromDays(30));
-            var bearer = _bearerTokenManager.Generate(authorToken);
+            var bearer = bearerTokenManager.Generate(authorToken);
 
             return StatusCode(StatusCodes.Status201Created, new BearerTokenResponse(authorToken.Name, bearer, authorToken.ExpiresAtUtc));
         }
@@ -235,16 +238,16 @@ public partial class AuthorController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteToken(string username, string tokenName, ApplicationRequestContext context)
+    public async Task<IActionResult> DeleteToken(string username, string tokenName, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
         var author = context.RequireAuthor();
 
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorUsername"] = author.Username,
+                   ["AuthorUsername"] = author.UserName,
                }))
         {
-            if (username != author.Username)
+            if (username != author.UserName)
             {
                 return Unauthorized(UsernameMismatch);
             }
@@ -256,19 +259,19 @@ public partial class AuthorController : ControllerBase
             }
 
             _db.Tokens.Remove(token);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
 
             return NoContent();
         }
     }
 
-    private async Task VerifyPassword(Author author, string password)
+    private async Task VerifyPassword(Author author, string password, CancellationToken cancellationToken = default)
     {
         var result = _passwordHasher.VerifyHashedPassword(author, author.PasswordHash, password);
         if (result == PasswordVerificationResult.SuccessRehashNeeded)
         {
             author.PasswordHash = _passwordHasher.HashPassword(author, password);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Rehashed password for {@Author}", author);
         }
@@ -279,12 +282,6 @@ public partial class AuthorController : ControllerBase
             throw new InvalidCredentialException("Password verification failed");
         }
     }
-
-    private async Task<Author?> GetAuthorFromUsername(string username) =>
-        await _db.Authors.Where(a => a.Username == username)
-            .Include(nameof(Author.Packages))
-            .Include(nameof(Author.Packages) + "." + nameof(Package.Versions))
-            .FirstOrDefaultAsync();
 
     private static ErrorResponse UsernameMismatch =>
         new(new("author-username-mismatch", "The username you are trying to access does not match the owner of the token you used"));

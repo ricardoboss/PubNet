@@ -1,0 +1,97 @@
+﻿@page "/package/{PackageName}"
+@inject HttpClient Http
+
+@if (PackageModel is null && Error is null)
+{
+    <PageTitle>Package: @PackageName</PageTitle>
+
+    <h1>Package: @PackageName</h1>
+
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (Error is not null)
+{
+    <PageTitle>Package: @PackageName</PageTitle>
+
+    <h1>Package: @PackageName</h1>
+
+    <p>
+        <strong>An error ocurred:</strong> @Error
+    </p>
+}
+else if (PackageModel is not null)
+{
+    <PageTitle>Package: @PackageName @(PackageModel.Latest?.Version)</PageTitle>
+
+    <h1>Package: @PackageName @(PackageModel.Latest?.Version)</h1>
+
+    <p>
+        Made by: <NavLink href="@("/author/" + PackageModel.Author?.Username)">@(PackageModel.Author?.Username)</NavLink>
+    </p>
+
+    <h2>Description</h2>
+
+    <p>@(PackageModel.Latest?.PubSpec?.Description)</p>
+
+    <h2>Dependencies</h2>
+
+    @if (PackageModel.Latest?.PubSpec?.Dependencies is null || PackageModel.Latest?.PubSpec?.Dependencies.Count == 0)
+    {
+        <p><em>No dependencies.</em></p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var dependency in PackageModel.Latest!.PubSpec!.Dependencies!)
+            {
+                <li><NavLink href="@("/package/" + dependency.Key)">@dependency.Key</NavLink></li>
+            }
+        </ul>
+    }
+
+    <h2>Versions</h2>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Version</th>
+            <th>Published At</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var version in PackageModel.Versions.OrderByDescending(v => v.PublishedAtUtc))
+        {
+            <tr>
+                <td>@version.Version</td>
+                <td>@version.PublishedAtUtc</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code
+{
+    [Parameter]
+    public string? PackageName { get; set; }
+
+    private Models.Package? PackageModel { get; set; }
+    private string? Error { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            Error = null;
+            PackageModel = await Http.GetFromJsonAsync<Models.Package>($"packages/{PackageName}");
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
+        }
+
+        await base.OnParametersSetAsync();
+    }
+}

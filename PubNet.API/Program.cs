@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PubNet.API;
 using PubNet.API.Contexts;
@@ -23,8 +23,6 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .CreateBootstrapLogger();
 
-Log.Logger.Information("Bootstrapping app");
-
 try
 {
     var builder = WebApplication.CreateBuilder(args);
@@ -37,26 +35,59 @@ try
             .WriteTo.Console());
 
     builder.Services.AddDbContext<PubNetContext>(
-        options => { options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet")); },
-        ServiceLifetime.Singleton);
+        options => options
+            .UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
+            .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))
+    );
+
+    builder.Services
+        .AddIdentityCore<Author>(o =>
+        {
+            o.SignIn.RequireConfirmedEmail = true;
+        })
+        .AddEntityFrameworkStores<PubNetContext>();
+
+    builder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new("Missing Authentication:Google:ClientId in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
+            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new("Missing Authentication:Google:ClientSecret in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
+            googleOptions.SaveTokens = true;
+            // googleOptions.Events.OnCreatingTicket = ctx =>
+            // {
+            //     var tokens = ctx.Properties.GetTokens().ToList();
+            //
+            //     tokens.Add(new()
+            //     {
+            //         Name = "TicketCreated",
+            //         Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+            //     });
+            //
+            //     ctx.Properties.StoreTokens(tokens);
+            //
+            //     return Task.CompletedTask;
+            // };
+        })
+        .AddJwtBearer();
+
+    // used for verifying and creating password hashes
+    builder.Services.TryAddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
+
+    // used to manage author tokens
+    builder.Services.AddScoped<AuthorTokenDispenser>();
+
+    // data protection is used to encrypt bearer tokens
+    // builder.Services.AddDataProtection()
+    //     .UseCryptographicAlgorithms(new()
+    //     {
+    //         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
+    //         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256,
+    //     });
+    builder.Services.AddScoped<BearerTokenManager>();
 
     // used to store request-specific data in a single place
     builder.Services.AddScoped<ApplicationRequestContext>();
-
-    // used for verifying and creating password hashes
-    builder.Services.AddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
-
-    // used to manage author tokens
-    builder.Services.AddSingleton<AuthorTokenDispenser>();
-
-    // data protection is used to encrypt bearer tokens
-    builder.Services.AddDataProtection()
-        .UseCryptographicAlgorithms(new()
-        {
-            EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
-            ValidationAlgorithm = ValidationAlgorithm.HMACSHA256,
-        });
-    builder.Services.AddSingleton<BearerTokenManager>();
 
     // needed to dynamically generate uris to controller actions
     builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -72,14 +103,12 @@ try
     // package storage
     builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
     builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
+    builder.Services.AddSingleton<EndpointHelper>();
 
     builder.Services.AddControllers();
 
-    if (builder.Environment.IsDevelopment())
-    {
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-    }
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
     builder.Services.AddCors(options =>
     {
@@ -125,13 +154,13 @@ try
 
     app.UseResponseCaching();
 
-    // app.UseAuthentication();
-    // app.UseAuthorization();
-
     app.UsePathBase("/api");
 
     app.UseMiddleware<ClientExceptionFormatterMiddleware>();
     app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.MapControllers();
 

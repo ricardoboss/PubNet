@@ -26,7 +26,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
     }
 
     /// <inheritdoc />
-    public async Task<string> StoreArchive(string name, string version, Stream stream)
+    public async Task<string> StoreArchive(string name, string version, Stream stream, CancellationToken cancellationToken = default)
     {
         var path = GetArchivePath(name, version);
 
@@ -37,11 +37,11 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
         }
 
         await using (var fileStream = File.OpenWrite(path))
-            await stream.CopyToAsync(fileStream);
+            await stream.CopyToAsync(fileStream, cancellationToken);
 
         await using (var fileStream = File.OpenRead(path))
         using (var hash = SHA256.Create())
-            return Convert.ToHexString(await hash.ComputeHashAsync(fileStream));
+            return Convert.ToHexString(await hash.ComputeHashAsync(fileStream, cancellationToken));
     }
 
     /// <inheritdoc />
