@@ -157,14 +157,14 @@ public class PackagesController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("versions/new")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, CancellationToken cancellationToken = default)
     {
-        var authorToken = context.RequireAuthorToken();
-        var response = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, authorToken, cancellationToken);
+        var response = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, null, cancellationToken);
         return Ok(response);
     }
 }

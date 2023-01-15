@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
@@ -33,6 +32,21 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
         _endpointHelper = endpointHelper;
     }
 
+    /// <inheritdoc />
+    [NonAction]
+    public Task<UploadEndpointData> GenerateUploadEndpointData(HttpRequest request, Author author, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var url = _endpointHelper.GenerateFullyQualified(request, "/api/storage/upload");
+        var fields = new Dictionary<string, string>
+        {
+            { "author-id", author.Id.ToString() },
+        };
+
+        return Task.FromResult(new UploadEndpointData(url, fields));
+    }
+
     [HttpPost("upload")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
@@ -55,18 +69,18 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
         if (packageFile is null)
             return BadRequest(new ErrorResponse(new("missing-package-file", "The package file is missing")));
 
-        if (!Request.Form.ContainsKey("token-id"))
+        if (!Request.Form.ContainsKey("author-id"))
             return BadRequest(new ErrorResponse(new("missing-fields", "Not all fields have been forwarded")));
 
-        var authorTokenId = int.Parse(Request.Form["token-id"].ToString());
-        var authorToken = await _db.Tokens.FindAsync(authorTokenId);
-        if (authorToken is null)
+        var authorId = int.Parse(Request.Form["author-id"].ToString());
+        var author = await _db.Authors.FindAsync(authorId);
+        if (author is null)
             return BadRequest(new ErrorResponse(new("invalid-token", "Invalid token id provided")));
 
         var pendingId = Guid.NewGuid();
         var tempFile = Path.GetTempPath() + pendingId + ".tar.gz";
 
-        _logger.LogDebug("Storing package archive for {Author} at {Path}", authorToken.Owner.UserName, tempFile);
+        _logger.LogDebug("Storing package archive for {Author} at {Path}", author.UserName, tempFile);
 
         await using (var fileStream = System.IO.File.OpenWrite(tempFile)) {
             await packageFile.CopyToAsync(fileStream);
@@ -76,7 +90,7 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
         {
             Uuid = pendingId,
             ArchivePath = tempFile,
-            Uploader = authorToken,
+            Uploader = author,
             UploadedAtUtc = DateTimeOffset.UtcNow,
         };
 
@@ -158,7 +172,7 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
             {
                 package = new()
                 {
-                    Author = pending.Uploader.Owner,
+                    Author = pending.Uploader,
                     Name = packageName,
                     Versions = new List<PackageVersion>(),
                     IsDiscontinued = false,
@@ -224,20 +238,5 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
             .Build();
 
         return yamlDeser.Deserialize<PubSpec>(pubSpecText);
-    }
-
-    /// <inheritdoc />
-    [NonAction]
-    public Task<UploadEndpointData> GenerateUploadEndpointData(HttpRequest request, AuthorToken authorToken, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var url = _endpointHelper.GenerateFullyQualified(request, "/api/storage/upload");
-        var fields = new Dictionary<string, string>
-        {
-            { "token-id", authorToken.Id.ToString() },
-        };
-
-        return Task.FromResult(new UploadEndpointData(url, fields));
     }
 }

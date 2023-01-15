@@ -1,6 +1,4 @@
 ﻿@page "/"
-@using System.Text.Json
-@inject IConfiguration config
 
 <PageTitle>PubNet</PageTitle>
 
@@ -9,7 +7,3 @@
 <p>
     Start <NavLink href="/browse">browsing</NavLink> packages.
 </p>
-
-<pre>
-    @(JsonSerializer.Serialize(config))
-</pre>

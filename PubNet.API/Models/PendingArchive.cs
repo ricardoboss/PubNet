@@ -14,7 +14,7 @@ public class PendingArchive
 
     public int UploaderId { get; set; }
 
-    public AuthorToken Uploader { get; set; }
+    public Author Uploader { get; set; }
 
     public DateTimeOffset UploadedAtUtc { get; set; }
 }

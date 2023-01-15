@@ -1,3 +1,5 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using PubNet.API;
 using PubNet.API.Contexts;
 using PubNet.API.Controllers;
@@ -41,35 +45,53 @@ try
     );
 
     builder.Services
-        .AddIdentityCore<Author>(o =>
-        {
-            o.SignIn.RequireConfirmedEmail = true;
-        })
+        .AddIdentityCore<Author>(o => { o.SignIn.RequireConfirmedEmail = true; })
         .AddEntityFrameworkStores<PubNetContext>();
 
     builder.Services
-        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddGoogle(googleOptions =>
+        .AddAuthentication(o =>
         {
-            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new("Missing Authentication:Google:ClientId in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
-            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new("Missing Authentication:Google:ClientSecret in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
-            googleOptions.SaveTokens = true;
-            // googleOptions.Events.OnCreatingTicket = ctx =>
-            // {
-            //     var tokens = ctx.Properties.GetTokens().ToList();
-            //
-            //     tokens.Add(new()
-            //     {
-            //         Name = "TicketCreated",
-            //         Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-            //     });
-            //
-            //     ctx.Properties.StoreTokens(tokens);
-            //
-            //     return Task.CompletedTask;
-            // };
+            o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddJwtBearer();
+        // .AddGoogle(googleOptions =>
+        // {
+        //     googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new(
+        //         "Missing Authentication:Google:ClientId in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
+        //     googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new(
+        //         "Missing Authentication:Google:ClientSecret in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
+        //     googleOptions.SaveTokens = true;
+        //     // googleOptions.Events.OnCreatingTicket = ctx =>
+        //     // {
+        //     //     var tokens = ctx.Properties.GetTokens().ToList();
+        //     //
+        //     //     tokens.Add(new()
+        //     //     {
+        //     //         Name = "TicketCreated",
+        //     //         Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
+        //     //     });
+        //     //
+        //     //     ctx.Properties.StoreTokens(tokens);
+        //     //
+        //     //     return Task.CompletedTask;
+        //     // };
+        // })
+        .AddJwtBearer(o =>
+        {
+            o.SaveToken = true;
+
+            o.TokenValidationParameters = new()
+            {
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+            };
+        });
 
     // used for verifying and creating password hashes
     builder.Services.TryAddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
@@ -108,7 +130,32 @@ try
     builder.Services.AddControllers();
 
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(o =>
+    {
+        const string bearerDefinition = "Bearer";
+
+        var definition = new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using Bearer scheme",
+        };
+
+        o.AddSecurityDefinition(bearerDefinition, definition);
+        o.AddSecurityRequirement(new()
+        {
+            {
+                definition,
+                new List<string>
+                {
+                    "given_name",
+                    "family_name",
+                }
+            },
+        });
+    });
 
     builder.Services.AddCors(options =>
     {
