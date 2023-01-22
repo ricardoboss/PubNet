@@ -83,9 +83,9 @@ try
 
             o.TokenValidationParameters = new()
             {
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+                ValidIssuer = JwtTokenGenerator.GetIssuer(builder.Configuration),
+                ValidAudience = JwtTokenGenerator.GetAudience(builder.Configuration),
+                IssuerSigningKey = JwtTokenGenerator.GetSecretKey(builder.Configuration),
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = false,
