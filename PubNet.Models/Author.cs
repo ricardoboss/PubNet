@@ -9,10 +9,10 @@ public class Author : IdentityUser<int>
 {
     [JsonIgnore]
     [Key]
-    public int Id { get; set; }
+    public new int Id { get; set; }
 
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Website { get; set; }

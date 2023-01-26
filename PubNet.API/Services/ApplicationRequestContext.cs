@@ -1,4 +1,6 @@
-﻿using PubNet.API.DTO;
+﻿using System.Security.Authentication;
+using System.Security.Claims;
+using PubNet.API.Contexts;
 using PubNet.Models;
 
 namespace PubNet.API.Services;
@@ -9,19 +11,23 @@ public class ApplicationRequestContext
 
     public List<string> AcceptedResponseFormats { get; } = new();
 
-    public Author? Author => AuthorToken?.Owner;
+    public Author? Author { get; set; }
 
-    public AuthorToken? AuthorToken { get; set; }
-
-    public AuthorToken RequireAuthorToken()
+    public async Task<Author> RequireAuthorAsync(ClaimsPrincipal user, PubNetContext db, CancellationToken cancellationToken = default)
     {
-        return AuthorToken ?? throw MissingHeader;
+        if (Author is not null)
+            return Author;
+
+        var idStr = user.FindFirstValue("id");
+        if (idStr is null || !int.TryParse(idStr, out var id))
+            throw MissingAuthentication;
+
+        var author = await db.Authors.FindAsync(new object?[] { id }, cancellationToken);
+        if (author is null)
+            throw MissingAuthentication;
+
+        return Author = author;
     }
 
-    public Author RequireAuthor()
-    {
-        return Author ?? throw MissingHeader;
-    }
-
-    private BearerTokenException MissingHeader => new("Missing authentication. Acquire a Bearer token at [POST /authors/{username}/tokens] and send it in the 'Authenticate' header.");
+    private static InvalidCredentialException MissingAuthentication => new("Missing authentication. Acquire a Bearer token at [POST /authentication/login] and send it in the 'Authenticate' header.");
 }

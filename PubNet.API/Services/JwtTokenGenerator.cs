@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using PubNet.API.DTO;
 using PubNet.Models;
 
 namespace PubNet.API.Services;
@@ -34,16 +35,17 @@ public class JwtTokenGenerator
         return lifetime;
     }
 
-    private readonly List<Claim> _defaultClaims;
     private readonly int _tokenLifetimeInSeconds;
     private readonly string _issuer;
     private readonly string _audience;
     private readonly JwtHeader _jwtHeader;
     private readonly JwtSecurityTokenHandler _jstHandler;
+    private readonly ILogger<JwtTokenGenerator> _logger;
 
-    public JwtTokenGenerator(IConfiguration configuration)
+    public JwtTokenGenerator(IConfiguration configuration, ILogger<JwtTokenGenerator> logger)
     {
-        _defaultClaims = new();
+        _logger = logger;
+
         _jstHandler = new();
 
         var secretKey = GetSecretKey(configuration);
@@ -55,28 +57,23 @@ public class JwtTokenGenerator
         _audience = GetAudience(configuration);
     }
 
-    public JwtTokenGenerator AddDefaultClaim(Claim claim)
-    {
-        _defaultClaims.Add(claim);
-
-        return this;
-    }
-
     public string Generate(Author author, out DateTimeOffset expireTime, IEnumerable<Claim>? additionalClaims = null)
     {
         var issueTime = DateTimeOffset.Now;
         expireTime = issueTime.AddSeconds(_tokenLifetimeInSeconds);
 
         var claims = new List<Claim>();
-        claims.AddRange(_defaultClaims);
         claims.AddRange(new Claim[]
         {
-            new (ClaimTypes.Sid, author.Id.ToString()),
-            new(ClaimTypes.Name, author.Name),
+            new("id", author.Id.ToString()),
+            new("name", author.Name),
+            new("username", author.UserName ?? string.Empty),
         });
 
         if (additionalClaims != null)
             claims.AddRange(additionalClaims);
+
+        _logger.LogDebug("Generated new token for {Author} with claims: {Claims}", author.UserName, claims);
 
         return _jstHandler.WriteToken(
             new JwtSecurityToken(

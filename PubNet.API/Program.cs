@@ -1,5 +1,3 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PubNet.API;
 using PubNet.API.Contexts;
@@ -36,7 +33,8 @@ try
             .ReadFrom.Services(services)
             .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
             .Enrich.FromLogContext()
-            .WriteTo.Console());
+            .WriteTo.Console()
+    );
 
     builder.Services.AddDbContext<PubNetContext>(
         options => options
@@ -45,7 +43,7 @@ try
     );
 
     builder.Services
-        .AddIdentityCore<Author>(o => { o.SignIn.RequireConfirmedEmail = true; })
+        .AddIdentityCore<Author>()
         .AddEntityFrameworkStores<PubNetContext>();
 
     builder.Services
@@ -95,18 +93,10 @@ try
 
     // used for verifying and creating password hashes
     builder.Services.TryAddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
+    builder.Services.AddScoped<PasswordManager>();
 
-    // used to manage author tokens
-    builder.Services.AddScoped<AuthorTokenDispenser>();
-
-    // data protection is used to encrypt bearer tokens
-    // builder.Services.AddDataProtection()
-    //     .UseCryptographicAlgorithms(new()
-    //     {
-    //         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_GCM,
-    //         ValidationAlgorithm = ValidationAlgorithm.HMACSHA256,
-    //     });
-    builder.Services.AddScoped<BearerTokenManager>();
+    // generates JWT tokens
+    builder.Services.AddSingleton<JwtTokenGenerator>();
 
     // used to store request-specific data in a single place
     builder.Services.AddScoped<ApplicationRequestContext>();
@@ -132,27 +122,21 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(o =>
     {
-        const string bearerDefinition = "Bearer";
+        const string definitionName = "Bearer";
 
-        var definition = new OpenApiSecurityScheme
+        o.AddSecurityDefinition(definitionName, new()
         {
-            Name = "Authorization",
-            Scheme = "Bearer",
+            Type = SecuritySchemeType.Http,
             BearerFormat = "JWT",
             In = ParameterLocation.Header,
-            Description = "JWT Authorization header using Bearer scheme",
-        };
+            Scheme = "Bearer",
+        });
 
-        o.AddSecurityDefinition(bearerDefinition, definition);
         o.AddSecurityRequirement(new()
         {
             {
-                definition,
-                new List<string>
-                {
-                    "given_name",
-                    "family_name",
-                }
+                new() { Reference = new() { Type = ReferenceType.SecurityScheme, Id = definitionName } },
+                new List<string>()
             },
         });
     });
@@ -178,6 +162,8 @@ try
 
     var app = builder.Build();
 
+    app.UsePathBase("/api");
+
     app.UseSerilogRequestLogging(options =>
     {
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
@@ -200,8 +186,6 @@ try
     app.UseCors();
 
     app.UseResponseCaching();
-
-    app.UsePathBase("/api");
 
     app.UseMiddleware<ClientExceptionFormatterMiddleware>();
     app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();

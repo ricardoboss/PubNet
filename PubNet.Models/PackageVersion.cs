@@ -7,17 +7,17 @@ public class PackageVersion
     [JsonIgnore]
     public int Id { get; set; }
 
-    public string PackageName { get; set; }
+    public string PackageName { get; set; } = string.Empty;
 
-    public string Version { get; set; }
+    public string Version { get; set; } = string.Empty;
 
     public bool Retracted { get; set; }
 
     [JsonPropertyName("archive_url")]
-    public string ArchiveUrl { get; set; }
+    public string ArchiveUrl { get; set; } = string.Empty;
 
     [JsonPropertyName("archive_sha256")]
-    public string ArchiveSha256 { get; set; }
+    public string ArchiveSha256 { get; set; } = string.Empty;
 
     [JsonPropertyName("published")]
     public DateTimeOffset PublishedAtUtc { get; set; }

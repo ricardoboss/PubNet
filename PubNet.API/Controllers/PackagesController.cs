@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
-using PubNet.Models;
 using PubNet.API.Services;
+using PubNet.Models;
 
 namespace PubNet.API.Controllers;
 
@@ -162,9 +162,11 @@ public class PackagesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
-        var response = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, null, cancellationToken);
-        return Ok(response);
+        var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+        var data = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, author, cancellationToken);
+
+        return Ok(data);
     }
 }

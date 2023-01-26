@@ -7,9 +7,9 @@ public class AuthorToken
     [JsonIgnore]
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public byte[] Value { get; set; }
+    public byte[] Value { get; set; } = Array.Empty<byte>();
 
     public DateTimeOffset ExpiresAtUtc { get; set; }
 
