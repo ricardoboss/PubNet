@@ -26,7 +26,7 @@ else
         {
             <tr>
                 <td><NavLink href="@("/package/" + package.Name)">@package.Name</NavLink></td>
-                <td><NavLink href="@("/author/" + package.Author?.Username)">@package.Author?.Username</NavLink></td>
+                <td><NavLink href="@("/author/" + package.Author?.UserName)">@package.Author?.UserName</NavLink></td>
                 <td>@package.Latest?.Version</td>
                 <td>@package.Latest?.PublishedAtUtc.ToLocalTime()</td>
             </tr>

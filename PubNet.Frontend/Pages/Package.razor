@@ -28,7 +28,7 @@ else if (PackageModel is not null)
     <h1>Package: @PackageName @(PackageModel.Latest?.Version)</h1>
 
     <p>
-        Made by: <NavLink href="@("/author/" + PackageModel.Author?.Username)">@(PackageModel.Author?.Username)</NavLink>
+        Made by: <NavLink href="@("/author/" + PackageModel.Author?.UserName)">@(PackageModel.Author?.UserName)</NavLink>
     </p>
 
     <h2>Description</h2>

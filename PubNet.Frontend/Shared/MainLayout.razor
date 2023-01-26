@@ -2,12 +2,17 @@
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu/>
+        <NavMenu />
     </div>
 
     <main>
         <div class="top-row px-4">
-            <NavLink href="/authenticate">Authenticate</NavLink>
+            <OnlyGuest>
+                <NavLink href="/authenticate">Authenticate</NavLink>
+            </OnlyGuest>
+            <OnlyAuthenticated>
+                Welcome back
+            </OnlyAuthenticated>
         </div>
 
         <article class="content px-4">
