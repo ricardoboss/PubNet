@@ -50,7 +50,7 @@
             await Auth.StoreTokenAsync(token.Token);
             await Auth.GetSelfAsync();
 
-            Nav.NavigateTo("/", true);
+            Nav.NavigateTo("/");
         }
         else
         {

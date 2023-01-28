@@ -8,12 +8,19 @@
 
     <main>
         <div class="top-row px-4">
-            <OnlyGuest>
+            @if (Authenticated is null)
+            {
+                <em>Please wait...</em>
+            }
+            else if (Authenticated == false)
+            {
                 <NavLink href="/authenticate">Authenticate</NavLink>
-            </OnlyGuest>
-            <OnlyAuthenticated>
-                Welcome back @Name
-            </OnlyAuthenticated>
+            }
+            else
+            {
+                <strong>Welcome back, @Name!</strong>
+                <NavLink href="/logout">Logout</NavLink>
+            }
         </div>
 
         <article class="content px-4">
@@ -23,14 +30,16 @@
 </div>
 
 @code {
+    private bool? Authenticated { get; set; }
     private string? Name { get; set; }
 
     /// <inheritdoc />
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await base.OnInitializedAsync();
+        await base.OnParametersSetAsync();
 
-        if (await Auth.IsAuthenticatedAsync())
+        Authenticated = await Auth.IsAuthenticatedAsync();
+        if (Authenticated == true)
             Name = (await Auth.GetSelfAsync()).Name;
     }
 }

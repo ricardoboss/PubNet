@@ -1,0 +1,17 @@
+@page "/Logout"
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+
+<em>Please wait...</em>
+
+@code {
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        await Auth.RemoveTokenAsync();
+        
+        Nav.NavigateTo("/");
+    }
+}
