@@ -48,7 +48,7 @@ public class ClientExceptionFormatterMiddleware
         }
 
         var exceptionClass = e.GetType().Name;
-        var errorMessage = $"Error ({exceptionClass}): {e.Message}";
+        var errorMessage = e.Message;
 
         await context.Response.WriteAsJsonAsync(
             new ErrorResponse(new(exceptionClass, errorMessage)),

@@ -12,9 +12,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationService>();
 
-builder.Services.AddScoped(sp => new HttpClient
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>())
 {
-    BaseAddress = new(builder.Configuration["Api:Base"] ?? throw new("Missing Api:Base value in configuration")),
+    BaseAddress = builder.Configuration["Api:Base"] ?? throw new("Missing Api:Base value in configuration"),
 });
 
 await builder.Build().RunAsync();

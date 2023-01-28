@@ -22,14 +22,29 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var package in _packages.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc))
+        @if (!_packages.Packages.Any())
         {
             <tr>
-                <td><NavLink href="@("/package/" + package.Name)">@package.Name</NavLink></td>
-                <td><NavLink href="@("/author/" + package.Author?.UserName)">@package.Author?.UserName</NavLink></td>
-                <td>@package.Latest?.Version</td>
-                <td>@package.Latest?.PublishedAtUtc.ToLocalTime()</td>
+                <td colspan="4" style="text-align: center">
+                    <strong>No packages found.</strong> Upload some using <code>dart pub publish</code>
+                </td>
             </tr>
+        }
+        else
+        {
+            @foreach (var package in _packages.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc))
+            {
+                <tr>
+                    <td>
+                        <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
+                    </td>
+                    <td>
+                        <NavLink href="@("/author/" + package.Author?.UserName)">@package.Author?.UserName</NavLink>
+                    </td>
+                    <td>@package.Latest?.Version</td>
+                    <td>@package.Latest?.PublishedAtUtc.ToLocalTime()</td>
+                </tr>
+            }
         }
         </tbody>
     </table>
@@ -42,4 +57,5 @@ else
     {
         _packages = await Http.GetFromJsonAsync<PackagesResponse>("packages");
     }
+
 }

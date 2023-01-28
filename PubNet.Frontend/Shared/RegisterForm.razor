@@ -1,0 +1,71 @@
+@using PubNet.API.DTO
+@using PubNet.Models
+@inject HttpClient HttpClient
+
+@if (Error is not null)
+{
+    <div class="alert alert-danger">
+        <strong>That didn't work.</strong> @Error
+    </div>
+}
+
+@if (Success is not null)
+{
+    <div class="alert alert-success">
+        <strong>Success!</strong> @Success
+    </div>
+}
+
+<EditForm Model="RegisterRequest" OnSubmit="SubmitForm">
+    <div class="form-group">
+        <label for="register-username">Username</label>
+        <InputText type="text" required @bind-Value="RegisterRequest.Username" class="form-control" id="register-username" />
+    </div>
+    <div class="form-group">
+        <label for="register-email">E-Mail</label>
+        <InputText type="email" required @bind-Value="RegisterRequest.Email" class="form-control" id="register-email" />
+    </div>
+    <div class="form-group">
+        <label for="register-password">Password</label>
+        <InputText type="password" required @bind-Value="RegisterRequest.Password" class="form-control" id="register-password" />
+    </div>
+    <div class="form-group">
+        <label for="register-name">Name</label>
+        <InputText type="text" required @bind-Value="RegisterRequest.Name" class="form-control" id="register-name" />
+    </div>
+    <div class="form-group">
+        <label for="register-website">Website</label>
+        <InputText type="url" @bind-Value="RegisterRequest.Website" class="form-control" id="register-website" />
+    </div>
+    <input type="submit" class="btn btn-primary mt-3" value="Register"/>
+</EditForm>
+
+@code {
+    public RegisterRequest RegisterRequest { get; set; } = new();
+  
+    public string? Error { get; set; }
+    public string? Success { get; set; }
+
+    public async Task SubmitForm(EditContext e)
+    {
+        Error = null;
+        Success = null;
+
+        var response = await HttpClient.PostAsJsonAsync("authentication/register", RegisterRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await response.Content.ReadFromJsonAsync<Author>();
+
+            RegisterRequest = new();
+
+            Success = "Registration complete. You can now log in.";
+        }
+        else
+        {
+            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+            Error = message?.Error.Message;
+        }
+    }
+}

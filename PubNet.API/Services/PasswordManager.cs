@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Authentication;
+using Microsoft.AspNetCore.Identity;
 using PubNet.API.Contexts;
 using PubNet.Models;
 
@@ -6,7 +7,7 @@ namespace PubNet.API.Services;
 
 public class PasswordManager
 {
-    private static InvalidCastException PasswordVerificationFailed => new("Password verification failed");
+    private static InvalidCredentialException PasswordVerificationFailed => new("Password verification failed");
 
     private readonly IPasswordHasher<Author> _passwordHasher;
     private readonly ILogger<PasswordManager> _logger;
@@ -24,13 +25,13 @@ public class PasswordManager
         return Task.FromResult(_passwordHasher.HashPassword(author, password));
     }
 
-    public async Task ThrowForInvalid(PubNetContext db, Author author, string password, CancellationToken cancellationToken = default)
+    public async Task ThrowForInvalid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         // TODO: check author.LockoutEnabled and respond with Retry-After value from author.LockoutEnds
 
-        if (author.PasswordHash is null)
+        if (password is null || author.PasswordHash is null)
             throw PasswordVerificationFailed;
 
         var result = _passwordHasher.VerifyHashedPassword(author, author.PasswordHash, password);

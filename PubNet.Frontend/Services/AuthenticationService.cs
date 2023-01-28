@@ -1,27 +1,75 @@
-﻿using Blazored.LocalStorage;
+﻿using System.Net.Http.Json;
+using Blazored.LocalStorage;
+using PubNet.Models;
 
 namespace PubNet.Frontend.Services;
 
 public class AuthenticationService
 {
     private const string TokenStorageName = "authentication.token";
+    private const string SelfStorageName = "authentication.self";
 
     private readonly ILocalStorageService _localStorage;
+    private readonly ApiClient _apiClient;
 
-    public AuthenticationService(ILocalStorageService localStorage)
+    public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient)
     {
         _localStorage = localStorage;
+        _apiClient = apiClient;
     }
 
-    private string? _token;
+    private Author? _author;
 
     public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
     {
-        return _token ??= await _localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
+        return _apiClient.Token ??= await _localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
     }
 
     public async ValueTask<bool> IsAuthenticatedAsync(CancellationToken cancellationToken = default)
     {
         return await GetTokenAsync(cancellationToken) is not null;
+    }
+
+    public async Task StoreTokenAsync(string token, CancellationToken cancellationToken = default)
+    {
+        await _localStorage.SetItemAsync(TokenStorageName, token, cancellationToken);
+
+        _apiClient.Token = token;
+    }
+
+    public async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
+    {
+        await _localStorage.RemoveItemAsync(TokenStorageName, cancellationToken);
+
+        _apiClient.Token = null;
+    }
+
+    public async Task<Author> GetSelfAsync(CancellationToken cancellationToken = default)
+    {
+        if (_apiClient.Token is null)
+            throw new("Not authenticated");
+
+        if (_author is not null)
+            return _author;
+
+        var storedSelf = await _localStorage.GetItemAsync<Author>(SelfStorageName, cancellationToken);
+        if (storedSelf is not null)
+        {
+            _author = storedSelf;
+
+            return _author;
+        }
+
+        var response = await _apiClient.GetAsync("authentication/self", cancellationToken);
+        if (!response.IsSuccessStatusCode)
+            throw new("Request failed");
+
+        _author = await response.Content.ReadFromJsonAsync<Author>(cancellationToken: cancellationToken);
+        if (_author is null)
+            throw new("Unable to deserialize");
+
+        await _localStorage.SetItemAsync(SelfStorageName, _author, cancellationToken);
+
+        return _author;
     }
 }

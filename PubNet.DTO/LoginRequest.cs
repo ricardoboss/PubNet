@@ -1,3 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PubNet.API.DTO;
 
-public record LoginRequest(string Email, string Password);
+public class LoginRequest
+{
+    [Required]
+    public string? Email { get; set; }
+
+    [Required]
+    public string? Password { get; set; }
+}

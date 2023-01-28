@@ -1,3 +1,29 @@
-﻿namespace PubNet.API.DTO;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record RegisterRequest(string Username, string Email, string Password, string Name, string? Website = null);
+namespace PubNet.API.DTO;
+
+public class RegisterRequest
+{
+    [Required]
+    public string? Username { get; set; }
+
+    [Required]
+    public string? Email { get; set; }
+
+    [Required]
+    public string? Password { get; set; }
+
+    [Required]
+    public string? Name { get; set; }
+
+    public string? Website { get; set; }
+
+    public void Deconstruct(out string? username, out string? email, out string? password, out string? name, out string? website)
+    {
+        username = Username;
+        email = Email;
+        password = Password;
+        name = Name;
+        website = Website;
+    }
+}

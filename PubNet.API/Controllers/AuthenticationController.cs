@@ -63,7 +63,7 @@ public class AuthenticationController : ControllerBase
         {
             UserName = dto.Username,
             Email = dto.Email,
-            Name = dto.Name,
+            Name = dto.Name!,
             Website = dto.Website,
             Inactive = false,
             RegisteredAtUtc = DateTimeOffset.UtcNow,
@@ -71,11 +71,19 @@ public class AuthenticationController : ControllerBase
             Tokens = new List<AuthorToken>(),
         };
 
-        author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);
+        author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password!, cancellationToken);
 
         _db.Authors.Add(author);
         await _db.SaveChangesAsync(cancellationToken);
 
         return CreatedAtAction("Get", "Author", new { username = author.UserName }, author);
+    }
+
+    [HttpGet("self")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
+    public async Task<IActionResult> Self(ApplicationRequestContext context, CancellationToken cancellationToken = default)
+    {
+        return Ok(await context.RequireAuthorAsync(User, _db, cancellationToken));
     }
 }

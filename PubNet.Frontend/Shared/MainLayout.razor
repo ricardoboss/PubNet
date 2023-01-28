@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationService Auth
 
 <div class="page">
     <div class="sidebar">
@@ -11,7 +12,7 @@
                 <NavLink href="/authenticate">Authenticate</NavLink>
             </OnlyGuest>
             <OnlyAuthenticated>
-                Welcome back
+                Welcome back @Name
             </OnlyAuthenticated>
         </div>
 
@@ -20,3 +21,16 @@
         </article>
     </main>
 </div>
+
+@code {
+    private string? Name { get; set; }
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (await Auth.IsAuthenticatedAsync())
+            Name = (await Auth.GetSelfAsync()).Name;
+    }
+}
