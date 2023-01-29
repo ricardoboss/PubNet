@@ -18,7 +18,7 @@ public class AuthenticationService
         _apiClient = apiClient;
     }
 
-    private Author? _author;
+    private Author? _self;
 
     public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
     {
@@ -49,27 +49,39 @@ public class AuthenticationService
         if (_apiClient.Token is null)
             throw new("Not authenticated");
 
-        if (_author is not null)
-            return _author;
+        if (_self is not null)
+            return _self;
 
         var storedSelf = await _localStorage.GetItemAsync<Author>(SelfStorageName, cancellationToken);
         if (storedSelf is not null)
         {
-            _author = storedSelf;
+            _self = storedSelf;
 
-            return _author;
+            return _self;
         }
 
         var response = await _apiClient.GetAsync("authentication/self", cancellationToken);
         if (!response.IsSuccessStatusCode)
             throw new("Request failed");
 
-        _author = await response.Content.ReadFromJsonAsync<Author>(cancellationToken: cancellationToken);
-        if (_author is null)
+        _self = await response.Content.ReadFromJsonAsync<Author>(cancellationToken: cancellationToken);
+        if (_self is null)
             throw new("Unable to deserialize");
 
-        await _localStorage.SetItemAsync(SelfStorageName, _author, cancellationToken);
+        await _localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
 
-        return _author;
+        return _self;
+    }
+
+    public async Task<bool> IsSelf(string username, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return (await GetSelfAsync(cancellationToken)).UserName == username;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

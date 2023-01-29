@@ -1,0 +1,90 @@
+@using Microsoft.AspNetCore.Components
+@using PubNet.API.DTO
+@using PubNet.Models
+@using System.Diagnostics
+@inject ApiClient Http
+
+@if (Error is not null)
+{
+    <div class="alert alert-danger">
+        <strong>Oops!</strong> @Error
+    </div>
+}
+
+@if (Success is not null)
+{
+    <div class="alert alert-success">
+        <strong>Alright!</strong> @Success
+    </div>
+}
+
+@if (FormModel is not null)
+{
+    <EditForm Model="FormModel" OnSubmit="OnFormSubmit">
+        <div class="form-group">
+            <label for="edit-author-name">Name</label>
+            <InputText @bind-Value="FormModel.Name" class="form-control" id="edit-author-name" required/>
+        </div>
+        <div class="form-group mt-1">
+            <label for="edit-author-website">Website</label>
+            <InputText type="url" @bind-Value="FormModel.Website" class="form-control" id="edit-author-website"/>
+        </div>
+        <button class="btn btn-success my-3" type="submit">Save</button>
+    </EditForm>
+}
+
+@code {
+
+    [Parameter]
+    public Author? Author { get; set; }
+    
+    private string? Error { get; set; }
+    private string? Success { get; set; }
+
+    private EditAuthorRequest? FormModel { get; set; }
+
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Author is null)
+            return;
+
+        FormModel = new()
+        {
+            Name = Author.Name,
+            Website = Author.Website,
+        };
+    }
+
+    private async Task OnFormSubmit(EditContext context)
+    {
+        Error = null;
+        Success = null;
+
+        Debug.Assert(Author is not null);
+        Debug.Assert(FormModel is not null);
+
+        var response = await Http.PatchAsync($"authors/{Author.UserName}", FormModel);
+        if (response.IsSuccessStatusCode)
+        {
+            Author.Name = FormModel.Name ?? "";
+            Author.Website = FormModel.Website;
+            
+            Success = "Your profile was saved!";
+        }
+        else
+        {
+            var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            if (errorResponse is null)
+            {
+                Error = "Unable to deserialize";
+
+                return;
+            }
+
+            Error = errorResponse.Error.Message;
+        }
+    }
+}

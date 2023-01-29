@@ -18,7 +18,7 @@
             }
             else
             {
-                <strong>Welcome back, @Name!</strong>
+                <strong>Welcome back, <NavLink style="margin-left: 0" href="@("/author/" + UserName)">@UserName</NavLink>!</strong>
                 <NavLink href="/logout">Logout</NavLink>
             }
         </div>
@@ -31,7 +31,7 @@
 
 @code {
     private bool? Authenticated { get; set; }
-    private string? Name { get; set; }
+    private string? UserName { get; set; }
 
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
@@ -40,6 +40,6 @@
 
         Authenticated = await Auth.IsAuthenticatedAsync();
         if (Authenticated == true)
-            Name = (await Auth.GetSelfAsync()).Name;
+            UserName = (await Auth.GetSelfAsync()).UserName;
     }
 }

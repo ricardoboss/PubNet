@@ -1,6 +1,6 @@
 ﻿@page "/browse"
 @using PubNet.API.DTO
-@inject HttpClient Http
+@inject ApiClient Http
 
 <PageTitle>Browse Packages</PageTitle>
 
@@ -12,6 +12,15 @@
 }
 else
 {
+    <ol>
+        <li>
+            Add <code>publish_to: @PublishToUrl</code> to your <code>pubspec.yaml</code>
+        </li>
+        <li>Run <code>dart pub publish</code></li>
+    </ol>
+
+    <hr>
+
     <table class="table">
         <thead>
         <tr>
@@ -26,7 +35,7 @@ else
         {
             <tr>
                 <td colspan="4" style="text-align: center">
-                    <strong>No packages found.</strong> Upload some using <code>dart pub publish</code>
+                    <strong>No packages found.</strong>
                 </td>
             </tr>
         }
@@ -53,9 +62,10 @@ else
 @code {
     private PackagesResponse? _packages;
 
-    protected override async Task OnInitializedAsync()
-    {
-        _packages = await Http.GetFromJsonAsync<PackagesResponse>("packages");
-    }
+    private string PublishToUrl => Http.BaseAddress ?? "";
 
+    protected override async Task OnParametersSetAsync()
+    {
+        _packages = await Http.GetAsync<PackagesResponse>("packages");
+    }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/author/{Username}"
 @using PubNet.API.DTO
 @inject HttpClient Http
+@inject AuthenticationService Auth
 
 <PageTitle>Author: @Username</PageTitle>
 
@@ -12,35 +13,56 @@
         <em>Loading...</em>
     </p>
 }
-else if (Error is not null)
+
+@if (Error is not null)
 {
-    <p>
+    <div class="alert alert-danger">
         <strong>An error ocurred:</strong> @Error
-    </p>
+    </div>
 }
-else if (AuthorModel is not null)
+
+@if (AuthorModel is not null)
 {
-    <p>Name: @AuthorModel.Name</p>
     <p>Registered since: @AuthorModel.RegisteredAtUtc</p>
 
-     @if (AuthorModel.Website is not null)
-     {
-         <p>Website: <a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a></p>
-     }
+    @if (Editing)
+    {
+        <EditAuthorForm Author="AuthorModel"/>
+    }
+    else
+    {
+        <p>Name: @AuthorModel.Name</p>
 
-    if (AuthorPackages is null && PackagesError is null)
+        @if (AuthorModel.Website is not null)
+        {
+            <p>Website: <a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a></p>
+        }
+    }
+
+    @if (IsSelf)
+    {
+        <button class="btn btn-outline-info" @onclick="() => Editing = !Editing">
+            @(Editing ? "Done" : "Edit")
+        </button>
+    }
+
+    <hr>
+
+    @if (AuthorPackages is null && PackagesError is null)
     {
         <p>
             <em>Loading packages...</em>
         </p>
     }
-    else if (PackagesError is not null)
+
+    @if (PackagesError is not null)
     {
-        <p>
+        <div class="alert alert-danger">
             <strong>An error ocurred while loading the author packages:</strong> @PackagesError
-        </p>
+        </div>
     }
-    else if (AuthorPackages is not null)
+
+    @if (AuthorPackages is not null)
     {
         <h2>Packages</h2>
 
@@ -53,12 +75,27 @@ else if (AuthorModel is not null)
             </tr>
             </thead>
             <tbody>
-            @foreach (var package in AuthorPackages)
+            @if (AuthorPackages.Any())
+            {
+                @foreach (var package in AuthorPackages.OrderByDescending(p => p.Name))
+                {
+                    <tr>
+                        <td>
+                            <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
+                        </td>
+                        <td>@package.Latest?.Version</td>
+                        <td>@package.Latest?.PublishedAtUtc</td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td><NavLink href="@("/package/" + package.Name)">@package.Name</NavLink></td>
-                    <td>@package.Latest?.Version</td>
-                    <td>@package.Latest?.PublishedAtUtc</td>
+                    <td colspan="3">
+                        <p class="text-center">
+                            This author has not published any packages yet.
+                        </p>
+                    </td>
                 </tr>
             }
             </tbody>
@@ -71,14 +108,26 @@ else if (AuthorModel is not null)
     [Parameter]
     public string? Username { get; set; }
 
+    private bool IsSelf { get; set; }
+    private bool Editing { get; set; }
+
     private Models.Author? AuthorModel { get; set; }
     private string? Error { get; set; }
 
     private IEnumerable<Models.Package>? AuthorPackages { get; set; }
     private string? PackagesError { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
+
+        if (Username is null)
+        {
+            Error = "No username set.";
+
+            return;
+        }
+
         try
         {
             Error = null;
@@ -93,6 +142,8 @@ else if (AuthorModel is not null)
             {
                 PackagesError = "Failed loading authors packages";
             }
+
+            IsSelf = await Auth.IsSelf(Username);
         }
         catch (Exception e)
         {

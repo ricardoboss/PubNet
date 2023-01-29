@@ -116,11 +116,11 @@ public class AuthorController : ControllerBase
                 author.Name = dto.Name;
             }
 
-            if (dto.RemoveWebsite && author.Website is not null)
+            if (string.IsNullOrWhiteSpace(dto.Website) && author.Website is not null)
             {
                 author.Website = null;
             }
-            else if (dto.Website is not null && author.Website != dto.Website)
+            else if (author.Website != dto.Website)
             {
                 author.Website = dto.Website;
             }

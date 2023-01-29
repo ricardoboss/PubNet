@@ -26,8 +26,14 @@ public class ApiClient
 
     public string? BaseAddress
     {
-        get => _httpClient.BaseAddress?.ToString();
-        set => _httpClient.BaseAddress = value is not null ? new(value) : null;
+        get => BaseUri?.ToString();
+        set => BaseUri = value is not null ? new(value) : null;
+    }
+
+    public Uri? BaseUri
+    {
+        get => _httpClient.BaseAddress;
+        set => _httpClient.BaseAddress = value;
     }
 
     public async Task<HttpResponseMessage> GetAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
@@ -35,8 +41,18 @@ public class ApiClient
         return await _httpClient.GetAsync(uri, cancellationToken);
     }
 
+    public async Task<T?> GetAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
+    {
+        return await _httpClient.GetFromJsonAsync<T>(uri, cancellationToken);
+    }
+
     public async Task<HttpResponseMessage> PostAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body, CancellationToken cancellationToken = default)
     {
         return await _httpClient.PostAsJsonAsync(uri, body, cancellationToken);
+    }
+
+    public async Task<HttpResponseMessage> PatchAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body, CancellationToken cancellationToken = default)
+    {
+        return await _httpClient.PatchAsJsonAsync(uri, body, cancellationToken);
     }
 }
