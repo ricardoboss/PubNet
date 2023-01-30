@@ -26,7 +26,7 @@ public class AuthorsController : BaseController
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-    [ResponseCache(VaryByQueryKeys = new []{ "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 3600)]
+    [ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 3600)]
     public IActionResult GetAll([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
     {
         const int maxLimit = 1000;
@@ -69,9 +69,9 @@ public class AuthorsController : BaseController
     public async Task<IActionResult> Get(string username, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["AuthorUsername"] = username,
-               }))
+        {
+            ["AuthorUsername"] = username,
+        }))
         {
             var author = await _db.Authors.FirstOrDefaultAsync(a => a.UserName == username, cancellationToken);
 
@@ -89,9 +89,9 @@ public class AuthorsController : BaseController
         var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["AuthorUsername"] = username,
-               }))
+        {
+            ["AuthorUsername"] = username,
+        }))
         {
             if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
 
@@ -133,9 +133,9 @@ public class AuthorsController : BaseController
         var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["AuthorUsername"] = author.UserName,
-               }))
+        {
+            ["AuthorUsername"] = author.UserName,
+        }))
         {
             if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
 

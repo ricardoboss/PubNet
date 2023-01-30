@@ -8,7 +8,8 @@ public enum WorkerTaskResult
     Failed,
 }
 
-public static class WorkerTaskResultExtensions {
+public static class WorkerTaskResultExtensions
+{
     public static bool IsSuccess(this WorkerTaskResult result)
     {
         switch (result)

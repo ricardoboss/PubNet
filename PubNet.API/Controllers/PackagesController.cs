@@ -27,7 +27,7 @@ public class PackagesController : BaseController
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-    [ResponseCache(VaryByQueryKeys = new []{ "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 300)]
+    [ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 300)]
     public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
     {
         const int maxLimit = 1000;
@@ -64,9 +64,9 @@ public class PackagesController : BaseController
     public async Task<IActionResult> GetByName(string name, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["PackageName"] = name,
-               }))
+        {
+            ["PackageName"] = name,
+        }))
         {
             var package = await _db.Packages
                 .Where(p => p.Name == name)
@@ -87,10 +87,10 @@ public class PackagesController : BaseController
         var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["PackageName"] = name,
-                   ["AuthorUsername"] = author.UserName,
-               }))
+        {
+            ["PackageName"] = name,
+            ["AuthorUsername"] = author.UserName,
+        }))
         {
             var package = await _db.Packages
                 .Where(p => p.Name == name)
@@ -119,9 +119,9 @@ public class PackagesController : BaseController
     public async Task<IActionResult> GetVersion(string name, string version, CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["PackageName"] = name,
-               }))
+        {
+            ["PackageName"] = name,
+        }))
         {
             var package = await _db.Packages
                 .Where(p => p.Name == name)
@@ -169,9 +169,9 @@ public class PackagesController : BaseController
         var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
         using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["AuthorUsername"] = author.UserName,
-               }))
+        {
+            ["AuthorUsername"] = author.UserName,
+        }))
         {
             var data = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, author, cancellationToken);
 

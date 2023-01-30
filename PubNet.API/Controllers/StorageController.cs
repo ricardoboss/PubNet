@@ -83,7 +83,8 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 
         _logger.LogDebug("Storing package archive for {Author} at {Path}", author.UserName, tempFile);
 
-        await using (var fileStream = System.IO.File.OpenWrite(tempFile)) {
+        await using (var fileStream = System.IO.File.OpenWrite(tempFile))
+        {
             await packageFile.CopyToAsync(fileStream);
         }
 
