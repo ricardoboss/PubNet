@@ -14,16 +14,16 @@ public class Author : IdentityUser<int>
     [Required]
     public string Name { get; set; } = string.Empty;
 
+    [Required]
+    public override string UserName { get; set; } = string.Empty;
+
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Website { get; set; }
 
     public bool Inactive { get; set; }
 
     public DateTimeOffset RegisteredAtUtc { get; set; }
-
-    [JsonIgnore]
-    [InverseProperty(nameof(AuthorToken.Owner))]
-    public ICollection<AuthorToken> Tokens { get; set; } = new List<AuthorToken>();
 
     [JsonIgnore]
     [InverseProperty(nameof(Package.Author))]

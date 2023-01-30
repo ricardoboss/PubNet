@@ -55,4 +55,9 @@ public class ApiClient
     {
         return await _httpClient.PatchAsJsonAsync(uri, body, cancellationToken);
     }
+
+    public async Task<HttpResponseMessage> DeleteAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
+    {
+        return await _httpClient.DeleteAsync(uri, cancellationToken);
+    }
 }

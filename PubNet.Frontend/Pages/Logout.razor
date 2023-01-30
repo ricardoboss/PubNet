@@ -10,7 +10,7 @@
     {
         await base.OnParametersSetAsync();
 
-        await Auth.RemoveTokenAsync();
+        await Auth.Logout();
         
         Nav.NavigateTo("/");
     }

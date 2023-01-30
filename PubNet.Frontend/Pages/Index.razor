@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject ApiClient Http
+@inject ClipboardService Clipboard
 
 <PageTitle>PubNet</PageTitle>
 
@@ -7,3 +9,45 @@
 <p>
     Start <NavLink href="/browse">browsing</NavLink> packages.
 </p>
+
+<OnlyAuthenticated>
+    <hr/>
+
+    <ol>
+        <li>Run <code>dart pub token add @PublishToUrl</code></li>
+        <li>
+            Copy and paste your OAuth token when prompted:
+
+            <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="CopyTokenToClipboard">Copy to clipboard</button>
+            <code><pre style="width: 50vw">@Token</pre></code>
+        </li>
+        <li>
+            Add <code>publish_to: @PublishToUrl</code> to your <code>pubspec.yaml</code>
+        </li>
+        <li>Run <code>dart pub publish</code></li>
+    </ol>
+</OnlyAuthenticated>
+
+@code {
+    private string PublishToUrl
+    {
+        get
+        {
+            var address = Http.BaseAddress ?? "";
+
+            address = address.TrimEnd('/');
+
+            if (address.EndsWith("/api"))
+                address = address[..^4];
+
+            return address;
+        }
+    }
+
+    private string Token => Http.Token ?? "";
+
+    private async Task CopyTokenToClipboard()
+    {
+        await Clipboard.WriteText(Token);
+    }
+}

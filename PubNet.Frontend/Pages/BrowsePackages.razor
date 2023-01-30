@@ -1,8 +1,9 @@
 ﻿@page "/browse"
+@page "/browse/packages"
 @using PubNet.API.DTO
 @inject ApiClient Http
 
-<PageTitle>Browse Packages</PageTitle>
+<PageTitle>Packages</PageTitle>
 
 @if (_packages == null)
 {
@@ -12,15 +13,6 @@
 }
 else
 {
-    <ol>
-        <li>
-            Add <code>publish_to: @PublishToUrl</code> to your <code>pubspec.yaml</code>
-        </li>
-        <li>Run <code>dart pub publish</code></li>
-    </ol>
-
-    <hr>
-
     <table class="table">
         <thead>
         <tr>
@@ -41,17 +33,24 @@ else
         }
         else
         {
-            @foreach (var package in _packages.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc))
+            @foreach (var package in _packages.Packages.OrderByDescending(p => p.LatestPublishedAtUtc))
             {
                 <tr>
                     <td>
                         <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
                     </td>
                     <td>
-                        <NavLink href="@("/author/" + package.Author?.UserName)">@package.Author?.UserName</NavLink>
+                        @if (package.AuthorUserName is not null)
+                                             {
+                                                 <NavLink href="@("/author/" + package.AuthorUserName)">@package.AuthorUserName</NavLink>
+                                             }
+                                             else
+                                             {
+                                                 <span class="text-muted">&lt;deleted&gt;</span>
+                                             }
                     </td>
-                    <td>@package.Latest?.Version</td>
-                    <td>@package.Latest?.PublishedAtUtc.ToLocalTime()</td>
+                    <td>@package.LatestVersion</td>
+                    <td>@package.LatestPublishedAtUtc.ToLocalTime()</td>
                 </tr>
             }
         }
@@ -60,12 +59,10 @@ else
 }
 
 @code {
-    private PackagesResponse? _packages;
-
-    private string PublishToUrl => Http.BaseAddress ?? "";
+    private SearchPackagesResponse? _packages;
 
     protected override async Task OnParametersSetAsync()
     {
-        _packages = await Http.GetAsync<PackagesResponse>("packages");
+        _packages = await Http.GetAsync<SearchPackagesResponse>("packages");
     }
 }

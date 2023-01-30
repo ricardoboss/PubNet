@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
@@ -12,7 +11,7 @@ namespace PubNet.API.Controllers;
 [ApiController]
 [Route("packages")]
 [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
-public class PackagesController : ControllerBase
+public class PackagesController : BaseController
 {
     private readonly ILogger<PackagesController> _logger;
     private readonly PubNetContext _db;
@@ -26,7 +25,7 @@ public class PackagesController : ControllerBase
     }
 
     [HttpGet("")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackagesResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
     [ResponseCache(VaryByQueryKeys = new []{ "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 300)]
     public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
@@ -38,17 +37,11 @@ public class PackagesController : ControllerBase
             .OrderByDescending(p => p.Latest!.PublishedAtUtc)
         ;
 
-        if (q != null)
-        {
-            packages = packages.Where(p => p.Name.StartsWith(q));
-        }
+        if (q != null) packages = packages.Where(p => p.Name.StartsWith(q));
 
         if (before.HasValue)
         {
-            if (!limit.HasValue)
-            {
-                return BadRequest(new ErrorResponse(new("invalid-query", "Query parameter 'limit' is mandatory if 'before' is given")));
-            }
+            if (!limit.HasValue) return BadRequest(ErrorResponse.InvalidQuery);
 
             var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
@@ -62,7 +55,7 @@ public class PackagesController : ControllerBase
             packages = packages.Take(resultLimit);
         }
 
-        return Ok(new PackagesResponse(packages));
+        return Ok(new SearchPackagesResponse(packages.ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest!.Version, p.Latest!.PublishedAtUtc))));
     }
 
     [HttpGet("{name}")]
@@ -84,16 +77,19 @@ public class PackagesController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpDelete("{name}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteByName(string name, CancellationToken cancellationToken = default)
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
+        var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+
         using (_logger.BeginScope(new Dictionary<string, object>
                {
                    ["PackageName"] = name,
+                   ["AuthorUsername"] = author.UserName,
                }))
         {
             var package = await _db.Packages
@@ -103,7 +99,14 @@ public class PackagesController : ControllerBase
 
             if (package is null) return NotFound();
 
+            if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+
+            // TODO: remove fiels from storage
+
+            _db.PackageVersionAnalyses.RemoveRange(_db.PackageVersionAnalyses.Include(a => a.Version).Where(a => package.Versions.Any(v => v == a.Version)));
+            _db.PackageVersions.RemoveRange(package.Versions);
             _db.Packages.Remove(package);
+
             await _db.SaveChangesAsync(cancellationToken);
 
             return NoContent();
@@ -157,7 +160,6 @@ public class PackagesController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("versions/new")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
@@ -165,8 +167,15 @@ public class PackagesController : ControllerBase
     public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
         var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
-        var data = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, author, cancellationToken);
 
-        return Ok(data);
+        using (_logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["AuthorUsername"] = author.UserName,
+               }))
+        {
+            var data = await uploadEndpointGenerator.GenerateUploadEndpointData(Request, author, cancellationToken);
+
+            return Ok(data);
+        }
     }
 }

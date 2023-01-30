@@ -11,6 +11,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<ClipboardService>();
+builder.Services.AddScoped<AlertService>();
 
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>())

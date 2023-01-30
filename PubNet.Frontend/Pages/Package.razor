@@ -1,34 +1,46 @@
 ﻿@page "/package/{PackageName}"
-@inject HttpClient Http
+@using System.Net
+@inject ApiClient Http
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+
+@if (Error is not null)
+{
+    <div class="alert alert-danger">
+        <strong>Whoops!</strong> @Error
+    </div>
+}
 
 @if (PackageModel is null && Error is null)
 {
-    <PageTitle>Package: @PackageName</PageTitle>
+    <PageTitle>@PackageName</PageTitle>
 
-    <h1>Package: @PackageName</h1>
+    <h1>@PackageName</h1>
 
     <p>
         <em>Loading...</em>
     </p>
 }
-else if (Error is not null)
-{
-    <PageTitle>Package: @PackageName</PageTitle>
-
-    <h1>Package: @PackageName</h1>
-
-    <p>
-        <strong>An error ocurred:</strong> @Error
-    </p>
-}
 else if (PackageModel is not null)
 {
-    <PageTitle>Package: @PackageName @(PackageModel.Latest?.Version)</PageTitle>
+    <PageTitle>@PackageName @(PackageModel.Latest?.Version)</PageTitle>
 
-    <h1>Package: @PackageName @(PackageModel.Latest?.Version)</h1>
+    <h1>@PackageName @(PackageModel.Latest?.Version)</h1>
+
+    @if (ShowPackageAdminTools)
+    {
+        <button class="btn btn-outline-danger my-3" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
+    }
 
     <p>
-        Made by: <NavLink href="@("/author/" + PackageModel.Author?.UserName)">@(PackageModel.Author?.UserName)</NavLink>
+        Published by @if (PackageModel.Author is not null)
+                     {
+                         <NavLink href="@("/author/" + PackageModel.Author.UserName)">@PackageModel.Author.UserName</NavLink>
+                     }
+                     else
+                     {
+                         <span class="text-muted">&lt;deleted&gt;</span>
+                     }
     </p>
 
     <h2>Description</h2>
@@ -79,19 +91,68 @@ else if (PackageModel is not null)
 
     private Models.Package? PackageModel { get; set; }
     private string? Error { get; set; }
+    
+    private bool Editing { get; set; }
+    private bool ShowPackageAdminTools { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
+
+        Error = null;
+
         try
         {
-            Error = null;
-            PackageModel = await Http.GetFromJsonAsync<Models.Package>($"packages/{PackageName}");
+            var response = await Http.GetAsync($"packages/{PackageName}");
+            if (response.IsSuccessStatusCode)
+            {
+                PackageModel = await response.Content.ReadFromJsonAsync<Models.Package>();
+            }
+            else
+            {
+                Error = response.StatusCode switch {
+                    HttpStatusCode.NotFound => "The package you are looking for does not exist",
+                    _ => "An unknown error occurred",
+                };
+            }
+
+            ShowPackageAdminTools = PackageModel?.Author?.UserName is not null
+                                    && await Auth.IsSelf(PackageModel.Author.UserName);
         }
         catch (Exception e)
         {
             Error = e.Message;
         }
+    }
 
-        await base.OnParametersSetAsync();
+    private async Task OnDeleteClicked()
+    {
+        Error = null;
+        Editing = true;
+
+        try
+        {
+            var response = await Http.DeleteAsync($"packages/{PackageName}");
+            if (response.IsSuccessStatusCode)
+            {
+                Nav.NavigateTo("/?message=package-deleted");
+            }
+            else
+            {
+                Error = response.StatusCode switch {
+                    HttpStatusCode.Unauthorized => "You are not authorized to delete this package",
+                    HttpStatusCode.NotFound => "The package was not found",
+                    _ => "An unknown error occurred",
+                };
+            }
+        }
+        catch (Exception e)
+        {
+            Error = e.Message;
+        }
+        finally
+        {
+            Editing = false;
+        }
     }
 }

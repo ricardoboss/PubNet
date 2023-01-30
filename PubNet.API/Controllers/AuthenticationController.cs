@@ -1,5 +1,4 @@
 using System.Security.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
@@ -11,22 +10,16 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("authentication")]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController : BaseController
 {
     private static InvalidCredentialException EmailNotFound => new("E-Mail address not registered");
-    private static ErrorResponse UsernameAlreadyInUse => new(new("username-already-in-use",
-        "The username you provided is already in use."));
-    private static ErrorResponse EmailAlreadyInUse => new(new("email-already-in-use",
-        "The e-mail address you provided is already in use."));
 
-    private readonly ILogger<AuthenticationController> _logger;
     private readonly JwtTokenGenerator _tokenGenerator;
     private readonly PubNetContext _db;
     private readonly PasswordManager _passwordManager;
 
-    public AuthenticationController(ILogger<AuthenticationController> logger, JwtTokenGenerator tokenGenerator, PubNetContext db, PasswordManager passwordManager)
+    public AuthenticationController(JwtTokenGenerator tokenGenerator, PubNetContext db, PasswordManager passwordManager)
     {
-        _logger = logger;
         _tokenGenerator = tokenGenerator;
         _db = db;
         _passwordManager = passwordManager;
@@ -54,21 +47,20 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterRequest dto, CancellationToken cancellationToken = default)
     {
         if (_db.Authors.Any(a => a.UserName == dto.Username))
-            return UnprocessableEntity(UsernameAlreadyInUse);
+            return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
 
         if (_db.Authors.Any(a => a.Email == dto.Email))
-            return UnprocessableEntity(EmailAlreadyInUse);
+            return UnprocessableEntity(ErrorResponse.EmailAlreadyInUse);
 
         var author = new Author
         {
-            UserName = dto.Username,
+            UserName = dto.Username!,
             Email = dto.Email,
             Name = dto.Name!,
             Website = dto.Website,
             Inactive = false,
             RegisteredAtUtc = DateTimeOffset.UtcNow,
             Packages = new List<Package>(),
-            Tokens = new List<AuthorToken>(),
         };
 
         author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password!, cancellationToken);
@@ -76,7 +68,7 @@ public class AuthenticationController : ControllerBase
         _db.Authors.Add(author);
         await _db.SaveChangesAsync(cancellationToken);
 
-        return CreatedAtAction("Get", "Author", new { username = author.UserName }, author);
+        return CreatedAtAction("Get", "Authors", new { username = author.UserName }, author);
     }
 
     [HttpGet("self")]

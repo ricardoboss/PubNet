@@ -12,13 +12,13 @@ public class AuthenticationService
     private readonly ILocalStorageService _localStorage;
     private readonly ApiClient _apiClient;
 
+    private Author? _self;
+
     public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient)
     {
         _localStorage = localStorage;
         _apiClient = apiClient;
     }
-
-    private Author? _self;
 
     public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
     {
@@ -37,11 +37,24 @@ public class AuthenticationService
         _apiClient.Token = token;
     }
 
-    public async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
+    public async Task Logout(CancellationToken cancellationToken = default)
+    {
+        await RemoveTokenAsync(cancellationToken);
+        await RemoveSelfAsync(cancellationToken);
+    }
+
+    private async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
     {
         await _localStorage.RemoveItemAsync(TokenStorageName, cancellationToken);
 
         _apiClient.Token = null;
+    }
+
+    private async Task RemoveSelfAsync(CancellationToken cancellationToken = default)
+    {
+        await _localStorage.RemoveItemAsync(SelfStorageName, cancellationToken);
+
+        _self = null;
     }
 
     public async Task<Author> GetSelfAsync(CancellationToken cancellationToken = default)

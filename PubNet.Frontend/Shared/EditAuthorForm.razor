@@ -23,13 +23,20 @@
     <EditForm Model="FormModel" OnSubmit="OnFormSubmit">
         <div class="form-group">
             <label for="edit-author-name">Name</label>
-            <InputText @bind-Value="FormModel.Name" class="form-control" id="edit-author-name" required/>
+            <InputText @bind-Value="FormModel.Name" class="form-control" id="edit-author-name" required disabled="@Submitting" />
         </div>
         <div class="form-group mt-1">
             <label for="edit-author-website">Website</label>
-            <InputText type="url" @bind-Value="FormModel.Website" class="form-control" id="edit-author-website"/>
+            <InputText type="url" @bind-Value="FormModel.Website" class="form-control" id="edit-author-website" disabled="@Submitting"/>
         </div>
-        <button class="btn btn-success my-3" type="submit">Save</button>
+        <div style="display: flex; align-items: center; gap: 0.5rem" class="my-3">
+            <button class="btn btn-success" type="submit" disabled="@Submitting">Save</button>
+            <button class="btn btn-outline-secondary" @onclick="OnAborted" type="button" disabled="@Submitting">Abort</button>
+            @if (Submitting)
+            {
+                <div class="spinner-border text-secondary"></div>
+            }
+        </div>
     </EditForm>
 }
 
@@ -37,7 +44,12 @@
 
     [Parameter]
     public Author? Author { get; set; }
-    
+
+    [Parameter]
+    public EventCallback<bool> OnDoneEditing { get; set; }
+
+    private bool Submitting { get; set; }
+
     private string? Error { get; set; }
     private string? Success { get; set; }
 
@@ -60,31 +72,44 @@
 
     private async Task OnFormSubmit(EditContext context)
     {
-        Error = null;
-        Success = null;
+        Submitting = true;
 
-        Debug.Assert(Author is not null);
-        Debug.Assert(FormModel is not null);
+        try
+        {
+            Error = null;
+            Success = null;
 
-        var response = await Http.PatchAsync($"authors/{Author.UserName}", FormModel);
-        if (response.IsSuccessStatusCode)
-        {
-            Author.Name = FormModel.Name ?? "";
-            Author.Website = FormModel.Website;
-            
-            Success = "Your profile was saved!";
-        }
-        else
-        {
-            var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-            if (errorResponse is null)
+            Debug.Assert(Author is not null);
+            Debug.Assert(FormModel is not null);
+
+            var response = await Http.PatchAsync($"authors/{Author.UserName}", FormModel);
+            if (response.IsSuccessStatusCode)
             {
-                Error = "Unable to deserialize";
+                Success = "Your profile was saved!";
 
-                return;
+                await OnDoneEditing.InvokeAsync(true);
             }
+            else
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                if (errorResponse is null)
+                {
+                    Error = "Unable to deserialize";
 
-            Error = errorResponse.Error.Message;
+                    return;
+                }
+
+                Error = errorResponse.Error.Message;
+            }
         }
+        finally
+        {
+            Submitting = false;
+        }
+    }
+
+    private async Task OnAborted()
+    {
+        await OnDoneEditing.InvokeAsync(false);
     }
 }

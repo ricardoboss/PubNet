@@ -47,11 +47,8 @@ public class ClientExceptionFormatterMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         }
 
-        var exceptionClass = e.GetType().Name;
-        var errorMessage = e.Message;
-
         await context.Response.WriteAsJsonAsync(
-            new ErrorResponse(new(exceptionClass, errorMessage)),
+            ErrorResponse.FromException(e),
             options: null,
             contentType: "application/vnd.pub.v2+json"
         );

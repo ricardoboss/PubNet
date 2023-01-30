@@ -12,8 +12,6 @@ public class PubNetContext : DbContext
 
     public DbSet<Author> Authors { get; set; }
 
-    public DbSet<AuthorToken> Tokens { get; set; }
-
     public DbSet<PendingArchive> PendingArchives { get; set; }
 
     public DbSet<PackageVersionAnalysis> PackageVersionAnalyses { get; set; }
@@ -33,17 +31,6 @@ public class PubNetContext : DbContext
 
         modelBuilder.Entity<Author>()
             .HasIndex(a => a.UserName)
-            .IsUnique();
-
-        modelBuilder.Entity<AuthorToken>()
-            .HasOne<Author>(nameof(AuthorToken.Owner))
-            .WithMany(a => a.Tokens);
-
-        modelBuilder.Entity<AuthorToken>()
-            .HasIndex(a => a.Name);
-
-        modelBuilder.Entity<AuthorToken>()
-            .HasIndex(t => new { t.Name, t.OwnerId })
             .IsUnique();
 
         modelBuilder.Entity<Package>()
@@ -75,6 +62,10 @@ public class PubNetContext : DbContext
 
         modelBuilder.Entity<PackageVersionAnalysis>()
             .Navigation(a => a.Version)
+            .AutoInclude();
+
+        modelBuilder.Entity<PendingArchive>()
+            .Navigation(p => p.Uploader)
             .AutoInclude();
     }
 }

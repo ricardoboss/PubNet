@@ -1,3 +1,3 @@
 ﻿namespace PubNet.API.DTO;
 
-public record DeleteAuthorRequest(string Confirmation, string Password);
+public record DeleteAuthorRequest(string Password);

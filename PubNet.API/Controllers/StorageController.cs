@@ -8,6 +8,7 @@ using PubNet.API.Services;
 using PubNet.API.Utils;
 using PubNet.API.WorkerTasks;
 using PubNet.Models;
+using Semver;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -15,7 +16,7 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("storage")]
-public class StorageController : ControllerBase, IUploadEndpointGenerator
+public class StorageController : BaseController, IUploadEndpointGenerator
 {
     private readonly ILogger<StorageController> _logger;
     private readonly PubNetContext _db;
@@ -60,22 +61,22 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
         switch (size)
         {
             case null:
-                return StatusCode(StatusCodes.Status411LengthRequired, new ErrorResponse(new("length-required", "The Content-Length header is required")));
+                return StatusCode(StatusCodes.Status411LengthRequired, ErrorResponse.PackageLengthRequired);
             case > maxUploadSize:
-                return StatusCode(StatusCodes.Status413PayloadTooLarge, new ErrorResponse(new("payload-too-large", $"Maximum payload size is {maxUploadSize} bytes")));
+                return StatusCode(StatusCodes.Status413PayloadTooLarge, ErrorResponse.PackagePayloadTooLarge);
         }
 
         var packageFile = Request.Form.Files.FirstOrDefault(f => f.Name == "file");
         if (packageFile is null)
-            return BadRequest(new ErrorResponse(new("missing-package-file", "The package file is missing")));
+            return BadRequest(ErrorResponse.MissingPackageFile);
 
         if (!Request.Form.ContainsKey("author-id"))
-            return BadRequest(new ErrorResponse(new("missing-fields", "Not all fields have been forwarded")));
+            return BadRequest(ErrorResponse.MissingFields);
 
         var authorId = int.Parse(Request.Form["author-id"].ToString());
         var author = await _db.Authors.FindAsync(authorId);
         if (author is null)
-            return BadRequest(new ErrorResponse(new("invalid-token", "Invalid token id provided")));
+            return BadRequest(ErrorResponse.InvalidAuthorId);
 
         var pendingId = Guid.NewGuid();
         var tempFile = Path.GetTempPath() + pendingId + ".tar.gz";
@@ -123,17 +124,19 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
     public async Task<IActionResult> FinalizeUpload([FromQuery] string? pendingId, CancellationToken cancellationToken = default)
     {
         if (!_endpointHelper.ValidateSignature(Request.QueryString.ToString()))
-            return BadRequest(new ErrorResponse(new("invalid-url", "The provided signature is invalid indicating the url has been tempered with")));
+            return BadRequest(ErrorResponse.InvalidSignedUrl);
 
         if (pendingId is null)
-            return StatusCode(StatusCodes.Status424FailedDependency, new ErrorResponse(new("missing-id", "No pending id was provided")));
+            return FailedDependency(ErrorResponse.MissingPendingId);
 
         if (!Guid.TryParse(pendingId, out var uuid))
-            return BadRequest(new ErrorResponse(new("invalid-id", "An invalid pending id was provided")));
+            return FailedDependency(ErrorResponse.InvalidPendingId);
 
-        var pending = await _db.PendingArchives.FirstOrDefaultAsync(a => a.Uuid == uuid, cancellationToken);
+        var pending = await _db.PendingArchives
+            .Include(p => p.Uploader)
+            .FirstOrDefaultAsync(a => a.Uuid == uuid, cancellationToken);
         if (pending is null)
-            return StatusCode(StatusCodes.Status424FailedDependency, new ErrorResponse(new("invalid-id", "An invalid pending id was provided")));
+            return FailedDependency(ErrorResponse.InvalidPendingId);
 
         var unpackedArchivePath = pending.UnpackedArchivePath;
         await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
@@ -148,21 +151,23 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
             }
             catch (FileNotFoundException)
             {
-                return UnprocessableEntity(new ErrorResponse(new("missing-pubspec", "The package archive is missing a pubspec.yaml")));
+                return UnprocessableEntity(ErrorResponse.MissingPubspec);
             }
             catch (Exception ex)
             {
-                return BadRequest(new ErrorResponse(new("invalid-pubspec",
-                    $"An error occurred while parsing the pubspec.yaml: {ex.Message}")));
+                return UnprocessableEntity(ErrorResponse.InvalidPubspec(ex.Message));
             }
 
             var packageName = pubSpec.Name;
             if (packageName is null)
-                return UnprocessableEntity(new ErrorResponse(new("invalid-pubspec", "The pubspec.yaml is missing a package name")));
+                return UnprocessableEntity(ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package name"));
 
             var packageVersionId = pubSpec.Version;
             if (packageVersionId is null)
-                return UnprocessableEntity(new ErrorResponse(new("invalid-pubspec", "The pubspec.yaml is missing a package version")));
+                return UnprocessableEntity(ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package version"));
+
+            if (!SemVersion.TryParse(packageVersionId, SemVersionStyles.Any, out var packageVersionSemver))
+                return UnprocessableEntity(ErrorResponse.InvalidPubspec("The package version could not be parsed"));
 
             var package = await _db.Packages.Where(p => p.Name == packageName)
                 .Include(p => p.Versions)
@@ -185,10 +190,18 @@ public class StorageController : ControllerBase, IUploadEndpointGenerator
             }
             else
             {
-                if (package.Versions.Any(v => v.Version == packageVersionId))
-                    return BadRequest(new ErrorResponse(new("version-already-exists", $"Version {packageVersionId} of {packageName} already exists")));
+                if (package.Author != pending.Uploader)
+                    return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
-                // TODO: check only newer versions get uploaded
+                if (package.Versions.Any(v => v.Version == packageVersionId))
+                    return UnprocessableEntity(ErrorResponse.VersionAlreadyExists(packageName, packageVersionId));
+
+                if (package.Latest is not null)
+                {
+                    var latestSemver = SemVersion.Parse(package.Latest.Version, SemVersionStyles.Any);
+                    if (packageVersionSemver.ComparePrecedenceTo(latestSemver) != 1)
+                        return UnprocessableEntity(ErrorResponse.VersionOlderThanLatest(package.Latest.Version));
+                }
             }
 
             string archiveSha256;

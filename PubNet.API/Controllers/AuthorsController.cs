@@ -8,25 +8,62 @@ using PubNet.Models;
 namespace PubNet.API.Controllers;
 
 [ApiController]
-[Route("authors/{username}")]
+[Route("authors")]
 [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
-public class AuthorController : ControllerBase
+public class AuthorsController : BaseController
 {
-    private static ErrorResponse UsernameMismatch =>
-        new(new("author-username-mismatch", "The username you are trying to access does not match the owner of the token you used"));
-
-    private readonly ILogger<AuthorController> _logger;
+    private readonly ILogger<AuthorsController> _logger;
     private readonly PubNetContext _db;
     private readonly PasswordManager _passwordManager;
 
-    public AuthorController(ILogger<AuthorController> logger, PubNetContext db, PasswordManager passwordManager)
+    public AuthorsController(ILogger<AuthorsController> logger, PubNetContext db, PasswordManager passwordManager)
     {
         _logger = logger;
         _db = db;
         _passwordManager = passwordManager;
     }
 
-    [HttpGet]
+    [HttpGet("")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+    [ResponseCache(VaryByQueryKeys = new []{ "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 3600)]
+    public IActionResult GetAll([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
+    {
+        const int maxLimit = 1000;
+
+        IQueryable<Author> packages = _db.Authors
+                .Where(a => !a.Inactive)
+                .OrderByDescending(p => p.RegisteredAtUtc)
+            ;
+
+        if (q != null)
+        {
+            packages = packages.Where(a => a.UserName!.StartsWith(q));
+        }
+
+        if (before.HasValue)
+        {
+            if (!limit.HasValue)
+            {
+                return BadRequest(ErrorResponse.InvalidQuery);
+            }
+
+            var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
+
+            packages = packages.Where(p => p.RegisteredAtUtc < publishedAtUpperLimit);
+        }
+
+        if (limit.HasValue)
+        {
+            var resultLimit = Math.Min(limit.Value, maxLimit);
+
+            packages = packages.Take(resultLimit);
+        }
+
+        return Ok(new AuthorsResponse(packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count))));
+    }
+
+    [HttpGet("{username}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(string username, CancellationToken cancellationToken = default)
@@ -42,12 +79,12 @@ public class AuthorController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpPost("{username}/delete")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public async Task<IActionResult> Delete([FromQuery] string username, [FromBody] DeleteAuthorRequest dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
     {
         var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
@@ -56,46 +93,38 @@ public class AuthorController : ControllerBase
                    ["AuthorUsername"] = username,
                }))
         {
-            if (username != author.UserName)
-            {
-                return Unauthorized(UsernameMismatch);
-            }
+            if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
 
-            await _passwordManager.ThrowForInvalid(_db, author, dto.Password, cancellationToken);
+            if (!await _passwordManager.IsValid(_db, author, dto.Password, cancellationToken))
+                return Unauthorized(ErrorResponse.InvalidPasswordConfirmation);
 
-            if (dto.Confirmation != author.UserName)
-            {
-                return Unauthorized(new ErrorResponse(new("invalid-confirmation", "The confirmation must match your username")));
-            }
+            foreach (var authorPackage in _db.Packages.Where(p => p.Author == author))
+                authorPackage.Author = null;
 
-            _db.Tokens.RemoveRange(author.Tokens);
+            await _db.SaveChangesAsync(cancellationToken);
+
             _db.Authors.Remove(author);
+
             await _db.SaveChangesAsync(cancellationToken);
 
             return Ok(new SuccessResponse(new($"Author '{username}' successfully deleted.")));
         }
     }
 
-    [HttpGet("packages")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackagesResponse))]
+    [HttpGet("{username}/packages")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorPackagesResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPackages(string username, CancellationToken cancellationToken = default)
     {
-        using (_logger.BeginScope(new Dictionary<string, object>
-               {
-                   ["AuthorUsername"] = username,
-               }))
-        {
-            var author = await _db.Authors
-                .Where(a => a.UserName == username)
-                .Include(a => a.Packages)
-                .FirstOrDefaultAsync(cancellationToken);
+        var author = await _db.Authors
+            .Where(a => a.UserName == username)
+            .Include(a => a.Packages)
+            .FirstOrDefaultAsync(cancellationToken);
 
-            return author is null ? NotFound() : Ok(new PackagesResponse(author.Packages));
-        }
+        return author is null ? NotFound() : Ok(new AuthorPackagesResponse(author.Packages));
     }
 
-    [HttpPatch]
+    [HttpPatch("{username}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -105,11 +134,10 @@ public class AuthorController : ControllerBase
 
         using (_logger.BeginScope(new Dictionary<string, object>
                {
-                   ["AuthorUsername"] = author.UserName!,
+                   ["AuthorUsername"] = author.UserName,
                }))
         {
-            if (username != author.UserName)
-                return Unauthorized(UsernameMismatch);
+            if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
 
             if (dto.Name is not null && author.Name != dto.Name)
             {
