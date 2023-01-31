@@ -5,17 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
-using PubNet.API;
-using PubNet.API.Contexts;
 using PubNet.API.Controllers;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
-using PubNet.API.Utils;
-using PubNet.Models;
+using PubNet.Common.Services;
+using PubNet.Database;
+using PubNet.Database.Models;
 using Serilog;
 using Serilog.Events;
 
@@ -38,9 +36,7 @@ try
     );
 
     builder.Services.AddDbContext<PubNetContext>(
-        options => options
-            .UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
-            .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))
+        options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
     );
 
     builder.Services
@@ -119,10 +115,7 @@ try
     builder.Services.AddSingleton<EndpointHelper>();
 
     builder.Services.AddControllers()
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        });
+        .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(o =>
@@ -159,11 +152,6 @@ try
     });
 
     builder.Services.AddResponseCaching();
-
-    // background worker for cleanup tasks etc
-    builder.Services.AddSingleton<DartCli>();
-    builder.Services.AddSingleton<WorkerTaskQueue>();
-    builder.Services.AddHostedService<Worker>();
 
     var app = builder.Build();
 

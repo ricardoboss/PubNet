@@ -1,5 +1,5 @@
 @using PubNet.API.DTO
-@using PubNet.Models
+@using PubNet.Database.Models
 @inject HttpClient HttpClient
 
 @if (Error is not null)
@@ -65,7 +65,7 @@
         {
             var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
 
-            Error = message?.Error.Message;
+            Error = message?.Error?.Message;
         }
     }
 }

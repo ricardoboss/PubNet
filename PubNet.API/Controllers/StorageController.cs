@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PubNet.API.Contexts;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
-using PubNet.API.Models;
 using PubNet.API.Services;
-using PubNet.API.Utils;
-using PubNet.API.WorkerTasks;
-using PubNet.Models;
+using PubNet.Common.Utils;
+using PubNet.Database;
+using PubNet.Database.Models;
 using Semver;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -21,15 +19,13 @@ public class StorageController : BaseController, IUploadEndpointGenerator
     private readonly ILogger<StorageController> _logger;
     private readonly PubNetContext _db;
     private readonly IPackageStorageProvider _storageProvider;
-    private readonly WorkerTaskQueue _workerTaskQueue;
     private readonly EndpointHelper _endpointHelper;
 
-    public StorageController(ILogger<StorageController> logger, PubNetContext db, IPackageStorageProvider storageProvider, WorkerTaskQueue workerTaskQueue, EndpointHelper endpointHelper)
+    public StorageController(ILogger<StorageController> logger, PubNetContext db, IPackageStorageProvider storageProvider, EndpointHelper endpointHelper)
     {
         _logger = logger;
         _db = db;
         _storageProvider = storageProvider;
-        _workerTaskQueue = workerTaskQueue;
         _endpointHelper = endpointHelper;
     }
 
@@ -63,7 +59,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
             case null:
                 return StatusCode(StatusCodes.Status411LengthRequired, ErrorResponse.PackageLengthRequired);
             case > maxUploadSize:
-                return StatusCode(StatusCodes.Status413PayloadTooLarge, ErrorResponse.PackagePayloadTooLarge);
+                return StatusCode(StatusCodes.Status413PayloadTooLarge, ErrorResponse.PackagePayloadTooLarge(maxUploadSize));
         }
 
         var packageFile = Request.Form.Files.FirstOrDefault(f => f.Name == "file");
@@ -226,8 +222,6 @@ public class StorageController : BaseController, IUploadEndpointGenerator
             await _db.SaveChangesAsync(cancellationToken);
 
             System.IO.File.Delete(pending.ArchivePath);
-
-            _workerTaskQueue.Enqueue(new PubSpecAnalyzerTask(packageName, packageVersionId));
 
             Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
             return Ok(new SuccessResponse(new($"Successfully uploaded {packageName} version {packageVersionId}! " + _endpointHelper.GenerateFullyQualified(Request, $"/api/packages/{packageName}/versions/{packageVersionId}"))));

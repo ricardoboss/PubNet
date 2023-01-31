@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using PubNet.Models;
+using PubNet.Database.Models;
 
 namespace PubNet.Frontend.Services;
 

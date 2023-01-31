@@ -1,4 +1,4 @@
-﻿@inject AuthenticationService auth
+﻿@inject AuthenticationService Auth
 
 @if (RenderContent)
 {
@@ -7,7 +7,7 @@
 
 @code {
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     private bool RenderContent { get; set; }
 
@@ -15,6 +15,6 @@
     {
         await base.OnInitializedAsync();
 
-        RenderContent = await auth.IsAuthenticatedAsync();
+        RenderContent = await Auth.IsAuthenticatedAsync();
     }
 }

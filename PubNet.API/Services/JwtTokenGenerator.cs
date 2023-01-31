@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using PubNet.API.DTO;
-using PubNet.Models;
+using PubNet.Database.Models;
 
 namespace PubNet.API.Services;
 

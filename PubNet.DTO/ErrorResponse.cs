@@ -2,13 +2,9 @@
 
 public class ErrorResponse
 {
-    public ErrorResponse()
+    public ErrorResponse(ErrorResponseBody? error = null)
     {
-    }
-
-    private ErrorResponse(ErrorResponseBody Error)
-    {
-        this.Error = Error;
+        Error = error;
     }
 
     public static ErrorResponse UsernameMismatch =>
@@ -32,7 +28,7 @@ public class ErrorResponse
     public static ErrorResponse PackageLengthRequired =>
         new(new("length-required", "The Content-Length header is required"));
 
-    public static ErrorResponse PackagePayloadTooLarge(int maxUploadSize) =>
+    public static ErrorResponse PackagePayloadTooLarge(long maxUploadSize) =>
         new(new("payload-too-large", $"Maximum payload size is {maxUploadSize} bytes"));
 
     public static ErrorResponse MissingPackageFile =>
@@ -68,9 +64,9 @@ public class ErrorResponse
     public static ErrorResponse FromException(Exception e) =>
         new(new(e.GetType().Name, e.Message));
 
-    public ErrorResponseBody Error { get; init; }
+    public ErrorResponseBody? Error { get; init; }
 
-    public void Deconstruct(out ErrorResponseBody error)
+    public void Deconstruct(out ErrorResponseBody? error)
     {
         error = Error;
     }

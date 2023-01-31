@@ -20,18 +20,14 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.2" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
         <PackageReference Include="Semver" Version="2.2.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.1-dev-00293" />
-        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.3-dev-00260" />
-        <PackageReference Include="SharpCompress" Version="0.32.2" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
+        <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="YamlDotNet" Version="12.3.1" />
     </ItemGroup>
 
@@ -46,8 +42,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj" />
+      <ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj" />
       <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
-      <ProjectReference Include="..\PubNet.Models\PubNet.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -60,6 +57,10 @@
 
     <ItemGroup>
       <None Remove="packages\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Contexts" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using PubNet.Models;
+using PubNet.Database.Models;
 
 namespace PubNet.API.DTO;
 

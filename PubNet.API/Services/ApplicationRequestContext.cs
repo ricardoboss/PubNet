@@ -1,7 +1,7 @@
 ﻿using System.Security.Authentication;
 using System.Security.Claims;
-using PubNet.API.Contexts;
-using PubNet.Models;
+using PubNet.Database;
+using PubNet.Database.Models;
 
 namespace PubNet.API.Services;
 

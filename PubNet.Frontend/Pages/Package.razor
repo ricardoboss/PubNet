@@ -24,10 +24,6 @@
 }
 else if (PackageModel is not null)
 {
-    <PageTitle>@PackageName @(PackageModel.Latest?.Version)</PageTitle>
-
-    <h1>@PackageName @(PackageModel.Latest?.Version)</h1>
-
     @if (ShowPackageAdminTools)
     {
         <button class="btn btn-outline-danger my-3" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
@@ -44,45 +40,58 @@ else if (PackageModel is not null)
                      }
     </p>
 
-    <p>@(PackageModel.Latest?.PubSpec?.Description)</p>
-
-    @if (PackageModel.Latest?.Analysis is {} analysis)
+    @if (PackageModel.Latest is null)
     {
-        <div style="display: flex; align-items: center; gap: 0.25rem">
-            @if (analysis.DocumentationHref is not null)
-            {
-                <NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
-            }
+        <PageTitle>@PackageName</PageTitle>
 
-            @if (analysis.Formatted == true)
-            {
-                <div class="badge bg-success">Formatted</div>
-            }
-            else if (analysis.Formatted == false)
-            {
-                <div class="badge bg-warning">Not Formatted</div>
-            }
-        </div>
+        <h1>@PackageName</h1>
     }
     else
     {
-        <div class="badge bg-secondary">Analysis not complete</div>
-    }
+        <PageTitle>@PackageName @(PackageModel.Latest.Version)</PageTitle>
 
-    <h2 class="mt-4">Dependencies</h2>
+        <h1>@PackageName @(PackageModel.Latest.Version)</h1>
 
-    @if (PackageModel.Latest?.PubSpec?.Dependencies is null || PackageModel.Latest?.PubSpec?.Dependencies.Count == 0)
-    {
-        <p><em>No dependencies.</em></p>
-    }
-    else
-    {
-        <ul>
-            @foreach (var dependency in PackageModel.Latest!.PubSpec!.Dependencies!)
-            {
-                <li><NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink></li>
-            }
-        </ul>
+        <p>@(PackageModel.Latest.PubSpec?.Description)</p>
+
+        @if (PackageModel.Latest.Analysis is {} analysis)
+        {
+            <div style="display: flex; align-items: center; gap: 0.25rem">
+                @if (analysis.DocumentationHref is not null)
+                {
+                    <NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
+                }
+
+                @if (analysis.Formatted == true)
+                {
+                    <div class="badge bg-success">Formatted</div>
+                }
+                else if (analysis.Formatted == false)
+                {
+                    <div class="badge bg-warning">Not Formatted</div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="badge bg-secondary">Analysis not complete</div>
+        }
+
+        <h2 class="mt-4">Dependencies</h2>
+
+        @if (PackageModel.Latest.PubSpec?.Dependencies is null || PackageModel.Latest.PubSpec?.Dependencies.Count == 0)
+        {
+            <p><em>No dependencies.</em></p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var dependency in PackageModel.Latest.PubSpec!.Dependencies!)
+                {
+                    <li><NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink></li>
+                }
+            </ul>
+        }
     }
 
     @if (PackageModel.Versions is not null)

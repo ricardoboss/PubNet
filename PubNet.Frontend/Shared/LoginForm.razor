@@ -56,7 +56,7 @@
         {
             var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
 
-            Error = message?.Error.Message;
+            Error = message?.Error?.Message;
         }
     }
 }
