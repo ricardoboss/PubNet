@@ -45,13 +45,15 @@ public class PubNetContext : DbContext
             .Navigation(p => p.Latest)
             .AutoInclude();
 
-        modelBuilder.Entity<Package>()
-            .Navigation(p => p.Author)
-            .AutoInclude();
-
         modelBuilder.Entity<PackageVersion>()
             .HasIndex(p => p.PublishedAtUtc)
             .IsDescending();
+
+        modelBuilder.Entity<PackageVersion>()
+            .HasOne<PackageVersionAnalysis>(p => p.Analysis)
+            .WithOne(a => a.Version)
+            .HasForeignKey<PackageVersionAnalysis>(a => a.VersionId)
+            .IsRequired(false);
 
         modelBuilder.Entity<PackageVersion>()
             .HasIndex(p => p.Version);
@@ -59,6 +61,11 @@ public class PubNetContext : DbContext
         modelBuilder.Entity<PackageVersion>()
             .Property(v => v.PubSpec)
             .HasColumnType("json");
+
+        modelBuilder.Entity<PackageVersionAnalysis>()
+            .HasOne<PackageVersion>(a => a.Version)
+            .WithOne(p => p.Analysis)
+            .IsRequired();
 
         modelBuilder.Entity<PackageVersionAnalysis>()
             .Navigation(a => a.Version)

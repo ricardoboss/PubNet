@@ -5,13 +5,17 @@ using PubNet.Models;
 
 namespace PubNet.API.WorkerTasks;
 
-public class MissingAnalysisQueuingTask : BaseWorkerTask
+public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 {
     private ILogger<MissingAnalysisQueuingTask>? _logger;
     private PubNetContext? _db;
     private WorkerTaskQueue? _taskQueue;
 
-    public override async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
+    public MissingAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
+    {
+    }
+
+    protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         _logger ??= services.GetRequiredService<ILogger<MissingAnalysisQueuingTask>>();
         _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();

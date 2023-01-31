@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.DTO;
@@ -10,18 +11,26 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("packages")]
-[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
 public class PackagesController : BaseController
 {
     private readonly ILogger<PackagesController> _logger;
     private readonly PubNetContext _db;
     private readonly IPackageStorageProvider _storageProvider;
+    private readonly FileExtensionContentTypeProvider _fileTypeProvider;
 
     public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IPackageStorageProvider storageProvider)
     {
         _logger = logger;
         _db = db;
         _storageProvider = storageProvider;
+        _fileTypeProvider = new()
+        {
+            Mappings =
+            {
+                ["dart"] = "text/plain",
+            },
+        };
     }
 
     [HttpGet("")]
@@ -55,11 +64,11 @@ public class PackagesController : BaseController
             packages = packages.Take(resultLimit);
         }
 
-        return Ok(new SearchPackagesResponse(packages.ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest!.Version, p.Latest!.PublishedAtUtc))));
+        return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest!.Version, p.Latest!.PublishedAtUtc))));
     }
 
     [HttpGet("{name}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Package))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByName(string name, CancellationToken cancellationToken = default)
     {
@@ -70,10 +79,12 @@ public class PackagesController : BaseController
         {
             var package = await _db.Packages
                 .Where(p => p.Name == name)
+                .Include(p => p.Author)
                 .Include(p => p.Versions)
+                .Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return package is null ? NotFound() : Ok(package);
+            return package is null ? NotFound() : Ok(PackageDto.FromPackage(package));
         }
     }
 
@@ -101,7 +112,7 @@ public class PackagesController : BaseController
 
             if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
-            // TODO: remove fiels from storage
+            // TODO: remove fields from storage
 
             _db.PackageVersionAnalyses.RemoveRange(_db.PackageVersionAnalyses.Include(a => a.Version).Where(a => package.Versions.Any(v => v == a.Version)));
             _db.PackageVersions.RemoveRange(package.Versions);
@@ -114,7 +125,7 @@ public class PackagesController : BaseController
     }
 
     [HttpGet("{name}/versions/{version}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersion))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetVersion(string name, string version, CancellationToken cancellationToken = default)
     {
@@ -126,6 +137,7 @@ public class PackagesController : BaseController
             var package = await _db.Packages
                 .Where(p => p.Name == name)
                 .Include(p => p.Versions)
+                .Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
                 .FirstOrDefaultAsync(cancellationToken);
 
             var packageVersion = package?.Versions.FirstOrDefault(v => v.Version == version);
@@ -134,7 +146,7 @@ public class PackagesController : BaseController
                 return NotFound();
 
             Response.Headers.ContentType = "application/vnd.pub.v2+json";
-            return Ok(packageVersion);
+            return Ok(PackageVersionDto.FromPackageVersion(packageVersion));
         }
     }
 
@@ -158,6 +170,43 @@ public class PackagesController : BaseController
 
             return NotFound();
         }
+    }
+
+    [HttpGet("{name}/versions/{version}/docs/")]
+    public IActionResult GetVersionDocsIndex(string name, string version) => 
+        RedirectToAction("GetVersionDocsFile", new { name, version, path = "index.html" });
+
+    [HttpGet("{name}/versions/{version}/docs/{**path}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path, CancellationToken cancellationToken = default)
+    {
+        var localPath = await _storageProvider.GetDocsPath(name, version);
+        if (localPath is null)
+            return NotFound();
+
+        var notFoundPage = Path.Combine(localPath, "__404error.html");
+        if (!System.IO.File.Exists(notFoundPage))
+            return NotFound();
+
+        string content;
+        
+        var requestedFile = Path.Combine(localPath, path);
+        if (!System.IO.File.Exists(requestedFile))
+            content = await System.IO.File.ReadAllTextAsync(notFoundPage, cancellationToken);
+        else
+            content = await System.IO.File.ReadAllTextAsync(requestedFile, cancellationToken);
+
+        if (!_fileTypeProvider.TryGetContentType(requestedFile, out var contentType))
+            contentType = "application/octet-stream";
+
+        return new ContentResult
+        {
+            Content = content,
+            ContentType = contentType,
+            StatusCode = StatusCodes.Status200OK,
+        };
     }
 
     [HttpGet("versions/new")]

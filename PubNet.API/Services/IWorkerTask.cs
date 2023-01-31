@@ -2,13 +2,11 @@
 
 public interface IWorkerTask
 {
-    Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default);
-
     string Name { get; }
 
     bool RequeueOnException { get; }
 
-    DateTimeOffset NextRun { get; set; }
+    int Tries { get; }
 
-    int Tries { get; set; }
+    Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default);
 }

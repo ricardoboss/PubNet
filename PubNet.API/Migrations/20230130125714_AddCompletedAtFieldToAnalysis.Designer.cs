@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.API.Contexts;
@@ -12,9 +13,11 @@ using PubNet.Models;
 namespace PubNet.API.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    partial class PubNetContextModelSnapshot : ModelSnapshot
+    [Migration("20230130125714_AddCompletedAtFieldToAnalysis")]
+    partial class AddCompletedAtFieldToAnalysis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,11 +178,13 @@ namespace PubNet.API.Migrations
 
                     b.Property<string>("ArchiveSha256")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasAnnotation("Relational:JsonPropertyName", "archive_sha256");
 
                     b.Property<string>("ArchiveUrl")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasAnnotation("Relational:JsonPropertyName", "archive_url");
 
                     b.Property<int?>("PackageId")
                         .HasColumnType("integer");
@@ -189,10 +194,12 @@ namespace PubNet.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<PubSpec>("PubSpec")
-                        .HasColumnType("json");
+                        .HasColumnType("json")
+                        .HasAnnotation("Relational:JsonPropertyName", "pubspec");
 
                     b.Property<DateTimeOffset>("PublishedAtUtc")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("Relational:JsonPropertyName", "published");
 
                     b.Property<bool>("Retracted")
                         .HasColumnType("boolean");
@@ -221,7 +228,7 @@ namespace PubNet.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTimeOffset?>("CompletedAtUtc")
+                    b.Property<DateTimeOffset>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DocumentationLink")
@@ -239,6 +246,8 @@ namespace PubNet.API.Migrations
                         .IsUnique();
 
                     b.ToTable("PackageVersionAnalyses");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "analysis");
                 });
 
             modelBuilder.Entity("PubNet.API.Models.PendingArchive", b =>

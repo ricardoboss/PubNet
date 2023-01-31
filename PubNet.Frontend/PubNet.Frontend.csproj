@@ -24,7 +24,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
-      <ProjectReference Include="..\PubNet.Models\PubNet.Models.csproj" />
     </ItemGroup>
 
 </Project>

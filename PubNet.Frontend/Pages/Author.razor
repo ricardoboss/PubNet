@@ -24,7 +24,7 @@
 
 @if (AuthorModel is not null)
 {
-    <p>Registered since: @AuthorModel.RegisteredAtUtc</p>
+    <p>Registered since: @AuthorModel.RegisteredAt</p>
 
     @if (Editing)
     {
@@ -107,7 +107,7 @@
                         <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
                     </td>
                     <td>@package.Latest?.Version</td>
-                    <td>@package.Latest?.PublishedAtUtc</td>
+                    <td>@package.Latest?.PublishedAt</td>
                 </tr>
             }
         }
@@ -133,13 +133,13 @@
     private bool IsSelf { get; set; }
     private bool Editing { get; set; }
 
-    private Models.Author? AuthorModel { get; set; }
+    private AuthorDto? AuthorModel { get; set; }
     private string? GeneralError { get; set; }
 
     private string? AuthorSuccess { get; set; }
     private string? AuthorError { get; set; }
 
-    private IEnumerable<Models.Package>? AuthorPackages { get; set; }
+    private IEnumerable<PackageDto>? AuthorPackages { get; set; }
     private string? PackagesError { get; set; }
 
     protected override async Task OnParametersSetAsync()
@@ -174,7 +174,7 @@
         AuthorModel = null;
         GeneralError = null;
 
-        var author = await Http.GetAsync<Models.Author>($"authors/{Username}");
+        var author = await Http.GetAsync<AuthorDto>($"authors/{Username}");
         if (author is not null)
         {
             AuthorModel = author;
@@ -191,7 +191,7 @@
         PackagesError = null;
 
         var response = await Http.GetAsync<AuthorPackagesResponse>($"authors/{Username}/packages");
-        if (response is not null)
+        if (response?.Packages is not null)
         {
             AuthorPackages = response.Packages;
         }

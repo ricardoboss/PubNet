@@ -1,5 +1,6 @@
 ﻿@page "/package/{PackageName}"
 @using System.Net
+@using PubNet.API.DTO
 @inject ApiClient Http
 @inject AuthenticationService Auth
 @inject NavigationManager Nav
@@ -43,11 +44,32 @@ else if (PackageModel is not null)
                      }
     </p>
 
-    <h2>Description</h2>
-
     <p>@(PackageModel.Latest?.PubSpec?.Description)</p>
 
-    <h2>Dependencies</h2>
+    @if (PackageModel.Latest?.Analysis is {} analysis)
+    {
+        <div style="display: flex; align-items: center; gap: 0.25rem">
+            @if (analysis.DocumentationHref is not null)
+            {
+                <NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
+            }
+
+            @if (analysis.Formatted == true)
+            {
+                <div class="badge bg-success">Formatted</div>
+            }
+            else if (analysis.Formatted == false)
+            {
+                <div class="badge bg-warning">Not Formatted</div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="badge bg-secondary">Analysis not complete</div>
+    }
+
+    <h2 class="mt-4">Dependencies</h2>
 
     @if (PackageModel.Latest?.PubSpec?.Dependencies is null || PackageModel.Latest?.PubSpec?.Dependencies.Count == 0)
     {
@@ -58,30 +80,50 @@ else if (PackageModel is not null)
         <ul>
             @foreach (var dependency in PackageModel.Latest!.PubSpec!.Dependencies!)
             {
-                <li><NavLink href="@("/package/" + dependency.Key)">@dependency.Key</NavLink></li>
+                <li><NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink></li>
             }
         </ul>
     }
 
-    <h2>Versions</h2>
+    @if (PackageModel.Versions is not null)
+    {
+        <h2>Versions</h2>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Version</th>
-            <th>Published At</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var version in PackageModel.Versions.OrderByDescending(v => v.PublishedAtUtc))
-        {
+        <table class="table">
+            <thead>
             <tr>
-                <td>@version.Version</td>
-                <td>@version.PublishedAtUtc</td>
+                <th>Version</th>
+                <th>Published At</th>
+                <th>Docs</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var version in PackageModel.Versions.OrderByDescending(v => v.PublishedAt))
+            {
+                <tr>
+                    <td>@version.Version</td>
+                    <td>@version.PublishedAt</td>
+                    <td>
+                        @if (version.Analysis?.DocumentationHref is null)
+                        {
+                            <div class="badge bg-secondary">Analysis not complete</div>
+                        }
+                        else
+                        {
+                            <NavLink href="@(DocumentationUrl(version.Analysis.DocumentationHref))" class="badge bg-info">
+                                Docs
+                            </NavLink>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p><em>No versions found.</em></p>
+    }
 }
 
 @code
@@ -89,11 +131,15 @@ else if (PackageModel is not null)
     [Parameter]
     public string? PackageName { get; set; }
 
-    private Models.Package? PackageModel { get; set; }
+    private PackageDto? PackageModel { get; set; }
     private string? Error { get; set; }
     
     private bool Editing { get; set; }
     private bool ShowPackageAdminTools { get; set; }
+
+    private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+
+    private static string LinkToDependency(string name) => "/package/" + name;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -106,7 +152,7 @@ else if (PackageModel is not null)
             var response = await Http.GetAsync($"packages/{PackageName}");
             if (response.IsSuccessStatusCode)
             {
-                PackageModel = await response.Content.ReadFromJsonAsync<Models.Package>();
+                PackageModel = await response.Content.ReadFromJsonAsync<PackageDto>();
             }
             else
             {

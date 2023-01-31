@@ -9,7 +9,7 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("authors")]
-[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
+[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
 public class AuthorsController : BaseController
 {
     private readonly ILogger<AuthorsController> _logger;
@@ -64,7 +64,7 @@ public class AuthorsController : BaseController
     }
 
     [HttpGet("{username}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(string username, CancellationToken cancellationToken = default)
     {
@@ -75,7 +75,7 @@ public class AuthorsController : BaseController
         {
             var author = await _db.Authors.FirstOrDefaultAsync(a => a.UserName == username, cancellationToken);
 
-            return author is null ? NotFound() : Ok(author);
+            return author is null ? NotFound() : Ok(AuthorDto.FromAuthor(author));
         }
     }
 
@@ -121,7 +121,7 @@ public class AuthorsController : BaseController
             .Include(a => a.Packages)
             .FirstOrDefaultAsync(cancellationToken);
 
-        return author is null ? NotFound() : Ok(new AuthorPackagesResponse(author.Packages));
+        return author is null ? NotFound() : Ok(new AuthorPackagesResponse(author.Packages.Select(PackageDto.FromPackage)));
     }
 
     [HttpPatch("{username}")]

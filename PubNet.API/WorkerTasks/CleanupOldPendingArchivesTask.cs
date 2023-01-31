@@ -4,13 +4,19 @@ using PubNet.API.Services;
 
 namespace PubNet.API.WorkerTasks;
 
-public class CleanupOldPendingArchivesTask : BaseWorkerTask
+public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 {
     private ILogger<CleanupOldPendingArchivesTask>? _logger;
     private PubNetContext? _db;
     private IConfiguration? _configuration;
 
-    public override async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public CleanupOldPendingArchivesTask(TimeSpan interval) : base(interval, DateTime.Now)
+    {
+    }
+
+    /// <inheritdoc />
+    protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
         _logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
@@ -50,6 +56,4 @@ public class CleanupOldPendingArchivesTask : BaseWorkerTask
 
         return WorkerTaskResult.Requeue;
     }
-
-    public override bool RequeueOnException => true;
 }

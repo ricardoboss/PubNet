@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace PubNet.API.Utils;
+namespace PubNet.API.Services;
 
 public class DartCli
 {
@@ -75,12 +75,12 @@ public class DartCli
 
     public async Task<int> Format(string folder, string workingDir, CancellationToken cancellationToken = default)
     {
-        return await InvokeDart($"format {folder} --set-exit-if-changed --output none", workingDir, cancellationToken);
+        return await InvokeDart($"format {folder} --set-exit-if-changed", workingDir, cancellationToken);
     }
 
-    public async Task<int> Doc(string folder, string workingDir, CancellationToken cancellationToken = default)
+    public async Task<int> Doc(string workingDir, CancellationToken cancellationToken = default)
     {
-        return await InvokeDart($"doc {folder}", workingDir, cancellationToken);
+        return await InvokeDart("doc", workingDir, cancellationToken);
     }
 
     private async Task<int> InvokeDart(string command, string workingDirectory,

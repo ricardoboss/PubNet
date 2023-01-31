@@ -1,20 +1,44 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PubNet.API.Services;
 
-public class WorkerTaskQueue : ConcurrentQueue<IWorkerTask>
+public class WorkerTaskQueue
 {
     private readonly ILogger<WorkerTaskQueue> _logger;
+    private readonly ConcurrentQueue<IWorkerTask> _queue = new();
+    private readonly PriorityQueue<IScheduledWorkerTask, DateTime> _scheduledQueue = new();
 
     public WorkerTaskQueue(ILogger<WorkerTaskQueue> logger)
     {
         _logger = logger;
     }
 
-    public new void Enqueue(IWorkerTask item)
+    public void Enqueue(IWorkerTask item)
     {
-        base.Enqueue(item);
+        if (item is IScheduledWorkerTask scheduled)
+        {
+            _scheduledQueue.Enqueue(scheduled, scheduled.NextRun);
+        }
+        else
+        {
+            _queue.Enqueue(item);
+        }
 
-        _logger.LogInformation("New task queued for worker queue: {TaskName}", item.Name);
+        _logger.LogDebug("New task queued for worker queue: {TaskName}", item.Name);
+    }
+
+    public bool GetNextUnscheduled([NotNullWhen(true)] out IWorkerTask? task) => _queue.TryPeek(out task);
+
+    public bool DequeueUnscheduled([NotNullWhen(true)] out IWorkerTask? task) => _queue.TryDequeue(out task);
+
+    public bool TryGetNextScheduledAt([NotNullWhen(true)] out IScheduledWorkerTask? task, out DateTime scheduledAt) => _scheduledQueue.TryPeek(out task, out scheduledAt);
+
+    public IEnumerable<IScheduledWorkerTask> DequeueUntil(DateTime limit)
+    {
+        while (_scheduledQueue.TryDequeue(out var task, out var scheduledAt) && scheduledAt <= limit)
+        {
+            yield return task;
+        }
     }
 }

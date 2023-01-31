@@ -26,6 +26,14 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <script>
+        var Utils = Utils || {};
+        Utils.getProperty = function (element, property) {
+            let result = element[property];
+            if (typeof result === "undefined") return null;
+            return result;
+        };
+    </script>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PubNet.API.Contexts;
 using PubNet.API.Interfaces;
-using PubNet.API.Models;
 using PubNet.API.Services;
 using PubNet.API.Utils;
 using PubNet.Models;
@@ -18,15 +17,13 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
     private IPackageStorageProvider? _storageProvider;
     private DartCli? _dart;
 
-    public PubSpecAnalyzerTask(string package, string version)
+    public PubSpecAnalyzerTask(string package, string version) : base($"{nameof(PubSpecAnalyzerTask)} for {package} {version}")
     {
         Package = package;
         Version = version;
     }
 
-    public override string Name => $"{nameof(PubSpecAnalyzerTask)} for {Package} {Version}";
-
-    public override async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
+    protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
     {
         _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
         _logger ??= services.GetRequiredService<ILogger<PubSpecAnalyzerTask>>();
@@ -39,8 +36,9 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
                    { "PackageVersion", Version },
                }))
         {
-            var package =
-                await _db.Packages.FirstOrDefaultAsync(p => p.Name == Package, cancellationToken: cancellationToken);
+            var package = await _db.Packages
+                .Include(p => p.Versions)
+                .FirstOrDefaultAsync(p => p.Name == Package, cancellationToken: cancellationToken);
             if (package is null)
             {
                 _logger.LogError("Could not find package {PackageName} for pubspec.yaml analysis", Package);
@@ -106,22 +104,28 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
         {
             logger.LogTrace("Generating documentation for package {PackageName} version {PackageVersion}", Package, Version);
 
-            var exitCode = await dart.Doc("lib", workingDir, cancellationToken);
+            var exitCode = await dart.Doc(workingDir, cancellationToken);
             if (exitCode != 0)
             {
                 // TODO: handle possible error generating docs
             }
             else
             {
-                // TODO: move {workingDir}/doc to package version storage
-                analysis.DocumentationLink = $"https://localhost:44365/api/packages/{Package}/version/{Version}/docs/";
+                // TODO: determine API url dynamically
+                analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
+
+                var apiDocPath = Path.Combine(workingDir, "doc", "api");
+                await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
             }
+        }
+
+        if (analysis.Formatted is not null && analysis.DocumentationLink is not null)
+        {
+            analysis.CompletedAtUtc = DateTimeOffset.Now.ToUniversalTime();
         }
 
         await db.SaveChangesAsync(cancellationToken);
 
         return WorkerTaskResult.Done;
     }
-
-    public override bool RequeueOnException => true;
 }
