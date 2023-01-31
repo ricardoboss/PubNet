@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Watch PubNet.Frontend" type="RunDotNetWatch" factoryName="RunDotNetWatch">
+    <option name="exePath" value="$USER_HOME$/.nuget/packages/microsoft.aspnetcore.components.webassembly.devserver/7.0.2/tools/blazor-devserver.dll" />
+    <option name="programParameters" value="--applicationpath $PROJECT_DIR$/PubNet.Frontend/bin/Debug/net7.0/PubNet.Frontend.dll" />
+    <option name="projectFilePath" value="$PROJECT_DIR$/PubNet.Frontend/PubNet.Frontend.csproj" />
+    <option name="projectTfm" value="net7.0" />
+    <option name="restartOnRudeEditEditor" value="true" />
+    <option name="workingDirectory" value="$PROJECT_DIR$/PubNet.Frontend" />
+    <method v="2" />
+  </configuration>
+</component>
