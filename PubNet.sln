@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Models", "PubNet.Mod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.DTO", "PubNet.DTO\PubNet.DTO.csproj", "{CF4DFF64-0E99-44A5-999D-1DAC69953740}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.FrontendAuth", "PubNet.FrontendAuth\PubNet.FrontendAuth.csproj", "{FE52831A-8B2B-401C-BFD7-6123299B71EE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,9 +38,5 @@ Global
 		{CF4DFF64-0E99-44A5-999D-1DAC69953740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF4DFF64-0E99-44A5-999D-1DAC69953740}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF4DFF64-0E99-44A5-999D-1DAC69953740}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE52831A-8B2B-401C-BFD7-6123299B71EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE52831A-8B2B-401C-BFD7-6123299B71EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE52831A-8B2B-401C-BFD7-6123299B71EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE52831A-8B2B-401C-BFD7-6123299B71EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
