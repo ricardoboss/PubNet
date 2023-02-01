@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		README.md = README.md
 		docker-compose.yml = docker-compose.yml
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Frontend", "PubNet.Frontend\PubNet.Frontend.csproj", "{9D192AC4-B6B3-45D0-B3D9-502AA2491ACC}"
