@@ -26,7 +26,8 @@ public class PasswordManager
 		return Task.FromResult(_passwordHasher.HashPassword(author, password));
 	}
 
-	public async Task<bool> IsValid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
+	public async Task<bool> IsValid(PubNetContext db, Author author, string? password,
+		CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -40,7 +41,8 @@ public class PasswordManager
 		}
 	}
 
-	public async Task ThrowForInvalid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
+	public async Task ThrowForInvalid(PubNetContext db, Author author, string? password,
+		CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 

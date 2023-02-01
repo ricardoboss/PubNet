@@ -16,7 +16,8 @@ public abstract class BaseWorkerTask : IWorkerTask
 
 	public virtual int Tries { get; private set; }
 
-	public virtual async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
+	public virtual async Task<WorkerTaskResult> Invoke(IServiceProvider services,
+		CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -34,5 +35,6 @@ public abstract class BaseWorkerTask : IWorkerTask
 		}
 	}
 
-	protected abstract Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default);
+	protected abstract Task<WorkerTaskResult> InvokeInternal(IServiceProvider services,
+		CancellationToken cancellationToken = default);
 }

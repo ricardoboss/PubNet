@@ -50,7 +50,8 @@ public class JwtTokenGenerator
 
 	public static int GetLifetimeInSeconds(IConfiguration configuration)
 	{
-		var lifetimeInSecondsString = configuration["JWT:LifetimeInSeconds"] ?? throw new("Key 'JWT:LifetimeInSeconds' is missing in configuration");
+		var lifetimeInSecondsString = configuration["JWT:LifetimeInSeconds"] ??
+			throw new("Key 'JWT:LifetimeInSeconds' is missing in configuration");
 		if (!int.TryParse(lifetimeInSecondsString, out var lifetime))
 			throw new("Key 'JWT:LifetimeInSeconds' does not contain a valid integer");
 

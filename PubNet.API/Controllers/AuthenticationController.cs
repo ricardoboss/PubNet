@@ -45,7 +45,8 @@ public class AuthenticationController : BaseController
 	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
 	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	public async Task<IActionResult> Register([FromBody] RegisterRequest dto, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> Register([FromBody] RegisterRequest dto,
+		CancellationToken cancellationToken = default)
 	{
 		if (_db.Authors.Any(a => a.UserName == dto.Username))
 			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
@@ -75,7 +76,8 @@ public class AuthenticationController : BaseController
 	[HttpGet("self")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	public async Task<IActionResult> Self(ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> Self(ApplicationRequestContext context,
+		CancellationToken cancellationToken = default)
 	{
 		return Ok(await context.RequireAuthorAsync(User, _db, cancellationToken));
 	}

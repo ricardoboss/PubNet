@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-	<configuration default="false" name="Watch PubNet.Frontend" type="RunDotNetWatch" factoryName="RunDotNetWatch">
+	<configuration name="Watch PubNet.Frontend" default="false" factoryName="RunDotNetWatch" type="RunDotNetWatch">
 		<option name="exePath"
 				value="$USER_HOME$/.nuget/packages/microsoft.aspnetcore.components.webassembly.devserver/7.0.2/tools/blazor-devserver.dll"/>
 		<option name="programParameters"

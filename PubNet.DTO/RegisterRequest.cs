@@ -14,7 +14,8 @@ public class RegisterRequest
 
 	public string? Website { get; set; }
 
-	public void Deconstruct(out string? username, out string? email, out string? password, out string? name, out string? website)
+	public void Deconstruct(out string? username, out string? email, out string? password, out string? name,
+		out string? website)
 	{
 		username = Username;
 		email = Email;

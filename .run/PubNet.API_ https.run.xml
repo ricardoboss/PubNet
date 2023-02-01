@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-	<configuration default="false" name="PubNet.API: https" type="LaunchSettings"
-				   factoryName=".NET Launch Settings Profile">
+	<configuration name="PubNet.API: https" default="false" factoryName=".NET Launch Settings Profile"
+				   type="LaunchSettings">
 		<option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PubNet.API/PubNet.API.csproj"/>
 		<option name="LAUNCH_PROFILE_TFM" value="net7.0"/>
 		<option name="LAUNCH_PROFILE_NAME" value="https"/>

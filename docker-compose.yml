@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  pubnet:
+    driver: bridge
+
 services:
   database:
     image: postgres:latest
@@ -7,8 +11,8 @@ services:
     environment:
       POSTGRES_USER: "pubnet"
       POSTGRES_PASSWORD: "pubnet"
-    ports:
-      - "5432:5432"
+    networks:
+      - pubnet
 
   seq:
     image: datalust/seq
@@ -17,12 +21,46 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "5380:80"
-      - "5341:5341"
 
-  api:
-    build:
-      context: ./PubNet.API
-      target: final
+  caddy:
+    image: caddy
+    restart: always
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+    networks:
+      - pubnet
+
+  api:
+    build:
+      dockerfile: PubNet.API/Dockerfile
+      target: final
+    depends_on:
+      - database
+      - caddy
+    volumes:
+      - "./appsettings.json:/app/appsettings.Production.json"
+    networks:
+      - pubnet
+
+  worker:
+    build:
+      dockerfile: PubNet.Worker/Dockerfile
+      target: final
+    depends_on:
+      - database
+    volumes:
+      - "./appsettings.json:/app/appsettings.Production.json"
+    networks:
+      - pubnet
+
+  frontend:
+    build:
+      dockerfile: PubNet.Frontend/Dockerfile
+      target: final
+    depends_on:
+      - api
+    volumes:
+      - "./appsettings-frontend.json:/app/wwwroot/appsettings.Production.json"

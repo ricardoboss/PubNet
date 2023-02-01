@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-	<configuration default="false" name="PubNet.Worker" type="LaunchSettings"
-				   factoryName=".NET Launch Settings Profile">
+	<configuration name="PubNet.Worker" default="false" factoryName=".NET Launch Settings Profile"
+				   type="LaunchSettings">
 		<option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PubNet.Worker/PubNet.Worker.csproj"/>
 		<option name="LAUNCH_PROFILE_TFM" value="net7.0"/>
 		<option name="LAUNCH_PROFILE_NAME" value="PubNet.Worker"/>

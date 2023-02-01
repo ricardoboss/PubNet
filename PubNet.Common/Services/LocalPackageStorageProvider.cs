@@ -26,7 +26,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public async Task<string> StoreArchive(string name, string version, Stream stream, CancellationToken cancellationToken = default)
+	public async Task<string> StoreArchive(string name, string version, Stream stream,
+		CancellationToken cancellationToken = default)
 	{
 		var path = GetPackageVersionArchivePath(name, version);
 
@@ -34,7 +35,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 		if (!File.Exists(path))
 		{
-			var parent = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Cannot get parent directory for archive path");
+			var parent = Path.GetDirectoryName(path) ??
+				throw new InvalidOperationException("Cannot get parent directory for archive path");
 			Directory.CreateDirectory(parent);
 		}
 
@@ -62,11 +64,13 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public async Task<string> StoreDocs(string name, string version, string tempFolder, CancellationToken cancellationToken = default)
+	public async Task<string> StoreDocs(string name, string version, string tempFolder,
+		CancellationToken cancellationToken = default)
 	{
 		var destination = await GetDocsPath(name, version, cancellationToken);
 
-		_logger.LogDebug("Storing package documentation for {PackageName} {PackageVersion} at {Path}", name, version, destination);
+		_logger.LogDebug("Storing package documentation for {PackageName} {PackageVersion} at {Path}", name, version,
+			destination);
 
 		if (Directory.Exists(destination))
 		{
@@ -92,7 +96,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 	private static string GetStorageBasePath()
 	{
-		return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet", "packages");
+		return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet",
+			"packages");
 	}
 
 	private static string GetPackageBasePath(string name)

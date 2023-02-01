@@ -26,8 +26,10 @@ public class AuthorsController : BaseController
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 3600)]
-	public IActionResult GetAll([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
+	[ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any,
+		Duration = 3600)]
+	public IActionResult GetAll([FromQuery] string? q = null, [FromQuery] long? before = null,
+		[FromQuery] int? limit = null)
 	{
 		const int maxLimit = 1000;
 
@@ -54,7 +56,8 @@ public class AuthorsController : BaseController
 			packages = packages.Take(resultLimit);
 		}
 
-		return Ok(new AuthorsResponse(packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count))));
+		return Ok(new AuthorsResponse(
+			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count))));
 	}
 
 	[HttpGet("{username}")]
@@ -78,7 +81,8 @@ public class AuthorsController : BaseController
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto,
+		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
@@ -115,14 +119,17 @@ public class AuthorsController : BaseController
 			.Include(a => a.Packages)
 			.FirstOrDefaultAsync(cancellationToken);
 
-		return author is null ? NotFound() : Ok(new AuthorPackagesResponse(author.Packages.Select(PackageDto.FromPackage)));
+		return author is null
+			? NotFound()
+			: Ok(new AuthorPackagesResponse(author.Packages.Select(PackageDto.FromPackage)));
 	}
 
 	[HttpPatch("{username}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto,
+		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 

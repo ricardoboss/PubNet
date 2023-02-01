@@ -14,7 +14,8 @@ public class PubDevPackageProvider
 		_clientFactory = clientFactory;
 	}
 
-	public async Task<PackageVersionDto?> TryGetVersion(string name, string version, CancellationToken cancellationToken = default)
+	public async Task<PackageVersionDto?> TryGetVersion(string name, string version,
+		CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -22,7 +23,8 @@ public class PubDevPackageProvider
 
 		try
 		{
-			var dto = await client.GetFromJsonAsync<PackageVersionDto>($"/api/packages/{name}/versions/{version}", cancellationToken);
+			var dto = await client.GetFromJsonAsync<PackageVersionDto>($"/api/packages/{name}/versions/{version}",
+				cancellationToken);
 			if (dto is null) return null;
 
 			dto.Mirrored = true;

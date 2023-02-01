@@ -17,13 +17,15 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 	}
 
 	/// <inheritdoc />
-	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
+	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,
+		CancellationToken cancellationToken = default)
 	{
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 		_logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
 		_configuration ??= services.GetRequiredService<IConfiguration>();
 
-		if (!TimeSpan.TryParse(_configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7", out var maxAge)) throw new("Unable to parse PackageStorage:PendingMaxAge as a valid TimeSpan");
+		if (!TimeSpan.TryParse(_configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7", out var maxAge))
+			throw new("Unable to parse PackageStorage:PendingMaxAge as a valid TimeSpan");
 
 		var uploadedAtLowerLimit = DateTimeOffset.UtcNow.Subtract(maxAge);
 

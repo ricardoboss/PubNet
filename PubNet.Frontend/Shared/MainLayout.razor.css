@@ -10,9 +10,9 @@ main {
 
 .sidebar {
 	background-image: linear-gradient(
-			140deg,
-			rgb(7, 89, 133) 0%,
-			rgb(12, 87, 56) 100%
+		140deg,
+		rgb(7, 89, 133) 0%,
+		rgb(12, 87, 56) 100%
 	);
 }
 

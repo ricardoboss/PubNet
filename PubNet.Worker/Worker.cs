@@ -14,7 +14,8 @@ public class Worker : BackgroundService
 	private readonly IServiceProvider _serviceProvider;
 	private readonly WorkerTaskQueue _taskQueue;
 
-	public Worker(ILogger<Worker> logger, WorkerTaskQueue taskQueue, IServiceProvider serviceProvider, IConfiguration configuration)
+	public Worker(ILogger<Worker> logger, WorkerTaskQueue taskQueue, IServiceProvider serviceProvider,
+		IConfiguration configuration)
 	{
 		_logger = logger;
 		_taskQueue = taskQueue;
@@ -58,7 +59,8 @@ public class Worker : BackgroundService
 
 						if (scheduledAt < (wakeTime ?? DateTime.Now.Add(interval)))
 						{
-							_logger.LogInformation("Adjusting worker wake time for scheduled task {TaskName}", scheduledTask.Name);
+							_logger.LogInformation("Adjusting worker wake time for scheduled task {TaskName}",
+								scheduledTask.Name);
 
 							wakeTime = scheduledAt;
 						}
@@ -88,7 +90,8 @@ public class Worker : BackgroundService
 
 					if (scheduledAt < (wakeTime ?? DateTime.Now.Add(interval)))
 					{
-						_logger.LogInformation("Adjusting worker wake time for scheduled task {TaskName}", scheduledTask.Name);
+						_logger.LogInformation("Adjusting worker wake time for scheduled task {TaskName}",
+							scheduledTask.Name);
 
 						wakeTime = scheduledAt;
 					}
@@ -177,7 +180,9 @@ public class Worker : BackgroundService
 
 				if (task is { Tries: >= MaxTries, RequeueOnException: true })
 				{
-					_logger.LogError("Not re-queueing task due to it having reached the maximum number of tries ({MaxTries})", MaxTries);
+					_logger.LogError(
+						"Not re-queueing task due to it having reached the maximum number of tries ({MaxTries})",
+						MaxTries);
 				}
 				else if (task.RequeueOnException)
 				{

@@ -19,7 +19,8 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 
 	public override bool RequeueOnException => true;
 
-	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
+	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,
+		CancellationToken cancellationToken = default)
 	{
 		_logger ??= services.GetRequiredService<ILogger<MissingAnalysisQueuingTask>>();
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
@@ -31,7 +32,8 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		return WorkerTaskResult.Requeue;
 	}
 
-	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger, WorkerTaskQueue taskQueue, CancellationToken cancellationToken = default)
+	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger,
+		WorkerTaskQueue taskQueue, CancellationToken cancellationToken = default)
 	{
 		var versionsWithoutAnalysis = await db.PackageVersions
 			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
@@ -49,7 +51,8 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		foreach (var packageVersion in versionsWithoutAnalysis) taskQueue.Enqueue(CreateTaskFor(packageVersion));
 	}
 
-	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger, WorkerTaskQueue taskQueue, CancellationToken cancellationToken)
+	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger,
+		WorkerTaskQueue taskQueue, CancellationToken cancellationToken)
 	{
 		var incompleteAnalyses = await db.PackageVersionAnalyses
 			.Where(a => a.Formatted == null || a.DocumentationLink == null)

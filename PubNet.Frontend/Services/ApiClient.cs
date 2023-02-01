@@ -36,27 +36,32 @@ public class ApiClient
 		set => _httpClient.BaseAddress = value;
 	}
 
-	public async Task<HttpResponseMessage> GetAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
+	public async Task<HttpResponseMessage> GetAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri,
+		CancellationToken cancellationToken = default)
 	{
 		return await _httpClient.GetAsync(uri, cancellationToken);
 	}
 
-	public async Task<T?> GetAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
+	public async Task<T?> GetAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri,
+		CancellationToken cancellationToken = default)
 	{
 		return await _httpClient.GetFromJsonAsync<T>(uri, cancellationToken);
 	}
 
-	public async Task<HttpResponseMessage> PostAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body, CancellationToken cancellationToken = default)
+	public async Task<HttpResponseMessage> PostAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body,
+		CancellationToken cancellationToken = default)
 	{
 		return await _httpClient.PostAsJsonAsync(uri, body, cancellationToken);
 	}
 
-	public async Task<HttpResponseMessage> PatchAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body, CancellationToken cancellationToken = default)
+	public async Task<HttpResponseMessage> PatchAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body,
+		CancellationToken cancellationToken = default)
 	{
 		return await _httpClient.PatchAsJsonAsync(uri, body, cancellationToken);
 	}
 
-	public async Task<HttpResponseMessage> DeleteAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
+	public async Task<HttpResponseMessage> DeleteAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri,
+		CancellationToken cancellationToken = default)
 	{
 		return await _httpClient.DeleteAsync(uri, cancellationToken);
 	}

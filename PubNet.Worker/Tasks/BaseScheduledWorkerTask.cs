@@ -4,7 +4,8 @@ namespace PubNet.API.WorkerTasks;
 
 public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorkerTask
 {
-	protected BaseScheduledWorkerTask(TimeSpan interval, DateTime scheduledAt, string? name = null, bool? requeueOnException = null) : base(name, requeueOnException)
+	protected BaseScheduledWorkerTask(TimeSpan interval, DateTime scheduledAt, string? name = null,
+		bool? requeueOnException = null) : base(name, requeueOnException)
 	{
 		Interval = interval;
 		ScheduledAt = scheduledAt;
@@ -25,7 +26,8 @@ public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorker
 	public DateTime NextRun { get; protected set; }
 
 	/// <inheritdoc />
-	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
+	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services,
+		CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -38,5 +40,6 @@ public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorker
 		}
 	}
 
-	protected abstract Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default);
+	protected abstract Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,
+		CancellationToken cancellationToken = default);
 }

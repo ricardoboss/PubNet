@@ -13,9 +13,11 @@ public class ApplicationRequestContext
 
 	public Author? Author { get; set; }
 
-	private static InvalidCredentialException MissingAuthentication => new("Missing authentication. Acquire a Bearer token at [POST /authentication/login] and send it in the 'Authenticate' header.");
+	private static InvalidCredentialException MissingAuthentication => new(
+		"Missing authentication. Acquire a Bearer token at [POST /authentication/login] and send it in the 'Authenticate' header.");
 
-	public async Task<Author> RequireAuthorAsync(ClaimsPrincipal user, PubNetContext db, CancellationToken cancellationToken = default)
+	public async Task<Author> RequireAuthorAsync(ClaimsPrincipal user, PubNetContext db,
+		CancellationToken cancellationToken = default)
 	{
 		if (Author is not null)
 			return Author;

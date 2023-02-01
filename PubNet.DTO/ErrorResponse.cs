@@ -8,10 +8,12 @@ public class ErrorResponse
 	}
 
 	public static ErrorResponse UsernameMismatch =>
-		new(new("author-username-mismatch", "The username you are trying to access does not match the owner of the token you used"));
+		new(new("author-username-mismatch",
+			"The username you are trying to access does not match the owner of the token you used"));
 
 	public static ErrorResponse PackageAuthorMismatch =>
-		new(new("package-author-mismatch", "The package you are trying to access does not belong the owner of the token you used"));
+		new(new("package-author-mismatch",
+			"The package you are trying to access does not belong the owner of the token you used"));
 
 	public static ErrorResponse InvalidQuery =>
 		new(new("invalid-query", "Query parameter 'limit' is mandatory if 'before' is given"));
@@ -32,7 +34,8 @@ public class ErrorResponse
 		new(new("invalid-author-id", "Invalid author id provided"));
 
 	public static ErrorResponse InvalidSignedUrl =>
-		new(new("invalid-signed-url", "The provided signature is invalid, indicating the url has been tempered with or was used on the wrong host"));
+		new(new("invalid-signed-url",
+			"The provided signature is invalid, indicating the url has been tempered with or was used on the wrong host"));
 
 	public static ErrorResponse MissingPendingId =>
 		new(new("missing-pending-id", "No pending id was provided"));
@@ -58,7 +61,8 @@ public class ErrorResponse
 
 	public static ErrorResponse VersionOlderThanLatest(string latestPackageVersion)
 	{
-		return new(new("version-older-than-latest", $"The version you are trying to upload is older than the latest version ({latestPackageVersion})"));
+		return new(new("version-older-than-latest",
+			$"The version you are trying to upload is older than the latest version ({latestPackageVersion})"));
 	}
 
 	public static ErrorResponse PackagePayloadTooLarge(long maxUploadSize)

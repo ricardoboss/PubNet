@@ -18,7 +18,8 @@ public class EndpointHelper
 
 	private IDataProtector Protector => _dataProtectionProvider.CreateProtector(nameof(EndpointHelper));
 
-	public string GenerateFullyQualified(HttpRequest request, string endpoint, IDictionary<string, string?>? queryParams = null, bool signed = false)
+	public string GenerateFullyQualified(HttpRequest request, string endpoint,
+		IDictionary<string, string?>? queryParams = null, bool signed = false)
 	{
 		var builder = new UriBuilder
 		{
@@ -38,7 +39,8 @@ public class EndpointHelper
 		return signed ? SignEndpoint(fqu) : fqu;
 	}
 
-	public string SignEndpoint(string endpoint, IDictionary<string, string?>? queryParams = null, string digestKey = DefaultDigestKey)
+	public string SignEndpoint(string endpoint, IDictionary<string, string?>? queryParams = null,
+		string digestKey = DefaultDigestKey)
 	{
 		var uri = new UriBuilder(endpoint);
 
