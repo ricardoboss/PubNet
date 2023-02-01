@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
+using PubNet.Common.Interfaces;
 using PubNet.Database;
 using PubNet.Database.Models;
 
@@ -18,8 +19,9 @@ public class PackagesController : BaseController
     private readonly PubNetContext _db;
     private readonly IPackageStorageProvider _storageProvider;
     private readonly FileExtensionContentTypeProvider _fileTypeProvider;
+    private readonly PubDevPackageProvider _pubDevPackageProvider;
 
-    public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IPackageStorageProvider storageProvider)
+    public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IPackageStorageProvider storageProvider, PubDevPackageProvider pubDevPackageProvider)
     {
         _logger = logger;
         _db = db;
@@ -31,6 +33,7 @@ public class PackagesController : BaseController
                 ["dart"] = "text/plain",
             },
         };
+        _pubDevPackageProvider = pubDevPackageProvider;
     }
 
     [HttpGet("")]
@@ -84,7 +87,20 @@ public class PackagesController : BaseController
                 .Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return package is null ? NotFound() : Ok(PackageDto.FromPackage(package));
+            PackageDto dto;
+            if (package is not null)
+            {
+                dto = PackageDto.FromPackage(package);
+            }
+            else
+            {
+                var pubDevPackage = await _pubDevPackageProvider.TryGetPackage(name, cancellationToken);
+                if (pubDevPackage is null) return NotFound();
+
+                dto = pubDevPackage;
+            }
+
+            return Ok(dto);
         }
     }
 
@@ -112,13 +128,33 @@ public class PackagesController : BaseController
 
             if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
-            // TODO: remove fields from storage
-
-            _db.PackageVersionAnalyses.RemoveRange(_db.PackageVersionAnalyses.Include(a => a.Version).Where(a => package.Versions.Any(v => v == a.Version)));
-            _db.PackageVersions.RemoveRange(package.Versions);
-            _db.Packages.Remove(package);
-
+            // decouple analyses from versions
+            await _db.PackageVersions
+                .Where(v => v.PackageName == name)
+                .ForEachAsync(v => v.Analysis = null, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);
+
+            // remove decoupled analyses
+            _db.PackageVersionAnalyses.RemoveRange(
+                _db.PackageVersionAnalyses
+                    .Include(a => a.Version)
+                    .Where(a => package.Versions.Any(v => v == a.Version))
+                );
+            await _db.SaveChangesAsync(cancellationToken);
+
+            // remove reference to latest version
+            package.Latest = null;
+            await _db.SaveChangesAsync(cancellationToken);
+            
+            // remove package versions
+            _db.PackageVersions.RemoveRange(package.Versions);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            // finally, delete the package itself
+            _db.Packages.Remove(package);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            await _storageProvider.DeletePackage(name, cancellationToken);
 
             return NoContent();
         }
@@ -140,20 +176,29 @@ public class PackagesController : BaseController
                 .Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
                 .FirstOrDefaultAsync(cancellationToken);
 
+            PackageVersionDto dto;
             var packageVersion = package?.Versions.FirstOrDefault(v => v.Version == version);
+            if (packageVersion is not null)
+            {
+                dto = PackageVersionDto.FromPackageVersion(packageVersion);
+            }
+            else
+            {
+                var pubDevPackageVersion = await _pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
+                if (pubDevPackageVersion is null) return NotFound();
 
-            if (packageVersion is null)
-                return NotFound();
+                dto = pubDevPackageVersion;
+            }
 
             Response.Headers.ContentType = "application/vnd.pub.v2+json";
-            return Ok(PackageVersionDto.FromPackageVersion(packageVersion));
+            return Ok(dto);
         }
     }
 
     [HttpGet("{name}/versions/{version}.tar.gz")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetVersionArchive(string name, string version)
+    public async Task<IActionResult> GetVersionArchive(string name, string version, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -166,6 +211,13 @@ public class PackagesController : BaseController
         }
         catch (Exception ex)
         {
+            if (ex is FileNotFoundException)
+            {
+                var pubDevPackageVersion = await _pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
+                if (pubDevPackageVersion is not null)
+                    return Redirect(pubDevPackageVersion.ArchiveUrl);
+            }
+
             _logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name, version);
 
             return NotFound();

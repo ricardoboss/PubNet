@@ -11,6 +11,7 @@ using PubNet.API.Controllers;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
+using PubNet.Common.Interfaces;
 using PubNet.Common.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -113,6 +114,17 @@ try
     builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
     builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
     builder.Services.AddSingleton<EndpointHelper>();
+
+    // mirror for pub.dev
+    builder.Services.AddHttpClient(PubDevPackageProvider.ClientName, options =>
+    {
+        options.BaseAddress = new("https://pub.dev/api/");
+        options.DefaultRequestHeaders.Accept.Add(new("application/json"));
+        options.DefaultRequestHeaders.UserAgent.Clear();
+        options.DefaultRequestHeaders.UserAgent.Add(new("pub-net-mirror", "1.0.0"));
+        options.DefaultRequestHeaders.UserAgent.Add(new("(+https://github.com/ricardoboss/PubNet)"));
+    });
+    builder.Services.AddSingleton<PubDevPackageProvider>();
 
     builder.Services.AddControllers()
         .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });

@@ -35,14 +35,6 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
             .Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
             .ToListAsync(cancellationToken);
 
-        // TODO: make current task batch available to tasks (analyzer tasks have already been dequeued by now)
-        // versionsWithoutAnalysis = versionsWithoutAnalysis
-        //     .Where(v => !taskQueue.Any(t =>
-        //         t is PubSpecAnalyzerTask existing && existing.Package == v.PackageName &&
-        //         existing.Version == v.Version)
-        //     )
-        //     .ToList();
-
         if (versionsWithoutAnalysis.Count == 0)
         {
             logger.LogTrace("No package versions without analysis found");

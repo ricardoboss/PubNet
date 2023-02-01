@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
+using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;

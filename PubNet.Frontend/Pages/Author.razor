@@ -24,8 +24,6 @@
 
 @if (AuthorModel is not null)
 {
-    <p>Registered since: @AuthorModel.RegisteredAt</p>
-
     @if (Editing)
     {
         <EditAuthorForm Author="AuthorModel" OnDoneEditing="DoneEditing" />
@@ -33,6 +31,8 @@
     else
     {
         <p>@AuthorModel.Name</p>
+
+        <p>Joined <abbr title="@AuthorModel.RegisteredAt">@AuthorModel.RegisteredAt.Humanize()</abbr></p>
 
         @if (AuthorModel.Website is not null)
         {
@@ -44,10 +44,10 @@
         @if (IsSelf)
         {
             <div class="my-3" style="display: flex; align-items: center; gap: 0.25rem">
-                <button class="btn btn-outline-info" @onclick="BeginEditing">
+                <button class="btn btn-sm btn-outline-info" @onclick="BeginEditing">
                     Edit
                 </button>
-                <button class="btn btn-outline-danger" @onclick="OnDeleteClicked">
+                <button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked">
                     Delete
                 </button>
             </div>
@@ -106,8 +106,19 @@
                     <td>
                         <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
                     </td>
-                    <td>@package.Latest?.Version</td>
-                    <td>@package.Latest?.PublishedAt</td>
+                    @if (package.Latest is {} latest)
+                    {
+                        <td>@latest.Version</td>
+                        <td>
+                            <abbr title="@latest.Published">@(latest.Published.Humanize())</abbr>
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="2">
+                            <em class="text-muted">No versions available</em>
+                        </td>
+                    }
                 </tr>
             }
         }

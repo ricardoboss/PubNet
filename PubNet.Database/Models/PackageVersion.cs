@@ -1,4 +1,6 @@
-﻿namespace PubNet.Database.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PubNet.Database.Models;
 
 public class PackageVersion
 {
@@ -16,6 +18,7 @@ public class PackageVersion
 
     public DateTimeOffset PublishedAtUtc { get; set; }
 
+    [NotNull]
     public PubSpec? PubSpec { set; get; }
 
     public int? AnalysisId { get; set; }

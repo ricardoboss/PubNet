@@ -26,6 +26,8 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <script src="js/popper/popper.min.js"></script>
+    <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
     <script>
         var Utils = Utils || {};
         Utils.getProperty = function (element, property) {
@@ -33,6 +35,10 @@
             if (typeof result === "undefined") return null;
             return result;
         };
+
+        Utils.reloadTooltips = function() {
+            [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        }
     </script>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>

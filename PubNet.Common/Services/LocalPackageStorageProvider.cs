@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
-using PubNet.API.Interfaces;
+using PubNet.Common.Interfaces;
 
 namespace PubNet.Common.Services;
 
@@ -27,6 +27,18 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
         var path = Path.Combine(GetPackageVersionBasePath(name, version), "archive.tar.gz");
 
         return Path.GetFullPath(path);
+    }
+
+    /// <inheritdoc />
+    public Task DeletePackage(string name, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var path = GetPackageBasePath(name);
+
+        Directory.Delete(path, true);
+
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />

@@ -1,0 +1,29 @@
+@inject ClipboardService Clipboard
+@inject IJSRuntime JsRuntime
+
+<button @onclick="() => Clipboard.WriteText(Content ?? string.Empty)"
+        data-bs-toggle="tooltip"
+        data-bs-title="Click to copy"
+        class="btn btn-sm btn-outline-secondary py-0 px-1"
+        style="cursor: pointer">
+    &boxbox;
+</button>
+
+@code {
+
+    [Parameter]
+    public string? Content { get; set; }
+
+    /// <inheritdoc />
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("Utils.reloadTooltips");
+        }
+    }
+
+}

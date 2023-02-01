@@ -1,97 +1,123 @@
 ﻿@page "/package/{PackageName}"
 @using System.Net
 @using PubNet.API.DTO
+
 @inject ApiClient Http
 @inject AuthenticationService Auth
 @inject NavigationManager Nav
+@inject AlertService Alert
 
 @if (Error is not null)
 {
     <div class="alert alert-danger">
         <strong>Whoops!</strong> @Error
     </div>
+    
+    @if (ShowUpstreamLink)
+    {
+        <p>
+            Maybe you can find this package at pub.dev instead: <a href="@("https://pub.dev/packages/" + PackageName)">pub.dev/packages/@PackageName</a>
+        </p>
+    }
 }
 
 @if (PackageModel is null && Error is null)
 {
     <PageTitle>@PackageName</PageTitle>
 
-    <h1>@PackageName</h1>
+    <h1>
+        <code>@PackageName</code>
+    </h1>
 
-    <p>
-        <em>Loading...</em>
-    </p>
+    <p><em>Loading...</em></p>
 }
 else if (PackageModel is not null)
 {
-    @if (ShowPackageAdminTools)
-    {
-        <button class="btn btn-outline-danger my-3" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
-    }
-
-    <p>
-        Published by @if (PackageModel.Author is not null)
-                     {
-                         <NavLink href="@("/author/" + PackageModel.Author.UserName)">@PackageModel.Author.UserName</NavLink>
-                     }
-                     else
-                     {
-                         <span class="text-muted">&lt;deleted&gt;</span>
-                     }
-    </p>
-
-    @if (PackageModel.Latest is null)
+    @if (PackageModel.Latest is not { } latest)
     {
         <PageTitle>@PackageName</PageTitle>
 
-        <h1>@PackageName</h1>
+        <h1>
+            <code>@PackageName</code>
+        </h1>
+
+        <p>
+            Published by <AuthorLink Username="@PackageModel.Author?.UserName" />
+        </p>
+
+        @if (ShowPackageAdminTools)
+        {
+            <button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
+        }
     }
     else
     {
-        <PageTitle>@PackageName @(PackageModel.Latest.Version)</PageTitle>
+        <PageTitle>@PackageName: @latest.Version</PageTitle>
 
-        <h1>@PackageName @(PackageModel.Latest.Version)</h1>
+        <h1>
+            <code>@PackageName: @latest.Version</code>
 
-        <p>@(PackageModel.Latest.PubSpec?.Description)</p>
+            <ClickToCopyButton Content="@($"{latest.PackageName}: ^{latest.Version}")" />
+        </h1>
 
-        @if (PackageModel.Latest.Analysis is {} analysis)
+        <p class="text-muted">
+            Published by <AuthorLink Username="@PackageModel.Author?.UserName" /> <abbr title="@latest.Published">@(latest.Published.Humanize())</abbr>
+        </p>
+
+        @if (ShowPackageAdminTools)
         {
-            <div style="display: flex; align-items: center; gap: 0.25rem">
-                @if (analysis.DocumentationHref is not null)
-                {
-                    <NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
-                }
-
-                @if (analysis.Formatted == true)
-                {
-                    <div class="badge bg-success">Formatted</div>
-                }
-                else if (analysis.Formatted == false)
-                {
-                    <div class="badge bg-warning">Not Formatted</div>
-                }
+            <div class="my-3">
+                <button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
             </div>
         }
-        else
-        {
-            <div class="badge bg-secondary">Analysis not complete</div>
-        }
 
-        <h2 class="mt-4">Dependencies</h2>
-
-        @if (PackageModel.Latest.PubSpec?.Dependencies is null || PackageModel.Latest.PubSpec?.Dependencies.Count == 0)
+        @if (IsMirrored)
         {
-            <p><em>No dependencies.</em></p>
+            <em><a href="@("https://pub.dev/packages/" + PackageName)" target="_blank">Mirrored from pub.dev</a></em>
         }
         else
         {
-            <ul>
-                @foreach (var dependency in PackageModel.Latest.PubSpec!.Dependencies!)
+            <AnalysisBadges Analysis="latest.Analysis"/>
+        }
+
+        <p class="my-3 lead">@(latest.PubSpec.Description)</p>
+
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <h2 class="mt-4">Dependencies</h2>
+
+                @if (latest.PubSpec.Dependencies is null or { Count: 0 })
                 {
-                    <li><NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink></li>
+                    <p class="my-3"><em>No dependencies.</em></p>
                 }
-            </ul>
-        }
+                else
+                {
+                    <ul>
+                        @foreach (var dependency in latest.PubSpec.Dependencies)
+                        {
+                            <li><NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink></li>
+                        }
+                    </ul>
+                }
+            </div>
+            <div class="col-12 col-sm-6">
+                <h2 class="mt-4">Dev Dependencies</h2>
+
+                @if (latest.PubSpec.DevDependencies is null or { Count: 0 })
+                {
+                    <p class="my-3"><em>No dependencies.</em></p>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var dependency in latest.PubSpec.DevDependencies)
+                        {
+                            <li><NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink></li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
     }
 
     @if (PackageModel.Versions is not null)
@@ -103,26 +129,38 @@ else if (PackageModel is not null)
             <tr>
                 <th>Version</th>
                 <th>Published At</th>
-                <th>Docs</th>
+                @if (!IsMirrored)
+                {
+                    <th>Badges</th>
+                }
             </tr>
             </thead>
             <tbody>
-            @foreach (var version in PackageModel.Versions.OrderByDescending(v => v.PublishedAt))
+            @foreach (var version in PackageModel.Versions.OrderByDescending(v => v.Published).Take(10))
             {
                 <tr>
-                    <td>@version.Version</td>
-                    <td>@version.PublishedAt</td>
                     <td>
-                        @if (version.Analysis?.DocumentationHref is null)
-                        {
-                            <div class="badge bg-secondary">Analysis not complete</div>
-                        }
-                        else
-                        {
-                            <NavLink href="@(DocumentationUrl(version.Analysis.DocumentationHref))" class="badge bg-info">
-                                Docs
-                            </NavLink>
-                        }
+                        <code>@version.Version</code>
+
+                        <ClickToCopyButton Content="@($"{version.PackageName}: ^{version.Version}")" />
+                    </td>
+                    <td>
+                        <abbr title="@version.Published">@(version.Published.Humanize())</abbr>
+                    </td>
+                    @if (!IsMirrored)
+                    {
+                        <td>
+                            <AnalysisBadges Analysis="version.Analysis"/>
+                        </td>
+                    }
+                </tr>
+            }
+            
+            @if (PackageModel.Versions.Count() > 10)
+            {
+                <tr>
+                    <td colspan="3">
+                        <span class="text-muted">... and @(PackageModel.Versions.Count() - 10) older versions</span>
                     </td>
                 </tr>
             }
@@ -131,7 +169,7 @@ else if (PackageModel is not null)
     }
     else
     {
-        <p><em>No versions found.</em></p>
+        <p class="my-3"><em>No versions found.</em></p>
     }
 }
 
@@ -141,20 +179,26 @@ else if (PackageModel is not null)
     public string? PackageName { get; set; }
 
     private PackageDto? PackageModel { get; set; }
+
     private string? Error { get; set; }
     
     private bool Editing { get; set; }
     private bool ShowPackageAdminTools { get; set; }
-
-    private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+    private bool ShowUpstreamLink { get; set; }
 
     private static string LinkToDependency(string name) => "/package/" + name;
+
+    private bool IsMirrored => PackageModel?.Mirrored ?? false;
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
         Error = null;
+        PackageModel = null;
+        Editing = false;
+        ShowPackageAdminTools = false;
+        ShowUpstreamLink = false;
 
         try
         {
@@ -165,10 +209,16 @@ else if (PackageModel is not null)
             }
             else
             {
-                Error = response.StatusCode switch {
-                    HttpStatusCode.NotFound => "The package you are looking for does not exist",
-                    _ => "An unknown error occurred",
-                };
+                PackageModel = null;
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Error = "The package you are looking for does not exist";
+                    ShowUpstreamLink = true;
+                }
+                else
+                {
+                    Error = "An unknown error occurred";
+                }
             }
 
             ShowPackageAdminTools = PackageModel?.Author?.UserName is not null
@@ -182,6 +232,10 @@ else if (PackageModel is not null)
 
     private async Task OnDeleteClicked()
     {
+        var confirmed = await Alert.Confirm("Are you sure? All versions will be deleted and you can no longer 'pub get' it.");
+        if (!confirmed)
+            return;
+
         Error = null;
         Editing = true;
 

@@ -4,9 +4,6 @@ namespace PubNet.Database.Models;
 
 public class PubSpec
 {
-    [JsonIgnore]
-    public int Id { get; set; }
-
     [JsonPropertyName("name")]
     public string? Name { get; set; }
 
@@ -73,5 +70,5 @@ public class PubSpec
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonPropertyName("flutter")]
-    public Dictionary<string, string?>? Flutter { get; set; }
+    public Dictionary<string, dynamic?>? Flutter { get; set; }
 }

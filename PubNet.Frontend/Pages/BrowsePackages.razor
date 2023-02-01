@@ -40,17 +40,12 @@ else
                         <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
                     </td>
                     <td>
-                        @if (package.AuthorUserName is not null)
-                                             {
-                                                 <NavLink href="@("/author/" + package.AuthorUserName)">@package.AuthorUserName</NavLink>
-                                             }
-                                             else
-                                             {
-                                                 <span class="text-muted">&lt;deleted&gt;</span>
-                                             }
+                        <AuthorLink Username="@package.AuthorUserName" />
                     </td>
                     <td>@package.LatestVersion</td>
-                    <td>@package.LatestPublishedAtUtc.ToLocalTime()</td>
+                    <td>
+                        <abbr title="@package.LatestPublishedAtUtc">@(package.LatestPublishedAtUtc.Humanize())</abbr>
+                    </td>
                 </tr>
             }
         }

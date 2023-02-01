@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using PubNet.Database.Models;
+using PubNet.API.DTO;
 
 namespace PubNet.Frontend.Services;
 
@@ -12,7 +12,7 @@ public class AuthenticationService
     private readonly ILocalStorageService _localStorage;
     private readonly ApiClient _apiClient;
 
-    private Author? _self;
+    private AuthorDto? _self;
 
     public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient)
     {
@@ -57,7 +57,7 @@ public class AuthenticationService
         _self = null;
     }
 
-    public async Task<Author> GetSelfAsync(CancellationToken cancellationToken = default)
+    public async Task<AuthorDto> GetSelfAsync(CancellationToken cancellationToken = default)
     {
         if (_apiClient.Token is null)
             throw new("Not authenticated");
@@ -65,7 +65,7 @@ public class AuthenticationService
         if (_self is not null)
             return _self;
 
-        var storedSelf = await _localStorage.GetItemAsync<Author>(SelfStorageName, cancellationToken);
+        var storedSelf = await _localStorage.GetItemAsync<AuthorDto>(SelfStorageName, cancellationToken);
         if (storedSelf is not null)
         {
             _self = storedSelf;
@@ -77,7 +77,7 @@ public class AuthenticationService
         if (!response.IsSuccessStatusCode)
             throw new("Request failed");
 
-        _self = await response.Content.ReadFromJsonAsync<Author>(cancellationToken: cancellationToken);
+        _self = await response.Content.ReadFromJsonAsync<AuthorDto>(cancellationToken: cancellationToken);
         if (_self is null)
             throw new("Unable to deserialize");
 

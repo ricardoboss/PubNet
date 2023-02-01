@@ -9,7 +9,11 @@ main {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(
+            140deg,
+            rgb(7, 89, 133) 0%,
+            rgb(12, 87, 56) 100%
+    );
 }
 
 .top-row {
@@ -23,7 +27,6 @@ main {
 
     .top-row ::deep a, .top-row ::deep .btn-link {
         white-space: nowrap;
-        margin-left: 1.5rem;
         text-decoration: none;
     }
 

@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using PubNet.API.DTO
+@inherits LayoutComponentBase
 @inject AuthenticationService Auth
 
 <div class="page">
@@ -18,8 +19,8 @@
             }
             else
             {
-                <strong>Welcome back, <NavLink style="margin-left: 0" href="@("/author/" + UserName)">@UserName</NavLink>!</strong>
-                <NavLink href="/logout">Logout</NavLink>
+                <strong>Welcome back, <AuthorLink Username="@UserName" />!</strong>
+                <NavLink href="/logout" class="ms-3">Logout</NavLink>
             }
         </div>
 

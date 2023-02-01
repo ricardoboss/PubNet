@@ -18,6 +18,10 @@
     top: -2px;
 }
 
+nav.flex-column span.oi {
+    padding-left: 0.5rem;
+}
+
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
