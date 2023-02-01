@@ -7,81 +7,77 @@ namespace PubNet.API.Services;
 
 public class EndpointHelper
 {
-    private const string DefaultDigestKey = "d";
+	private const string DefaultDigestKey = "d";
 
-    private readonly IDataProtectionProvider _dataProtectionProvider;
+	private readonly IDataProtectionProvider _dataProtectionProvider;
 
-    public EndpointHelper(IDataProtectionProvider dataProtectionProvider)
-    {
-        _dataProtectionProvider = dataProtectionProvider;
-    }
+	public EndpointHelper(IDataProtectionProvider dataProtectionProvider)
+	{
+		_dataProtectionProvider = dataProtectionProvider;
+	}
 
-    public string GenerateFullyQualified(HttpRequest request, string endpoint, IDictionary<string, string?>? queryParams = null, bool signed = false)
-    {
-        var builder = new UriBuilder
-        {
-            Scheme = request.Scheme,
-            Host = request.Host.Host,
-            Path = endpoint,
-        };
+	private IDataProtector Protector => _dataProtectionProvider.CreateProtector(nameof(EndpointHelper));
 
-        if (request.Host.Port.HasValue)
-            builder.Port = request.Host.Port.Value;
+	public string GenerateFullyQualified(HttpRequest request, string endpoint, IDictionary<string, string?>? queryParams = null, bool signed = false)
+	{
+		var builder = new UriBuilder
+		{
+			Scheme = request.Scheme,
+			Host = request.Host.Host,
+			Path = endpoint,
+		};
 
-        if (queryParams is not null)
-            builder.Query = QueryString.Create(queryParams).ToUriComponent();
+		if (request.Host.Port.HasValue)
+			builder.Port = request.Host.Port.Value;
 
-        var fqu = builder.ToString();
+		if (queryParams is not null)
+			builder.Query = QueryString.Create(queryParams).ToUriComponent();
 
-        return signed ? SignEndpoint(fqu) : fqu;
-    }
+		var fqu = builder.ToString();
 
-    public string SignEndpoint(string endpoint, IDictionary<string, string?>? queryParams = null, string digestKey = DefaultDigestKey)
-    {
-        var uri = new UriBuilder(endpoint);
+		return signed ? SignEndpoint(fqu) : fqu;
+	}
 
-        var query = HttpUtility.ParseQueryString(uri.Query);
-        if (queryParams is not null)
-        {
-            foreach (var (key, value) in queryParams)
-            {
-                query[key] = value;
-            }
-        }
+	public string SignEndpoint(string endpoint, IDictionary<string, string?>? queryParams = null, string digestKey = DefaultDigestKey)
+	{
+		var uri = new UriBuilder(endpoint);
 
-        var queryString = query.ToString()!;
-        var queryStringBytes = Encoding.UTF8.GetBytes(queryString);
-        var digestBytes = SHA256.HashData(queryStringBytes);
-        var securedQueryStringBytes = Protector.Protect(digestBytes);
-        var digestString = Convert.ToBase64String(securedQueryStringBytes);
-        query[digestKey] = digestString;
+		var query = HttpUtility.ParseQueryString(uri.Query);
+		if (queryParams is not null)
+			foreach (var (key, value) in queryParams)
+				query[key] = value;
 
-        uri.Query = query.ToString();
+		var queryString = query.ToString()!;
+		var queryStringBytes = Encoding.UTF8.GetBytes(queryString);
+		var digestBytes = SHA256.HashData(queryStringBytes);
+		var securedQueryStringBytes = Protector.Protect(digestBytes);
+		var digestString = Convert.ToBase64String(securedQueryStringBytes);
+		query[digestKey] = digestString;
 
-        return uri.ToString();
-    }
+		uri.Query = query.ToString();
 
-    public bool ValidateSignature(string query, string digestKey = DefaultDigestKey)
-    {
-        var collection = HttpUtility.ParseQueryString(query);
-        if (collection[digestKey] == null)
-            return false;
+		return uri.ToString();
+	}
 
-        var digestString = collection[digestKey];
-        if (digestString is null)
-            return false;
+	public bool ValidateSignature(string query, string digestKey = DefaultDigestKey)
+	{
+		var collection = HttpUtility.ParseQueryString(query);
+		if (collection[digestKey] == null)
+			return false;
 
-        collection.Remove(digestKey);
+		var digestString = collection[digestKey];
+		if (digestString is null)
+			return false;
 
-        var actualQueryString = collection.ToString()!;
-        var actualQueryStringBytes = Encoding.UTF8.GetBytes(actualQueryString);
-        var actualDigestBytes = SHA256.HashData(actualQueryStringBytes);
+		collection.Remove(digestKey);
 
-        var givenSecuredDigestBytes = Convert.FromBase64String(digestString);
-        var givenDigestBytes = Protector.Unprotect(givenSecuredDigestBytes);
+		var actualQueryString = collection.ToString()!;
+		var actualQueryStringBytes = Encoding.UTF8.GetBytes(actualQueryString);
+		var actualDigestBytes = SHA256.HashData(actualQueryStringBytes);
 
-        return actualDigestBytes.SequenceEqual(givenDigestBytes);
-    }
+		var givenSecuredDigestBytes = Convert.FromBase64String(digestString);
+		var givenDigestBytes = Protector.Unprotect(givenSecuredDigestBytes);
 
-    private IDataProtector Protector => _dataProtectionProvider.CreateProtector(nameof(EndpointHelper));
+		return actualDigestBytes.SequenceEqual(givenDigestBytes);
+	}
 }

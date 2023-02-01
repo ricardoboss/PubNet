@@ -1,114 +1,114 @@
-@using Microsoft.AspNetCore.Components
 @using PubNet.API.DTO
 @using System.Diagnostics
 @inject ApiClient Http
 
 @if (Error is not null)
 {
-    <div class="alert alert-danger">
-        <strong>Oops!</strong> @Error
-    </div>
+	<div class="alert alert-danger">
+		<strong>Oops!</strong> @Error
+	</div>
 }
 
 @if (Success is not null)
 {
-    <div class="alert alert-success">
-        <strong>Alright!</strong> @Success
-    </div>
+	<div class="alert alert-success">
+		<strong>Alright!</strong> @Success
+	</div>
 }
 
 @if (FormModel is not null)
 {
-    <EditForm Model="FormModel" OnSubmit="OnFormSubmit">
-        <div class="form-group">
-            <label for="edit-author-name">Name</label>
-            <InputText @bind-Value="FormModel.Name" class="form-control" id="edit-author-name" required disabled="@Submitting" />
-        </div>
-        <div class="form-group mt-1">
-            <label for="edit-author-website">Website</label>
-            <InputText type="url" @bind-Value="FormModel.Website" class="form-control" id="edit-author-website" disabled="@Submitting"/>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem" class="my-3">
-            <button class="btn btn-success" type="submit" disabled="@Submitting">Save</button>
-            <button class="btn btn-outline-secondary" @onclick="OnAborted" type="button" disabled="@Submitting">Abort</button>
-            @if (Submitting)
-            {
-                <div class="spinner-border text-secondary"></div>
-            }
-        </div>
-    </EditForm>
+	<EditForm Model="FormModel" OnSubmit="OnFormSubmit">
+		<div class="form-group">
+			<label for="edit-author-name">Name</label>
+			<InputText @bind-Value="FormModel.Name" class="form-control" id="edit-author-name" required disabled="@Submitting"/>
+		</div>
+		<div class="form-group mt-1">
+			<label for="edit-author-website">Website</label>
+			<InputText type="url" @bind-Value="FormModel.Website" class="form-control" id="edit-author-website" disabled="@Submitting"/>
+		</div>
+		<div style="display: flex; align-items: center; gap: 0.5rem" class="my-3">
+			<button class="btn btn-success" type="submit" disabled="@Submitting">Save</button>
+			<button class="btn btn-outline-secondary" @onclick="OnAborted" type="button" disabled="@Submitting">Abort</button>
+			@if (Submitting)
+			{
+				<div class="spinner-border text-secondary"></div>
+			}
+		</div>
+	</EditForm>
 }
 
 @code {
 
-    [Parameter]
-    public AuthorDto? Author { get; set; }
+	[Parameter]
+	public AuthorDto? Author { get; set; }
 
-    [Parameter]
-    public EventCallback<bool> OnDoneEditing { get; set; }
+	[Parameter]
+	public EventCallback<bool> OnDoneEditing { get; set; }
 
-    private bool Submitting { get; set; }
+	private bool Submitting { get; set; }
 
-    private string? Error { get; set; }
-    private string? Success { get; set; }
+	private string? Error { get; set; }
+	private string? Success { get; set; }
 
-    private EditAuthorRequest? FormModel { get; set; }
+	private EditAuthorRequest? FormModel { get; set; }
 
-    /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
+	/// <inheritdoc />
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
 
-        if (Author is null)
-            return;
+		if (Author is null)
+			return;
 
-        FormModel = new()
-        {
-            Name = Author.Name,
-            Website = Author.Website,
-        };
-    }
+		FormModel = new()
+		{
+			Name = Author.Name,
+			Website = Author.Website,
+		};
+	}
 
-    private async Task OnFormSubmit(EditContext context)
-    {
-        Submitting = true;
+	private async Task OnFormSubmit(EditContext context)
+	{
+		Submitting = true;
 
-        try
-        {
-            Error = null;
-            Success = null;
+		try
+		{
+			Error = null;
+			Success = null;
 
-            Debug.Assert(Author is not null);
-            Debug.Assert(FormModel is not null);
+			Debug.Assert(Author is not null);
+			Debug.Assert(FormModel is not null);
 
-            var response = await Http.PatchAsync($"authors/{Author.UserName}", FormModel);
-            if (response.IsSuccessStatusCode)
-            {
-                Success = "Your profile was saved!";
+			var response = await Http.PatchAsync($"authors/{Author.UserName}", FormModel);
+			if (response.IsSuccessStatusCode)
+			{
+				Success = "Your profile was saved!";
 
-                await OnDoneEditing.InvokeAsync(true);
-            }
-            else
-            {
-                var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-                if (errorResponse?.Error is null)
-                {
-                    Error = "Unable to deserialize";
+				await OnDoneEditing.InvokeAsync(true);
+			}
+			else
+			{
+				var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+				if (errorResponse?.Error is null)
+				{
+					Error = "Unable to deserialize";
 
-                    return;
-                }
+					return;
+				}
 
-                Error = errorResponse.Error.Message;
-            }
-        }
-        finally
-        {
-            Submitting = false;
-        }
-    }
+				Error = errorResponse.Error.Message;
+			}
+		}
+		finally
+		{
+			Submitting = false;
+		}
+	}
 
-    private async Task OnAborted()
-    {
-        await OnDoneEditing.InvokeAsync(false);
-    }
+	private async Task OnAborted()
+	{
+		await OnDoneEditing.InvokeAsync(false);
+	}
+
 }

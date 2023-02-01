@@ -7,54 +7,45 @@ namespace PubNet.Worker.Tasks;
 
 public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 {
-    private ILogger<CleanupOldPendingArchivesTask>? _logger;
-    private PubNetContext? _db;
-    private IConfiguration? _configuration;
+	private IConfiguration? _configuration;
+	private PubNetContext? _db;
+	private ILogger<CleanupOldPendingArchivesTask>? _logger;
 
-    /// <inheritdoc />
-    public CleanupOldPendingArchivesTask(TimeSpan interval) : base(interval, DateTime.Now)
-    {
-    }
+	/// <inheritdoc />
+	public CleanupOldPendingArchivesTask(TimeSpan interval) : base(interval, DateTime.Now)
+	{
+	}
 
-    /// <inheritdoc />
-    protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
-    {
-        _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
-        _logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
-        _configuration ??= services.GetRequiredService<IConfiguration>();
+	/// <inheritdoc />
+	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
+	{
+		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		_logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
+		_configuration ??= services.GetRequiredService<IConfiguration>();
 
-        if (!TimeSpan.TryParse(_configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7", out var maxAge))
-        {
-            throw new("Unable to parse PackageStorage:PendingMaxAge as a valid TimeSpan");
-        }
+		if (!TimeSpan.TryParse(_configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7", out var maxAge)) throw new("Unable to parse PackageStorage:PendingMaxAge as a valid TimeSpan");
 
-        var uploadedAtLowerLimit = DateTimeOffset.UtcNow.Subtract(maxAge);
+		var uploadedAtLowerLimit = DateTimeOffset.UtcNow.Subtract(maxAge);
 
-        var outdatedArchives = await _db.PendingArchives
-            .Where(p => p.UploadedAtUtc < uploadedAtLowerLimit)
-            .ToListAsync(cancellationToken: cancellationToken);
+		var outdatedArchives = await _db.PendingArchives
+			.Where(p => p.UploadedAtUtc < uploadedAtLowerLimit)
+			.ToListAsync(cancellationToken);
 
-        _logger.LogTrace("Found {Count} outdated archive(s)", outdatedArchives.Count);
+		_logger.LogTrace("Found {Count} outdated archive(s)", outdatedArchives.Count);
 
-        foreach (var outdatedArchive in outdatedArchives)
-        {
-            var archivePath = outdatedArchive.ArchivePath;
-            if (File.Exists(archivePath))
-            {
-                File.Delete(archivePath);
-            }
+		foreach (var outdatedArchive in outdatedArchives)
+		{
+			var archivePath = outdatedArchive.ArchivePath;
+			if (File.Exists(archivePath)) File.Delete(archivePath);
 
-            var unpackedArchivePath = outdatedArchive.UnpackedArchivePath;
-            if (Directory.Exists(unpackedArchivePath))
-            {
-                Directory.Delete(unpackedArchivePath, true);
-            }
+			var unpackedArchivePath = outdatedArchive.UnpackedArchivePath;
+			if (Directory.Exists(unpackedArchivePath)) Directory.Delete(unpackedArchivePath, true);
 
-            _db.PendingArchives.Remove(outdatedArchive);
-        }
+			_db.PendingArchives.Remove(outdatedArchive);
+		}
 
-        await _db.SaveChangesAsync(cancellationToken);
+		await _db.SaveChangesAsync(cancellationToken);
 
-        return WorkerTaskResult.Requeue;
-    }
+		return WorkerTaskResult.Requeue;
+	}
 }

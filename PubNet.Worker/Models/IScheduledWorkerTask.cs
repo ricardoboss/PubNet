@@ -2,11 +2,11 @@ namespace PubNet.Worker.Models;
 
 public interface IScheduledWorkerTask : IWorkerTask
 {
-    TimeSpan Interval { get; }
+	TimeSpan Interval { get; }
 
-    DateTime ScheduledAt { get; }
+	DateTime ScheduledAt { get; }
 
-    DateTime? LastRun { get; }
+	DateTime? LastRun { get; }
 
-    DateTime NextRun { get; }
+	DateTime NextRun { get; }
 }

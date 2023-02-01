@@ -1,17 +1,15 @@
-@using PubNet.API.DTO
-
 @if (Username is not null)
 {
-    <NavLink href="@("/author/" + Username)">@Username</NavLink>
+	<NavLink href="@("/author/" + Username)">@Username</NavLink>
 }
 else
 {
-    <span class="text-muted">&lt;unknown&gt;</span>
+	<span class="text-muted">&lt;unknown&gt;</span>
 }
 
 @code {
 
-    [Parameter]
-    public string? Username { get; set; }
+	[Parameter]
+	public string? Username { get; set; }
 
 }

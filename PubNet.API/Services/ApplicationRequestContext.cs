@@ -7,27 +7,27 @@ namespace PubNet.API.Services;
 
 public class ApplicationRequestContext
 {
-    public List<string> AcceptedApiVersions { get; } = new();
+	public List<string> AcceptedApiVersions { get; } = new();
 
-    public List<string> AcceptedResponseFormats { get; } = new();
+	public List<string> AcceptedResponseFormats { get; } = new();
 
-    public Author? Author { get; set; }
+	public Author? Author { get; set; }
 
-    public async Task<Author> RequireAuthorAsync(ClaimsPrincipal user, PubNetContext db, CancellationToken cancellationToken = default)
-    {
-        if (Author is not null)
-            return Author;
+	private static InvalidCredentialException MissingAuthentication => new("Missing authentication. Acquire a Bearer token at [POST /authentication/login] and send it in the 'Authenticate' header.");
 
-        var idStr = user.FindFirstValue("id");
-        if (idStr is null || !int.TryParse(idStr, out var id))
-            throw MissingAuthentication;
+	public async Task<Author> RequireAuthorAsync(ClaimsPrincipal user, PubNetContext db, CancellationToken cancellationToken = default)
+	{
+		if (Author is not null)
+			return Author;
 
-        var author = await db.Authors.FindAsync(new object?[] { id }, cancellationToken);
-        if (author is null)
-            throw MissingAuthentication;
+		var idStr = user.FindFirstValue("id");
+		if (idStr is null || !int.TryParse(idStr, out var id))
+			throw MissingAuthentication;
 
-        return Author = author;
-    }
+		var author = await db.Authors.FindAsync(new object?[] { id }, cancellationToken);
+		if (author is null)
+			throw MissingAuthentication;
 
-    private static InvalidCredentialException MissingAuthentication => new("Missing authentication. Acquire a Bearer token at [POST /authentication/login] and send it in the 'Authenticate' header.");
+		return Author = author;
+	}
 }

@@ -17,12 +17,12 @@ builder.Services.AddScoped<AlertService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<ApiClient>(sp =>
 {
-    var apiBase = builder.Configuration["Api:Base"] ?? throw new("Missing Api:Base value in configuration");
+	var apiBase = builder.Configuration["Api:Base"] ?? throw new("Missing Api:Base value in configuration");
 
-    return new(sp.GetRequiredService<HttpClient>())
-    {
-        BaseAddress = apiBase.TrimEnd('/') + "/api/",
-    };
+	return new(sp.GetRequiredService<HttpClient>())
+	{
+		BaseAddress = apiBase.TrimEnd('/') + "/api/",
+	};
 });
 
 await builder.Build().RunAsync();

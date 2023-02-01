@@ -6,24 +6,24 @@
         data-bs-title="Click to copy"
         class="btn btn-sm btn-outline-secondary py-0 px-1"
         style="cursor: pointer">
-    &boxbox;
+	&boxbox;
 </button>
 
 @code {
 
-    [Parameter]
-    public string? Content { get; set; }
+	[Parameter]
+	public string? Content { get; set; }
 
-    /// <inheritdoc />
-    /// <inheritdoc />
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
+	/// <inheritdoc />
+	/// <inheritdoc />
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender)
-        {
-            await JsRuntime.InvokeVoidAsync("Utils.reloadTooltips");
-        }
-    }
+		if (firstRender)
+		{
+			await JsRuntime.InvokeVoidAsync("Utils.reloadTooltips");
+		}
+	}
 
 }

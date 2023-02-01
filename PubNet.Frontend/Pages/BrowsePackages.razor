@@ -7,57 +7,58 @@
 
 @if (_packages == null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+	<p>
+		<em>Loading...</em>
+	</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Author</th>
-            <th>Latest Version</th>
-            <th>Published At</th>
-        </tr>
-        </thead>
-        <tbody>
-        @if (!_packages.Packages.Any())
-        {
-            <tr>
-                <td colspan="4" style="text-align: center">
-                    <strong>No packages found.</strong>
-                </td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var package in _packages.Packages.OrderByDescending(p => p.LatestPublishedAtUtc))
-            {
-                <tr>
-                    <td>
-                        <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
-                    </td>
-                    <td>
-                        <AuthorLink Username="@package.AuthorUserName" />
-                    </td>
-                    <td>@package.LatestVersion</td>
-                    <td>
-                        <abbr title="@package.LatestPublishedAtUtc">@(package.LatestPublishedAtUtc.Humanize())</abbr>
-                    </td>
-                </tr>
-            }
-        }
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Author</th>
+			<th>Latest Version</th>
+			<th>Published At</th>
+		</tr>
+		</thead>
+		<tbody>
+		@if (!_packages.Packages.Any())
+		{
+			<tr>
+				<td colspan="4" style="text-align: center">
+					<strong>No packages found.</strong>
+				</td>
+			</tr>
+		}
+		else
+		{
+			@foreach (var package in _packages.Packages.OrderByDescending(p => p.LatestPublishedAtUtc))
+			{
+				<tr>
+					<td>
+						<NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
+					</td>
+					<td>
+						<AuthorLink Username="@package.AuthorUserName"/>
+					</td>
+					<td>@package.LatestVersion</td>
+					<td>
+						<abbr title="@package.LatestPublishedAtUtc">@(package.LatestPublishedAtUtc.Humanize())</abbr>
+					</td>
+				</tr>
+			}
+		}
+		</tbody>
+	</table>
 }
 
 @code {
-    private SearchPackagesResponse? _packages;
+	private SearchPackagesResponse? _packages;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        _packages = await Http.GetAsync<SearchPackagesResponse>("packages");
-    }
+	protected override async Task OnParametersSetAsync()
+	{
+		_packages = await Http.GetAsync<SearchPackagesResponse>("packages");
+	}
+
 }

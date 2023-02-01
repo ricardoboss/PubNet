@@ -10,251 +10,251 @@
 
 @if (AuthorModel is null && GeneralError is null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+	<p>
+		<em>Loading...</em>
+	</p>
 }
 
 @if (GeneralError is not null)
 {
-    <div class="alert alert-danger">
-        <strong>An error ocurred:</strong> @GeneralError
-    </div>
+	<div class="alert alert-danger">
+		<strong>An error ocurred:</strong> @GeneralError
+	</div>
 }
 
 @if (AuthorModel is not null)
 {
-    @if (Editing)
-    {
-        <EditAuthorForm Author="AuthorModel" OnDoneEditing="DoneEditing" />
-    }
-    else
-    {
-        <p>@AuthorModel.Name</p>
+	@if (Editing)
+	{
+		<EditAuthorForm Author="AuthorModel" OnDoneEditing="DoneEditing"/>
+	}
+	else
+	{
+		<p>@AuthorModel.Name</p>
 
-        <p>Joined <abbr title="@AuthorModel.RegisteredAt">@AuthorModel.RegisteredAt.Humanize()</abbr></p>
+		<p>Joined <abbr title="@AuthorModel.RegisteredAt">@AuthorModel.RegisteredAt.Humanize()</abbr></p>
 
-        @if (AuthorModel.Website is not null)
-        {
-            <p>
-                <a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a>
-            </p>
-        }
+		@if (AuthorModel.Website is not null)
+		{
+			<p>
+				<a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a>
+			</p>
+		}
 
-        @if (IsSelf)
-        {
-            <div class="my-3" style="display: flex; align-items: center; gap: 0.25rem">
-                <button class="btn btn-sm btn-outline-info" @onclick="BeginEditing">
-                    Edit
-                </button>
-                <button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked">
-                    Delete
-                </button>
-            </div>
-        }
+		@if (IsSelf)
+		{
+			<div class="my-3" style="display: flex; align-items: center; gap: 0.25rem">
+				<button class="btn btn-sm btn-outline-info" @onclick="BeginEditing">
+					Edit
+				</button>
+				<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked">
+					Delete
+				</button>
+			</div>
+		}
 
-        @if (AuthorError is not null)
-        {
-            <div class="alert alert-danger">
-                <strong>Oh no!</strong> @AuthorError
-            </div>
-        }
-        
-        @if (AuthorSuccess is not null)
-        {
-            <div class="alert alert-success">
-                <strong>Ok!</strong> @AuthorSuccess
-            </div>
-        }
-    }
+		@if (AuthorError is not null)
+		{
+			<div class="alert alert-danger">
+				<strong>Oh no!</strong> @AuthorError
+			</div>
+		}
+
+		@if (AuthorSuccess is not null)
+		{
+			<div class="alert alert-success">
+				<strong>Ok!</strong> @AuthorSuccess
+			</div>
+		}
+	}
 }
 
 <hr>
 
 @if (AuthorPackages is null && PackagesError is null)
 {
-    <p>
-        <em>Loading packages...</em>
-    </p>
+	<p>
+		<em>Loading packages...</em>
+	</p>
 }
 
 @if (PackagesError is not null)
 {
-    <div class="alert alert-danger">
-        <strong>An error ocurred while loading the author packages:</strong> @PackagesError
-    </div>
+	<div class="alert alert-danger">
+		<strong>An error ocurred while loading the author packages:</strong> @PackagesError
+	</div>
 }
 
 @if (AuthorPackages is not null)
 {
-    <h2>Packages</h2>
+	<h2>Packages</h2>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Latest Version</th>
-            <th>Published At</th>
-        </tr>
-        </thead>
-        <tbody>
-        @if (AuthorPackages.Any())
-        {
-            @foreach (var package in AuthorPackages.OrderByDescending(p => p.Name))
-            {
-                <tr>
-                    <td>
-                        <NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
-                    </td>
-                    @if (package.Latest is {} latest)
-                    {
-                        <td>@latest.Version</td>
-                        <td>
-                            <abbr title="@latest.Published">@(latest.Published.Humanize())</abbr>
-                        </td>
-                    }
-                    else
-                    {
-                        <td colspan="2">
-                            <em class="text-muted">No versions available</em>
-                        </td>
-                    }
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="3">
-                    <p class="text-center">
-                        This author has not published any packages yet.
-                    </p>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Latest Version</th>
+			<th>Published At</th>
+		</tr>
+		</thead>
+		<tbody>
+		@if (AuthorPackages.Any())
+		{
+			@foreach (var package in AuthorPackages.OrderByDescending(p => p.Name))
+			{
+				<tr>
+					<td>
+						<NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
+					</td>
+					@if (package.Latest is {} latest)
+					{
+						<td>@latest.Version</td>
+						<td>
+							<abbr title="@latest.Published">@(latest.Published.Humanize())</abbr>
+						</td>
+					}
+					else
+					{
+						<td colspan="2">
+							<em class="text-muted">No versions available</em>
+						</td>
+					}
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="3">
+					<p class="text-center">
+						This author has not published any packages yet.
+					</p>
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
 }
 
 @code
 {
-    [Parameter]
-    public string? Username { get; set; }
+	[Parameter]
+	public string? Username { get; set; }
 
-    private bool IsSelf { get; set; }
-    private bool Editing { get; set; }
+	private bool IsSelf { get; set; }
+	private bool Editing { get; set; }
 
-    private AuthorDto? AuthorModel { get; set; }
-    private string? GeneralError { get; set; }
+	private AuthorDto? AuthorModel { get; set; }
+	private string? GeneralError { get; set; }
 
-    private string? AuthorSuccess { get; set; }
-    private string? AuthorError { get; set; }
+	private string? AuthorSuccess { get; set; }
+	private string? AuthorError { get; set; }
 
-    private IEnumerable<PackageDto>? AuthorPackages { get; set; }
-    private string? PackagesError { get; set; }
+	private IEnumerable<PackageDto>? AuthorPackages { get; set; }
+	private string? PackagesError { get; set; }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
 
-        if (Username is null)
-        {
-            GeneralError = "No username set.";
+		if (Username is null)
+		{
+			GeneralError = "No username set.";
 
-            return;
-        }
+			return;
+		}
 
-        GeneralError = null;
+		GeneralError = null;
 
-        try
-        {
-            await FetchAuthorModel();
+		try
+		{
+			await FetchAuthorModel();
 
-            await FetchAuthorPackages();
+			await FetchAuthorPackages();
 
-            IsSelf = await Auth.IsSelf(Username);
-        }
-        catch (Exception e)
-        {
-            GeneralError = e.Message;
-        }
-    }
+			IsSelf = await Auth.IsSelf(Username);
+		}
+		catch (Exception e)
+		{
+			GeneralError = e.Message;
+		}
+	}
 
-    private async Task FetchAuthorModel()
-    {
-        AuthorModel = null;
-        GeneralError = null;
+	private async Task FetchAuthorModel()
+	{
+		AuthorModel = null;
+		GeneralError = null;
 
-        var author = await Http.GetAsync<AuthorDto>($"authors/{Username}");
-        if (author is not null)
-        {
-            AuthorModel = author;
-        }
-        else
-        {
-            GeneralError = "Failed loading author";
-        }
-    }
+		var author = await Http.GetAsync<AuthorDto>($"authors/{Username}");
+		if (author is not null)
+		{
+			AuthorModel = author;
+		}
+		else
+		{
+			GeneralError = "Failed loading author";
+		}
+	}
 
-    private async Task FetchAuthorPackages()
-    {
-        AuthorPackages = null;
-        PackagesError = null;
+	private async Task FetchAuthorPackages()
+	{
+		AuthorPackages = null;
+		PackagesError = null;
 
-        var response = await Http.GetAsync<AuthorPackagesResponse>($"authors/{Username}/packages");
-        if (response?.Packages is not null)
-        {
-            AuthorPackages = response.Packages;
-        }
-        else
-        {
-            PackagesError = "Failed loading authors packages";
-        }
-    }
+		var response = await Http.GetAsync<AuthorPackagesResponse>($"authors/{Username}/packages");
+		if (response?.Packages is not null)
+		{
+			AuthorPackages = response.Packages;
+		}
+		else
+		{
+			PackagesError = "Failed loading authors packages";
+		}
+	}
 
-    private void BeginEditing()
-    {
-        Editing = true;
-    }
+	private void BeginEditing()
+	{
+		Editing = true;
+	}
 
-    private async Task DoneEditing(bool edited)
-    {
-        if (edited)
-        {
-            await FetchAuthorModel();
-        }
+	private async Task DoneEditing(bool edited)
+	{
+		if (edited)
+		{
+			await FetchAuthorModel();
+		}
 
-        Editing = false;
-    }
+		Editing = false;
+	}
 
-    private async Task OnDeleteClicked()
-    {
-        AuthorSuccess = null;
-        AuthorError = null;
+	private async Task OnDeleteClicked()
+	{
+		AuthorSuccess = null;
+		AuthorError = null;
 
-        var confirmation = await Alert.Prompt("Are you sure? All your packages remain but will be disconnected from your username.\r\n\r\nPlease enter your password to confirm:");
-        if (string.IsNullOrWhiteSpace(confirmation))
-            return;
+		var confirmation = await Alert.Prompt("Are you sure? All your packages remain but will be disconnected from your username.\r\n\r\nPlease enter your password to confirm:");
+		if (string.IsNullOrWhiteSpace(confirmation))
+			return;
 
-        var response = await Http.PostAsync($"authors/{Username}/delete", new DeleteAuthorRequest(confirmation));
-        if (response.IsSuccessStatusCode)
-        {
-            var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
-            if (successResponse is null)
-            {
-                AuthorError = "Unable to deserialize";
+		var response = await Http.PostAsync($"authors/{Username}/delete", new DeleteAuthorRequest(confirmation));
+		if (response.IsSuccessStatusCode)
+		{
+			var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
+			if (successResponse is null)
+			{
+				AuthorError = "Unable to deserialize";
 
-                return;
-            }
-            
+				return;
+			}
 
-            AuthorSuccess = successResponse.Success.Message;
 
-            await Auth.Logout();
-        }
-        else
-        {
-            AuthorError = "Failed to delete author";
-        }
-    }
+			AuthorSuccess = successResponse.Success.Message;
+
+			await Auth.Logout();
+		}
+		else
+		{
+			AuthorError = "Failed to delete author";
+		}
+	}
 }

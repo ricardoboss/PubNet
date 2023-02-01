@@ -2,7 +2,7 @@
 
 public class BearerTokenException : UnauthorizedAccessException
 {
-    public BearerTokenException(string message) : base(message)
-    {
-    }
+	public BearerTokenException(string message) : base(message)
+	{
+	}
 }

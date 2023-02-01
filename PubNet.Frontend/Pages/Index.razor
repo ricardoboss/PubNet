@@ -5,74 +5,76 @@
 
 @if (MessageBoxContent is not null)
 {
-    <div class="alert alert-info">
-        @MessageBoxContent
-    </div>
+	<div class="alert alert-info">
+		@MessageBoxContent
+	</div>
 }
 
 <h1>Welcome to PubNet!</h1>
 
 <p class="lead">
-    Private dart package hosting.
+	Private dart package hosting.
 </p>
 
 <h2>What to do</h2>
 
 <p>
-    You could...
+	You could...
 </p>
 
 <ul>
-    <li>Browse available packages: <NavLink href="/browse/packages">Browse Packages</NavLink></li>
-    <li>Look for authors who already uploaded packages: <NavLink href="/browse/authors">Browse Authors</NavLink></li>
+	<li>Browse available packages: <NavLink href="/browse/packages">Browse Packages</NavLink></li>
+	<li>Look for authors who already uploaded packages: <NavLink href="/browse/authors">Browse Authors</NavLink></li>
 </ul>
 
 <h2>How to upload packages</h2>
 
 <ol>
-    <OnlyGuest>
-        <li>
-            <NavLink href="/authenticate">Register/log in</NavLink> to obtain your personal OAuth token
-        </li>
-    </OnlyGuest>
-    <OnlyAuthenticated>
-        <li>
-            Add a <code>PUBNET_TOKEN</code> environment variable with the following value:
+	<OnlyGuest>
+		<li>
+			<NavLink href="/authenticate">Register/log in</NavLink> to obtain your personal OAuth token
+		</li>
+	</OnlyGuest>
+	<OnlyAuthenticated>
+		<li>
+			Add a <code>PUBNET_TOKEN</code> environment variable with the following value:
 
-            <ClickToCopyButton Content="@Token" />
-            <code><pre style="width: 50vw">@Token</pre></code>
-        </li>
-    </OnlyAuthenticated>
-    <li>Run <code>dart pub token add @PublishToUrl --env-var PUBNET_TOKEN</code></li>
-    <li>Add <code>publish_to: @PublishToUrl</code> to your <code>pubspec.yaml</code></li>
-    <li>Run <code>dart pub publish</code></li>
+			<ClickToCopyButton Content="@Token"/>
+			<code>
+				<pre style="width: 50vw">@Token</pre>
+			</code>
+		</li>
+	</OnlyAuthenticated>
+	<li>Run <code>dart pub token add @PublishToUrl --env-var PUBNET_TOKEN</code></li>
+	<li>Add <code>publish_to: @PublishToUrl</code> to your <code>pubspec.yaml</code></li>
+	<li>Run <code>dart pub publish</code></li>
 </ol>
 
 @code {
 
-    [Parameter]
-    [SupplyParameterFromQuery(Name = "message")]
-    public string? Message { get; set; }
+	[Parameter]
+	[SupplyParameterFromQuery(Name = "message")]
+	public string? Message { get; set; }
 
-    private string? MessageBoxContent => Message switch {
-        "package-deleted" => "The package has been deleted successfully.",
-        _ => null,
-    };
+	private string? MessageBoxContent => Message switch {
+		"package-deleted" => "The package has been deleted successfully.",
+		_ => null,
+		};
 
-    private string PublishToUrl
-    {
-        get
-        {
-            var address = Http.BaseAddress ?? "";
+	private string PublishToUrl
+	{
+		get
+		{
+			var address = Http.BaseAddress ?? "";
 
-            address = address.TrimEnd('/');
+			address = address.TrimEnd('/');
 
-            if (address.EndsWith("/api"))
-                address = address[..^4];
+			if (address.EndsWith("/api"))
+				address = address[..^4];
 
-            return address;
-        }
-    }
+			return address;
+		}
+	}
 
-    private string Token => Http.Token ?? "";
+	private string Token => Http.Token ?? "";
 }

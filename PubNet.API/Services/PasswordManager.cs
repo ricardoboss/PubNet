@@ -7,67 +7,68 @@ namespace PubNet.API.Services;
 
 public class PasswordManager
 {
-    private static InvalidCredentialException PasswordVerificationFailed => new("Password verification failed");
+	private readonly ILogger<PasswordManager> _logger;
 
-    private readonly IPasswordHasher<Author> _passwordHasher;
-    private readonly ILogger<PasswordManager> _logger;
+	private readonly IPasswordHasher<Author> _passwordHasher;
 
-    public PasswordManager(IPasswordHasher<Author> passwordHasher, ILogger<PasswordManager> logger)
-    {
-        _passwordHasher = passwordHasher;
-        _logger = logger;
-    }
+	public PasswordManager(IPasswordHasher<Author> passwordHasher, ILogger<PasswordManager> logger)
+	{
+		_passwordHasher = passwordHasher;
+		_logger = logger;
+	}
 
-    public Task<string> GenerateHashAsync(Author author, string password, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+	private static InvalidCredentialException PasswordVerificationFailed => new("Password verification failed");
 
-        return Task.FromResult(_passwordHasher.HashPassword(author, password));
-    }
+	public Task<string> GenerateHashAsync(Author author, string password, CancellationToken cancellationToken = default)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-    public async Task<bool> IsValid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await ThrowForInvalid(db, author, password, cancellationToken);
+		return Task.FromResult(_passwordHasher.HashPassword(author, password));
+	}
 
-            return true;
-        }
-        catch (InvalidCredentialException)
-        {
-            return false;
-        }
-    }
+	public async Task<bool> IsValid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			await ThrowForInvalid(db, author, password, cancellationToken);
 
-    public async Task ThrowForInvalid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
+			return true;
+		}
+		catch (InvalidCredentialException)
+		{
+			return false;
+		}
+	}
 
-        // TODO: check author.LockoutEnabled and respond with Retry-After value from author.LockoutEnds
+	public async Task ThrowForInvalid(PubNetContext db, Author author, string? password, CancellationToken cancellationToken = default)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
 
-        if (password is null || author.PasswordHash is null)
-            throw PasswordVerificationFailed;
+		// TODO: check author.LockoutEnabled and respond with Retry-After value from author.LockoutEnds
 
-        var result = _passwordHasher.VerifyHashedPassword(author, author.PasswordHash, password);
-        if (result == PasswordVerificationResult.SuccessRehashNeeded)
-        {
-            author.PasswordHash = _passwordHasher.HashPassword(author, password);
+		if (password is null || author.PasswordHash is null)
+			throw PasswordVerificationFailed;
 
-            _logger.LogInformation("Rehashed password for {@Author}", author);
-        }
-        else if (result != PasswordVerificationResult.Success)
-        {
-            _logger.LogInformation("Wrong password for {@Author}", author);
+		var result = _passwordHasher.VerifyHashedPassword(author, author.PasswordHash, password);
+		if (result == PasswordVerificationResult.SuccessRehashNeeded)
+		{
+			author.PasswordHash = _passwordHasher.HashPassword(author, password);
 
-            author.AccessFailedCount++;
-            await db.SaveChangesAsync(cancellationToken);
+			_logger.LogInformation("Rehashed password for {@Author}", author);
+		}
+		else if (result != PasswordVerificationResult.Success)
+		{
+			_logger.LogInformation("Wrong password for {@Author}", author);
 
-            // TODO: check if AccessFailedCount crossed a threshold and lock user out for some time
+			author.AccessFailedCount++;
+			await db.SaveChangesAsync(cancellationToken);
 
-            throw PasswordVerificationFailed;
-        }
+			// TODO: check if AccessFailedCount crossed a threshold and lock user out for some time
 
-        author.AccessFailedCount = 0;
-        await db.SaveChangesAsync(cancellationToken);
-    }
+			throw PasswordVerificationFailed;
+		}
+
+		author.AccessFailedCount = 0;
+		await db.SaveChangesAsync(cancellationToken);
+	}
 }

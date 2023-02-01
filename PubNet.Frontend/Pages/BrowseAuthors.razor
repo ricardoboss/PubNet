@@ -6,51 +6,52 @@
 
 @if (_authors == null)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+	<p>
+		<em>Loading...</em>
+	</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Username</th>
-            <th>Name</th>
-            <th># of packages</th>
-        </tr>
-        </thead>
-        <tbody>
-        @if (!_authors.Authors.Any())
-        {
-            <tr>
-                <td colspan="3" style="text-align: center">
-                    <strong>No authors found.</strong>
-                </td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var author in _authors.Authors.OrderByDescending(a => a.UserName))
-            {
-                <tr>
-                    <td>
-                        <NavLink href="@("/author/" + author.UserName)">@author.UserName</NavLink>
-                    </td>
-                    <td>@author.Name</td>
-                    <td>@author.NumPackagesUploaded</td>
-                </tr>
-            }
-        }
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Username</th>
+			<th>Name</th>
+			<th># of packages</th>
+		</tr>
+		</thead>
+		<tbody>
+		@if (!_authors.Authors.Any())
+		{
+			<tr>
+				<td colspan="3" style="text-align: center">
+					<strong>No authors found.</strong>
+				</td>
+			</tr>
+		}
+		else
+		{
+			@foreach (var author in _authors.Authors.OrderByDescending(a => a.UserName))
+			{
+				<tr>
+					<td>
+						<NavLink href="@("/author/" + author.UserName)">@author.UserName</NavLink>
+					</td>
+					<td>@author.Name</td>
+					<td>@author.NumPackagesUploaded</td>
+				</tr>
+			}
+		}
+		</tbody>
+	</table>
 }
 
 @code {
-    private AuthorsResponse? _authors;
+	private AuthorsResponse? _authors;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        _authors = await Http.GetAsync<AuthorsResponse>("authors");
-    }
+	protected override async Task OnParametersSetAsync()
+	{
+		_authors = await Http.GetAsync<AuthorsResponse>("authors");
+	}
+
 }

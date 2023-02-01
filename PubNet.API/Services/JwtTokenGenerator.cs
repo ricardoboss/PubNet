@@ -2,90 +2,90 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using PubNet.API.DTO;
 using PubNet.Database.Models;
 
 namespace PubNet.API.Services;
 
 public class JwtTokenGenerator
 {
-    public static SecurityKey GetSecretKey(IConfiguration configuration)
-    {
-        var keyString = configuration["JWT:SecretKey"] ?? throw new("Key 'JWT:SecretKey' is missing in configuration");
-        var keyBytes = Encoding.UTF8.GetBytes(keyString);
-        return new SymmetricSecurityKey(keyBytes);
-    }
+	private readonly string _audience;
+	private readonly string _issuer;
+	private readonly JwtSecurityTokenHandler _jstHandler;
+	private readonly JwtHeader _jwtHeader;
+	private readonly ILogger<JwtTokenGenerator> _logger;
 
-    public static string GetIssuer(IConfiguration configuration)
-    {
-        return configuration["JWT:Issuer"] ?? throw new("Key 'JWT:Issuer' is missing in configuration");
-    }
+	private readonly int _tokenLifetimeInSeconds;
 
-    public static string GetAudience(IConfiguration configuration)
-    {
-        return configuration["JWT:Audience"] ?? throw new("Key 'JWT:Audience' is missing in configuration");
-    }
+	public JwtTokenGenerator(IConfiguration configuration, ILogger<JwtTokenGenerator> logger)
+	{
+		_logger = logger;
 
-    public static int GetLifetimeInSeconds(IConfiguration configuration)
-    {
-        var lifetimeInSecondsString = configuration["JWT:LifetimeInSeconds"] ?? throw new("Key 'JWT:LifetimeInSeconds' is missing in configuration");
-        if (!int.TryParse(lifetimeInSecondsString, out var lifetime))
-            throw new("Key 'JWT:LifetimeInSeconds' does not contain a valid integer");
+		_jstHandler = new();
 
-        return lifetime;
-    }
+		var secretKey = GetSecretKey(configuration);
+		var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+		_jwtHeader = new(credentials);
 
-    private readonly int _tokenLifetimeInSeconds;
-    private readonly string _issuer;
-    private readonly string _audience;
-    private readonly JwtHeader _jwtHeader;
-    private readonly JwtSecurityTokenHandler _jstHandler;
-    private readonly ILogger<JwtTokenGenerator> _logger;
+		_tokenLifetimeInSeconds = GetLifetimeInSeconds(configuration);
+		_issuer = GetIssuer(configuration);
+		_audience = GetAudience(configuration);
+	}
 
-    public JwtTokenGenerator(IConfiguration configuration, ILogger<JwtTokenGenerator> logger)
-    {
-        _logger = logger;
+	public static SecurityKey GetSecretKey(IConfiguration configuration)
+	{
+		var keyString = configuration["JWT:SecretKey"] ?? throw new("Key 'JWT:SecretKey' is missing in configuration");
+		var keyBytes = Encoding.UTF8.GetBytes(keyString);
+		return new SymmetricSecurityKey(keyBytes);
+	}
 
-        _jstHandler = new();
+	public static string GetIssuer(IConfiguration configuration)
+	{
+		return configuration["JWT:Issuer"] ?? throw new("Key 'JWT:Issuer' is missing in configuration");
+	}
 
-        var secretKey = GetSecretKey(configuration);
-        var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-        _jwtHeader = new(credentials);
+	public static string GetAudience(IConfiguration configuration)
+	{
+		return configuration["JWT:Audience"] ?? throw new("Key 'JWT:Audience' is missing in configuration");
+	}
 
-        _tokenLifetimeInSeconds = GetLifetimeInSeconds(configuration);
-        _issuer = GetIssuer(configuration);
-        _audience = GetAudience(configuration);
-    }
+	public static int GetLifetimeInSeconds(IConfiguration configuration)
+	{
+		var lifetimeInSecondsString = configuration["JWT:LifetimeInSeconds"] ?? throw new("Key 'JWT:LifetimeInSeconds' is missing in configuration");
+		if (!int.TryParse(lifetimeInSecondsString, out var lifetime))
+			throw new("Key 'JWT:LifetimeInSeconds' does not contain a valid integer");
 
-    public string Generate(Author author, out DateTimeOffset expireTime, IEnumerable<Claim>? additionalClaims = null)
-    {
-        var issueTime = DateTimeOffset.Now;
-        expireTime = issueTime.AddSeconds(_tokenLifetimeInSeconds);
+		return lifetime;
+	}
 
-        var claims = new List<Claim>();
-        claims.AddRange(new Claim[]
-        {
-            new("id", author.Id.ToString()),
-            new("name", author.Name),
-            new("username", author.UserName ?? string.Empty),
-        });
+	public string Generate(Author author, out DateTimeOffset expireTime, IEnumerable<Claim>? additionalClaims = null)
+	{
+		var issueTime = DateTimeOffset.Now;
+		expireTime = issueTime.AddSeconds(_tokenLifetimeInSeconds);
 
-        if (additionalClaims != null)
-            claims.AddRange(additionalClaims);
+		var claims = new List<Claim>();
+		claims.AddRange(new Claim[]
+		{
+			new("id", author.Id.ToString()),
+			new("name", author.Name),
+			new("username", author.UserName ?? string.Empty),
+		});
 
-        _logger.LogDebug("Generated new token for {Author} with claims: {Claims}", author.UserName, claims);
+		if (additionalClaims != null)
+			claims.AddRange(additionalClaims);
 
-        return _jstHandler.WriteToken(
-            new JwtSecurityToken(
-                _jwtHeader,
-                new(
-                    _issuer,
-                    _audience,
-                    claims,
-                    issueTime.DateTime,
-                    expireTime.DateTime
-                )
-            )
-        );
-    }
+		_logger.LogDebug("Generated new token for {Author} with claims: {Claims}", author.UserName, claims);
+
+		return _jstHandler.WriteToken(
+			new JwtSecurityToken(
+				_jwtHeader,
+				new(
+					_issuer,
+					_audience,
+					claims,
+					issueTime.DateTime,
+					expireTime.DateTime
+				)
+			)
+		);
+	}
 }

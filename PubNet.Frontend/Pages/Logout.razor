@@ -5,13 +5,15 @@
 <em>Please wait...</em>
 
 @code {
-    /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
 
-        await Auth.Logout();
-        
-        Nav.NavigateTo("/");
-    }
+	/// <inheritdoc />
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		await Auth.Logout();
+
+		Nav.NavigateTo("/");
+	}
+
 }

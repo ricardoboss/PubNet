@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <AssemblyName>PubNet.API.DTO</AssemblyName>
-        <RootNamespace>PubNet.API.DTO</RootNamespace>
-        <LangVersion>default</LangVersion>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>PubNet.API.DTO</AssemblyName>
+		<RootNamespace>PubNet.API.DTO</RootNamespace>
+		<LangVersion>default</LangVersion>
+	</PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj"/>
+	</ItemGroup>
 
 </Project>

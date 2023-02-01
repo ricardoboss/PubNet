@@ -1,46 +1,46 @@
-﻿@using PubNet.API.DTO
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 @inject AuthenticationService Auth
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	<div class="sidebar">
+		<NavMenu/>
+	</div>
 
-    <main>
-        <div class="top-row px-4">
-            @if (Authenticated is null)
-            {
-                <em>Please wait...</em>
-            }
-            else if (Authenticated == false)
-            {
-                <NavLink href="/authenticate">Authenticate</NavLink>
-            }
-            else
-            {
-                <strong>Welcome back, <AuthorLink Username="@UserName" />!</strong>
-                <NavLink href="/logout" class="ms-3">Logout</NavLink>
-            }
-        </div>
+	<main>
+		<div class="top-row px-4">
+			@if (Authenticated is null)
+			{
+				<em>Please wait...</em>
+			}
+			else if (Authenticated == false)
+			{
+				<NavLink href="/authenticate">Authenticate</NavLink>
+			}
+			else
+			{
+				<strong>Welcome back, <AuthorLink Username="@UserName"/>!</strong>
+				<NavLink href="/logout" class="ms-3">Logout</NavLink>
+			}
+		</div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 </div>
 
 @code {
-    private bool? Authenticated { get; set; }
-    private string? UserName { get; set; }
+	private bool? Authenticated { get; set; }
+	private string? UserName { get; set; }
 
-    /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
+	/// <inheritdoc />
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
 
-        Authenticated = await Auth.IsAuthenticatedAsync();
-        if (Authenticated == true)
-            UserName = (await Auth.GetSelfAsync()).UserName;
-    }
+		Authenticated = await Auth.IsAuthenticatedAsync();
+		if (Authenticated == true)
+			UserName = (await Auth.GetSelfAsync()).UserName;
+	}
+
 }

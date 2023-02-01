@@ -9,72 +9,66 @@ namespace PubNet.Worker.Tasks;
 
 public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 {
-    private ILogger<MissingAnalysisQueuingTask>? _logger;
-    private PubNetContext? _db;
-    private WorkerTaskQueue? _taskQueue;
+	private PubNetContext? _db;
+	private ILogger<MissingAnalysisQueuingTask>? _logger;
+	private WorkerTaskQueue? _taskQueue;
 
-    public MissingAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
-    {
-    }
+	public MissingAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
+	{
+	}
 
-    protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
-    {
-        _logger ??= services.GetRequiredService<ILogger<MissingAnalysisQueuingTask>>();
-        _db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
-        _taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
+	public override bool RequeueOnException => true;
 
-        await EnqueueMissingAnalyses(_db, _logger, _taskQueue, cancellationToken);
-        await EnqueueIncompleteAnalyses(_db, _logger, _taskQueue, cancellationToken);
+	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
+	{
+		_logger ??= services.GetRequiredService<ILogger<MissingAnalysisQueuingTask>>();
+		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		_taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
-        return WorkerTaskResult.Requeue;
-    }
+		await EnqueueMissingAnalyses(_db, _logger, _taskQueue, cancellationToken);
+		await EnqueueIncompleteAnalyses(_db, _logger, _taskQueue, cancellationToken);
 
-    private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger, WorkerTaskQueue taskQueue, CancellationToken cancellationToken = default)
-    {
-        var versionsWithoutAnalysis = await db.PackageVersions
-            .Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
-            .ToListAsync(cancellationToken);
+		return WorkerTaskResult.Requeue;
+	}
 
-        if (versionsWithoutAnalysis.Count == 0)
-        {
-            logger.LogTrace("No package versions without analysis found");
+	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger, WorkerTaskQueue taskQueue, CancellationToken cancellationToken = default)
+	{
+		var versionsWithoutAnalysis = await db.PackageVersions
+			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
+			.ToListAsync(cancellationToken);
 
-            return;
-        }
+		if (versionsWithoutAnalysis.Count == 0)
+		{
+			logger.LogTrace("No package versions without analysis found");
 
-        logger.LogTrace("Found {Count} package versions without analysis", versionsWithoutAnalysis.Count);
+			return;
+		}
 
-        foreach (var packageVersion in versionsWithoutAnalysis)
-        {
-            taskQueue.Enqueue(CreateTaskFor(packageVersion));
-        }
-    }
+		logger.LogTrace("Found {Count} package versions without analysis", versionsWithoutAnalysis.Count);
 
-    private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger, WorkerTaskQueue taskQueue, CancellationToken cancellationToken)
-    {
-        var incompleteAnalyses = await db.PackageVersionAnalyses
-            .Where(a => a.Formatted == null || a.DocumentationLink == null)
-            .ToListAsync(cancellationToken);
+		foreach (var packageVersion in versionsWithoutAnalysis) taskQueue.Enqueue(CreateTaskFor(packageVersion));
+	}
 
-        if (incompleteAnalyses.Count == 0)
-        {
-            logger.LogTrace("No incomplete package version analyses found");
+	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger, WorkerTaskQueue taskQueue, CancellationToken cancellationToken)
+	{
+		var incompleteAnalyses = await db.PackageVersionAnalyses
+			.Where(a => a.Formatted == null || a.DocumentationLink == null)
+			.ToListAsync(cancellationToken);
 
-            return;
-        }
+		if (incompleteAnalyses.Count == 0)
+		{
+			logger.LogTrace("No incomplete package version analyses found");
 
-        logger.LogTrace("Found {Count} incomplete package version analyses", incompleteAnalyses.Count);
+			return;
+		}
 
-        foreach (var analysis in incompleteAnalyses)
-        {
-            taskQueue.Enqueue(CreateTaskFor(analysis.Version));
-        }
-    }
+		logger.LogTrace("Found {Count} incomplete package version analyses", incompleteAnalyses.Count);
 
-    private static PubSpecAnalyzerTask CreateTaskFor(PackageVersion version)
-    {
-        return new(version.PackageName, version.Version);
-    }
+		foreach (var analysis in incompleteAnalyses) taskQueue.Enqueue(CreateTaskFor(analysis.Version));
+	}
 
-    public override bool RequeueOnException => true;
+	private static PubSpecAnalyzerTask CreateTaskFor(PackageVersion version)
+	{
+		return new(version.PackageName, version.Version);
+	}
 }

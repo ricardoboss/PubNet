@@ -3,32 +3,35 @@
 
 @if (Analysis is {} analysis)
 {
-    <div style="display: flex; align-items: center; gap: 0.25rem">
-        @if (analysis.DocumentationHref is not null)
-        {
-            <NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
-        }
+	<div style="display: flex; align-items: center; gap: 0.25rem">
+		@if (analysis.DocumentationHref is not null)
+		{
+			<NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
+		}
 
-        @if (analysis.Formatted == true)
-        {
-            <div class="badge bg-success">Formatted</div>
-        }
-        else if (analysis.Formatted == false)
-        {
-            <div class="badge bg-warning">Not Formatted</div>
-        }
-    </div>
+		@if (analysis.Formatted == true)
+		{
+			<div class="badge bg-success">Formatted</div>
+		}
+		else if (analysis.Formatted == false)
+		{
+			<div class="badge bg-warning">Not Formatted</div>
+		}
+	</div>
 }
 else
 {
-    <div class="badge bg-secondary">Analysis not complete</div>
+	<div class="badge bg-secondary">Analysis not complete</div>
 }
 
 @code {
 
-    [Parameter]
-    public PackageVersionAnalysisDto? Analysis { get; set; }
+	[Parameter]
+	public PackageVersionAnalysisDto? Analysis { get; set; }
 
-    private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+	private string DocumentationUrl(string uri)
+	{
+		return Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+	}
 
 }

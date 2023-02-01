@@ -4,35 +4,35 @@ namespace PubNet.API.WorkerTasks;
 
 public abstract class BaseWorkerTask : IWorkerTask
 {
-    public virtual string Name { get; }
+	protected BaseWorkerTask(string? name = null, bool? requeueOnException = null)
+	{
+		Name = name ?? GetType().Name;
+		RequeueOnException = requeueOnException ?? true;
+	}
 
-    public virtual bool RequeueOnException { get; }
+	public virtual string Name { get; }
 
-    public virtual int Tries { get; private set; }
+	public virtual bool RequeueOnException { get; }
 
-    protected BaseWorkerTask(string? name = null, bool? requeueOnException = null)
-    {
-        Name = name ?? GetType().Name;
-        RequeueOnException = requeueOnException ?? true;
-    }
+	public virtual int Tries { get; private set; }
 
-    public virtual async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var result = await InvokeInternal(services, cancellationToken);
+	public virtual async Task<WorkerTaskResult> Invoke(IServiceProvider services, CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			var result = await InvokeInternal(services, cancellationToken);
 
-            Tries = 0;
+			Tries = 0;
 
-            return result;
-        }
-        catch (Exception)
-        {
-            Tries++;
+			return result;
+		}
+		catch (Exception)
+		{
+			Tries++;
 
-            throw;
-        }
-    }
+			throw;
+		}
+	}
 
-    protected abstract Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default);
+	protected abstract Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default);
 }

@@ -2,12 +2,12 @@
 
 public class EditAuthorRequest
 {
-    public string? Name { get; set; }
-    public string? Website { get; set; }
+	public string? Name { get; set; }
+	public string? Website { get; set; }
 
-    public void Deconstruct(out string? name, out string? website)
-    {
-        name = Name;
-        website = Website;
-    }
+	public void Deconstruct(out string? name, out string? website)
+	{
+		name = Name;
+		website = Website;
+	}
 }
