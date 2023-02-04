@@ -51,28 +51,6 @@ try
 			o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 			o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 		})
-		// .AddGoogle(googleOptions =>
-		// {
-		//     googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new(
-		//         "Missing Authentication:Google:ClientId in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
-		//     googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new(
-		//         "Missing Authentication:Google:ClientSecret in configuration. See https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/google-logins?view=aspnetcore-7.0#store-the-google-client-id-and-secret");
-		//     googleOptions.SaveTokens = true;
-		//     // googleOptions.Events.OnCreatingTicket = ctx =>
-		//     // {
-		//     //     var tokens = ctx.Properties.GetTokens().ToList();
-		//     //
-		//     //     tokens.Add(new()
-		//     //     {
-		//     //         Name = "TicketCreated",
-		//     //         Value = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture),
-		//     //     });
-		//     //
-		//     //     ctx.Properties.StoreTokens(tokens);
-		//     //
-		//     //     return Task.CompletedTask;
-		//     // };
-		// })
 		.AddJwtBearer(o =>
 		{
 			o.SaveToken = true;
