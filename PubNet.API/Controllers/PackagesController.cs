@@ -202,6 +202,67 @@ public class PackagesController : BaseController
 		}
 	}
 
+	[HttpDelete("{name}/versions/{version}")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionDto))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> DeleteVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	{
+		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+
+		using (_logger.BeginScope(new Dictionary<string, object>
+		{
+			["PackageName"] = name,
+			["AuthorUsername"] = author.UserName,
+		}))
+		{
+			var package = await _db.Packages
+				.Where(p => p.Name == name)
+				.Include(p => p.Versions)
+				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
+				.FirstOrDefaultAsync(cancellationToken);
+			if (package is null)
+				return NotFound();
+
+			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
+			if (packageVersion is null)
+				return NotFound();
+
+			if (package.Latest == packageVersion)
+			{
+				if (package.Versions.Count > 1)
+				{
+					var newLatestPackage = package.Versions
+						.Where(v => v.Version != version)
+						.MaxBy(v => v.PublishedAtUtc);
+
+					package.Latest = newLatestPackage;
+				}
+				else
+				{
+					package.Latest = null;
+				}
+
+				await _db.SaveChangesAsync(cancellationToken);
+			}
+
+			if (packageVersion.Analysis is {} analysis)
+			{
+				// packageVersion.Analysis = null;
+				// await _db.SaveChangesAsync(cancellationToken);
+
+				_db.PackageVersionAnalyses.Remove(analysis);
+				await _db.SaveChangesAsync(cancellationToken);
+			}
+
+			_db.PackageVersions.Remove(packageVersion);
+			await _db.SaveChangesAsync(cancellationToken);
+
+			await _storageProvider.DeletePackageVersion(name, version, cancellationToken);
+
+			return NoContent();
+		}
+	}
+
 	[HttpGet("{name}/versions/{version}.tar.gz")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]

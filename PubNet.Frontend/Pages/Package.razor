@@ -20,6 +20,12 @@
 		</p>
 	}
 }
+@if (Success is not null)
+{
+	<div class="alert alert-success">
+		<strong>Alright!</strong> @Success
+	</div>
+}
 
 @if (PackageModel is null && Error is null)
 {
@@ -136,6 +142,10 @@ else if (PackageModel is not null)
 				{
 					<th>Badges</th>
 				}
+				@if (ShowPackageAdminTools)
+				{
+					<th>Actions</th>
+				}
 			</tr>
 			</thead>
 			<tbody>
@@ -154,6 +164,12 @@ else if (PackageModel is not null)
 					{
 						<td>
 							<AnalysisBadges Analysis="version.Analysis"/>
+						</td>
+					}
+					@if (ShowPackageAdminTools)
+					{
+						<td>
+							<button class="btn btn-sm btn-outline-danger" @onclick="() => OnDeleteVersionClicked(version.Version)">Delete</button>
 						</td>
 					}
 				</tr>
@@ -186,6 +202,7 @@ else if (PackageModel is not null)
 	private PackageDto? PackageModel { get; set; }
 
 	private string? Error { get; set; }
+	private string? Success { get; set; }
 
 	private bool Editing { get; set; }
 	private bool ShowPackageAdminTools { get; set; }
@@ -214,6 +231,10 @@ else if (PackageModel is not null)
 	{
 		await base.OnParametersSetAsync();
 
+		await ReloadPackage();
+	}
+
+	private async Task ReloadPackage() {
 		Error = null;
 		PackageModel = null;
 		Editing = false;
@@ -272,7 +293,45 @@ else if (PackageModel is not null)
 					HttpStatusCode.Unauthorized => "You are not authorized to delete this package",
 					HttpStatusCode.NotFound => "The package was not found",
 					_ => "An unknown error occurred",
-					};
+				};
+			}
+		}
+		catch (Exception e)
+		{
+			Error = e.Message;
+		}
+		finally
+		{
+			Editing = false;
+		}
+	}
+
+	private async Task OnDeleteVersionClicked(string version)
+	{
+		var confirmed = await Alert.Confirm($"Are you sure you want to delete {PackageName}: {version}?");
+		if (!confirmed)
+			return;
+
+		Success = null;
+		Error = null;
+		Editing = true;
+
+		try
+		{
+			var response = await Http.DeleteAsync($"packages/{PackageName}/versions/{version}");
+			if (response.IsSuccessStatusCode)
+			{
+				Success = $"Version {version} has been deleted.";
+
+				await ReloadPackage();
+			}
+			else
+			{
+				Error = response.StatusCode switch {
+					HttpStatusCode.Unauthorized => "You are not authorized to delete this package version",
+					HttpStatusCode.NotFound => "This package version was not found",
+					_ => "An unknown error occurred",
+				};
 			}
 		}
 		catch (Exception e)
