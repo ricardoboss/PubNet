@@ -1,9 +1,15 @@
 @using PubNet.API.DTO
 @inject ApiClient Http
 
-@if (Analysis is {} analysis)
-{
-	<div style="display: flex; align-items: center; gap: 0.25rem">
+<div style="display: flex; align-items: center; gap: 0.25rem">
+	@if (Mirrored)
+	{
+		<a href="@("https://pub.dev/packages/" + PackageName)" target="_blank">
+			<div class="badge bg-secondary">Mirrored from pub.dev</div>
+		</a>
+	}
+	else if (Analysis is {} analysis)
+	{
 		@if (analysis.DocumentationHref is not null)
 		{
 			<NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
@@ -17,17 +23,23 @@
 		{
 			<div class="badge bg-warning">Not Formatted</div>
 		}
-	</div>
-}
-else
-{
-	<div class="badge bg-secondary">Analysis not complete</div>
-}
+	}
+	else
+	{
+		<div class="badge bg-secondary">Analysis not complete</div>
+	}
+</div>
 
 @code {
 
 	[Parameter]
 	public PackageVersionAnalysisDto? Analysis { get; set; }
+
+	[Parameter]
+	public bool Mirrored { get; set; }
+
+	[Parameter]
+	public string PackageName { get; set; }
 
 	private string DocumentationUrl(string uri)
 	{

@@ -59,7 +59,7 @@ else if (PackageModel is not null)
 		<h1>
 			<code>@PackageName: @latest.Version</code>
 
-			<ClickToCopyButton Content="@($"{latest.PackageName}: ^{latest.Version}")"/>
+			<ClickToCopyButton Content="@PubspecVersionText(latest.Version, PackageModel.Mirrored)"/>
 		</h1>
 
 		<p class="text-muted">
@@ -73,16 +73,7 @@ else if (PackageModel is not null)
 			</div>
 		}
 
-		@if (IsMirrored)
-		{
-			<em>
-				<a href="@("https://pub.dev/packages/" + PackageName)" target="_blank">Mirrored from pub.dev</a>
-			</em>
-		}
-		else
-		{
-			<AnalysisBadges Analysis="latest.Analysis"/>
-		}
+		<AnalysisBadges Analysis="latest.Analysis" Mirrored="PackageModel.Mirrored" PackageName="PackageName"/>
 
 		<p class="my-3 lead">@(latest.PubSpec.Description)</p>
 
@@ -102,7 +93,7 @@ else if (PackageModel is not null)
 						@foreach (var dependency in latest.PubSpec.Dependencies)
 						{
 							<li>
-								<NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink>
+								<NavLink href="@HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
 							</li>
 						}
 					</ul>
@@ -123,7 +114,7 @@ else if (PackageModel is not null)
 						@foreach (var dependency in latest.PubSpec.DevDependencies)
 						{
 							<li>
-								<NavLink href="@LinkToDependency(dependency.Key)">@dependency.Key</NavLink>
+								<NavLink href="@HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
 							</li>
 						}
 					</ul>
@@ -154,7 +145,7 @@ else if (PackageModel is not null)
 					<td>
 						<code>@version.Version</code>
 
-						<ClickToCopyButton Content="@($"{version.PackageName}: ^{version.Version}")"/>
+						<ClickToCopyButton Content="@($"{PackageName}: ^{version.Version}")"/>
 					</td>
 					<td>
 						<abbr title="@version.Published">@(version.Published.Humanize())</abbr>
@@ -200,9 +191,21 @@ else if (PackageModel is not null)
 	private bool ShowPackageAdminTools { get; set; }
 	private bool ShowUpstreamLink { get; set; }
 
-	private static string LinkToDependency(string name)
+	private static string HrefToDependency(string name)
 	{
 		return "/package/" + name;
+	}
+
+	private string PubspecVersionText(string version, bool mirrored)
+	{
+		if (mirrored)
+			return $"{PackageName}: ^{version}";
+
+		return $@"{PackageName}:
+  hosted:
+    url: {Http.BaseAddress}
+    name: {PackageName}
+    version: ^{version}";
 	}
 
 	private bool IsMirrored => PackageModel?.Mirrored ?? false;

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using PubNet.API.Controllers;
+using PubNet.API.Converter;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
@@ -105,7 +106,11 @@ try
 	builder.Services.AddSingleton<PubDevPackageProvider>();
 
 	builder.Services.AddControllers()
-		.AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
+		.AddJsonOptions(options =>
+		{
+			options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+		});
 
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen(o =>

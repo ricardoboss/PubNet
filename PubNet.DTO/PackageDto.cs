@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using PubNet.Database.Models;
 
 namespace PubNet.API.DTO;
@@ -5,12 +6,21 @@ namespace PubNet.API.DTO;
 public class PackageDto
 {
 	public string Name { get; init; }
+
 	public IEnumerable<PackageVersionDto>? Versions { get; init; }
-	public bool? IsDiscontinued { get; init; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+	public bool IsDiscontinued { get; init; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public string? ReplacedBy { get; init; }
+
 	public PackageVersionDto? Latest { get; init; }
+
 	public AuthorDto? Author { get; init; }
-	public bool? Mirrored { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+	public bool Mirrored { get; set; }
 
 	public static PackageDto FromPackage(Package package)
 	{

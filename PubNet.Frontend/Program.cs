@@ -21,7 +21,7 @@ builder.Services.AddScoped<ApiClient>(sp =>
 
 	return new(sp.GetRequiredService<HttpClient>())
 	{
-		BaseAddress = apiBase.TrimEnd('/') + "/api/",
+		BaseAddress = apiBase.TrimEnd('/'),
 	};
 });
 
