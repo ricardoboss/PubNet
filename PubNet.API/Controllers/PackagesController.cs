@@ -246,9 +246,7 @@ public class PackagesController : BaseController
 	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path,
 		CancellationToken cancellationToken = default)
 	{
-		var localPath = await _storageProvider.GetDocsPath(name, version);
-		if (localPath is null)
-			return NotFound();
+		var localPath = await _storageProvider.GetDocsPath(name, version, cancellationToken);
 
 		var notFoundPage = Path.Combine(localPath, "__404error.html");
 		if (!System.IO.File.Exists(notFoundPage))
