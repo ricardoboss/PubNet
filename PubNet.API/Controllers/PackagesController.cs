@@ -220,12 +220,12 @@ public class PackagesController : BaseController
 				.Include(p => p.Versions)
 				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
 				.FirstOrDefaultAsync(cancellationToken);
-			if (package is null)
-				return NotFound();
+			if (package is null) return NotFound();
+
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
-			if (packageVersion is null)
-				return NotFound();
+			if (packageVersion is null) return NotFound();
 
 			if (package.Latest == packageVersion)
 			{
@@ -247,9 +247,6 @@ public class PackagesController : BaseController
 
 			if (packageVersion.Analysis is {} analysis)
 			{
-				// packageVersion.Analysis = null;
-				// await _db.SaveChangesAsync(cancellationToken);
-
 				_db.PackageVersionAnalyses.Remove(analysis);
 				await _db.SaveChangesAsync(cancellationToken);
 			}
