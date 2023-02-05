@@ -55,7 +55,7 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		WorkerTaskQueue taskQueue, CancellationToken cancellationToken)
 	{
 		var incompleteAnalyses = await db.PackageVersionAnalyses
-			.Where(a => a.Formatted == null || a.DocumentationLink == null)
+			.Where(a => a.Formatted == null || a.DocumentationLink == null || a.ReadmeFound == null)
 			.ToListAsync(cancellationToken);
 
 		if (incompleteAnalyses.Count == 0)

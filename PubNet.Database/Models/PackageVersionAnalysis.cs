@@ -14,5 +14,9 @@ public class PackageVersionAnalysis
 
 	public string? DocumentationLink { get; set; }
 
+	public bool? ReadmeFound { get; set; }
+
+	public string? ReadmeText { get; set; }
+
 	public DateTimeOffset? CompletedAtUtc { get; set; }
 }

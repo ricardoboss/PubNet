@@ -19,15 +19,13 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 	private ILogger<PubSpecAnalyzerTask>? _logger;
 	private IPackageStorageProvider? _storageProvider;
 
-	public PubSpecAnalyzerTask(string package, string version) : base(
-		$"{nameof(PubSpecAnalyzerTask)} for {package} {version}")
+	public PubSpecAnalyzerTask(string package, string version) : base($"{nameof(PubSpecAnalyzerTask)} for {package} {version}")
 	{
 		Package = package;
 		Version = version;
 	}
 
-	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services,
-		CancellationToken cancellationToken = default)
+	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 		_logger ??= services.GetRequiredService<ILogger<PubSpecAnalyzerTask>>();
@@ -53,17 +51,14 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 			var version = package.Versions.FirstOrDefault(v => v.Version == Version);
 			if (version is null)
 			{
-				_logger.LogError(
-					"Could not find package {PackageName} version {PackageVersion} for pubspec.yaml analysis", Package,
-					Version);
+				_logger.LogError("Could not find package {PackageName} version {PackageVersion} for pubspec.yaml analysis", Package, Version);
 
 				return WorkerTaskResult.Failed;
 			}
 
 			var analysis = await _db.PackageVersionAnalyses.FirstOrDefaultAsync(a => a.Version == version,
 				cancellationToken);
-			if (analysis is null)
-				return await CreateAnalysis(version, _storageProvider, _dart, _db, _logger, cancellationToken);
+			if (analysis is null) return await CreateAnalysis(version, _storageProvider, _dart, _db, _logger, cancellationToken);
 
 			_logger.LogTrace("Updating existing analysis for {PackageName} {PackageVersion}", Package, Version);
 
@@ -71,9 +66,7 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 		}
 	}
 
-	private async Task<WorkerTaskResult> CreateAnalysis(PackageVersion version, IPackageStorageProvider storageProvider,
-		DartCli dart, PubNetContext db, ILogger<PubSpecAnalyzerTask> logger,
-		CancellationToken cancellationToken = default)
+	private async Task<WorkerTaskResult> CreateAnalysis(PackageVersion version, IPackageStorageProvider storageProvider, DartCli dart, PubNetContext db, ILogger<PubSpecAnalyzerTask> logger, CancellationToken cancellationToken = default)
 	{
 		var analysis = new PackageVersionAnalysis
 		{
@@ -88,9 +81,7 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 		return await UpdateAnalysis(analysis, storageProvider, dart, db, logger, cancellationToken);
 	}
 
-	private async Task<WorkerTaskResult> UpdateAnalysis(PackageVersionAnalysis analysis,
-		IPackageStorageProvider storageProvider, DartCli dart, PubNetContext db, ILogger<PubSpecAnalyzerTask> logger,
-		CancellationToken cancellationToken = default)
+	private async Task<WorkerTaskResult> UpdateAnalysis(PackageVersionAnalysis analysis, IPackageStorageProvider storageProvider, DartCli dart, PubNetContext db, ILogger<PubSpecAnalyzerTask> logger, CancellationToken cancellationToken = default)
 	{
 		var workingDir = Path.Combine(Path.GetTempPath(), "PubNetAnalysis", Package, Version);
 
@@ -101,40 +92,62 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}
 
-		if (analysis.Formatted is null)
+		try
 		{
-			logger.LogTrace("Check if package {PackageName} version {PackageVersion} is formatted", Package, Version);
+			if (analysis.Formatted is null)
+			{
+				logger.LogTrace("Check if package {PackageName} version {PackageVersion} is formatted", Package, Version);
 
-			var exitCode = await dart.Format("lib", workingDir, cancellationToken);
+				var exitCode = await dart.Format("lib", workingDir, cancellationToken);
 
-			analysis.Formatted = exitCode == 0;
+				analysis.Formatted = exitCode == 0;
+			}
+
+			if (analysis.DocumentationLink is null)
+			{
+				logger.LogTrace("Generating documentation for package {PackageName} version {PackageVersion}", Package, Version);
+
+				var exitCode = await dart.Doc(workingDir, cancellationToken);
+				if (exitCode != 0)
+				{
+					// TODO: handle possible error generating docs
+				}
+				else
+				{
+					// TODO: determine API url dynamically
+					analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
+
+					var apiDocPath = Path.Combine(workingDir, "doc", "api");
+					await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
+				}
+			}
+
+			if (analysis.ReadmeFound is null)
+			{
+				logger.LogTrace("Looking for a README file in package {PackageName} version {PackageVersion}", Package, Version);
+
+				var readmePath = await PathHelper.GetCaseInsensitivePath(workingDir, "readme.md", cancellationToken);
+				if (readmePath is null || !File.Exists(readmePath))
+				{
+					analysis.ReadmeFound = false;
+				}
+				else
+				{
+					analysis.ReadmeFound = true;
+					analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
+				}
+			}
+
+			if (analysis is not { ReadmeFound: null, DocumentationLink: null, Formatted: null })
+				analysis.CompletedAtUtc = DateTimeOffset.Now.ToUniversalTime();
+
+			await db.SaveChangesAsync(cancellationToken);
+
+			return WorkerTaskResult.Done;
 		}
-
-		if (analysis.DocumentationLink is null)
+		finally
 		{
-			logger.LogTrace("Generating documentation for package {PackageName} version {PackageVersion}", Package,
-				Version);
-
-			var exitCode = await dart.Doc(workingDir, cancellationToken);
-			if (exitCode != 0)
-			{
-				// TODO: handle possible error generating docs
-			}
-			else
-			{
-				// TODO: determine API url dynamically
-				analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
-
-				var apiDocPath = Path.Combine(workingDir, "doc", "api");
-				await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
-			}
+			Directory.Delete(workingDir, true);
 		}
-
-		if (analysis.Formatted is not null && analysis.DocumentationLink is not null)
-			analysis.CompletedAtUtc = DateTimeOffset.Now.ToUniversalTime();
-
-		await db.SaveChangesAsync(cancellationToken);
-
-		return WorkerTaskResult.Done;
 	}
 }

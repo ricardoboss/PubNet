@@ -255,7 +255,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	private static async Task<PubSpec> GetPubSpec(string workingDirectory,
 		CancellationToken cancellationToken = default)
 	{
-		var pubSpecPath = Path.Combine(workingDirectory, "pubspec.yaml");
+		var pubSpecPath = await PathHelper.GetCaseInsensitivePath(workingDirectory, "pubspec.yaml", cancellationToken);
 		if (!System.IO.File.Exists(pubSpecPath))
 			throw new FileNotFoundException("pubspec.yaml not found in working directory", pubSpecPath);
 

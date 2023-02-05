@@ -16,7 +16,6 @@ public class PackageVersionDto
 	[JsonPropertyName("archive_sha256")]
 	public string ArchiveSha256 { get; init; }
 
-
 	public DateTimeOffset Published { get; init; }
 
 	[JsonPropertyName("pubspec")]
