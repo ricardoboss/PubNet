@@ -52,6 +52,9 @@ public class ErrorResponse
 	public static ErrorResponse EmailAlreadyInUse =>
 		new(new("email-already-in-use", "The e-mail address you provided is already in use"));
 
+	public static ErrorResponse PackageDiscontinued =>
+		new(new("package-discontinued", "The package you are trying to publish has been discontinued and new versions cannot be added to it"));
+
 	public ErrorResponseBody? Error { get; init; }
 
 	public static ErrorResponse VersionAlreadyExists(string packageName, string packageVersion)

@@ -42,10 +42,19 @@ else
 					<td>
 						<AuthorLink Username="@package.AuthorUserName"/>
 					</td>
-					<td>@package.LatestVersion</td>
-					<td>
-						<abbr title="@package.LatestPublishedAtUtc">@(package.LatestPublishedAtUtc.Humanize())</abbr>
-					</td>
+					@if (package is not {LatestVersion: null, LatestPublishedAtUtc: null})
+					{
+						<td>@package.LatestVersion</td>
+						<td>
+							<abbr title="@package.LatestPublishedAtUtc">@(package.LatestPublishedAtUtc.Humanize())</abbr>
+						</td>
+					}
+					else
+					{
+						<td colspan="2" class="text-center text-muted">
+							<em>No latest version available</em>
+						</td>
+					}
 				</tr>
 			}
 		}

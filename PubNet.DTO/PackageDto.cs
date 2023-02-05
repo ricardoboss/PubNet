@@ -17,6 +17,7 @@ public class PackageDto
 
 	public PackageVersionDto? Latest { get; init; }
 
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public AuthorDto? Author { get; init; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -28,14 +29,18 @@ public class PackageDto
 			? package.Versions.Select(PackageVersionDto.FromPackageVersion)
 			: null;
 
+		var latestDto = package.Latest is null ? null : PackageVersionDto.FromPackageVersion(package.Latest);
+
+		var authorDto = AuthorDto.FromAuthor(package.Author, true);
+
 		return new()
 		{
 			Name = package.Name,
 			Versions = versions,
 			IsDiscontinued = package.IsDiscontinued,
 			ReplacedBy = package.ReplacedBy,
-			Latest = package.Latest is null ? null : PackageVersionDto.FromPackageVersion(package.Latest),
-			Author = AuthorDto.FromAuthor(package.Author, true),
+			Latest = latestDto,
+			Author = authorDto,
 			Mirrored = false,
 		};
 	}

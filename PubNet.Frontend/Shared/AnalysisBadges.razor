@@ -2,35 +2,57 @@
 @inject ApiClient Http
 
 <div style="display: flex; align-items: center; gap: 0.25rem">
-	@if (Mirrored)
+	@if (Mirrored && PackageName is not null)
 	{
 		<a href="@("https://pub.dev/packages/" + PackageName)" target="_blank">
 			<div class="badge bg-secondary">Mirrored from pub.dev</div>
 		</a>
 	}
-	else if (Analysis is {} analysis)
-	{
-		@if (analysis.DocumentationHref is not null)
-		{
-			<NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
-		}
 
-		@if (analysis.Formatted == true)
+	@if (ShowAnlysis)
+	{
+		@if (Analysis is {} analysis)
 		{
-			<div class="badge bg-success">Formatted</div>
+			@if (analysis.DocumentationHref is not null)
+			{
+				<NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
+			}
+
+			@if (analysis.Formatted == true)
+			{
+				<div class="badge bg-success">Formatted</div>
+			}
+			else if (analysis.Formatted == false)
+			{
+				<div class="badge bg-warning">Not Formatted</div>
+			}
 		}
-		else if (analysis.Formatted == false)
+		else
 		{
-			<div class="badge bg-warning">Not Formatted</div>
+			<div class="badge bg-secondary">Not analyzed</div>
 		}
 	}
-	else
+
+	@if (IsDiscontinued)
 	{
-		<div class="badge bg-secondary">Analysis not complete</div>
+		<div class="badge bg-danger">Discontinued</div>
+
+		@if (ReplacedBy is not null)
+		{
+			<NavLink href="@(HrefToReplacement(ReplacedBy))" class="badge bg-warning">Replaced by <code>@ReplacedBy</code></NavLink>
+		}
+	}
+
+	@if (Retracted)
+	{
+		<div class="badge bg-danger">Retracted</div>
 	}
 </div>
 
 @code {
+
+	[Parameter]
+	public bool ShowAnlysis { get; set; } = true;
 
 	[Parameter]
 	public PackageVersionAnalysisDto? Analysis { get; set; }
@@ -39,11 +61,19 @@
 	public bool Mirrored { get; set; }
 
 	[Parameter]
-	public string PackageName { get; set; }
+	public string? PackageName { get; set; }
 
-	private string DocumentationUrl(string uri)
-	{
-		return Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
-	}
+	[Parameter]
+	public bool IsDiscontinued { get; set; }
+
+	[Parameter]
+	public string? ReplacedBy { get; set; }
+
+	[Parameter]
+	public bool Retracted { get; set; }
+
+	private static string HrefToReplacement(string name) => "/package/" + name;
+
+	private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
 
 }

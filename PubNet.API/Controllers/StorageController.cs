@@ -198,6 +198,9 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 				if (package.Author != pending.Uploader)
 					return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
+				if (package.IsDiscontinued)
+					return UnprocessableEntity(ErrorResponse.PackageDiscontinued);
+
 				if (package.Versions.Any(v => v.Version == packageVersionId))
 					return UnprocessableEntity(ErrorResponse.VersionAlreadyExists(packageName, packageVersionId));
 

@@ -20,10 +20,11 @@
 		</p>
 	}
 }
-@if (Success is not null)
+
+@if (Info is not null)
 {
-	<div class="alert alert-success">
-		<strong>Alright!</strong> @Success
+	<div class="alert alert-info">
+		@Info
 	</div>
 }
 
@@ -41,7 +42,7 @@
 }
 else if (PackageModel is not null)
 {
-	@if (PackageModel.Latest is not { } latest)
+	@if (PackageModel.Latest is not { } titleLatest)
 	{
 		<PageTitle>@PackageName</PageTitle>
 
@@ -52,35 +53,37 @@ else if (PackageModel is not null)
 		<p>
 			Published by <AuthorLink Username="@PackageModel.Author?.UserName"/>
 		</p>
-
-		@if (ShowPackageAdminTools)
-		{
-			<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
-		}
 	}
 	else
 	{
-		<PageTitle>@PackageName: @latest.Version</PageTitle>
+		<PageTitle>@PackageName: @titleLatest.Version</PageTitle>
 
 		<h1>
-			<code>@PackageName: @latest.Version</code>
+			<code>@PackageName: @titleLatest.Version</code>
 
-			<ClickToCopyButton Content="@PubspecVersionText(latest.Version, PackageModel.Mirrored)"/>
+			<ClickToCopyButton Content="@PubspecVersionText(titleLatest.Version, PackageModel.Mirrored)"/>
 		</h1>
 
 		<p class="text-muted">
-			Published by <AuthorLink Username="@PackageModel.Author?.UserName"/> <abbr title="@latest.Published">@(latest.Published.Humanize())</abbr>
+			Published by <AuthorLink Username="@PackageModel.Author?.UserName"/> <abbr title="@titleLatest.Published">@(titleLatest.Published.Humanize())</abbr>
 		</p>
+	}
 
-		@if (ShowPackageAdminTools)
-		{
-			<div class="my-3">
-				<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
-			</div>
-		}
+	@if (ShowPackageAdminTools)
+	{
+		<div style="display: flex; align-items: center; gap: 0.25rem" class="my-3">
+			@if (!PackageModel.IsDiscontinued)
+			{
+				<button class="btn btn-sm btn-outline-warning" @onclick="OnDiscontinueClicked" disabled="@Editing">Discontinue</button>
+			}
+			<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
+		</div>
+	}
 
-		<AnalysisBadges Analysis="latest.Analysis" Mirrored="PackageModel.Mirrored" PackageName="PackageName"/>
+	<AnalysisBadges ShowAnlysis="@(PackageModel.Latest is not null && !PackageModel.Mirrored)" Analysis="PackageModel.Latest?.Analysis" Mirrored="PackageModel.Mirrored" PackageName="@PackageName" IsDiscontinued="@PackageModel.IsDiscontinued" ReplacedBy="@PackageModel.ReplacedBy" />
 
+	@if (PackageModel.Latest is {} latest)
+	{
 		<p class="my-3 lead">@(latest.PubSpec.Description)</p>
 
 		<div class="row">
@@ -131,7 +134,7 @@ else if (PackageModel is not null)
 
 	@if (PackageModel.Versions is not null)
 	{
-		<h2>Versions</h2>
+		<h2 class="my-3">Versions</h2>
 
 		<table class="table">
 			<thead>
@@ -155,7 +158,7 @@ else if (PackageModel is not null)
 					<td>
 						<code>@version.Version</code>
 
-						<ClickToCopyButton Content="@($"{PackageName}: ^{version.Version}")"/>
+						<ClickToCopyButton Content="@(PubspecVersionText(version.Version, IsMirrored))"/>
 					</td>
 					<td>
 						<abbr title="@version.Published">@(version.Published.Humanize())</abbr>
@@ -163,13 +166,19 @@ else if (PackageModel is not null)
 					@if (!IsMirrored)
 					{
 						<td>
-							<AnalysisBadges Analysis="version.Analysis"/>
+							<AnalysisBadges Analysis="@version.Analysis" Retracted="@version.Retracted" />
 						</td>
 					}
 					@if (ShowPackageAdminTools)
 					{
 						<td>
-							<button class="btn btn-sm btn-outline-danger" @onclick="() => OnDeleteVersionClicked(version.Version)">Delete</button>
+							<div style="display: flex; align-items: center; gap: 0.25rem">
+								@if (!version.Retracted)
+								{
+									<button class="btn btn-sm btn-outline-warning" @onclick="() => OnRetractVersionClicked(version.Version)" disabled="@Editing">Retract</button>
+								}
+								<button class="btn btn-sm btn-outline-danger" @onclick="() => OnDeleteVersionClicked(version.Version)" disabled="@Editing">Delete</button>
+							</div>
 						</td>
 					}
 				</tr>
@@ -202,16 +211,13 @@ else if (PackageModel is not null)
 	private PackageDto? PackageModel { get; set; }
 
 	private string? Error { get; set; }
-	private string? Success { get; set; }
+	private string? Info { get; set; }
 
 	private bool Editing { get; set; }
 	private bool ShowPackageAdminTools { get; set; }
 	private bool ShowUpstreamLink { get; set; }
 
-	private static string HrefToDependency(string name)
-	{
-		return "/package/" + name;
-	}
+	private static string HrefToDependency(string name) => "/package/" + name;
 
 	private string PubspecVersionText(string version, bool mirrored)
 	{
@@ -243,7 +249,7 @@ else if (PackageModel is not null)
 
 		try
 		{
-			var response = await Http.GetAsync($"packages/{PackageName}");
+			var response = await Http.GetAsync($"packages/{PackageName}?includeAuthor=true&includeAnalysis=true");
 			if (response.IsSuccessStatusCode)
 			{
 				PackageModel = await response.Content.ReadFromJsonAsync<PackageDto>();
@@ -308,11 +314,11 @@ else if (PackageModel is not null)
 
 	private async Task OnDeleteVersionClicked(string version)
 	{
-		var confirmed = await Alert.Confirm($"Are you sure you want to delete {PackageName}: {version}?");
+		var confirmed = await Alert.Confirm($"Are you sure you want to delete {PackageName}: {version}? This cannot be undone.");
 		if (!confirmed)
 			return;
 
-		Success = null;
+		Info = null;
 		Error = null;
 		Editing = true;
 
@@ -321,7 +327,7 @@ else if (PackageModel is not null)
 			var response = await Http.DeleteAsync($"packages/{PackageName}/versions/{version}");
 			if (response.IsSuccessStatusCode)
 			{
-				Success = $"Version {version} has been deleted.";
+				Info = $"Version {version} has been deleted.";
 
 				await ReloadPackage();
 			}
@@ -329,6 +335,83 @@ else if (PackageModel is not null)
 			{
 				Error = response.StatusCode switch {
 					HttpStatusCode.Unauthorized => "You are not authorized to delete this package version",
+					HttpStatusCode.NotFound => "This package version was not found",
+					_ => "An unknown error occurred",
+				};
+			}
+		}
+		catch (Exception e)
+		{
+			Error = e.Message;
+		}
+		finally
+		{
+			Editing = false;
+		}
+	}
+
+	private async Task OnDiscontinueClicked()
+	{
+		var replacement = await Alert.Prompt($"Are you sure you want to discontinue {PackageName}? This change cannot be undone.\r\n\r\nYou can suggest a replacement package here:");
+		if (replacement is null)
+			return;
+
+		Info = null;
+		Error = null;
+		Editing = true;
+
+		try
+		{
+			var dto = new SetDiscontinuedDto(string.IsNullOrWhiteSpace(replacement) ? null : replacement);
+			var response = await Http.PatchAsync($"packages/{PackageName}/discontinue", dto);
+			if (response.IsSuccessStatusCode)
+			{
+				Info = $"Package {PackageName} has been marked as discontinued.";
+
+				await ReloadPackage();
+			}
+			else
+			{
+				Error = response.StatusCode switch {
+					HttpStatusCode.Unauthorized => "You are not authorized to discontinue this package",
+					HttpStatusCode.NotFound => "This package was not found",
+					_ => "An unknown error occurred",
+				};
+			}
+		}
+		catch (Exception e)
+		{
+			Error = e.Message;
+		}
+		finally
+		{
+			Editing = false;
+		}
+	}
+
+	private async Task OnRetractVersionClicked(string version)
+	{
+		var confirmed = await Alert.Confirm($"Are you sure you want to retract {PackageName}: {version}? This cannot be undone.");
+		if (!confirmed)
+			return;
+
+		Info = null;
+		Error = null;
+		Editing = true;
+
+		try
+		{
+			var response = await Http.PatchAsync($"packages/{PackageName}/versions/{version}/retract");
+			if (response.IsSuccessStatusCode)
+			{
+				Info = $"Package version {version} has been marked as retracted.";
+
+				await ReloadPackage();
+			}
+			else
+			{
+				Error = response.StatusCode switch {
+					HttpStatusCode.Unauthorized => "You are not authorized to retract this package version",
 					HttpStatusCode.NotFound => "This package version was not found",
 					_ => "An unknown error occurred",
 				};

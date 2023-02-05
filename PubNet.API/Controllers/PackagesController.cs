@@ -12,7 +12,6 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("packages")]
-[ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
 public class PackagesController : BaseController
 {
 	private readonly PubNetContext _db;
@@ -21,8 +20,7 @@ public class PackagesController : BaseController
 	private readonly PubDevPackageProvider _pubDevPackageProvider;
 	private readonly IPackageStorageProvider _storageProvider;
 
-	public PackagesController(ILogger<PackagesController> logger, PubNetContext db,
-		IPackageStorageProvider storageProvider, PubDevPackageProvider pubDevPackageProvider)
+	public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IPackageStorageProvider storageProvider, PubDevPackageProvider pubDevPackageProvider)
 	{
 		_logger = logger;
 		_db = db;
@@ -40,17 +38,12 @@ public class PackagesController : BaseController
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any,
-		Duration = 300)]
-	public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null,
-		[FromQuery] int? limit = null)
+	[ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 60 * 60)]
+	public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
 	{
 		const int maxLimit = 1000;
 
-		IQueryable<Package> packages = _db.Packages
-				.Where(p => p.Latest != null)
-				.OrderByDescending(p => p.Latest!.PublishedAtUtc)
-			;
+		IQueryable<Package> packages = _db.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc);
 
 		if (q != null) packages = packages.Where(p => p.Name.StartsWith(q));
 
@@ -70,27 +63,31 @@ public class PackagesController : BaseController
 			packages = packages.Take(resultLimit);
 		}
 
-		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p =>
-			new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest!.Version,
-				p.Latest!.PublishedAtUtc))));
+		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version, p.Latest?.PublishedAtUtc))));
 	}
 
 	[HttpGet("{name}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetByName(string name, CancellationToken cancellationToken = default)
+	[ResponseCache(VaryByQueryKeys = new[] { "includeAuthor", "includeAnalysis" }, Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
+	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, [FromQuery] bool includeAnalysis = false, CancellationToken cancellationToken = default)
 	{
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 		}))
 		{
-			var package = await _db.Packages
-				.Where(p => p.Name == name)
-				.Include(p => p.Author)
+			var packageQuery = _db.Packages
 				.Include(p => p.Versions)
-				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
-				.FirstOrDefaultAsync(cancellationToken);
+				.Where(p => p.Name == name);
+
+			if (includeAuthor)
+				packageQuery = packageQuery.Include(p => p.Author);
+
+			if (includeAnalysis)
+				packageQuery = packageQuery.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis));
+
+			var package = await packageQuery.FirstOrDefaultAsync(cancellationToken);
 
 			PackageDto dto;
 			if (package is not null)
@@ -109,13 +106,41 @@ public class PackagesController : BaseController
 		}
 	}
 
+	[HttpPatch("{name}/discontinue")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> DiscontinueByName(string name, [FromBody] SetDiscontinuedDto dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	{
+		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+
+		using (_logger.BeginScope(new Dictionary<string, object>
+		{
+			["PackageName"] = name,
+			["AuthorUsername"] = author.UserName,
+		}))
+		{
+			var package = await _db.Packages
+				.Where(p => p.Name == name)
+				.Include(p => p.Versions)
+				.FirstOrDefaultAsync(cancellationToken);
+
+			if (package is null) return NotFound();
+
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+
+			package.IsDiscontinued = true;
+			package.ReplacedBy = dto.Replacement;
+			await _db.SaveChangesAsync(cancellationToken);
+
+			return NoContent();
+		}
+	}
+
 	[HttpDelete("{name}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context,
-		CancellationToken cancellationToken = default)
+	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
@@ -169,8 +194,8 @@ public class PackagesController : BaseController
 	[HttpGet("{name}/versions/{version}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetVersion(string name, string version,
-		CancellationToken cancellationToken = default)
+	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
+	public async Task<IActionResult> GetVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -202,8 +227,57 @@ public class PackagesController : BaseController
 		}
 	}
 
+	[HttpPatch("{name}/versions/{version}/retract")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> RetractVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	{
+		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+
+		using (_logger.BeginScope(new Dictionary<string, object>
+		{
+			["PackageName"] = name,
+			["AuthorUsername"] = author.UserName,
+		}))
+		{
+			var package = await _db.Packages
+				.Where(p => p.Name == name)
+				.Include(p => p.Versions)
+				.FirstOrDefaultAsync(cancellationToken);
+			if (package is null) return NotFound();
+
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+
+			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
+			if (packageVersion is null) return NotFound();
+
+			if (package.Latest == packageVersion)
+			{
+				if (package.Versions.Count > 1)
+				{
+					var newLatestPackage = package.Versions
+						.Where(v => v.Version != version && v.Retracted == false)
+						.MaxBy(v => v.PublishedAtUtc);
+
+					package.Latest = newLatestPackage;
+				}
+				else
+				{
+					package.Latest = null;
+				}
+
+				await _db.SaveChangesAsync(cancellationToken);
+			}
+
+			packageVersion.Retracted = true;
+			await _db.SaveChangesAsync(cancellationToken);
+
+			return NoContent();
+		}
+	}
+
 	[HttpDelete("{name}/versions/{version}")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionDto))]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
@@ -232,7 +306,7 @@ public class PackagesController : BaseController
 				if (package.Versions.Count > 1)
 				{
 					var newLatestPackage = package.Versions
-						.Where(v => v.Version != version)
+						.Where(v => v.Version != version && v.Retracted == false)
 						.MaxBy(v => v.PublishedAtUtc);
 
 					package.Latest = newLatestPackage;
@@ -245,7 +319,7 @@ public class PackagesController : BaseController
 				await _db.SaveChangesAsync(cancellationToken);
 			}
 
-			if (packageVersion.Analysis is {} analysis)
+			if (packageVersion.Analysis is { } analysis)
 			{
 				_db.PackageVersionAnalyses.Remove(analysis);
 				await _db.SaveChangesAsync(cancellationToken);
@@ -263,8 +337,8 @@ public class PackagesController : BaseController
 	[HttpGet("{name}/versions/{version}.tar.gz")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetVersionArchive(string name, string version,
-		CancellationToken cancellationToken = default)
+	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
+	public async Task<IActionResult> GetVersionArchive(string name, string version, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -284,8 +358,7 @@ public class PackagesController : BaseController
 					return Redirect(pubDevPackageVersion.ArchiveUrl);
 			}
 
-			_logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name,
-				version);
+			_logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name, version);
 
 			return NotFound();
 		}
@@ -300,9 +373,8 @@ public class PackagesController : BaseController
 	[HttpGet("{name}/versions/{version}/docs/{**path}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
-	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path,
-		CancellationToken cancellationToken = default)
+	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
+	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path, CancellationToken cancellationToken = default)
 	{
 		var localPath = await _storageProvider.GetDocsPath(name, version, cancellationToken);
 
@@ -332,9 +404,7 @@ public class PackagesController : BaseController
 	[HttpGet("versions/new")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator,
-		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
