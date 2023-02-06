@@ -5,15 +5,16 @@ end_of_line = crlf
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
-indent_style = tab
 
 [*.cs]
+indent_style = tab
+
 # ReSharper properties
 resharper_align_multiline_binary_expressions_chain = false
 resharper_align_multiline_statement_conditions = false
 resharper_csharp_alignment_tab_fill_style = use_tabs_only
 resharper_indent_braces_inside_statement_conditions = false
 
-[{*.json,*.yml}]
+[{*.ya?ml,*.json}]
 indent_style = space
 indent_size = 2

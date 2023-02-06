@@ -1,0 +1,9 @@
+{
+  "ConnectionStrings": {
+    "PubNet": "Host=database;Database=pubnet;Username=pubnet;Password=pubnet"
+  },
+  "PackageStorage": {
+    "Path": "./packages",
+    "PendingMaxAge": "00:05:00"
+  }
+}

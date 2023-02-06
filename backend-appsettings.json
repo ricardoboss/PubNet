@@ -1,0 +1,16 @@
+{
+  "AllowedOrigins": [
+    "http://localhost"
+  ],
+  "ConnectionStrings": {
+    "PubNet": "Host=database;Database=pubnet;Username=pubnet;Password=pubnet"
+  },
+  "Jwt": {
+    "Issuer": "http://localhost",
+    "Audience": "http://localhost",
+    "SecretKey": "Kfou3.pfi6fvY*P8!hhB6BsPV-zEjz!X"
+  },
+  "PackageStorage": {
+    "Path": "./packages"
+  }
+}

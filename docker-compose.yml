@@ -1,8 +1,11 @@
 version: '3.9'
 
-networks:
-  pubnet:
-    driver: bridge
+volumes:
+  postgres_data:
+#  seq_data:
+  pubnet_packages:
+  caddy_data:
+  caddy_config:
 
 services:
   database:
@@ -11,56 +14,62 @@ services:
     environment:
       POSTGRES_USER: "pubnet"
       POSTGRES_PASSWORD: "pubnet"
-    networks:
-      - pubnet
-
-  seq:
-    image: datalust/seq
-    restart: always
-    environment:
-      ACCEPT_EULA: "Y"
-    ports:
-      - "5380:80"
-
-  caddy:
-    image: caddy
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
-      - "./Caddyfile:/etc/caddy/Caddyfile"
-    networks:
-      - pubnet
+      - postgres_data:/var/lib/postgresql/data
 
-  api:
+  adminer:
+    image: adminer
+
+#  seq:
+#    image: datalust/seq
+#    restart: always
+#    environment:
+#      ACCEPT_EULA: "Y"
+#    volumes:
+#      - "seq_data:/data"
+#    ports:
+#      - "5380:80"
+#      - "5341:5341"
+
+  backend:
     build:
-      dockerfile: PubNet.API/Dockerfile
+      dockerfile: ./PubNet.API/Dockerfile
       target: final
+    restart: always
+    volumes:
+      - "./backend-appsettings.json:/app/appsettings.Production.json"
+      - "pubnet_packages:/app/packages"
     depends_on:
       - database
       - caddy
-    volumes:
-      - "./appsettings.json:/app/appsettings.Production.json"
-    networks:
-      - pubnet
 
   worker:
     build:
-      dockerfile: PubNet.Worker/Dockerfile
+      dockerfile: ./PubNet.Worker/Dockerfile
       target: final
+    restart: always
+    volumes:
+      - "./worker-appsettings.json:/app/appsettings.Production.json"
+      - "pubnet_packages:/app/packages"
     depends_on:
       - database
-    volumes:
-      - "./appsettings.json:/app/appsettings.Production.json"
-    networks:
-      - pubnet
 
   frontend:
     build:
-      dockerfile: PubNet.Frontend/Dockerfile
-      target: final
+      dockerfile: ./PubNet.Frontend/Dockerfile
+    restart: always
     depends_on:
-      - api
+      - backend
+      - caddy
+
+  # you can choose any reverse proxy you want, Caddy is not required
+  caddy:
+    image: caddy
+    restart: always
     volumes:
-      - "./appsettings-frontend.json:/app/wwwroot/appsettings.Production.json"
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+      - "caddy_data:/data"
+      - "caddy_config:/config"
+    ports:
+      - "80:80"
+      - "443:443"
