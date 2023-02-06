@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PubNet.Common.Interfaces;
 
@@ -7,10 +8,12 @@ namespace PubNet.Common.Services;
 public class LocalPackageStorageProvider : IPackageStorageProvider
 {
 	private readonly ILogger<LocalPackageStorageProvider> _logger;
+	private readonly IConfiguration _configuration;
 
-	public LocalPackageStorageProvider(ILogger<LocalPackageStorageProvider> logger)
+	public LocalPackageStorageProvider(ILogger<LocalPackageStorageProvider> logger, IConfiguration configuration)
 	{
 		_logger = logger;
+		_configuration = configuration;
 	}
 
 	/// <inheritdoc />
@@ -102,22 +105,23 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 		return Task.FromResult(Path.GetFullPath(path));
 	}
 
-	private static string GetStorageBasePath()
+	private string GetStorageBasePath()
 	{
-		return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet", "packages");
+		return _configuration["PackageStorage:Path"]
+			?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet", "packages");
 	}
 
-	private static string GetPackageBasePath(string name)
+	private string GetPackageBasePath(string name)
 	{
 		return Path.Combine(GetStorageBasePath(), name);
 	}
 
-	private static string GetPackageVersionBasePath(string name, string version)
+	private string GetPackageVersionBasePath(string name, string version)
 	{
 		return Path.Combine(GetPackageBasePath(name), version);
 	}
 
-	private static string GetPackageVersionArchivePath(string name, string version)
+	private string GetPackageVersionArchivePath(string name, string version)
 	{
 		var path = Path.Combine(GetPackageVersionBasePath(name, version), "archive.tar.gz");
 
