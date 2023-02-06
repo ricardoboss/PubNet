@@ -15,14 +15,9 @@ builder.Services.AddScoped<ClipboardService>();
 builder.Services.AddScoped<AlertService>();
 
 builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<ApiClient>(sp =>
+builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>())
 {
-	var apiBase = builder.Configuration["Api:Base"] ?? throw new("Missing Api:Base value in configuration");
-
-	return new(sp.GetRequiredService<HttpClient>())
-	{
-		BaseAddress = apiBase.TrimEnd('/'),
-	};
+	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
 });
 
 await builder.Build().RunAsync();
