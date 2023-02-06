@@ -93,50 +93,33 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 
 		try
 		{
-			if (analysis.Formatted is null)
-			{
-				logger.LogTrace("Check if package {PackageName} version {PackageVersion} is formatted", Package, Version);
+			await CheckFormatted(logger, analysis, dart, workingDir, cancellationToken);
+		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Error checking if package {PackageName} version {PackageVersion} is formatted", Package, Version);
+		}
 
-				var exitCode = await dart.Format("lib", workingDir, cancellationToken);
+		try
+		{
+			await CheckDocsGenerated(logger, analysis, dart, workingDir, storageProvider, cancellationToken);
+		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Error generating the documentation for package {PackageName} version {PackageVersion}", Package, Version);
+		}
 
-				analysis.Formatted = exitCode == 0;
-			}
+		try
+		{
+			await CheckReadmeFound(logger, analysis, workingDir, cancellationToken);
+		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Error checking if package {PackageName} version {PackageVersion} has a README.md", Package, Version);
+		}
 
-			if (analysis.DocumentationLink is null)
-			{
-				logger.LogTrace("Generating documentation for package {PackageName} version {PackageVersion}", Package, Version);
-
-				var exitCode = await dart.Doc(workingDir, cancellationToken);
-				if (exitCode != 0)
-				{
-					// TODO: handle possible error generating docs
-				}
-				else
-				{
-					// TODO: determine API url dynamically
-					var apiDocPath = Path.Combine(workingDir, "doc", "api");
-					await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
-
-					analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
-				}
-			}
-
-			if (analysis.ReadmeFound is null)
-			{
-				logger.LogTrace("Looking for a README file in package {PackageName} version {PackageVersion}", Package, Version);
-
-				var readmePath = await PathHelper.GetCaseInsensitivePath(workingDir, "readme.md", cancellationToken);
-				if (readmePath is null || !File.Exists(readmePath))
-				{
-					analysis.ReadmeFound = false;
-				}
-				else
-				{
-					analysis.ReadmeFound = true;
-					analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
-				}
-			}
-
+		try
+		{
 			if (analysis is not { ReadmeFound: null, DocumentationLink: null, Formatted: null })
 				analysis.CompletedAtUtc = DateTimeOffset.Now.ToUniversalTime();
 
@@ -144,9 +127,67 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 
 			return WorkerTaskResult.Done;
 		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Failed to save changes to analysis of package {PackageName} version {PackageVersion}", Package, Version);
+
+			return WorkerTaskResult.FailedRecoverable;
+		}
 		finally
 		{
+			logger.LogTrace("Cleaning up working directory {WorkingDirectory}", workingDir);
+
 			Directory.Delete(workingDir, true);
+		}
+	}
+
+	private async Task CheckFormatted(ILogger logger, PackageVersionAnalysis analysis, DartCli dart, string workingDir, CancellationToken cancellationToken = default)
+	{
+		if (analysis.Formatted is not null) return;
+
+		logger.LogTrace("Check if package {PackageName} version {PackageVersion} is formatted", Package, Version);
+
+		var exitCode = await dart.Format("lib", workingDir, cancellationToken);
+
+		analysis.Formatted = exitCode == 0;
+	}
+
+	private async Task CheckDocsGenerated(ILogger logger, PackageVersionAnalysis analysis, DartCli dart, string workingDir, IPackageStorageProvider storageProvider, CancellationToken cancellationToken = default)
+	{
+		if (analysis.DocumentationLink is not null) return;
+
+		logger.LogTrace("Generating documentation for package {PackageName} version {PackageVersion}", Package, Version);
+
+		var exitCode = await dart.Doc(workingDir, cancellationToken);
+		if (exitCode != 0)
+		{
+			// TODO: handle possible error generating docs
+		}
+		else
+		{
+			// TODO: determine API url dynamically
+			var apiDocPath = Path.Combine(workingDir, "doc", "api");
+			await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
+
+			analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
+		}
+	}
+
+	private async Task CheckReadmeFound(ILogger logger, PackageVersionAnalysis analysis, string workingDir, CancellationToken cancellationToken = default)
+	{
+		if (analysis.ReadmeFound is not null) return;
+
+		logger.LogTrace("Looking for a README file in package {PackageName} version {PackageVersion}", Package, Version);
+
+		var readmePath = await PathHelper.GetCaseInsensitivePath(workingDir, "readme.md", cancellationToken);
+		if (readmePath is null || !File.Exists(readmePath))
+		{
+			analysis.ReadmeFound = false;
+		}
+		else
+		{
+			analysis.ReadmeFound = true;
+			analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
 		}
 	}
 }
