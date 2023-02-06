@@ -2,7 +2,7 @@ using PubNet.Database.Models;
 
 namespace PubNet.API.DTO;
 
-public record PackageVersionAnalysisDto(bool? Formatted, string? DocumentationHref, DateTimeOffset? CompletedAt)
+public record PackageVersionAnalysisDto(bool? Formatted, string? DocumentationHref, bool? ReadmeFound, DateTimeOffset? CompletedAt)
 {
 	public static PackageVersionAnalysisDto? FromPackageVersionAnalysis(PackageVersionAnalysis? analysis)
 	{
@@ -11,6 +11,7 @@ public record PackageVersionAnalysisDto(bool? Formatted, string? DocumentationHr
 		return new(
 			analysis.Formatted,
 			analysis.DocumentationLink,
+			analysis.ReadmeFound,
 			analysis.CompletedAtUtc
 		);
 	}
