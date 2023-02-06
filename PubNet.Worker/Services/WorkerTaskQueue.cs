@@ -44,4 +44,6 @@ public class WorkerTaskQueue
 	{
 		while (_scheduledQueue.TryDequeue(out var task, out var scheduledAt) && scheduledAt <= limit) yield return task;
 	}
+
+	public IEnumerable<IWorkerTask> Tasks => _queue.Union(_scheduledQueue.UnorderedItems.Select(t => t.Element));
 }

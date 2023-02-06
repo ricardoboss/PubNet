@@ -31,11 +31,11 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		return WorkerTaskResult.Requeue;
 	}
 
-	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger,
-		WorkerTaskQueue taskQueue, CancellationToken cancellationToken = default)
+	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
+		CancellationToken cancellationToken = default)
 	{
 		var versionsWithoutAnalysis = await db.PackageVersions
-			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
+			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v) && !TaskQueueContainsTaskFor(taskQueue, v))
 			.ToListAsync(cancellationToken);
 
 		if (versionsWithoutAnalysis.Count == 0)
@@ -50,11 +50,11 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		foreach (var packageVersion in versionsWithoutAnalysis) taskQueue.Enqueue(CreateTaskFor(packageVersion));
 	}
 
-	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger<MissingAnalysisQueuingTask> logger,
-		WorkerTaskQueue taskQueue, CancellationToken cancellationToken)
+	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
+		CancellationToken cancellationToken = default)
 	{
 		var incompleteAnalyses = await db.PackageVersionAnalyses
-			.Where(a => a.Formatted == null || a.DocumentationLink == null || a.ReadmeFound == null)
+			.Where(a => !a.IsComplete() && !TaskQueueContainsTaskFor(taskQueue, a.Version))
 			.ToListAsync(cancellationToken);
 
 		if (incompleteAnalyses.Count == 0)
@@ -72,5 +72,13 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 	private static PubSpecAnalyzerTask CreateTaskFor(PackageVersion version)
 	{
 		return new(version.PackageName, version.Version);
+	}
+
+	private static bool TaskQueueContainsTaskFor(WorkerTaskQueue taskQueue, PackageVersion version)
+	{
+		return taskQueue.Tasks.Any(t =>
+			t is PubSpecAnalyzerTask analyzerTask &&
+			analyzerTask.Package == version.PackageName &&
+			analyzerTask.Version == version.Version);
 	}
 }

@@ -19,4 +19,9 @@ public class PackageVersionAnalysis
 	public string? ReadmeText { get; set; }
 
 	public DateTimeOffset? CompletedAtUtc { get; set; }
+
+	public bool IsComplete()
+	{
+		return Formatted is not null && DocumentationLink is not null && ReadmeFound is not null;
+	}
 }

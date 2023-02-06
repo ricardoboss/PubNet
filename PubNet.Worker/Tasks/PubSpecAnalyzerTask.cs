@@ -120,7 +120,7 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 
 		try
 		{
-			if (analysis is not { ReadmeFound: null, DocumentationLink: null, Formatted: null })
+			if (analysis.IsComplete())
 				analysis.CompletedAtUtc = DateTimeOffset.Now.ToUniversalTime();
 
 			await db.SaveChangesAsync(cancellationToken);
