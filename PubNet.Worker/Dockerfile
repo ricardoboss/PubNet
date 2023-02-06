@@ -14,9 +14,10 @@ RUN dotnet publish "PubNet.Worker.csproj" -c Release -o /app/publish
 
 FROM base AS final
 
-COPY --from=dart:stable /usr/lib/dart/ /usr/lib/dart/
-COPY --from=dart:stable /runtime/ /runtime/
-ENV PATH="/usr/lib/dart/bin:$PATH"
+RUN apt-get update && apt-get install git curl unzip -y
+WORKDIR /flutter
+RUN git clone https://github.com/flutter/flutter.git -b stable flutter
+ENV PATH="/flutter/flutter/bin/:$PATH"
 
 WORKDIR /app
 COPY --from=publish /app/publish .
