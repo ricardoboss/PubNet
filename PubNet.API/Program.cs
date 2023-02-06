@@ -150,6 +150,13 @@ try
 
 	var app = builder.Build();
 
+	Log.Logger.Information("Migrating database");
+	using (var startupScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+	{
+		var db = startupScope.ServiceProvider.GetRequiredService<PubNetContext>();
+		await db.Database.MigrateAsync();
+	}
+
 	app.UsePathBase("/api");
 
 	app.UseSerilogRequestLogging(options =>
