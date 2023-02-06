@@ -13,6 +13,7 @@ FROM build AS publish
 RUN dotnet publish "PubNet.Worker.csproj" -c Release -o /app/publish
 
 FROM base AS final
+# TODO: add dart bin for generating docs
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "PubNet.Worker.dll"]
