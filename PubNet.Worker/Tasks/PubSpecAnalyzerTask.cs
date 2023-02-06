@@ -114,10 +114,10 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 				else
 				{
 					// TODO: determine API url dynamically
-					analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
-
 					var apiDocPath = Path.Combine(workingDir, "doc", "api");
 					await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
+
+					analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
 				}
 			}
 
