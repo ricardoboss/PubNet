@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PubNet.API.WorkerTasks;
 using PubNet.Database;
 using PubNet.Database.Models;
 using PubNet.Worker.Models;

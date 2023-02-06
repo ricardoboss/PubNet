@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PubNet.API.WorkerTasks;
 using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;

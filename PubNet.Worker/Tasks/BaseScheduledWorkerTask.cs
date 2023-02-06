@@ -1,6 +1,6 @@
 using PubNet.Worker.Models;
 
-namespace PubNet.API.WorkerTasks;
+namespace PubNet.Worker.Tasks;
 
 public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorkerTask
 {
