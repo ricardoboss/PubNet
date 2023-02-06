@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PubNet.Common.Interfaces;
+using PubNet.Common.Utils;
 
 namespace PubNet.Common.Services;
 
@@ -90,7 +91,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 			Directory.Delete(destination, true);
 		}
 
-		Directory.Move(tempFolder, destination);
+		DirectoriesHelper.CopyDirectory(tempFolder, destination, true);
+		Directory.Delete(tempFolder, true);
 
 		return destination;
 	}
