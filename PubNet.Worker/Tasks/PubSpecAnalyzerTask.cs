@@ -161,16 +161,17 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 		var exitCode = await dart.Doc(workingDir, cancellationToken);
 		if (exitCode != 0)
 		{
-			// TODO: handle possible error generating docs
-		}
-		else
-		{
-			// TODO: determine API url dynamically
-			var apiDocPath = Path.Combine(workingDir, "doc", "api");
-			await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
+			logger.LogError("Process to generate documentation exited with non-zero exit code ({ExitCode})", exitCode);
 
-			analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
+			return;
 		}
+
+		var apiDocPath = Path.Combine(workingDir, "doc", "api");
+		await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
+
+		analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
+
+		logger.LogInformation("Documentation successfully generated and stored");
 	}
 
 	private async Task CheckReadmeFound(ILogger logger, PackageVersionAnalysis analysis, string workingDir, CancellationToken cancellationToken = default)
@@ -183,11 +184,11 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 		if (readmePath is null || !File.Exists(readmePath))
 		{
 			analysis.ReadmeFound = false;
+
+			return;
 		}
-		else
-		{
-			analysis.ReadmeFound = true;
-			analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
-		}
+
+		analysis.ReadmeFound = true;
+		analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
 	}
 }
