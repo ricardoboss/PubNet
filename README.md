@@ -73,7 +73,7 @@ services:
 
 You can also host the backend and frontend on different ports, and publish them directly, removing the need to configure a reverse proxy.
 
-In case you want a reverse proxy configure it appropriately (in this case using a Caddyfile):
+In case you want a reverse proxy, configure it appropriately (in this case using a Caddyfile):
 
 ```Caddyfile
 *:80, *:443 {
