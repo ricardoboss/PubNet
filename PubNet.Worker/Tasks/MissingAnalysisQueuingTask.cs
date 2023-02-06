@@ -25,18 +25,38 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 		_taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
-		await EnqueueMissingAnalyses(_db, _logger, _taskQueue, cancellationToken);
-		await EnqueueIncompleteAnalyses(_db, _logger, _taskQueue, cancellationToken);
+		var anyFailed = false;
+		try
+		{
+			await EnqueueMissingAnalyses(_db, _logger, _taskQueue, cancellationToken);
+		}
+		catch (Exception e)
+		{
+			anyFailed = true;
+			_logger.LogError(e, "Failed to enqueue missing analyses");
+		}
 
-		return WorkerTaskResult.Requeue;
+		try
+		{
+			await EnqueueIncompleteAnalyses(_db, _logger, _taskQueue, cancellationToken);
+		}
+		catch (Exception e)
+		{
+			anyFailed = true;
+			_logger.LogError(e, "Failed to enqueue incomplete analyses");
+		}
+
+		return anyFailed ? WorkerTaskResult.FailedRecoverable : WorkerTaskResult.Requeue;
 	}
 
 	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
 		CancellationToken cancellationToken = default)
 	{
-		var versionsWithoutAnalysis = await db.PackageVersions
-			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v) && !TaskQueueContainsTaskFor(taskQueue, v))
-			.ToListAsync(cancellationToken);
+		var versionsWithoutAnalysis = (await db.PackageVersions
+			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
+			.ToListAsync(cancellationToken))
+			.Where(v => !TaskQueueContainsTaskFor(taskQueue, v))
+			.ToList();
 
 		if (versionsWithoutAnalysis.Count == 0)
 		{
@@ -53,9 +73,11 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
 		CancellationToken cancellationToken = default)
 	{
-		var incompleteAnalyses = await db.PackageVersionAnalyses
+		var incompleteAnalyses = (await db.PackageVersionAnalyses
+			.Where(a => a.CompletedAtUtc == null)
+			.ToListAsync(cancellationToken))
 			.Where(a => !a.IsComplete() && !TaskQueueContainsTaskFor(taskQueue, a.Version))
-			.ToListAsync(cancellationToken);
+			.ToList();
 
 		if (incompleteAnalyses.Count == 0)
 		{
