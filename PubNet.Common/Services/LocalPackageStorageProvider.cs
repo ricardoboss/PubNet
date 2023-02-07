@@ -113,8 +113,10 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 	private string GetStorageBasePath()
 	{
-		return _configuration["PackageStorage:Path"]
-			?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet", "packages");
+		var configuredPath = _configuration["PackageStorage:Path"];
+		return configuredPath is null
+			? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet", "packages")
+			: Path.GetFullPath(configuredPath);
 	}
 
 	private string GetPackageBasePath(string name)
