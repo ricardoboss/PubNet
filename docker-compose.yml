@@ -2,7 +2,7 @@ version: '3.9'
 
 volumes:
   postgres_data:
-#  seq_data:
+  seq_data:
   pubnet_packages:
   caddy_data:
   caddy_config:
@@ -19,17 +19,19 @@ services:
 
   adminer:
     image: adminer
+    ports:
+      - "8080:8080"
 
-#  seq:
-#    image: datalust/seq
-#    restart: always
-#    environment:
-#      ACCEPT_EULA: "Y"
-#    volumes:
-#      - "seq_data:/data"
-#    ports:
-#      - "5380:80"
-#      - "5341:5341"
+  seq:
+    image: datalust/seq
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+    volumes:
+      - "seq_data:/data"
+    ports:
+      - "5380:80"
+      - "5341:5341"
 
   backend:
     build:
