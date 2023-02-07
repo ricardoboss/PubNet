@@ -271,7 +271,7 @@ else if (PackageModel is not null)
 
 		try
 		{
-			PackageModel = await Packages.GetPackage(PackageName, true);
+			PackageModel = await Packages.GetPackage(PackageName, true, true);
 		}
 		catch (PackageNotFoundException pnfe)
 		{
@@ -316,19 +316,9 @@ else if (PackageModel is not null)
 
 		try
 		{
-			var response = await Http.DeleteAsync($"packages/{PackageName}");
-			if (response.IsSuccessStatusCode)
-			{
-				Nav.NavigateTo("/?message=package-deleted");
-			}
-			else
-			{
-				Error = response.StatusCode switch {
-					HttpStatusCode.Unauthorized => "You are not authorized to delete this package",
-					HttpStatusCode.NotFound => "The package was not found",
-					_ => "An unknown error occurred",
-				};
-			}
+			await Packages.DeletePackage(PackageName!);
+
+			Nav.NavigateTo("/?message=package-deleted");
 		}
 		catch (Exception e)
 		{
@@ -352,21 +342,11 @@ else if (PackageModel is not null)
 
 		try
 		{
-			var response = await Http.DeleteAsync($"packages/{PackageName}/versions/{version}");
-			if (response.IsSuccessStatusCode)
-			{
-				Info = $"Version {version} has been deleted.";
+			await Packages.DeletePackageVersion(PackageName!, version);
 
-				await ReloadPackage();
-			}
-			else
-			{
-				Error = response.StatusCode switch {
-					HttpStatusCode.Unauthorized => "You are not authorized to delete this package version",
-					HttpStatusCode.NotFound => "This package version was not found",
-					_ => "An unknown error occurred",
-				};
-			}
+			Info = $"Version {version} has been deleted.";
+
+			await ReloadPackage();
 		}
 		catch (Exception e)
 		{
@@ -390,22 +370,11 @@ else if (PackageModel is not null)
 
 		try
 		{
-			var dto = new SetDiscontinuedDto(string.IsNullOrWhiteSpace(replacement) ? null : replacement);
-			var response = await Http.PatchAsync($"packages/{PackageName}/discontinue", dto);
-			if (response.IsSuccessStatusCode)
-			{
-				Info = $"Package {PackageName} has been marked as discontinued.";
+			await Packages.DiscontinuePackage(PackageName!, replacement);
 
-				await ReloadPackage();
-			}
-			else
-			{
-				Error = response.StatusCode switch {
-					HttpStatusCode.Unauthorized => "You are not authorized to discontinue this package",
-					HttpStatusCode.NotFound => "This package was not found",
-					_ => "An unknown error occurred",
-				};
-			}
+			Info = $"Package {PackageName} has been marked as discontinued.";
+
+			await ReloadPackage();
 		}
 		catch (Exception e)
 		{
@@ -429,21 +398,11 @@ else if (PackageModel is not null)
 
 		try
 		{
-			var response = await Http.PatchAsync($"packages/{PackageName}/versions/{version}/retract");
-			if (response.IsSuccessStatusCode)
-			{
-				Info = $"Package version {version} has been marked as retracted.";
+			await Packages.RetractVersion(PackageName!, version);
 
-				await ReloadPackage();
-			}
-			else
-			{
-				Error = response.StatusCode switch {
-					HttpStatusCode.Unauthorized => "You are not authorized to retract this package version",
-					HttpStatusCode.NotFound => "This package version was not found",
-					_ => "An unknown error occurred",
-				};
-			}
+			Info = $"Package version {version} has been marked as retracted.";
+
+			await ReloadPackage();
 		}
 		catch (Exception e)
 		{

@@ -66,8 +66,7 @@
 
 	private string? ReplacedBy => PackageDto?.ReplacedBy;
 
-	[Parameter]
-	public bool Retracted { get; set; }
+	private bool Retracted => PackageVersionDto?.Retracted ?? false;
 
 	private static string HrefToReplacement(string name) => "/packages/" + name;
 

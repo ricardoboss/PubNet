@@ -8,7 +8,7 @@ public class PackageVersionDto
 	public string Version { get; init; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-	public bool Retracted { get; init; }
+	public bool Retracted { get; set; }
 
 	[JsonPropertyName("archive_url")]
 	public string ArchiveUrl { get; init; }

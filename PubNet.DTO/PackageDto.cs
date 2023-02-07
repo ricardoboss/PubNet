@@ -7,10 +7,10 @@ public class PackageDto
 {
 	public string Name { get; init; }
 
-	public IEnumerable<PackageVersionDto>? Versions { get; init; }
+	public List<PackageVersionDto>? Versions { get; init; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-	public bool IsDiscontinued { get; init; }
+	public bool IsDiscontinued { get; set; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public string? ReplacedBy { get; init; }
@@ -26,7 +26,7 @@ public class PackageDto
 	public static PackageDto FromPackage(Package package)
 	{
 		var versions = package.Versions.Any()
-			? package.Versions.Select(PackageVersionDto.FromPackageVersion)
+			? package.Versions.Select(PackageVersionDto.FromPackageVersion).ToList()
 			: null;
 
 		var latestDto = package.Latest is null ? null : PackageVersionDto.FromPackageVersion(package.Latest);

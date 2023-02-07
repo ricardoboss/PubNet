@@ -6,7 +6,7 @@ namespace PubNet.Frontend.Services;
 public class AnalysisService
 {
 	private readonly ApiClient _http;
-	private readonly Dictionary<(string, string, bool), PackageVersionAnalysisDto?> _analyses = new();
+	private readonly Dictionary<string, Dictionary<(string, bool), PackageVersionAnalysisDto?>> _analyses = new();
 
 	private bool _fetching;
 
@@ -15,11 +15,30 @@ public class AnalysisService
 		_http = http;
 	}
 
+	public void InvalidateAnalysisFor(string name, string? version = null)
+	{
+		if (!_analyses.ContainsKey(name))
+			return;
+
+		if (version is not null)
+		{
+			_analyses[name].Remove((version, true));
+			_analyses[name].Remove((version, false));
+		}
+		else
+		{
+			_analyses.Remove(name);
+		}
+	}
+
 	public async Task<PackageVersionAnalysisDto?> GetAnalysisForVersion(string name, string version, bool includeReadme, CancellationToken cancellationToken = default)
 	{
 		while (_fetching) await Task.Delay(100, cancellationToken);
 
-		if (_analyses.TryGetValue((name, version, includeReadme), out var value))
+		if (
+			_analyses.TryGetValue(name, out var versions)
+			&& versions.TryGetValue((version, includeReadme), out var value)
+		)
 			return value;
 
 		_fetching = true;
@@ -32,7 +51,10 @@ public class AnalysisService
 			else
 				analysis = null;
 
-			_analyses[(name, version, includeReadme)] = analysis;
+			if (!_analyses.ContainsKey(name))
+				_analyses[name] = new();
+
+			_analyses[name][(version, includeReadme)] = analysis;
 
 			return analysis;
 		}
