@@ -74,11 +74,13 @@ public class AuthenticationController : BaseController
 	}
 
 	[HttpGet("self")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorDto))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	public async Task<IActionResult> Self(ApplicationRequestContext context,
 		CancellationToken cancellationToken = default)
 	{
-		return Ok(await context.RequireAuthorAsync(User, _db, cancellationToken));
+		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+
+		return Ok(AuthorDto.FromAuthor(author, true));
 	}
 }
