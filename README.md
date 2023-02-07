@@ -1,3 +1,6 @@
+[![.NET](https://github.com/ricardoboss/PubNet/actions/workflows/dotnet.yml/badge.svg)](https://github.com/ricardoboss/PubNet/actions/workflows/dotnet.yml)
+[![Docker](https://github.com/ricardoboss/PubNet/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/ricardoboss/PubNet/actions/workflows/docker-publish.yml)
+
 # PubNet
 
 Private pub.dev alternative.
