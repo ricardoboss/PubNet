@@ -17,7 +17,11 @@ builder.Services.AddScoped<AlertService>();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>())
 {
+#if DEBUG
+	BaseAddress = "https://localhost:7171/api/",
+#else
 	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
+#endif
 });
 
 await builder.Build().RunAsync();
