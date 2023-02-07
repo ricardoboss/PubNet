@@ -16,6 +16,8 @@ services:
       POSTGRES_PASSWORD: "pubnet"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   adminer:
     image: adminer
