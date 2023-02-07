@@ -27,8 +27,9 @@ jobs:
         permissions:
             contents: read
             packages: write
-        matrix:
-            project: ['API','Worker','Frontend']
+        strategy:
+            matrix:
+                project: ['API','Worker','Frontend']
 
         steps:
             -   name: Checkout repository
