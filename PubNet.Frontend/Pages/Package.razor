@@ -335,26 +335,29 @@ else if (PackageModel is not null)
 			Error = e.Message;
 		}
 
+		if (!IsMirrored)
+		{
 #pragma warning disable CS4014
-		if (PackageModel?.Latest is not null)
-			Analysis.GetAnalysisForVersion(PackageName, PackageModel.Latest.Version, true)
-				.ContinueWith(task =>
-				{
-					if (task.IsFaulted)
+			if (PackageModel?.Latest is not null)
+				Analysis.GetAnalysisForVersion(PackageName, PackageModel.Latest.Version, true)
+					.ContinueWith(task =>
 					{
-						Error = task.Exception!.Message;
-					}
-					else
-					{
-						LatestVersionAnalysis = task.Result;
-					}
-				});
+						if (task.IsFaulted)
+						{
+							Error = task.Exception!.Message;
+						}
+						else
+						{
+							LatestVersionAnalysis = task.Result;
+						}
+					});
 
-		if (PackageModel?.Versions is not null)
-			Task.WhenAll(PackageModel.Versions.Select(v => Analysis.GetAnalysisForVersion(PackageName, v.Version, false))).ContinueWith(_ => StateHasChanged());
+			if (PackageModel?.Versions is not null)
+				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => Analysis.GetAnalysisForVersion(PackageName, v.Version, false))).ContinueWith(_ => StateHasChanged());
 #pragma warning restore CS4014
+		}
 
-		ShowPackageAdminTools = await Auth.IsSelf(PackageModel?.Author?.UserName);
+		ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(PackageModel?.Author?.UserName);
 	}
 
 	private async Task OnDeleteClicked()
