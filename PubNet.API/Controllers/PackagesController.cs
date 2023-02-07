@@ -185,7 +185,14 @@ public class PackagesController : BaseController
 			_db.Packages.Remove(package);
 			await _db.SaveChangesAsync(cancellationToken);
 
-			await _storageProvider.DeletePackage(name, cancellationToken);
+			try
+			{
+				await _storageProvider.DeletePackage(name, cancellationToken);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Failed to delete package from storage");
+			}
 
 			return NoContent();
 		}
@@ -328,7 +335,14 @@ public class PackagesController : BaseController
 			_db.PackageVersions.Remove(packageVersion);
 			await _db.SaveChangesAsync(cancellationToken);
 
-			await _storageProvider.DeletePackageVersion(name, version, cancellationToken);
+			try
+			{
+				await _storageProvider.DeletePackageVersion(name, version, cancellationToken);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Failed to delete package version from storage");
+			}
 
 			return NoContent();
 		}
