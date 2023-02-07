@@ -78,7 +78,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public async Task<string> StoreDocs(string name, string version, string tempFolder, CancellationToken cancellationToken = default)
+	public async Task StoreDocs(string name, string version, string tempFolder, CancellationToken cancellationToken = default)
 	{
 		var destination = await GetDocsPath(name, version, cancellationToken);
 
@@ -93,8 +93,6 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 		DirectoriesHelper.CopyDirectory(tempFolder, destination, true);
 		Directory.Delete(tempFolder, true);
-
-		return destination;
 	}
 
 	/// <inheritdoc />

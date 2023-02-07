@@ -10,7 +10,7 @@ public interface IPackageStorageProvider
 
 	public Stream ReadArchive(string name, string version);
 
-	public Task<string> StoreDocs(string name, string version, string tempFolder, CancellationToken cancellationToken = default);
+	public Task StoreDocs(string name, string version, string tempFolder, CancellationToken cancellationToken = default);
 
 	public Task<string> GetDocsPath(string name, string version, CancellationToken cancellationToken = default);
 }
