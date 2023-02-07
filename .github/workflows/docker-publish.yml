@@ -47,8 +47,6 @@ jobs:
             -   name: Extract Docker metadata
                 id: meta
                 uses: docker/metadata-action@v4
-                with:
-                    images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
             -   name: Build and push Docker image (PubNet.API)
                 id: build-and-push-api
@@ -57,7 +55,7 @@ jobs:
                     context: .
                     file: PubNet.API/Dockerfile
                     push: ${{ github.event_name != 'pull_request' }}
-                    tags: ricardoboss/pubnet-api:latest
+                    tags: ${{ env.REGISTRY }}/${{ github.repository }}/api:${{ github.sha }}
                     labels: ${{ steps.meta.outputs.labels }}
                     cache-from: type=gha
                     cache-to: type=gha,mode=max
@@ -69,7 +67,7 @@ jobs:
                     context: .
                     file: PubNet.Worker/Dockerfile
                     push: ${{ github.event_name != 'pull_request' }}
-                    tags: ricardoboss/pubnet-worker:latest
+                    tags: ${{ env.REGISTRY }}/${{ github.repository }}/worker:${{ github.sha }}
                     labels: ${{ steps.meta.outputs.labels }}
                     cache-from: type=gha
                     cache-to: type=gha,mode=max
@@ -81,7 +79,7 @@ jobs:
                     context: .
                     file: PubNet.Frontend/Dockerfile
                     push: ${{ github.event_name != 'pull_request' }}
-                    tags: ricardoboss/pubnet-frontend:latest
+                    tags: ${{ env.REGISTRY }}/${{ github.repository }}/frontend:${{ github.sha }}
                     labels: ${{ steps.meta.outputs.labels }}
                     cache-from: type=gha
                     cache-to: type=gha,mode=max
