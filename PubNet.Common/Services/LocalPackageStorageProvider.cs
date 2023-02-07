@@ -15,6 +15,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	{
 		_logger = logger;
 		_configuration = configuration;
+
+		_logger.LogTrace("Local package storage base path is {StorageBasePath}", GetStorageBasePath());
 	}
 
 	/// <inheritdoc />
@@ -23,6 +25,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var path = GetPackageBasePath(name);
+
+		_logger.LogInformation("Deleting package {PackageName} at {PackageBasePath}", name, path);
 
 		Directory.Delete(path, true);
 
@@ -35,6 +39,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var path = GetPackageVersionBasePath(name, version);
+
+		_logger.LogInformation("Deleting package version {PackageName} {PackageVersion} at {PackageVersionBasePath}", name, version, path);
 
 		Directory.Delete(path, true);
 
