@@ -1,6 +1,7 @@
 ﻿@page "/package/{PackageName}"
 @using PubNet.API.DTO
 @using System.Net
+@using Markdig;
 
 @inject ApiClient Http
 @inject AuthenticationService Auth
@@ -130,6 +131,13 @@ else if (PackageModel is not null)
 				}
 			</div>
 		</div>
+
+		@if (latest.Analysis is not { ReadmeText: null })
+		{
+			<div class="my-3">
+				@((MarkupString) Markdown.ToHtml(ReadmeText, MarkdownPipeline))
+			</div>
+		}
 	}
 
 	@if (PackageModel.Versions is not null)
@@ -218,6 +226,12 @@ else if (PackageModel is not null)
 	private bool ShowUpstreamLink { get; set; }
 
 	private static string HrefToDependency(string name) => "/package/" + name;
+
+	private string ReadmeText => PackageModel?.Latest?.Analysis?.ReadmeText ?? string.Empty;
+
+	private MarkdownPipeline MarkdownPipeline => new MarkdownPipelineBuilder()
+		.UseAdvancedExtensions()
+		.Build();
 
 	private string PubspecVersionText(string version, bool mirrored)
 	{
