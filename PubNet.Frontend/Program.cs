@@ -9,13 +9,17 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<AuthenticationService>();
-builder.Services.AddScoped<ClipboardService>();
-builder.Services.AddScoped<AlertService>();
+#if DEBUG
+builder.Logging.ClearProviders();
+builder.Logging.AddProvider(new SimpleConsoleLoggerProvider());
+builder.Logging.SetMinimumLevel(LogLevel.Trace);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
+#else
+builder.Logging.SetMinimumLevel(LogLevel.None);
+#endif
 
 builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>())
+builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILogger<ApiClient>>())
 {
 #if DEBUG
 	BaseAddress = "https://localhost:7171/api/",
@@ -24,4 +28,12 @@ builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient
 #endif
 });
 
-await builder.Build().RunAsync();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<ClipboardService>();
+builder.Services.AddScoped<AlertService>();
+builder.Services.AddScoped<PackagesService>();
+builder.Services.AddScoped<AnalysisService>();
+
+var app = builder.Build();
+await app.RunAsync();

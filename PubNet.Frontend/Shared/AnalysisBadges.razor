@@ -1,36 +1,33 @@
 @using PubNet.API.DTO
 @inject ApiClient Http
+@inject PackagesService Packages
+@inject AnalysisService Analysis
+@inject ILogger<AnalysisBadges> Logger
 
 <div style="display: flex; align-items: center; gap: 0.25rem">
-	@if (Mirrored && PackageName is not null)
+	@if (Mirrored)
 	{
 		<a href="@("https://pub.dev/packages/" + PackageName)" target="_blank">
 			<div class="badge bg-secondary">Mirrored from pub.dev</div>
 		</a>
 	}
 
-	@if (ShowAnlysis)
+	@if (AnalysisDto?.DocumentationHref is not null)
 	{
-		@if (Analysis is {} analysis)
-		{
-			@if (analysis.DocumentationHref is not null)
-			{
-				<NavLink href="@(DocumentationUrl(analysis.DocumentationHref))" class="badge bg-info">Docs</NavLink>
-			}
+		<NavLink href="@(DocumentationUrl(AnalysisDto.DocumentationHref))" class="badge bg-info">Docs</NavLink>
+	}
 
-			@if (analysis.Formatted == true)
-			{
-				<div class="badge bg-success">Formatted</div>
-			}
-			else if (analysis.Formatted == false)
-			{
-				<div class="badge bg-warning">Not Formatted</div>
-			}
-		}
-		else
-		{
-			<div class="badge bg-secondary">Not analyzed</div>
-		}
+	@if (AnalysisDto?.Formatted == true)
+	{
+		<div class="badge bg-success">Formatted</div>
+	}
+	else if (AnalysisDto?.Formatted == false)
+	{
+		<div class="badge bg-warning">Not Formatted</div>
+	}
+	else if (PackageVersionDto is not null)
+	{
+		<div class="badge bg-secondary">Not analyzed</div>
 	}
 
 	@if (IsDiscontinued)
@@ -52,28 +49,40 @@
 @code {
 
 	[Parameter]
-	public bool ShowAnlysis { get; set; } = true;
-
-	[Parameter]
-	public PackageVersionAnalysisDto? Analysis { get; set; }
-
-	[Parameter]
-	public bool Mirrored { get; set; }
-
-	[Parameter]
 	public string? PackageName { get; set; }
 
 	[Parameter]
-	public bool IsDiscontinued { get; set; }
+	public string? PackageVersion { get; set; }
 
-	[Parameter]
-	public string? ReplacedBy { get; set; }
+	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
+
+	private PackageVersionDto? PackageVersionDto { get; set; }
+
+	private PackageDto? PackageDto { get; set; }
+
+	private bool Mirrored => PackageDto?.Mirrored ?? false;
+
+	private bool IsDiscontinued => PackageDto?.IsDiscontinued ?? false;
+
+	private string? ReplacedBy => PackageDto?.ReplacedBy;
 
 	[Parameter]
 	public bool Retracted { get; set; }
 
-	private static string HrefToReplacement(string name) => "/package/" + name;
+	private static string HrefToReplacement(string name) => "/packages/" + name;
 
 	private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+
+	/// <inheritdoc />
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		if (PackageName is null || PackageVersion is null) return;
+
+		PackageDto = await Packages.GetPackage(PackageName, false);
+		PackageVersionDto = await Packages.GetPackageVersion(PackageName, PackageVersion);
+		AnalysisDto = await Analysis.GetAnalysisForVersion(PackageName, PackageVersion, false);
+	}
 
 }

@@ -22,9 +22,6 @@ public class PackageVersionDto
 	public PubSpec PubSpec { get; init; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-	public PackageVersionAnalysisDto? Analysis { get; init; }
-
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public bool Mirrored { get; set; }
 
 	public static PackageVersionDto FromPackageVersion(PackageVersion version)
@@ -37,7 +34,6 @@ public class PackageVersionDto
 			ArchiveSha256 = version.ArchiveSha256.ToLowerInvariant(),
 			Published = version.PublishedAtUtc,
 			PubSpec = version.PubSpec,
-			Analysis = PackageVersionAnalysisDto.FromPackageVersionAnalysis(version.Analysis),
 			Mirrored = false,
 		};
 	}

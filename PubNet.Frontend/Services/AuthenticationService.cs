@@ -13,6 +13,7 @@ public class AuthenticationService
 	private readonly ILocalStorageService _localStorage;
 
 	private AuthorDto? _self;
+	private bool _fetchedSelf;
 
 	public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient)
 	{
@@ -60,13 +61,13 @@ public class AuthenticationService
 	public async Task<AuthorDto> GetSelfAsync(CancellationToken cancellationToken = default)
 	{
 		if (_apiClient.Token is null)
-			throw new("Not authenticated");
+			throw new UnauthenticatedException("Not authenticated");
 
 		if (_self is not null)
 			return _self;
 
 		var storedSelf = await _localStorage.GetItemAsync<AuthorDto>(SelfStorageName, cancellationToken);
-		if (storedSelf is not null)
+		if (_fetchedSelf && storedSelf is not null)
 		{
 			_self = storedSelf;
 
@@ -75,26 +76,40 @@ public class AuthenticationService
 
 		var response = await _apiClient.GetAsync("authentication/self", cancellationToken);
 		if (!response.IsSuccessStatusCode)
-			throw new("Request failed");
+			throw new UnauthenticatedException("Request failed");
 
 		_self = await response.Content.ReadFromJsonAsync<AuthorDto>(cancellationToken: cancellationToken);
 		if (_self is null)
-			throw new("Unable to deserialize");
+			throw new UnauthenticatedException("Unable to deserialize");
 
 		await _localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
+
+		_fetchedSelf = true;
 
 		return _self;
 	}
 
-	public async Task<bool> IsSelf(string username, CancellationToken cancellationToken = default)
+	public async Task<bool> IsSelf(string? username, CancellationToken cancellationToken = default)
 	{
+		if (username is null) return false;
+
 		try
 		{
 			return (await GetSelfAsync(cancellationToken)).UserName == username;
 		}
-		catch (Exception)
+		catch (Exception e)
 		{
+			if (e is UnauthenticatedException)
+				await Logout(CancellationToken.None);
+
 			return false;
 		}
+	}
+}
+
+public class UnauthenticatedException : Exception
+{
+	public UnauthenticatedException(string message) : base(message)
+	{
 	}
 }

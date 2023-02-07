@@ -69,8 +69,8 @@ public class PackagesController : BaseController
 	[HttpGet("{name}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(VaryByQueryKeys = new[] { "includeAuthor", "includeAnalysis" }, Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
-	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, [FromQuery] bool includeAnalysis = false, CancellationToken cancellationToken = default)
+	[ResponseCache(VaryByQueryKeys = new[] { "includeAuthor" }, Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
+	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, CancellationToken cancellationToken = default)
 	{
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -83,9 +83,6 @@ public class PackagesController : BaseController
 
 			if (includeAuthor)
 				packageQuery = packageQuery.Include(p => p.Author);
-
-			if (includeAnalysis)
-				packageQuery = packageQuery.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis));
 
 			var package = await packageQuery.FirstOrDefaultAsync(cancellationToken);
 
@@ -231,6 +228,30 @@ public class PackagesController : BaseController
 
 			Response.Headers.ContentType = "application/vnd.pub.v2+json";
 			return Ok(dto);
+		}
+	}
+
+	[HttpGet("{name}/versions/{version}/analysis")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionAnalysisDto))]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ResponseCache(VaryByQueryKeys = new [] { "includeReadme" }, Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
+	public async Task<IActionResult> GetVersionAnalysis(string name, string version, [FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
+	{
+		using (_logger.BeginScope(new Dictionary<string, object>
+		{
+			["PackageName"] = name,
+		}))
+		{
+			var package = await _db.Packages
+				.Where(p => p.Name == name)
+				.Include(p => p.Versions)
+				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
+				.FirstOrDefaultAsync(cancellationToken);
+
+			var packageVersionAnalysis = package?.Versions.FirstOrDefault(v => v.Version == version)?.Analysis;
+			if (packageVersionAnalysis is null) return NotFound();
+
+			return Ok(PackageVersionAnalysisDto.FromPackageVersionAnalysis(packageVersionAnalysis, includeReadme));
 		}
 	}
 

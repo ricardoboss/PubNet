@@ -5,3 +5,4 @@ riderModule.iml
 *.db*
 /PubNet.API/packages/
 /*.user
+/packages/
