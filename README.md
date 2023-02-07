@@ -31,9 +31,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build:
-      dockerfile: ./PubNet.API/Dockerfile
-      target: final
+    image: ghcr.io/ricardoboss/pubnet/api:main
     restart: always
     volumes:
       - "./backend-appsettings.json:/app/appsettings.Production.json"
@@ -43,9 +41,7 @@ services:
       - caddy
 
   worker:
-    build:
-      dockerfile: ./PubNet.Worker/Dockerfile
-      target: final
+    image: ghcr.io/ricardoboss/pubnet/worker:main
     restart: always
     volumes:
       - "./worker-appsettings.json:/app/appsettings.Production.json"
@@ -54,8 +50,7 @@ services:
       - database
 
   frontend:
-    build:
-      dockerfile: ./PubNet.Frontend/Dockerfile
+    image: ghcr.io/ricardoboss/pubnet/frontend:main
     restart: always
     depends_on:
       - backend
