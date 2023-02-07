@@ -80,7 +80,7 @@ jobs:
                     cache-to: type=gha,mode=max
 
             -   name: Extract Docker metadata (PubNet.Frontend)
-                id: meta-worker
+                id: meta-frontend
                 uses: docker/metadata-action@v4
                 with:
                     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
