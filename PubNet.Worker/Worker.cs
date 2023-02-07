@@ -23,83 +23,60 @@ public class Worker : BackgroundService
 		_configuration = configuration;
 	}
 
+	private TimeSpan GetInterval(string path)
+	{
+		return TimeSpan.Parse(_configuration.GetRequiredSection(path).Value ?? string.Empty);
+	}
+
 	public override async Task StartAsync(CancellationToken cancellationToken)
 	{
-		_taskQueue.Enqueue(new CleanupOldPendingArchivesTask(TimeSpan.FromMinutes(1)));
-		_taskQueue.Enqueue(new MissingAnalysisQueuingTask(TimeSpan.FromSeconds(35)));
+		_taskQueue.Enqueue(new CleanupOldPendingArchivesTask(GetInterval("Worker:PendingCleanupInterval")));
+		_taskQueue.Enqueue(new MissingAnalysisQueuingTask(GetInterval("Worker:QueueMissingAnalysisInterval")));
 
 		await base.StartAsync(cancellationToken);
 	}
 
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
-		if (!TimeSpan.TryParse(_configuration.GetRequiredSection("Worker:Interval").Value!, out var interval))
-		{
-			_logger.LogCritical("Failed to parse Worker:SleepInterval value. Check your configuration");
-
-			return;
-		}
+		var interval = GetInterval("Worker:TaskInterval");
 
 		while (!stoppingToken.IsCancellationRequested)
 		{
-			var start = DateTime.Now;
-			DateTime? wakeTime = null;
 			try
 			{
-				var tasks = new List<IWorkerTask>();
-				while (_taskQueue.DequeueUnscheduled(out var task))
-					tasks.Add(task);
+				_logger.LogInformation("Worker is running at {Now}", DateTime.Now);
 
-				if (_taskQueue.TryGetNextScheduledAt(out var scheduledTask, out var scheduledAt))
+				// possibly need to wake up earlier than interval
+				var wakeTime = AdjustWakeTime(null, interval, out var runNow);
+				if (runNow)
 				{
-					// if the next scheduled task should run in the future, abort
-					if (scheduledAt > DateTimeOffset.Now)
-					{
-						_logger.LogTrace("Next scheduled task should run at {NextScheduled}", scheduledAt);
+					// scheduled tasks are due now or overdue
+					await RunScheduledTasksAsync(DateTime.Now, stoppingToken);
 
-						if (scheduledAt < (wakeTime ?? DateTime.Now.Add(interval)))
-						{
-							_logger.LogInformation("Adjusting worker wake time for scheduled task {TaskName}",
-								scheduledTask.Name);
-
-							wakeTime = scheduledAt;
-						}
-						else
-						{
-							_logger.LogTrace("Worker wake time is before next scheduled task");
-						}
-					}
-					else
-					{
-						tasks.AddRange(_taskQueue.DequeueUntil(scheduledAt));
-					}
+					// adjust wake time again after running scheduled tasks
+					wakeTime = AdjustWakeTime(null, interval, out _);
 				}
 
-				if (!tasks.Any())
+				await RunUnscheduledTasks(stoppingToken);
+
+				var sleepDuration  = wakeTime.Subtract(DateTime.Now);
+				if (sleepDuration <= TimeSpan.Zero)
 				{
-					_logger.LogInformation("No worker tasks to run right now");
+					_logger.LogInformation("Skipping sleep as wake time has already passed ({WakeTime})", wakeTime);
 
 					continue;
 				}
 
-				await RunTasksAsync(tasks, stoppingToken);
-
-				if (_taskQueue.TryGetNextScheduledAt(out scheduledTask, out scheduledAt))
+				if (_taskQueue.GetNextUnscheduled(out var task))
 				{
-					_logger.LogTrace("Next scheduled task should run at {NextScheduled}", scheduledAt);
+					_logger.LogInformation("Skipping sleep because new, unscheduled tasks have been queued ({TaskName})", task.Name);
 
-					if (scheduledAt < (wakeTime ?? DateTime.Now.Add(interval)))
-					{
-						_logger.LogInformation("Adjusting worker wake time for scheduled task {TaskName}",
-							scheduledTask.Name);
-
-						wakeTime = scheduledAt;
-					}
-					else
-					{
-						_logger.LogTrace("Worker wake time is before next scheduled task");
-					}
+					continue;
 				}
+
+				_logger.LogInformation("Worker is sleeping until {WakeTime}", wakeTime);
+
+				await Task.Delay(sleepDuration, _taskQueue.SleepCancellation);
 			}
 			catch (Exception e)
 			{
@@ -107,39 +84,47 @@ public class Worker : BackgroundService
 
 				break;
 			}
-			finally
-			{
-				TimeSpan sleepDuration;
-				if (wakeTime is null)
-				{
-					var runDuration = DateTime.Now - start;
-					sleepDuration = interval - runDuration;
-					wakeTime = DateTime.Now.Add(sleepDuration);
-				}
-				else
-				{
-					sleepDuration = wakeTime.Value.Subtract(DateTime.Now);
-				}
-
-				if (sleepDuration > TimeSpan.Zero)
-				{
-					_logger.LogInformation("Worker is sleeping until {WakeTime}", wakeTime);
-
-					await Task.Delay(sleepDuration, stoppingToken);
-				}
-			}
 		}
 
 		_logger.LogWarning("Worker is stopping");
 	}
 
-	private async Task RunTasksAsync(List<IWorkerTask> tasks, CancellationToken cancellationToken = default)
+	private DateTime AdjustWakeTime(DateTime? wakeTime, TimeSpan interval, out bool runNow)
+	{
+		runNow = false;
+		var calculatedWakeTime = wakeTime ?? DateTime.Now.Add(interval);
+		if (!_taskQueue.TryGetNextScheduledAt(out var scheduledTask, out var nextScheduledTime))
+		{
+			_logger.LogTrace("No scheduled tasks found");
+
+			return calculatedWakeTime;
+		}
+
+		if (nextScheduledTime <= DateTime.Now)
+		{
+			_logger.LogTrace("Scheduled tasks are due now ({TaskName})", scheduledTask.Name);
+
+			runNow = true;
+			return nextScheduledTime;
+		}
+
+		if (nextScheduledTime >= calculatedWakeTime)
+			return calculatedWakeTime; // worker is awake at or before next scheduled task
+
+		_logger.LogDebug(
+			"Worker wake time adjusted to {NextScheduled} (because of {TaskName})",
+			nextScheduledTime,
+			scheduledTask.Name
+		);
+
+		return nextScheduledTime;
+	}
+
+	private async Task RunScheduledTasksAsync(DateTime limit, CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		_logger.LogInformation("Running {TaskCount} worker task(s)", tasks.Count);
-
-		foreach (var workerTask in tasks)
+		foreach (var workerTask in _taskQueue.DequeueUntil(limit))
 		{
 			await RunTaskAsync(workerTask, cancellationToken);
 
@@ -151,6 +136,24 @@ public class Worker : BackgroundService
 			return;
 		}
 
+		_logger.LogTrace("Done running scheduled tasks up until {Limit}", limit);
+	}
+
+	private async Task RunUnscheduledTasks(CancellationToken cancellationToken = default)
+	{
+		cancellationToken.ThrowIfCancellationRequested();
+
+		while (_taskQueue.DequeueUnscheduled(out var task))
+		{
+			await RunTaskAsync(task, cancellationToken);
+
+			if (!cancellationToken.IsCancellationRequested) continue;
+
+			_logger.LogTrace("Cancellation requested. Aborting running tasks");
+
+			break;
+		}
+
 		_logger.LogTrace("Done running tasks");
 	}
 
@@ -158,9 +161,10 @@ public class Worker : BackgroundService
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		using (_logger.BeginScope(new Dictionary<string, string>
+		using (_logger.BeginScope(new Dictionary<string, string?>
 		{
 			{ "TaskName", task.Name },
+			{ "TaskType", task.GetType().FullName },
 		}))
 		{
 			try

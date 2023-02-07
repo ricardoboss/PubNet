@@ -14,16 +14,16 @@ public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorker
 	}
 
 	/// <inheritdoc />
-	public TimeSpan Interval { get; }
+	public TimeSpan Interval { get; protected set; }
 
 	/// <inheritdoc />
 	public DateTime ScheduledAt { get; }
 
 	/// <inheritdoc />
-	public DateTime? LastRun { get; protected set; }
+	public DateTime? LastRun { get; private set; }
 
 	/// <inheritdoc />
-	public DateTime NextRun { get; protected set; }
+	public DateTime NextRun { get; private set; }
 
 	/// <inheritdoc />
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services,
@@ -31,11 +31,12 @@ public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorker
 	{
 		try
 		{
+			LastRun = DateTime.Now;
+
 			return await InvokeScheduled(services, cancellationToken);
 		}
 		finally
 		{
-			LastRun = DateTime.Now;
 			NextRun = DateTime.Now.Add(Interval);
 		}
 	}
