@@ -170,8 +170,6 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 		await storageProvider.StoreDocs(Package, Version, apiDocPath, cancellationToken);
 
 		analysis.DocumentationLink = $"/packages/{Package}/versions/{Version}/docs/";
-
-		logger.LogInformation("Documentation successfully generated and stored");
 	}
 
 	private async Task CheckReadmeFound(ILogger logger, PackageVersionAnalysis analysis, string workingDir, CancellationToken cancellationToken = default)
