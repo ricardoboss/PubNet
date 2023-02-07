@@ -27,6 +27,8 @@ jobs:
         permissions:
             contents: read
             packages: write
+        matrix:
+            project: ['API','Worker','Frontend']
 
         steps:
             -   name: Checkout repository
@@ -43,56 +45,20 @@ jobs:
                     username: ${{ github.actor }}
                     password: ${{ secrets.GITHUB_TOKEN }}
 
-            -   name: Extract Docker metadata (PubNet.API)
-                id: meta-api
+            -   name: Extract Docker metadata (PubNet.${{ matrix.project }})
+                id: meta
                 uses: docker/metadata-action@v4
                 with:
-                    images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api
+                    images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.project }}
 
-            -   name: Build and push Docker image (PubNet.API)
-                id: build-and-push-api
+            -   name: Build and push Docker image (PubNet.${{ matrix.project }})
+                id: build-and-push
                 uses: docker/build-push-action@v4
                 with:
                     context: .
-                    file: PubNet.API/Dockerfile
+                    file: PubNet.${{ matrix.project }}/Dockerfile
                     push: ${{ github.event_name != 'pull_request' }}
                     tags: ${{ steps.meta-api.outputs.tags }}
                     labels: ${{ steps.meta-api.outputs.labels }}
-                    cache-from: type=gha
-                    cache-to: type=gha,mode=max
-
-            -   name: Extract Docker metadata (PubNet.Worker)
-                id: meta-worker
-                uses: docker/metadata-action@v4
-                with:
-                    images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/worker
-
-            -   name: Build and push Docker image (PubNet.Worker)
-                id: build-and-push-worker
-                uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
-                with:
-                    context: .
-                    file: PubNet.Worker/Dockerfile
-                    push: ${{ github.event_name != 'pull_request' }}
-                    tags: ${{ steps.meta-worker.outputs.tags }}
-                    labels: ${{ steps.meta-worker.outputs.labels }}
-                    cache-from: type=gha
-                    cache-to: type=gha,mode=max
-
-            -   name: Extract Docker metadata (PubNet.Frontend)
-                id: meta-frontend
-                uses: docker/metadata-action@v4
-                with:
-                    images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
-
-            -   name: Build and push Docker image (PubNet.Frontend)
-                id: build-and-push-frontend
-                uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
-                with:
-                    context: .
-                    file: PubNet.Frontend/Dockerfile
-                    push: ${{ github.event_name != 'pull_request' }}
-                    tags: ${{ steps.meta-frontend.outputs.tags }}
-                    labels: ${{ steps.meta-frontend.outputs.labels }}
                     cache-from: type=gha
                     cache-to: type=gha,mode=max
