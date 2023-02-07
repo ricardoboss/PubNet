@@ -1,0 +1,4 @@
+localhost
+
+root * /srv
+try_files {path} {path}/ /index.html =404

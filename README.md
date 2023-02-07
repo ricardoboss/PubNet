@@ -67,6 +67,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp"
 ```
 
 You can also host the backend and frontend on different ports, and publish them directly, removing the need to configure a reverse proxy.

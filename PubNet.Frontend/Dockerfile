@@ -13,7 +13,7 @@ RUN dotnet build "PubNet.Frontend.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "PubNet.Frontend.csproj" -c Release -o /app/publish
 
-FROM nginx:alpine AS final
-WORKDIR /usr/share/nginx/html
+FROM caddy AS final
+WORKDIR /srv
 COPY --from=publish /app/publish/wwwroot .
-COPY ./PubNet.Frontend/nginx.conf /etc/nginx/nginx.conf
+COPY ./PubNet.Frontend/Caddyfile /etc/caddy/Caddyfile
