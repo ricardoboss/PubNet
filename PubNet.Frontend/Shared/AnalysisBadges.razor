@@ -80,8 +80,12 @@
 		if (PackageName is null || PackageVersion is null) return;
 
 		PackageDto = await Packages.GetPackage(PackageName, false);
-		PackageVersionDto = await Packages.GetPackageVersion(PackageName, PackageVersion);
-		AnalysisDto = await Analysis.GetAnalysisForVersion(PackageName, PackageVersion, false);
+
+		if (!(PackageDto?.Mirrored ?? false))
+		{
+			PackageVersionDto = await Packages.GetPackageVersion(PackageName, PackageVersion);
+			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageName, PackageVersion, false);
+		}
 	}
 
 }
