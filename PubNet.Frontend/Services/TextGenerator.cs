@@ -18,17 +18,4 @@ public static class TextGenerator
 
 
 	public static string HrefToDependency(string name) => "/packages/" + name;
-
-
-	public static string bla(PackageVersionAnalysisDto? AnalysisDto, PackageVersionDto? PackageVersionDto)
-	{
-		var result = AnalysisDto?.Formatted switch
-		{
-			true => "Formatted",
-			false => "not formatted",
-			_ => PackageVersionDto is not null ? "not analyzed" : string.Empty,
-		};
-
-		return result;
-	}
 }
