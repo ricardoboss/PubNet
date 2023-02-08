@@ -14,6 +14,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddProvider(new SimpleConsoleLoggerProvider());
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
 builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Components.Routing.Router", LogLevel.Information);
 #else
 builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif
