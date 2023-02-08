@@ -10,7 +10,7 @@ public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorker
 		Interval = interval;
 		ScheduledAt = scheduledAt;
 		LastRun = null;
-		NextRun = scheduledAt.Add(interval);
+		NextRun = scheduledAt;
 	}
 
 	/// <inheritdoc />
