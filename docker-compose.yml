@@ -23,6 +23,8 @@ services:
     image: adminer
     ports:
       - "8080:8080"
+    depends_on:
+      - database
 
   seq:
     image: datalust/seq
