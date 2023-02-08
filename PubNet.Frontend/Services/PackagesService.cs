@@ -6,6 +6,8 @@ namespace PubNet.Frontend.Services;
 
 public class PackagesService
 {
+	private const int FetchDelay = 10;
+
 	private readonly ApiClient _http;
 	private readonly AnalysisService _analysis;
 	private readonly Dictionary<string, PackageDto?> _packages = new();
@@ -25,7 +27,7 @@ public class PackagesService
 
 	public async Task<PackageDto?> GetPackage(string name, bool includeAuthor, bool forceFetch = false, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(100, cancellationToken);
+		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
 
 		if (!forceFetch && _packages.TryGetValue(name, out var package))
 			return package ?? throw NotFound();
@@ -60,7 +62,7 @@ public class PackagesService
 
 	public async Task DeletePackage(string name, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(100, cancellationToken);
+		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
 
 		_fetching = true;
 		try
@@ -89,7 +91,7 @@ public class PackagesService
 
 	public async Task DeletePackageVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(100, cancellationToken);
+		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
 
 		_fetching = true;
 		try
@@ -127,7 +129,7 @@ public class PackagesService
 
 	public async Task DiscontinuePackage(string name, string? replacement, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(100, cancellationToken);
+		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
 
 		_fetching = true;
 		try
@@ -160,7 +162,7 @@ public class PackagesService
 
 	public async Task RetractVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(100, cancellationToken);
+		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
 
 		_fetching = true;
 		try

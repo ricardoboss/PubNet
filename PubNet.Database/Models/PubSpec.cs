@@ -1,12 +1,17 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace PubNet.Database.Models;
 
 public class PubSpec
 {
-	[JsonPropertyName("name")] public string? Name { get; set; }
+	[JsonPropertyName("name")]
+	[NotNull]
+	public string? Name { get; set; }
 
-	[JsonPropertyName("version")] public string? Version { get; set; }
+	[JsonPropertyName("version")]
+	[NotNull]
+	public string? Version { get; set; }
 
 	[JsonPropertyName("description")] public string? Description { get; set; }
 

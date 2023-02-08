@@ -5,6 +5,8 @@ namespace PubNet.Frontend.Services;
 
 public class AnalysisService
 {
+	private const int FetchDelay = 10;
+
 	private readonly ApiClient _http;
 	private readonly Dictionary<string, Dictionary<(string, bool), PackageVersionAnalysisDto?>> _analyses = new();
 
@@ -33,13 +35,17 @@ public class AnalysisService
 
 	public async Task<PackageVersionAnalysisDto?> GetAnalysisForVersion(string name, string version, bool includeReadme, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(100, cancellationToken);
+		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
 
-		if (
-			_analyses.TryGetValue(name, out var versions)
-			&& versions.TryGetValue((version, includeReadme), out var value)
-		)
-			return value;
+		if (_analyses.TryGetValue(name, out var versions))
+		{
+			if (versions.TryGetValue((version, includeReadme), out var value))
+				return value;
+
+			// fallback to returning an analysis including a readme, even if it was not requested
+			if (includeReadme == false && versions.TryGetValue((version, true), out value))
+				return value;
+		}
 
 		_fetching = true;
 		try

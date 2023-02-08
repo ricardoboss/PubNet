@@ -30,116 +30,23 @@
 	</div>
 }
 
-@if (PackageModel is null && Error is null)
+<PackageHeader PackageName="@PackageName" />
+
+@if (PackageModel is not null)
 {
-	<PageTitle>@PackageName</PageTitle>
-
-	<h1>
-		<code>@PackageName</code>
-	</h1>
-
-	<p>
-		<em>Loading...</em>
-	</p>
-}
-else if (PackageModel is not null)
-{
-	@if (PackageModel.Latest is not { } titleLatest)
-	{
-		<PageTitle>@PackageName</PageTitle>
-
-		<h1>
-			<code>@PackageName</code>
-		</h1>
-
-		<p>
-			Published by <AuthorLink Username="@PackageModel.Author?.UserName"/>
-		</p>
-	}
-	else
-	{
-		<PageTitle>@PackageName: @titleLatest.Version</PageTitle>
-
-		<h1>
-			<code>@PackageName: @titleLatest.Version</code>
-
-			<ClickToCopyButton Content="@PubspecVersionText(titleLatest.Version, PackageModel.Mirrored)"/>
-		</h1>
-
-		<p class="text-muted">
-			Published by <AuthorLink Username="@PackageModel.Author?.UserName"/> <abbr title="@titleLatest.Published">@(titleLatest.Published.Humanize())</abbr>
-		</p>
-	}
-
 	@if (ShowPackageAdminTools)
 	{
-		<div style="display: flex; align-items: center; gap: 0.25rem" class="my-3">
-			@if (!PackageModel.IsDiscontinued)
-			{
-				<button class="btn btn-sm btn-outline-warning" @onclick="OnDiscontinueClicked" disabled="@Editing">Discontinue</button>
-			}
-			<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
-		</div>
+		<PackageAdminToolbar PackageModel="@PackageModel" Editing="@Editing" OnDeleteClicked="OnDeleteClicked" OnDiscontinueClicked="OnDiscontinueClicked" />
 	}
 
-	<AnalysisBadges PackageName="@PackageName" PackageVersion="@PackageModel?.Latest?.Version" />
+	<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@LatestVersion" />
 
-	@if (PackageModel?.Latest is {} latest)
+	@if (LatestVersion is not null)
 	{
-		<p class="my-3 lead">@(latest.PubSpec.Description)</p>
-
-		<div class="row">
-			<div class="col-12 col-sm-6">
-				<h2 class="mt-4">Dependencies</h2>
-
-				@if (latest.PubSpec.Dependencies is null or { Count: 0 })
-				{
-					<p class="my-3">
-						<em>No dependencies.</em>
-					</p>
-				}
-				else
-				{
-					<ul>
-						@foreach (var dependency in latest.PubSpec.Dependencies)
-						{
-							<li>
-								<NavLink href="@HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
-							</li>
-						}
-					</ul>
-				}
-			</div>
-			<div class="col-12 col-sm-6">
-				<h2 class="mt-4">Dev Dependencies</h2>
-
-				@if (latest.PubSpec.DevDependencies is null or { Count: 0 })
-				{
-					<p class="my-3">
-						<em>No dependencies.</em>
-					</p>
-				}
-				else
-				{
-					<ul>
-						@foreach (var dependency in latest.PubSpec.DevDependencies)
-						{
-							<li>
-								<NavLink href="@HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
-							</li>
-						}
-					</ul>
-				}
-			</div>
-		</div>
-
-		@if (LatestVersionAnalysis is not null)
-		{
-			<Markdown Content="@LatestVersionAnalysis.ReadmeText" BaseUrl="@PackageModel?.Latest.PubSpec.Repository" />
-		}
+		<PackageVersionOverview Version="LatestVersion" />
 	}
 
-	@if (PackageModel?.Versions is not null)
+	@if (PackageVersions is not null)
 	{
 		<h2 class="my-3">Versions</h2>
 
@@ -159,13 +66,13 @@ else if (PackageModel is not null)
 			</tr>
 			</thead>
 			<tbody>
-			@foreach (var version in PackageModel.Versions.OrderByDescending(v => v.Published).Take(10))
+			@foreach (var version in PackageVersions.OrderByDescending(v => v.Published).Take(10))
 			{
 				<tr>
 					<td>
 						<code>@version.Version</code>
 
-						<ClickToCopyButton Content="@(PubspecVersionText(version.Version, IsMirrored))"/>
+						<ClickToCopyButton Content="@(PubspecVersionText(version.Version))"/>
 					</td>
 					<td>
 						<abbr title="@version.Published">@(version.Published.Humanize())</abbr>
@@ -173,7 +80,7 @@ else if (PackageModel is not null)
 					@if (!IsMirrored)
 					{
 						<td>
-							<AnalysisBadges PackageName="@PackageName" PackageVersion="@version.Version" />
+							<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@version" />
 						</td>
 					}
 					@if (ShowPackageAdminTools)
@@ -191,11 +98,11 @@ else if (PackageModel is not null)
 				</tr>
 			}
 
-			@if (PackageModel.Versions.Count > 10)
+			@if (PackageVersions.Count > 10)
 			{
 				<tr>
 					<td colspan="3">
-						<span class="text-muted">... and @(PackageModel.Versions.Count - 10) older versions</span>
+						<span class="text-muted">... and @(PackageVersions.Count - 10) older versions</span>
 					</td>
 				</tr>
 			}
@@ -216,7 +123,10 @@ else if (PackageModel is not null)
 	public string? PackageName { get; set; }
 
 	private PackageDto? PackageModel { get; set; }
-	private PackageVersionAnalysisDto? LatestVersionAnalysis { get; set; }
+
+	private PackageVersionDto? LatestVersion => PackageModel?.Latest;
+
+	private List<PackageVersionDto>? PackageVersions => PackageModel?.Versions;
 
 	private string? Error { get; set; }
 	private string? Info { get; set; }
@@ -225,18 +135,11 @@ else if (PackageModel is not null)
 	private bool ShowPackageAdminTools { get; set; }
 	private bool ShowUpstreamLink { get; set; }
 
-	private static string HrefToDependency(string name) => "/package/" + name;
-
-	private string PubspecVersionText(string version, bool mirrored)
+	private string PubspecVersionText(string version)
 	{
-		if (mirrored)
-			return $"{PackageName}: ^{version}";
-
-		return $@"{PackageName}:
-  hosted:
-    url: {Http.BaseAddress}
-    name: {PackageName}
-    version: ^{version}";
+		return PackageName is null
+			? string.Empty
+			: TextGenerator.PubspecVersionText(PackageName, version, IsMirrored, Http.BaseAddress);
 	}
 
 	private bool IsMirrored => PackageModel?.Mirrored ?? false;
@@ -251,7 +154,6 @@ else if (PackageModel is not null)
 	private async Task ReloadPackage() {
 		Error = null;
 		PackageModel = null;
-		LatestVersionAnalysis = null;
 		Editing = false;
 		ShowPackageAdminTools = false;
 		ShowUpstreamLink = false;
@@ -276,20 +178,6 @@ else if (PackageModel is not null)
 		if (!IsMirrored)
 		{
 #pragma warning disable CS4014
-			if (PackageModel?.Latest is not null)
-				Analysis.GetAnalysisForVersion(PackageName, PackageModel.Latest.Version, true)
-					.ContinueWith(task =>
-					{
-						if (task.IsFaulted)
-						{
-							Error = task.Exception!.Message;
-						}
-						else
-						{
-							LatestVersionAnalysis = task.Result;
-						}
-					});
-
 			if (PackageModel?.Versions is not null)
 				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => Analysis.GetAnalysisForVersion(PackageName, v.Version, false))).ContinueWith(_ => StateHasChanged());
 #pragma warning restore CS4014

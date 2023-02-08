@@ -1,0 +1,89 @@
+﻿@using PubNet.API.DTO
+
+@inject AnalysisService AnalysisService
+
+@if (Version is null)
+{
+	<p>
+		<em>Loading...</em>
+	</p>
+}
+else
+{
+	<p class="my-3 lead">@(Version.PubSpec.Description)</p>
+
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<h2 class="mt-4">Dependencies</h2>
+
+			@if (Version.PubSpec.Dependencies is null or { Count: 0 })
+			{
+				<p class="my-3">
+					<em>No dependencies.</em>
+				</p>
+			}
+			else
+			{
+				<ul>
+					@foreach (var dependency in Version.PubSpec.Dependencies)
+					{
+						<li>
+							<NavLink href="@TextGenerator.HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
+						</li>
+					}
+				</ul>
+			}
+		</div>
+		<div class="col-12 col-sm-6">
+			<h2 class="mt-4">Dev Dependencies</h2>
+
+			@if (Version.PubSpec.DevDependencies is null or { Count: 0 })
+			{
+				<p class="my-3">
+					<em>No dependencies.</em>
+				</p>
+			}
+			else
+			{
+				<ul>
+					@foreach (var dependency in Version.PubSpec.DevDependencies)
+					{
+						<li>
+							<NavLink href="@TextGenerator.HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
+						</li>
+					}
+				</ul>
+			}
+		</div>
+	</div>
+
+	@if (Analysis is not null)
+	{
+		<Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.PubSpec.Repository" />
+	}
+}
+
+@code {
+	[Parameter]
+	public PackageVersionDto? Version { get; set; }
+
+	private PackageVersionAnalysisDto? Analysis { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		if (Version is null)
+			return;
+
+		try
+		{
+			Analysis = await AnalysisService.GetAnalysisForVersion(Version.PubSpec.Name, Version.Version, true);
+		}
+		catch (Exception)
+		{
+			// ignored
+		}
+	}
+
+}

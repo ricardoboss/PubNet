@@ -17,17 +17,20 @@
 		<NavLink href="@(DocumentationUrl(AnalysisDto.DocumentationHref))" class="badge bg-info">Docs</NavLink>
 	}
 
-	@if (AnalysisDto?.Formatted == true)
+	@switch (AnalysisDto?.Formatted)
 	{
-		<div class="badge bg-success">Formatted</div>
-	}
-	else if (AnalysisDto?.Formatted == false)
-	{
-		<div class="badge bg-warning">Not Formatted</div>
-	}
-	else if (PackageVersionDto is not null)
-	{
-		<div class="badge bg-secondary">Not analyzed</div>
+		case true:
+			<div class="badge bg-success">Formatted</div>
+			break;
+		case false:
+			<div class="badge bg-warning">Not Formatted</div>
+			break;
+		default:
+			if (PackageVersionDto is not null)
+			{
+				<div class="badge bg-secondary">Not analyzed</div>
+			}
+			break;
 	}
 
 	@if (IsDiscontinued)
@@ -49,16 +52,14 @@
 @code {
 
 	[Parameter]
-	public string? PackageName { get; set; }
+	public PackageDto? PackageDto { get; set; }
 
 	[Parameter]
-	public string? PackageVersion { get; set; }
+	public PackageVersionDto? PackageVersionDto { get; set; }
 
 	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
 
-	private PackageVersionDto? PackageVersionDto { get; set; }
-
-	private PackageDto? PackageDto { get; set; }
+	private string? PackageName => PackageDto?.Name ?? PackageVersionDto?.PubSpec.Name;
 
 	private bool Mirrored => PackageDto?.Mirrored ?? false;
 
@@ -77,14 +78,11 @@
 	{
 		await base.OnInitializedAsync();
 
-		if (PackageName is null || PackageVersion is null) return;
-
-		PackageDto = await Packages.GetPackage(PackageName, false);
+		if (PackageVersionDto is null) return;
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			PackageVersionDto = await Packages.GetPackageVersion(PackageName, PackageVersion);
-			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageName, PackageVersion, false);
+			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.PubSpec.Name, PackageVersionDto.Version, false);
 		}
 	}
 

@@ -1,0 +1,27 @@
+﻿@using PubNet.API.DTO
+<div style="display: flex; align-items: center; gap: 0.25rem" class="my-3">
+	@if (!IsDiscontinued)
+	{
+		<button class="btn btn-sm btn-outline-warning" @onclick="OnDiscontinueClicked" disabled="@Editing">Discontinue</button>
+	}
+
+	<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
+</div>
+
+@code {
+	[Parameter]
+	public PackageDto? PackageModel { get; set; }
+
+	[Parameter]
+	public bool Editing { get; set; }
+
+	[Parameter]
+	public EventCallback OnDeleteClicked { get; set; }
+
+	[Parameter]
+	public EventCallback OnDiscontinueClicked { get; set; }
+
+	private bool IsDiscontinued => PackageModel?.IsDiscontinued ?? false;
+
+	// MAYBE: move logic to discontinue and delete packages in here
+}
