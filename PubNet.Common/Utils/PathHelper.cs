@@ -8,7 +8,11 @@ public static class PathHelper
 
 		var lowercaseSearchFilename = searchFilename.ToLowerInvariant();
 		return Task.FromResult(Directory.EnumerateFiles(workingDirectory).FirstOrDefault(
-			filename => Path.GetFileName(filename).ToLowerInvariant().SequenceEqual(lowercaseSearchFilename)
-		));
+			filename =>
+			{
+				var lowercaseFilename = Path.GetFileName(filename).ToLowerInvariant();
+
+				return lowercaseFilename.SequenceEqual(lowercaseSearchFilename);
+			}));
 	}
 }
