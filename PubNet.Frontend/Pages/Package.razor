@@ -1,8 +1,5 @@
 ﻿@page "/package/{PackageName}"
 @page "/packages/{PackageName}"
-@using Markdig
-@using Markdig.Parsers
-@using Markdig.Renderers
 @using PubNet.API.DTO
 
 @inject ApiClient Http
@@ -11,9 +8,6 @@
 @inject AlertService Alert
 @inject PackagesService Packages
 @inject AnalysisService Analysis
-@inject ILogger<Package> Logger
-
-<link rel="stylesheet" href="/css/github-markdown.css">
 
 @if (Error is not null)
 {
@@ -139,11 +133,9 @@ else if (PackageModel is not null)
 			</div>
 		</div>
 
-		@if (LatestVersionAnalysis is not { ReadmeText: null })
+		@if (LatestVersionAnalysis is not null)
 		{
-			<div class="markdown-body">
-				@((MarkupString) ReadmeHtml)
-			</div>
+			<Markdown Content="@LatestVersionAnalysis.ReadmeText" BaseUrl="@PackageModel?.Latest.PubSpec.Repository" />
 		}
 	}
 
@@ -234,62 +226,6 @@ else if (PackageModel is not null)
 	private bool ShowUpstreamLink { get; set; }
 
 	private static string HrefToDependency(string name) => "/package/" + name;
-
-	private string ReadmeText => LatestVersionAnalysis?.ReadmeText ?? string.Empty;
-
-	private string ReadmeHtml
-	{
-		get
-		{
-			var writer = new StringWriter();
-			var renderer = new HtmlRenderer(writer)
-			{
-				LinkRewriter = relative =>
-				{
-					try
-					{
-						if (!Uri.TryCreate(relative, UriKind.RelativeOrAbsolute, out var givenUri) || givenUri.IsAbsoluteUri)
-							return relative;
-
-						var baseUrl = PackageModel?.Latest?.PubSpec.Repository;
-						if (baseUrl is null)
-							return relative;
-
-						var baseUri = new Uri(baseUrl);
-						switch (baseUri.Host)
-						{
-							case "github.com":
-								var path = baseUri.Segments.Select(s => s.Trim('/')).ToList();
-								path.Add("main"); // default branch
-								path.AddRange(relative.TrimStart('/').Split('/'));
-								return new Uri(new("https://raw.githubusercontent.com"), string.Join('/', path)).ToString();
-							default:
-								return new Uri(new(baseUrl.TrimEnd('/') + '/'), relative.TrimStart('/')).ToString();
-						}
-					}
-					catch (Exception err)
-					{
-						Logger.LogError(err, "Error rewriting url");
-
-						return relative;
-					}
-				},
-			};
-
-			var pipeline = MarkdownPipeline;
-			pipeline.Setup(renderer);
-
-			var document = MarkdownParser.Parse(ReadmeText, pipeline);
-			renderer.Render(document);
-			writer.Flush();
-
-			return writer.ToString();
-		}
-	}
-
-	private MarkdownPipeline MarkdownPipeline => new MarkdownPipelineBuilder()
-		.UseAdvancedExtensions()
-		.Build();
 
 	private string PubspecVersionText(string version, bool mirrored)
 	{

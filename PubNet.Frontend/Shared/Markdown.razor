@@ -1,0 +1,100 @@
+﻿@using Markdig.Renderers
+@using Markdig.Parsers
+@using Markdig
+@using Markdig.Extensions.AutoIdentifiers
+
+@inject ILogger<Markdown> Logger
+
+<link rel="stylesheet" href="/css/github-markdown.css">
+
+@if (Content is not null)
+{
+    <div class="markdown-body">
+        @if (HtmlContent is null)
+        {
+            <p>
+                <em>Rendering...</em>
+            </p>
+        }
+        else
+        {
+            @HtmlContent
+        }
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string? Content { get; set; }
+
+    [Parameter]
+    public string? BaseUrl { get; set; }
+
+    private MarkupString? HtmlContent { get; set; }
+
+    private static MarkdownPipeline MarkdownPipeline => new MarkdownPipelineBuilder()
+        .UseAdvancedExtensions()
+        .UseEmojiAndSmiley()
+        .UseAutoIdentifiers(AutoIdentifierOptions.GitHub)
+        .Build();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        HtmlContent = RenderContentAsHtml();
+    }
+
+    private MarkupString? RenderContentAsHtml()
+    {
+        if (Content is null)
+            return null;
+
+        var writer = new StringWriter();
+        var renderer = new HtmlRenderer(writer)
+        {
+            LinkRewriter = RewriteRelativeUrl,
+        };
+
+        var pipeline = MarkdownPipeline;
+        pipeline.Setup(renderer);
+
+        var document = MarkdownParser.Parse(Content, pipeline);
+        renderer.Render(document);
+        writer.Flush();
+
+        return new MarkupString(writer.ToString());
+    }
+
+    private string RewriteRelativeUrl(string url)
+    {
+        try
+        {
+            if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var givenUri) || givenUri.IsAbsoluteUri)
+                return url;
+
+            if (BaseUrl is null)
+                return url;
+
+            var baseUri = new Uri(BaseUrl);
+            switch (baseUri.Host)
+            {
+                case "github.com":
+                    var path = baseUri.Segments.Select(s => s.Trim('/')).ToList();
+                    path.Add("main"); // default branch
+                    path.AddRange(url.TrimStart('/').Split('/'));
+                    return new Uri(new("https://raw.githubusercontent.com"), string.Join('/', path)).ToString();
+                default:
+                    return new Uri(new(BaseUrl.TrimEnd('/') + '/'), url.TrimStart('/')).ToString();
+            }
+        }
+        catch (Exception err)
+        {
+            Logger.LogError(err, "Error rewriting url {URL}", url);
+
+            return url;
+        }
+    }
+
+}
