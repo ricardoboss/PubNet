@@ -6,13 +6,13 @@ using PubNet.Worker.Services;
 
 namespace PubNet.Worker.Tasks;
 
-public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
+public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 {
 	private PubNetContext? _db;
-	private ILogger<MissingAnalysisQueuingTask>? _logger;
+	private ILogger<MissingPackageVersionAnalysisQueuingTask>? _logger;
 	private WorkerTaskQueue? _taskQueue;
 
-	public MissingAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
+	public MissingPackageVersionAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
 	{
 	}
 
@@ -21,7 +21,7 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,
 		CancellationToken cancellationToken = default)
 	{
-		_logger ??= services.GetRequiredService<ILogger<MissingAnalysisQueuingTask>>();
+		_logger ??= services.GetRequiredService<ILogger<MissingPackageVersionAnalysisQueuingTask>>();
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 		_taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
@@ -76,7 +76,7 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		var incompleteAnalyses = (await db.PackageVersionAnalyses
 			.Where(a => a.CompletedAtUtc == null)
 			.ToListAsync(cancellationToken))
-			.Where(a => !a.IsComplete() && !TaskQueueContainsTaskFor(taskQueue, a.Version))
+			.Where(a => !TaskQueueContainsTaskFor(taskQueue, a.Version))
 			.ToList();
 
 		if (incompleteAnalyses.Count == 0)
@@ -91,7 +91,7 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 		foreach (var analysis in incompleteAnalyses) taskQueue.Enqueue(CreateTaskFor(analysis.Version));
 	}
 
-	private static PubSpecAnalyzerTask CreateTaskFor(PackageVersion version)
+	private static PackageVersionAnalyzerTask CreateTaskFor(PackageVersion version)
 	{
 		return new(version.PackageName, version.Version);
 	}
@@ -99,7 +99,7 @@ public class MissingAnalysisQueuingTask : BaseScheduledWorkerTask
 	private static bool TaskQueueContainsTaskFor(WorkerTaskQueue taskQueue, PackageVersion version)
 	{
 		return taskQueue.Tasks.Any(t =>
-			t is PubSpecAnalyzerTask analyzerTask &&
+			t is PackageVersionAnalyzerTask analyzerTask &&
 			analyzerTask.Package == version.PackageName &&
 			analyzerTask.Version == version.Version);
 	}

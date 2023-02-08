@@ -31,7 +31,7 @@ public class Worker : BackgroundService
 	public override async Task StartAsync(CancellationToken cancellationToken)
 	{
 		_taskQueue.Enqueue(new CleanupOldPendingArchivesTask(GetInterval("Worker:PendingCleanupInterval")));
-		_taskQueue.Enqueue(new MissingAnalysisQueuingTask(GetInterval("Worker:QueueMissingAnalysisInterval")));
+		_taskQueue.Enqueue(new MissingPackageVersionAnalysisQueuingTask(GetInterval("Worker:QueueMissingAnalysisInterval")));
 
 		await base.StartAsync(cancellationToken);
 	}
@@ -46,15 +46,15 @@ public class Worker : BackgroundService
 			{
 				_logger.LogInformation("Worker is running at {Now}", DateTime.Now);
 
-				// possibly need to wake up earlier than interval
+				await RunScheduledTasksAsync(DateTime.Now, stoppingToken);
+
+				// adjust wake time after running scheduled tasks
 				var wakeTime = AdjustWakeTime(null, interval, out var runNow);
 				if (runNow)
 				{
-					// scheduled tasks are due now or overdue
-					await RunScheduledTasksAsync(DateTime.Now, stoppingToken);
+					_logger.LogDebug("Skipping unscheduled tasks and sleep as scheduled tasks are due now");
 
-					// adjust wake time again after running scheduled tasks
-					wakeTime = AdjustWakeTime(null, interval, out _);
+					continue;
 				}
 
 				await RunUnscheduledTasks(stoppingToken);
@@ -124,9 +124,12 @@ public class Worker : BackgroundService
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
+		var count = 0;
 		foreach (var workerTask in _taskQueue.DequeueUntil(limit))
 		{
 			await RunTaskAsync(workerTask, cancellationToken);
+
+			count++;
 
 			if (!cancellationToken.IsCancellationRequested)
 				continue;
@@ -136,16 +139,19 @@ public class Worker : BackgroundService
 			return;
 		}
 
-		_logger.LogTrace("Done running scheduled tasks up until {Limit}", limit);
+		_logger.LogTrace("Ran {Count} scheduled tasks up until {Limit}", count, limit);
 	}
 
 	private async Task RunUnscheduledTasks(CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
+		var count = 0;
 		while (_taskQueue.DequeueUnscheduled(out var task))
 		{
 			await RunTaskAsync(task, cancellationToken);
+
+			count++;
 
 			if (!cancellationToken.IsCancellationRequested) continue;
 
@@ -154,7 +160,7 @@ public class Worker : BackgroundService
 			break;
 		}
 
-		_logger.LogTrace("Done running tasks");
+		_logger.LogTrace("Ran {Count} unscheduled tasks", count);
 	}
 
 	private async Task RunTaskAsync(IWorkerTask task, CancellationToken cancellationToken = default)
