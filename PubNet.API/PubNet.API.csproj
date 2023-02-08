@@ -59,8 +59,4 @@
 		<None Remove="packages\**" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Contexts" />
-	</ItemGroup>
-
 </Project>
