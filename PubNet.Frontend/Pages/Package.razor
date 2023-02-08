@@ -13,6 +13,8 @@
 @inject AnalysisService Analysis
 @inject ILogger<Package> Logger
 
+<link rel="stylesheet" href="/css/github-markdown.css">
+
 @if (Error is not null)
 {
 	<div class="alert alert-danger">
@@ -139,7 +141,7 @@ else if (PackageModel is not null)
 
 		@if (LatestVersionAnalysis is not { ReadmeText: null })
 		{
-			<div class="my-3">
+			<div class="markdown-body">
 				@((MarkupString) ReadmeHtml)
 			</div>
 		}
@@ -197,11 +199,11 @@ else if (PackageModel is not null)
 				</tr>
 			}
 
-			@if (PackageModel.Versions.Count() > 10)
+			@if (PackageModel.Versions.Count > 10)
 			{
 				<tr>
 					<td colspan="3">
-						<span class="text-muted">... and @(PackageModel.Versions.Count() - 10) older versions</span>
+						<span class="text-muted">... and @(PackageModel.Versions.Count - 10) older versions</span>
 					</td>
 				</tr>
 			}
