@@ -8,18 +8,18 @@
 
 	<main>
 		<div class="top-row px-4">
-			@if (Authenticated is null)
+			@switch (Authenticated)
 			{
-				<em>Please wait...</em>
-			}
-			else if (Authenticated == false)
-			{
-				<NavLink href="/authenticate">Authenticate</NavLink>
-			}
-			else
-			{
-				<strong>Welcome back, <AuthorLink Username="@UserName"/>!</strong>
-				<NavLink href="/logout" class="ms-3">Logout</NavLink>
+				case true:
+					<strong>Welcome back, <AuthorLink Username="@UserName"/>!</strong>
+					<NavLink href="/logout" class="ms-3">Logout</NavLink>
+					break;
+				case false:
+					<NavLink href="/authenticate">Authenticate</NavLink>
+					break;
+				default:
+					<em>Please wait...</em>
+					break;
 			}
 		</div>
 
@@ -31,6 +31,7 @@
 
 @code {
 	private bool? Authenticated { get; set; }
+
 	private string? UserName { get; set; }
 
 	/// <inheritdoc />
