@@ -10,7 +10,7 @@ volumes:
 services:
   database:
     image: postgres:latest
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: "pubnet"
       POSTGRES_PASSWORD: "pubnet"
@@ -21,6 +21,7 @@ services:
 
   adminer:
     image: adminer
+    restart: unless-stopped
     ports:
       - "8080:8080"
     depends_on:
@@ -28,7 +29,7 @@ services:
 
   seq:
     image: datalust/seq
-    restart: always
+    restart: unless-stopped
     environment:
       ACCEPT_EULA: "Y"
     volumes:
@@ -41,7 +42,7 @@ services:
     build:
       dockerfile: ./PubNet.API/Dockerfile
       target: final
-    restart: always
+    restart: unless-stopped
     volumes:
       - "./backend-appsettings.json:/app/appsettings.Production.json"
       - "pubnet_packages:/app/packages"
@@ -53,7 +54,7 @@ services:
     build:
       dockerfile: ./PubNet.Worker/Dockerfile
       target: final
-    restart: always
+    restart: unless-stopped
     volumes:
       - "./worker-appsettings.json:/app/appsettings.Production.json"
       - "pubnet_packages:/app/packages"
@@ -63,7 +64,7 @@ services:
   frontend:
     build:
       dockerfile: ./PubNet.Frontend/Dockerfile
-    restart: always
+    restart: unless-stopped
     depends_on:
       - backend
       - caddy
@@ -71,7 +72,7 @@ services:
   # you can choose any reverse proxy you want, Caddy is not required
   caddy:
     image: caddy
-    restart: always
+    restart: unless-stopped
     volumes:
       - "./Caddyfile:/etc/caddy/Caddyfile"
       - "caddy_data:/data"
