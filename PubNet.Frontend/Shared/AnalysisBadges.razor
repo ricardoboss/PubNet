@@ -33,7 +33,16 @@
 			break;
 	}
 
-	@if (IsDiscontinued)
+	@if (IsLatest == true)
+	{
+		<div class="badge bg-success">Latest version</div>
+	}
+	else if (IsLatest == false && !HideNonVersionSpecificBadges)
+	{
+		<div class="badge bg-warning">Not latest version</div>
+	}
+
+	@if (IsDiscontinued && !HideNonVersionSpecificBadges)
 	{
 		<div class="badge bg-danger">Discontinued</div>
 
@@ -56,6 +65,11 @@
 
 	[Parameter]
 	public PackageVersionDto? PackageVersionDto { get; set; }
+
+	[Parameter]
+	public bool HideNonVersionSpecificBadges { get; set; }
+
+	private bool? IsLatest => PackageDto?.Latest?.Version is null ? null : PackageDto?.Latest?.Version == PackageVersionDto?.Version;
 
 	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
 

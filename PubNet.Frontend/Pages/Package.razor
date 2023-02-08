@@ -79,7 +79,7 @@
 					@if (!IsMirrored)
 					{
 						<td>
-							<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@version" />
+							<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@version" HideNonVersionSpecificBadges="@true" />
 						</td>
 					}
 					@if (ShowPackageAdminTools)
