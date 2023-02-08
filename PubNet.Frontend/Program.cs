@@ -13,6 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Logging.ClearProviders();
 builder.Logging.AddProvider(new SimpleConsoleLoggerProvider());
 builder.Logging.SetMinimumLevel(LogLevel.Trace);
+builder.Logging.AddFilter("PubNet.Frontend.Services.FetchLock", LogLevel.None);
 builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
 builder.Logging.AddFilter("Microsoft.AspNetCore.Components.Routing.Router", LogLevel.Information);
 #else
@@ -35,6 +36,7 @@ builder.Services.AddScoped<ClipboardService>();
 builder.Services.AddScoped<AlertService>();
 builder.Services.AddScoped<PackagesService>();
 builder.Services.AddScoped<AnalysisService>();
+builder.Services.AddTransient(typeof(FetchLock<>));
 
 var app = builder.Build();
 await app.RunAsync();

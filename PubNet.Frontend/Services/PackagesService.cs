@@ -6,18 +6,16 @@ namespace PubNet.Frontend.Services;
 
 public class PackagesService
 {
-	private const int FetchDelay = 10;
-
 	private readonly ApiClient _http;
 	private readonly AnalysisService _analysis;
 	private readonly Dictionary<string, PackageDto?> _packages = new();
+	private readonly FetchLock<PackagesService> _fetchLock;
 
-	private bool _fetching;
-
-	public PackagesService(ApiClient http, AnalysisService analysis)
+	public PackagesService(ApiClient http, AnalysisService analysis, FetchLock<PackagesService> fetchLock)
 	{
 		_http = http;
 		_analysis = analysis;
+		_fetchLock = fetchLock;
 	}
 
 	private static UnauthorizedAccessException Unauthorized(string message) => new(message);
@@ -27,12 +25,12 @@ public class PackagesService
 
 	public async Task<PackageDto?> GetPackage(string name, bool includeAuthor, bool forceFetch = false, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
+		await _fetchLock.UntilFreed(taskName: $"GetPackage({name}, {includeAuthor})");
 
 		if (!forceFetch && _packages.TryGetValue(name, out var package))
 			return package ?? throw NotFound();
 
-		_fetching = true;
+		_fetchLock.Lock($"GetPackage({name}, {includeAuthor})");
 		try
 		{
 			var response = await _http.GetAsync($"packages/{name}?includeAuthor={includeAuthor}", cancellationToken);
@@ -56,15 +54,13 @@ public class PackagesService
 		}
 		finally
 		{
-			_fetching = false;
+			_fetchLock.Free();
 		}
 	}
 
 	public async Task DeletePackage(string name, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
-
-		_fetching = true;
+		await _fetchLock.LockAfterFreed(taskName: $"DeletePackage({name})");
 		try
 		{
 			var response = await _http.DeleteAsync($"packages/{name}", cancellationToken);
@@ -85,15 +81,13 @@ public class PackagesService
 
 			_analysis.InvalidateAnalysisFor(name);
 
-			_fetching = false;
+			_fetchLock.Free();
 		}
 	}
 
 	public async Task DeletePackageVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
-
-		_fetching = true;
+		await _fetchLock.LockAfterFreed(taskName: $"DeletePackageVersion({name}, {version})");
 		try
 		{
 			var response = await _http.DeleteAsync($"packages/{name}/versions/{version}", cancellationToken);
@@ -118,7 +112,7 @@ public class PackagesService
 
 			_analysis.InvalidateAnalysisFor(name, version);
 
-			_fetching = false;
+			_fetchLock.Free();
 		}
 	}
 
@@ -129,9 +123,7 @@ public class PackagesService
 
 	public async Task DiscontinuePackage(string name, string? replacement, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
-
-		_fetching = true;
+		await _fetchLock.LockAfterFreed(taskName: $"DiscontinuePackage({name}, {replacement})");
 		try
 		{
 			var dto = new SetDiscontinuedDto(string.IsNullOrWhiteSpace(replacement) ? null : replacement);
@@ -156,15 +148,13 @@ public class PackagesService
 
 			_analysis.InvalidateAnalysisFor(name);
 
-			_fetching = false;
+			_fetchLock.Free();
 		}
 	}
 
 	public async Task RetractVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		while (_fetching) await Task.Delay(FetchDelay, cancellationToken);
-
-		_fetching = true;
+		await _fetchLock.LockAfterFreed(taskName: $"RetractVersion({name}, {version})");
 		try
 		{
 			var response = await _http.PatchAsync($"packages/{name}/versions/{version}/retract", cancellationToken);
@@ -188,7 +178,7 @@ public class PackagesService
 
 			_analysis.InvalidateAnalysisFor(name, version);
 
-			_fetching = false;
+			_fetchLock.Free();
 		}
 	}
 }

@@ -8,17 +8,19 @@ public class AuthenticationService
 {
 	private const string TokenStorageName = "authentication.token";
 	private const string SelfStorageName = "authentication.self";
-	private readonly ApiClient _apiClient;
 
+	private readonly ApiClient _apiClient;
 	private readonly ILocalStorageService _localStorage;
+	private readonly FetchLock<AuthenticationService> _fetchLock;
 
 	private AuthorDto? _self;
 	private bool _fetchedSelf;
 
-	public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient)
+	public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient, FetchLock<AuthenticationService> fetchLock)
 	{
 		_localStorage = localStorage;
 		_apiClient = apiClient;
+		_fetchLock = fetchLock;
 	}
 
 	public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
@@ -63,30 +65,40 @@ public class AuthenticationService
 		if (_apiClient.Token is null)
 			throw new UnauthenticatedException("Not authenticated");
 
+		await _fetchLock.UntilFreed();
+
 		if (_self is not null)
 			return _self;
 
-		var storedSelf = await _localStorage.GetItemAsync<AuthorDto>(SelfStorageName, cancellationToken);
-		if (_fetchedSelf && storedSelf is not null)
+		_fetchLock.Lock();
+		try
 		{
-			_self = storedSelf;
+			var storedSelf = await _localStorage.GetItemAsync<AuthorDto>(SelfStorageName, cancellationToken);
+			if (_fetchedSelf && storedSelf is not null)
+			{
+				_self = storedSelf;
+
+				return _self;
+			}
+
+			var response = await _apiClient.GetAsync("authentication/self", cancellationToken);
+			if (!response.IsSuccessStatusCode)
+				throw new UnauthenticatedException("Request failed");
+
+			_self = await response.Content.ReadFromJsonAsync<AuthorDto>(cancellationToken: cancellationToken);
+			if (_self is null)
+				throw new UnauthenticatedException("Unable to deserialize");
+
+			await _localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
+
+			_fetchedSelf = true;
 
 			return _self;
 		}
-
-		var response = await _apiClient.GetAsync("authentication/self", cancellationToken);
-		if (!response.IsSuccessStatusCode)
-			throw new UnauthenticatedException("Request failed");
-
-		_self = await response.Content.ReadFromJsonAsync<AuthorDto>(cancellationToken: cancellationToken);
-		if (_self is null)
-			throw new UnauthenticatedException("Unable to deserialize");
-
-		await _localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
-
-		_fetchedSelf = true;
-
-		return _self;
+		finally
+		{
+			_fetchLock.Free();
+		}
 	}
 
 	public async Task<bool> IsSelf(string? username, CancellationToken cancellationToken = default)
