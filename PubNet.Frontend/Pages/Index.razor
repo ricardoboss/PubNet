@@ -38,16 +38,25 @@
 	<OnlyAuthenticated>
 		<li>
 			Add a <code>PUBNET_TOKEN</code> environment variable with the following value:
-
 			<ClickToCopyButton Content="@Token"/>
+
 			<code>
 				<pre style="width: 50vw">@Token</pre>
 			</code>
 		</li>
 	</OnlyAuthenticated>
-	<li>Run <code>dart pub token add @PublishToUrl --env-var PUBNET_TOKEN</code></li>
-	<li>Add <code>publish_to: @PublishToUrl</code> to your <code>pubspec.yaml</code></li>
-	<li>Run <code>dart pub publish</code></li>
+	<li>
+		Run <code>dart pub token add @PublishToUrl --env-var PUBNET_TOKEN</code>&ensp;
+		<ClickToCopyButton Content="@($"dart pub token add {PublishToUrl} --env-var PUBNET_TOKEN")"/>
+	</li>
+	<li>
+		Add
+		<code>publish_to: @PublishToUrl</code>&ensp;<ClickToCopyButton Content="@($"publish_to: {PublishToUrl}")"/>
+		to your <code>pubspec.yaml</code>
+	</li>
+	<li>
+		Run <code>dart pub publish</code>&ensp;<ClickToCopyButton Content="dart pub publish" />
+	</li>
 </ol>
 
 @code {
