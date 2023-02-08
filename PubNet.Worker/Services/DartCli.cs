@@ -65,7 +65,7 @@ public class DartCli
 		return await InvokeDart("doc", workingDir, cancellationToken);
 	}
 
-	private async Task<int> InvokeDart(string command, string workingDirectory,
+	public async Task<int> InvokeDart(string command, string workingDirectory,
 		CancellationToken cancellationToken = default)
 	{
 		var psi = new ProcessStartInfo
@@ -73,22 +73,13 @@ public class DartCli
 			FileName = await FindDartBinaryAsync(cancellationToken),
 			Arguments = command,
 			WorkingDirectory = workingDirectory,
-			RedirectStandardOutput = true,
-			RedirectStandardError = true,
+			UseShellExecute = true,
 		};
 
-		var proc = Process.Start(psi);
+		_logger.LogTrace("Invoking dart binary with {Command} in {WorkingDirectory}", command, workingDirectory);
+
+		using var proc = Process.Start(psi);
 		if (proc is null) throw new("Unable to start dart process");
-
-		proc.OutputDataReceived += (_, args) =>
-		{
-			if (args.Data != null) _logger.LogTrace("{DartCliOutput}", args.Data);
-		};
-
-		proc.ErrorDataReceived += (_, args) =>
-		{
-			if (args.Data != null) _logger.LogTrace("{DartCliError}", args.Data);
-		};
 
 		await proc.WaitForExitAsync(cancellationToken);
 
