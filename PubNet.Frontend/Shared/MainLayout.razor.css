@@ -41,11 +41,7 @@ main {
 }
 
 @media (max-width: 640.98px) {
-	.top-row:not(.auth) {
-		display: none;
-	}
-
-	.top-row.auth {
+	.top-row {
 		justify-content: space-between;
 	}
 
@@ -60,19 +56,13 @@ main {
 	}
 
 	.sidebar {
-		width: 250px;
+		width: 200px;
 		height: 100vh;
 		position: sticky;
 		top: 0;
 	}
 
-	.top-row {
-		position: sticky;
-		top: 0;
-		z-index: 1;
-	}
-
-	.top-row.auth ::deep a:first-child {
+	.top-row ::deep a:first-child {
 		flex: 1;
 		text-align: right;
 		width: 0;
