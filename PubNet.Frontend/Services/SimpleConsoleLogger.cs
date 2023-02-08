@@ -30,7 +30,7 @@ public class SimpleConsoleLogger : ILogger
 	{
 		if (!IsEnabled(logLevel)) return;
 
-		Console.WriteLine($"[{logLevel}] [{_name}] {formatter(state, exception)}");
+		Console.WriteLine($"[{DateTime.Now}] [{logLevel}] [{_name}] {formatter(state, exception)}");
 	}
 
 	/// <inheritdoc />
