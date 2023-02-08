@@ -156,9 +156,19 @@ public class PubSpecAnalyzerTask : BaseWorkerTask
 	{
 		if (analysis.DocumentationLink is not null) return;
 
+		logger.LogTrace("Getting dependencies for documentation");
+
+		var exitCode = await dart.InvokeDart("pub get", workingDir, cancellationToken);
+		if (exitCode != 0)
+		{
+			logger.LogError("Failed to get dependencies for documentation (exit code {ExitCode})", exitCode);
+
+			return;
+		}
+
 		logger.LogTrace("Generating documentation for package {PackageName} version {PackageVersion}", Package, Version);
 
-		var exitCode = await dart.Doc(workingDir, cancellationToken);
+		exitCode = await dart.Doc(workingDir, cancellationToken);
 		if (exitCode != 0)
 		{
 			logger.LogError("Process to generate documentation exited with non-zero exit code ({ExitCode})", exitCode);
