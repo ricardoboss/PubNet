@@ -18,4 +18,8 @@ public static class TextGenerator
 
 
 	public static string HrefToDependency(string name) => "/packages/" + name;
+
+	public static string VersionToUrlSegment(string version) => version.Replace('.', '_');
+
+	public static string UrlSegmentToVersion(string urlSegment) => urlSegment.Replace('_', '.');
 }

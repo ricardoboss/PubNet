@@ -1,5 +1,8 @@
 ﻿@page "/package/{PackageName}"
 @page "/packages/{PackageName}"
+@page "/package/{PackageName}/version/{PackageVersionUrl}"
+@page "/packages/{PackageName}/versions/{PackageVersionUrl}"
+
 @using PubNet.API.DTO
 
 @inject ApiClient Http
@@ -33,6 +36,7 @@
 {
 	<PackageVersionOverview
 		Package="@PackageModel"
+		Version="@PackageVersionModel"
 		OnError="(e) => Error = e"
 		OnInfo="(i) => Info = i"
 		OnEditing="(e) => Editing = e"
@@ -63,7 +67,9 @@
 			{
 				<tr>
 					<td>
-						<code>@version.Version</code>
+						<NavLink href="@($"/packages/{PackageName}/versions/{TextGenerator.VersionToUrlSegment(version.Version)}")">
+							<code>@version.Version</code>
+						</NavLink>
 
 						<ClickToCopyButton Content="@(PubspecVersionText(version.Version))"/>
 					</td>
@@ -115,7 +121,18 @@
 	[Parameter]
 	public string? PackageName { get; set; }
 
+	[Parameter]
+	public string? PackageVersionUrl { get; set; }
+
+	private string? PackageVersion
+	{
+		get => PackageVersionUrl is null ? null : TextGenerator.UrlSegmentToVersion(PackageVersionUrl);
+		set => PackageVersionUrl = value is null ? null : TextGenerator.VersionToUrlSegment(value);
+	}
+
 	private PackageDto? PackageModel { get; set; }
+
+	private PackageVersionDto? PackageVersionModel { get; set; }
 
 	private List<PackageVersionDto>? PackageVersions => PackageModel?.Versions;
 
@@ -161,10 +178,29 @@
 		{
 			Error = pnfe.Message;
 			ShowUpstreamLink = true;
+
+			return;
 		}
 		catch (Exception e)
 		{
 			Error = e.Message;
+
+			return;
+		}
+
+		PackageVersion ??= PackageModel?.Latest?.Version;
+		if (PackageVersion is not null)
+		{
+			try
+			{
+				PackageVersionModel = await Packages.GetPackageVersion(PackageName, PackageVersion);
+			}
+			catch (Exception e)
+			{
+				Error = e.Message;
+
+				return;
+			}
 		}
 
 		if (!IsMirrored)

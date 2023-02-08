@@ -118,7 +118,7 @@ public class PackagesService
 
 	public async Task<PackageVersionDto?> GetPackageVersion(string name, string version)
 	{
-		return (await GetPackage(name, false))?.Versions?.FirstOrDefault(v => v.Version == version);
+		return (await GetPackage(name, false))?.Versions?.FirstOrDefault(v => v.Version == version) ?? throw NotFound("The package version you are looking for does not exist");
 	}
 
 	public async Task DiscontinuePackage(string name, string? replacement, CancellationToken cancellationToken = default)
