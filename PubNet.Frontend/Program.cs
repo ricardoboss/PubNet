@@ -10,12 +10,16 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 #if DEBUG
-builder.Logging.ClearProviders();
-builder.Logging.AddProvider(new SimpleConsoleLoggerProvider());
-builder.Logging.SetMinimumLevel(LogLevel.Trace);
-builder.Logging.AddFilter("PubNet.Frontend.Services.FetchLock", LogLevel.None);
-builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
-builder.Logging.AddFilter("Microsoft.AspNetCore.Components.Routing.Router", LogLevel.Information);
+builder.Services.AddScoped<SimpleConsoleLoggerProvider>();
+await using (var tempProvider = builder.Services.BuildServiceProvider())
+{
+	builder.Logging.ClearProviders();
+	builder.Logging.AddProvider(tempProvider.GetRequiredService<SimpleConsoleLoggerProvider>());
+	builder.Logging.SetMinimumLevel(LogLevel.Trace);
+	builder.Logging.AddFilter("PubNet.Frontend.Services.FetchLock", LogLevel.None);
+	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
+	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.Routing.Router", LogLevel.Information);
+}
 #else
 builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif

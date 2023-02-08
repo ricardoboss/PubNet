@@ -1,7 +1,16 @@
+using Microsoft.JSInterop;
+
 namespace PubNet.Frontend.Services;
 
 public class SimpleConsoleLoggerProvider : ILoggerProvider
 {
+	private readonly IJSRuntime _jsRuntime;
+
+	public SimpleConsoleLoggerProvider(IJSRuntime jsRuntime)
+	{
+		_jsRuntime = jsRuntime;
+	}
+
 	/// <inheritdoc />
 	public void Dispose()
 	{
@@ -10,27 +19,41 @@ public class SimpleConsoleLoggerProvider : ILoggerProvider
 	/// <inheritdoc />
 	public ILogger CreateLogger(string categoryName)
 	{
-		return new SimpleConsoleLogger(categoryName);
+		return new SimpleConsoleLogger(categoryName, _jsRuntime);
 	}
 }
 
 public class SimpleConsoleLogger : ILogger
 {
 	private readonly string _name;
+	private readonly IJSRuntime _jsRuntime;
 
 	public LogLevel Minimum { get; set; } = LogLevel.Information;
 
-	public SimpleConsoleLogger(string name)
+	public SimpleConsoleLogger(string name, IJSRuntime jsRuntime)
 	{
 		_name = name;
+		_jsRuntime = jsRuntime;
 	}
 
 	/// <inheritdoc />
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
-		if (!IsEnabled(logLevel)) return;
+		if (!IsEnabled(logLevel) || logLevel == LogLevel.None) return;
 
-		Console.WriteLine($"[{DateTime.Now}] [{logLevel}] [{_name}] {formatter(state, exception)}");
+		_ = _jsRuntime.InvokeVoidAsync(
+			logLevel switch {
+				LogLevel.Trace => "console.debug",
+				LogLevel.Debug => "console.debug",
+				LogLevel.Information => "console.log",
+				LogLevel.Warning => "console.warn",
+				LogLevel.Error => "console.error",
+				LogLevel.Critical => "console.error",
+				LogLevel.None => throw new InvalidOperationException(),
+				_ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null),
+			},
+			$"[{_name}] {formatter(state, exception)}"
+		);
 	}
 
 	/// <inheritdoc />
