@@ -8,7 +8,7 @@
 <h1>
 	<code>@Title</code>
 
-	@if (LatestVersion is not null)
+	@if (Version is not null)
 	{
 		@:&nbsp;
 		<ClickToCopyButton Content="@PubspecVersionText"/>
@@ -16,7 +16,7 @@
 </h1>
 
 <p class="text-muted">
-	@if (PackageModel is null)
+	@if (Package is null)
 	{
 		<em>Loading...</em>
 	}
@@ -26,53 +26,31 @@
 			Published by <AuthorLink Username="@AuthorUserName"/>
 		</span>
 
-		@if (LatestVersion is not null)
+		@if (Version is not null)
 		{
 			@:&nbsp;
-			<abbr title="@LatestVersion.Published">@(LatestVersion.Published.Humanize())</abbr>
+			<abbr title="@Version.Published">@(Version.Published.Humanize())</abbr>
 		}
 	}
 </p>
 
 @code {
 	[Parameter]
-	public string? PackageName { get; set; }
+	public PackageDto? Package { get; set; }
+
+	[Parameter]
+	public PackageVersionDto? Version { get; set; }
 
 	private bool Loading { get; set; }
 
-	private PackageDto? PackageModel { get; set; }
+	private string? PackageName => Package?.Name;
 
-	private PackageVersionDto? LatestVersion => PackageModel?.Latest;
-
-	private string PubspecVersionText => PackageName is null || LatestVersion is null
+	private string PubspecVersionText => PackageName is null || Version is null
 		? string.Empty
-		: TextGenerator.PubspecVersionText(PackageName, LatestVersion.Version, PackageModel?.Mirrored ?? false, Http.BaseAddress);
+		: TextGenerator.PubspecVersionText(PackageName, Version.Version, Package?.Mirrored ?? false, Http.BaseAddress);
 
-	private string Title => PackageName + (LatestVersion is null ? string.Empty : $": {LatestVersion.Version}");
+	private string Title => PackageName + (Version is null ? string.Empty : $": {Version.Version}");
 
-	private string? AuthorUserName => PackageModel?.Author?.UserName;
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-
-		if (PackageName is null)
-			return;
-
-		Loading = true;
-		PackageModel = null;
-		try
-		{
-			PackageModel = await Packages.GetPackage(PackageName, true);
-		}
-		catch (Exception)
-		{
-			// ignore
-		}
-		finally
-		{
-			Loading = false;
-		}
-	}
+	private string? AuthorUserName => Package?.Author?.UserName;
 
 }

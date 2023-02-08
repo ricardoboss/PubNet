@@ -4,7 +4,6 @@
 
 @inject ApiClient Http
 @inject AuthenticationService Auth
-@inject NavigationManager Nav
 @inject AlertService Alert
 @inject PackagesService Packages
 @inject AnalysisService Analysis
@@ -30,21 +29,15 @@
 	</div>
 }
 
-<PackageHeader PackageName="@PackageName" />
-
 @if (PackageModel is not null)
 {
-	@if (ShowPackageAdminTools)
-	{
-		<PackageAdminToolbar PackageModel="@PackageModel" Editing="@Editing" OnDeleteClicked="OnDeleteClicked" OnDiscontinueClicked="OnDiscontinueClicked" />
-	}
-
-	<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@LatestVersion" />
-
-	@if (LatestVersion is not null)
-	{
-		<PackageVersionOverview Version="LatestVersion" />
-	}
+	<PackageVersionOverview
+		Package="@PackageModel"
+		OnError="(e) => Error = e"
+		OnInfo="(i) => Info = i"
+		OnEditing="(e) => Editing = e"
+		Editing="@Editing"
+		OnPackageDiscontinued="ReloadPackage" />
 
 	@if (PackageVersions is not null)
 	{
@@ -124,16 +117,17 @@
 
 	private PackageDto? PackageModel { get; set; }
 
-	private PackageVersionDto? LatestVersion => PackageModel?.Latest;
-
 	private List<PackageVersionDto>? PackageVersions => PackageModel?.Versions;
 
 	private string? Error { get; set; }
+
 	private string? Info { get; set; }
 
 	private bool Editing { get; set; }
-	private bool ShowPackageAdminTools { get; set; }
+
 	private bool ShowUpstreamLink { get; set; }
+
+	private bool ShowPackageAdminTools { get; set; }
 
 	private string PubspecVersionText(string version)
 	{
@@ -155,11 +149,9 @@
 		Error = null;
 		PackageModel = null;
 		Editing = false;
-		ShowPackageAdminTools = false;
 		ShowUpstreamLink = false;
 
-		if (PackageName is null)
-			return;
+		if (PackageName is null) return;
 
 		try
 		{
@@ -186,31 +178,6 @@
 		ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(PackageModel?.Author?.UserName);
 	}
 
-	private async Task OnDeleteClicked()
-	{
-		var confirmed = await Alert.Confirm("Are you sure? All versions will be deleted and you can no longer 'pub get' it.");
-		if (!confirmed)
-			return;
-
-		Error = null;
-		Editing = true;
-
-		try
-		{
-			await Packages.DeletePackage(PackageName!);
-
-			Nav.NavigateTo("/?message=package-deleted");
-		}
-		catch (Exception e)
-		{
-			Error = e.Message;
-		}
-		finally
-		{
-			Editing = false;
-		}
-	}
-
 	private async Task OnDeleteVersionClicked(string version)
 	{
 		var confirmed = await Alert.Confirm($"Are you sure you want to delete {PackageName}: {version}? This cannot be undone.");
@@ -226,34 +193,6 @@
 			await Packages.DeletePackageVersion(PackageName!, version);
 
 			Info = $"Version {version} has been deleted.";
-
-			await ReloadPackage();
-		}
-		catch (Exception e)
-		{
-			Error = e.Message;
-		}
-		finally
-		{
-			Editing = false;
-		}
-	}
-
-	private async Task OnDiscontinueClicked()
-	{
-		var replacement = await Alert.Prompt($"Are you sure you want to discontinue {PackageName}? This change cannot be undone.\r\n\r\nYou can suggest a replacement package here:");
-		if (replacement is null)
-			return;
-
-		Info = null;
-		Error = null;
-		Editing = true;
-
-		try
-		{
-			await Packages.DiscontinuePackage(PackageName!, replacement);
-
-			Info = $"Package {PackageName} has been marked as discontinued.";
 
 			await ReloadPackage();
 		}

@@ -1,6 +1,10 @@
 ﻿@using PubNet.API.DTO
 
+@inject PackagesService PackagesService
 @inject AnalysisService AnalysisService
+@inject AuthenticationService Auth
+@inject AlertService Alert
+@inject NavigationManager Nav
 
 @if (Version is null)
 {
@@ -10,71 +14,135 @@
 }
 else
 {
-	<p class="my-3 lead">@(Version.PubSpec.Description)</p>
-
 	<div class="row">
-		<div class="col-12 col-sm-6">
-			<h2 class="mt-4">Dependencies</h2>
+		<div class="col-12 col-md-8">
+			<div class="row">
+				<div class="col-12 mb-3">
+					<PackageHeader Package="@Package" Version="@Version" />
 
-			@if (Version.PubSpec.Dependencies is null or { Count: 0 })
-			{
-				<p class="my-3">
-					<em>No dependencies.</em>
-				</p>
-			}
-			else
-			{
-				<ul>
-					@foreach (var dependency in Version.PubSpec.Dependencies)
-					{
-						<li>
-							<NavLink href="@TextGenerator.HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
-						</li>
-					}
-				</ul>
-			}
+					<AnalysisBadges PackageDto="@Package" PackageVersionDto="@Version"/>
+				</div>
+				@if (Analysis?.ReadmeText is not null)
+				{
+					<div class="col-12 border-secondary-subtle border py-2 px-3">
+						<Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.PubSpec.Repository"/>
+					</div>
+				}
+				else if (Analysis?.ReadmeFound is false)
+				{
+					<div class="col-12">
+						<p class="text-muted">
+							<em>No README.md found.</em>
+						</p>
+					</div>
+				}
+			</div>
 		</div>
-		<div class="col-12 col-sm-6">
-			<h2 class="mt-4">Dev Dependencies</h2>
+		<div class="col-12 col-md-4">
+			<div class="row">
+				@if (ShowPackageAdminTools)
+				{
+					<div class="col-12 mb-4">
+						<h3>Package Admin Tools</h3>
 
-			@if (Version.PubSpec.DevDependencies is null or { Count: 0 })
-			{
-				<p class="my-3">
-					<em>No dependencies.</em>
-				</p>
-			}
-			else
-			{
-				<ul>
-					@foreach (var dependency in Version.PubSpec.DevDependencies)
+						<PackageAdminToolbar
+							Package="@Package"
+							Editing="@Editing"
+							OnDeleteClicked="OnDeleteClicked"
+							OnDiscontinueClicked="OnDiscontinueClicked"/>
+					</div>
+				}
+				<div class="col-12">
+					<h3>Description</h3>
+
+					<p class="my-3 lead">@(Version.PubSpec.Description)</p>
+				</div>
+				<div class="col-12 mt-4">
+					<h3>Dependencies</h3>
+
+					@if (Version.PubSpec.Dependencies is null or { Count: 0 })
 					{
-						<li>
-							<NavLink href="@TextGenerator.HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
-						</li>
+						<p class="my-3">
+							<em>No dependencies.</em>
+						</p>
 					}
-				</ul>
-			}
+					else
+					{
+						<ul>
+							@foreach (var dependency in Version.PubSpec.Dependencies)
+							{
+								<li>
+									<NavLink href="@TextGenerator.HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
+								</li>
+							}
+						</ul>
+					}
+				</div>
+				<div class="col-12 mt-4">
+					<h3>Dev Dependencies</h3>
+
+					@if (Version.PubSpec.DevDependencies is null or { Count: 0 })
+					{
+						<p class="my-3">
+							<em>No dependencies.</em>
+						</p>
+					}
+					else
+					{
+						<ul>
+							@foreach (var dependency in Version.PubSpec.DevDependencies)
+							{
+								<li>
+									<NavLink href="@TextGenerator.HrefToDependency(dependency.Key)">@dependency.Key</NavLink>
+								</li>
+							}
+						</ul>
+					}
+				</div>
+			</div>
 		</div>
 	</div>
-
-	@if (Analysis is not null)
-	{
-		<Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.PubSpec.Repository" />
-	}
 }
 
 @code {
 	[Parameter]
+	public PackageDto? Package { get; set; }
+
+	[Parameter]
 	public PackageVersionDto? Version { get; set; }
 
+	[Parameter]
+	public EventCallback<string?> OnError { get; set; }
+
+	[Parameter]
+	public EventCallback<string?> OnInfo { get; set; }
+
+	[Parameter]
+	public bool Editing { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> OnEditing { get; set; }
+
+	[Parameter]
+	public EventCallback OnPackageDiscontinued { get; set; }
+
 	private PackageVersionAnalysisDto? Analysis { get; set; }
+
+	private bool ShowPackageAdminTools { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
+		if (Package is null)
+			return;
+
+		Version ??= Package.Latest;
 		if (Version is null)
 			return;
+
+		ShowPackageAdminTools = false;
+		ShowPackageAdminTools = !Package.Mirrored && await Auth.IsSelf(Package?.Author?.UserName);
 
 		try
 		{
@@ -86,4 +154,61 @@ else
 		}
 	}
 
+	private async Task OnDiscontinueClicked()
+	{
+		if (Package is null) return;
+
+		var replacement = await Alert.Prompt($"Are you sure you want to discontinue {Package.Name}? This change cannot be undone.\r\n\r\nYou can suggest a replacement package here:");
+		if (replacement is null)
+			return;
+
+		await OnInfo.InvokeAsync(null);
+		await OnError.InvokeAsync(null);
+		await OnEditing.InvokeAsync(true);
+
+		try
+		{
+			await PackagesService.DiscontinuePackage(Package.Name, replacement);
+
+			await OnInfo.InvokeAsync($"Package {Package.Name} has been marked as discontinued.");
+
+			await OnPackageDiscontinued.InvokeAsync();
+		}
+		catch (Exception e)
+		{
+			await OnError.InvokeAsync(e.Message);
+		}
+		finally
+		{
+			await OnEditing.InvokeAsync(false);
+		}
+	}
+
+	private async Task OnDeleteClicked()
+	{
+		if (Package is null) return;
+
+		var confirmed = await Alert.Confirm("Are you sure? All versions will be deleted and you can no longer 'pub get' it.");
+		if (!confirmed)
+			return;
+
+		await OnInfo.InvokeAsync(null);
+		await OnError.InvokeAsync(null);
+		await OnEditing.InvokeAsync(true);
+
+		try
+		{
+			await PackagesService.DeletePackage(Package.Name);
+
+			Nav.NavigateTo("/?message=package-deleted");
+		}
+		catch (Exception e)
+		{
+			await OnError.InvokeAsync(e.Message);
+		}
+		finally
+		{
+			await OnEditing.InvokeAsync(false);
+		}
+	}
 }

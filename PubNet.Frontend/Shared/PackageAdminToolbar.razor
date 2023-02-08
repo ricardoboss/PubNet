@@ -10,7 +10,7 @@
 
 @code {
 	[Parameter]
-	public PackageDto? PackageModel { get; set; }
+	public PackageDto? Package { get; set; }
 
 	[Parameter]
 	public bool Editing { get; set; }
@@ -21,7 +21,7 @@
 	[Parameter]
 	public EventCallback OnDiscontinueClicked { get; set; }
 
-	private bool IsDiscontinued => PackageModel?.IsDiscontinued ?? false;
+	private bool IsDiscontinued => Package?.IsDiscontinued ?? false;
 
 	// MAYBE: move logic to discontinue and delete packages in here
 }
