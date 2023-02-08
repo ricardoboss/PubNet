@@ -24,13 +24,13 @@ public class WorkerTaskQueue : IDisposable
 		{
 			_scheduledQueue.Enqueue(scheduled, scheduled.NextRun);
 
-			_logger.LogDebug("Scheduled task queued: {TaskName} (due at {NextScheduled})", item.Name, scheduled.NextRun);
+			_logger.LogTrace("Scheduled task queued: {TaskName} (due at {NextScheduled})", item.Name, scheduled.NextRun);
 		}
 		else
 		{
 			_queue.Enqueue(item);
 
-			_logger.LogDebug("Task queued: {TaskName}", item.Name);
+			_logger.LogTrace("Task queued: {TaskName}", item.Name);
 
 			_sleepCancellation.Cancel();
 			if (_sleepCancellation.TryReset()) return;

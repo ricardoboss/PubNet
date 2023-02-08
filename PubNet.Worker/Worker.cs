@@ -52,7 +52,7 @@ public class Worker : BackgroundService
 				var wakeTime = AdjustWakeTime(null, interval, out var runNow);
 				if (runNow)
 				{
-					_logger.LogDebug("Skipping unscheduled tasks and sleep as scheduled tasks are due now");
+					_logger.LogInformation("Skipping unscheduled tasks and sleep as scheduled tasks are due now");
 
 					continue;
 				}
@@ -95,14 +95,14 @@ public class Worker : BackgroundService
 		var calculatedWakeTime = wakeTime ?? DateTime.Now.Add(interval);
 		if (!_taskQueue.TryGetNextScheduledAt(out var scheduledTask, out var nextScheduledTime))
 		{
-			_logger.LogTrace("No scheduled tasks found");
+			_logger.LogDebug("No scheduled tasks found");
 
 			return calculatedWakeTime;
 		}
 
 		if (nextScheduledTime <= DateTime.Now)
 		{
-			_logger.LogTrace("Scheduled tasks are due now ({TaskName})", scheduledTask.Name);
+			_logger.LogDebug("Scheduled tasks are due now ({TaskName})", scheduledTask.Name);
 
 			runNow = true;
 			return nextScheduledTime;
@@ -134,12 +134,12 @@ public class Worker : BackgroundService
 			if (!cancellationToken.IsCancellationRequested)
 				continue;
 
-			_logger.LogTrace("Cancellation requested. Aborting running tasks");
+			_logger.LogInformation("Cancellation requested. Aborting running tasks");
 
 			return;
 		}
 
-		_logger.LogTrace("Ran {Count} scheduled tasks up until {Limit}", count, limit);
+		_logger.LogInformation("Ran {Count} scheduled tasks up until {Limit}", count, limit);
 	}
 
 	private async Task RunUnscheduledTasks(CancellationToken cancellationToken = default)
@@ -155,12 +155,12 @@ public class Worker : BackgroundService
 
 			if (!cancellationToken.IsCancellationRequested) continue;
 
-			_logger.LogTrace("Cancellation requested. Aborting running tasks");
+			_logger.LogInformation("Cancellation requested. Aborting running tasks");
 
 			break;
 		}
 
-		_logger.LogTrace("Ran {Count} unscheduled tasks", count);
+		_logger.LogInformation("Ran {Count} unscheduled tasks", count);
 	}
 
 	private async Task RunTaskAsync(IWorkerTask task, CancellationToken cancellationToken = default)
@@ -196,13 +196,13 @@ public class Worker : BackgroundService
 				}
 				else if (task.RequeueOnException)
 				{
-					_logger.LogTrace("Re-queueing failed task");
+					_logger.LogDebug("Re-queueing failed task");
 
 					_taskQueue.Enqueue(task);
 				}
 				else
 				{
-					_logger.LogTrace("Not re-queueing failed task");
+					_logger.LogDebug("Not re-queueing failed task");
 				}
 			}
 		}
