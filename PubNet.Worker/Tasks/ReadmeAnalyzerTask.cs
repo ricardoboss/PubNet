@@ -53,6 +53,8 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 			{
 				_analysis.ReadmeFound = false;
 
+				await _db.SaveChangesAsync(cancellationToken);
+
 				return WorkerTaskResult.Done;
 			}
 
