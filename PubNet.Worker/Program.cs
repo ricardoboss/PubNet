@@ -42,7 +42,11 @@ try
 			services.AddHostedService<Worker>();
 		});
 
-	await builder.Build().RunAsync();
+	var app = builder.Build();
+
+	await PubNetContext.RunMigrations(app.Services);
+
+	await app.RunAsync();
 }
 catch (Exception e)
 {

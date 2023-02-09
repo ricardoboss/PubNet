@@ -150,12 +150,7 @@ try
 
 	var app = builder.Build();
 
-	Log.Logger.Information("Migrating database");
-	using (var startupScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-	{
-		var db = startupScope.ServiceProvider.GetRequiredService<PubNetContext>();
-		await db.Database.MigrateAsync();
-	}
+	await PubNetContext.RunMigrations(app.Services);
 
 	app.UsePathBase("/api");
 

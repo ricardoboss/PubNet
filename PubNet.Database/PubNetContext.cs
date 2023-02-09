@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PubNet.Database.Models;
 
 namespace PubNet.Database;
@@ -13,6 +15,15 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 
 	public PubNetContext(DbContextOptions<PubNetContext> options) : base(options)
 	{
+	}
+
+	public static async Task RunMigrations(IServiceProvider serviceProvider)
+	{
+		serviceProvider.GetRequiredService<ILogger<PubNetContext>>().LogInformation("Migrating database");
+
+		using var startupScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+		await startupScope.ServiceProvider.GetRequiredService<PubNetContext>().Database.MigrateAsync();
 	}
 
 	public DbSet<Package> Packages { get; set; } = null!;
