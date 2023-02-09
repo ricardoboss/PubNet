@@ -1,11 +1,13 @@
-﻿@using PubNet.API.DTO
-<div style="display: flex; align-items: center; gap: 0.25rem" class="my-3">
+﻿@inherits BaseComponent
+
+@using PubNet.API.DTO
+<div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (!IsDiscontinued)
 	{
-		<button class="btn btn-sm btn-outline-warning" @onclick="OnDiscontinueClicked" disabled="@Editing">Discontinue</button>
+		<Button Size="Size.Small" Color="Color.Warning" Clicked="OnDiscontinueClicked" Disabled="@Editing">Discontinue</Button>
 	}
 
-	<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked" disabled="@Editing">Delete</button>
+	<Button Size="Size.Small" Color="Color.Danger" Clicked="OnDeleteClicked" Disabled="@Editing">Delete</Button>
 </div>
 
 @code {

@@ -4,16 +4,16 @@
 
 @if (Error is not null)
 {
-	<div class="alert alert-danger">
-		<strong>That didn't work.</strong> @Error
-	</div>
+	<Alert Color="Color.Danger" Visible>
+		<strong>Oh no!</strong> @Error
+	</Alert>
 }
 
 @if (Success is not null)
 {
-	<div class="alert alert-success">
-		<strong>Success!</strong> @Success
-	</div>
+	<Alert Color="Color.Success" Visible>
+		<strong>Great!</strong> @Success
+	</Alert>
 }
 
 <EditForm Model="RegisterRequest" OnSubmit="SubmitForm">

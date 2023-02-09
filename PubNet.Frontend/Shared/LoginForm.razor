@@ -5,16 +5,16 @@
 
 @if (Error is not null)
 {
-	<div class="alert alert-danger">
+	<Alert Color="Color.Danger">
 		<strong>That didn't work.</strong> @Error
-	</div>
+	</Alert>
 }
 
 @if (Success is not null)
 {
-	<div class="alert alert-success">
+	<Alert Color="Color.Success">
 		<strong>Success!</strong> @Success
-	</div>
+	</Alert>
 }
 
 <EditForm Model="LoginRequest" OnSubmit="SubmitForm">
@@ -50,7 +50,7 @@
 			await Auth.StoreTokenAsync(token.Token);
 			await Auth.GetSelfAsync();
 
-			Nav.NavigateTo("/");
+			Nav.NavigateTo("/?message=welcome-back", true);
 		}
 		else
 		{

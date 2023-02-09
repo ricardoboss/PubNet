@@ -1,4 +1,7 @@
 using Blazored.LocalStorage;
+using Blazorise;
+using Blazorise.Bulma;
+using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PubNet.Frontend;
@@ -9,6 +12,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+// set up logging
 #if DEBUG
 builder.Services.AddScoped<SimpleConsoleLoggerProvider>();
 await using (var tempProvider = builder.Services.BuildServiceProvider())
@@ -24,6 +28,7 @@ await using (var tempProvider = builder.Services.BuildServiceProvider())
 builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif
 
+// API client services
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILogger<ApiClient>>())
 {
@@ -34,13 +39,24 @@ builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient
 #endif
 });
 
-builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<AuthenticationService>();
-builder.Services.AddScoped<ClipboardService>();
-builder.Services.AddScoped<AlertService>();
-builder.Services.AddScoped<PackagesService>();
-builder.Services.AddScoped<AnalysisService>();
-builder.Services.AddTransient(typeof(FetchLock<>));
+// set up Blazorise
+builder.Services
+	.AddBlazorise(options =>
+	{
+		options.Immediate = true;
+	})
+	.AddBulmaProviders()
+	.AddFontAwesomeIcons();
+
+// set up common services
+builder.Services
+	.AddBlazoredLocalStorage()
+	.AddScoped<AuthenticationService>()
+	.AddScoped<ClipboardService>()
+	.AddScoped<AlertService>()
+	.AddScoped<PackagesService>()
+	.AddScoped<AnalysisService>()
+	.AddTransient(typeof(FetchLock<>));
 
 var app = builder.Build();
 await app.RunAsync();

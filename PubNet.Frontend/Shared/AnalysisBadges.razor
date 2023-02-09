@@ -1,62 +1,67 @@
+@inherits BaseComponent
 @using PubNet.API.DTO
 @inject ApiClient Http
 @inject PackagesService Packages
 @inject AnalysisService Analysis
 @inject ILogger<AnalysisBadges> Logger
 
-<div style="display: flex; align-items: center; gap: 0.25rem">
+<Div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (Mirrored)
 	{
 		<a href="@("https://pub.dev/packages/" + PackageName)" target="_blank">
-			<div class="badge bg-secondary">Mirrored from pub.dev</div>
+			<Badge Color="Color.Secondary" Pill>Mirrored from pub.dev</Badge>
 		</a>
 	}
 
 	@if (AnalysisDto?.DocumentationHref is not null)
 	{
-		<NavLink href="@(DocumentationUrl(AnalysisDto.DocumentationHref))" class="badge bg-info">Docs</NavLink>
+		<NavLink href="@(DocumentationUrl(AnalysisDto.DocumentationHref))">
+			<Badge Color="Color.Info" Pill>Docs</Badge>
+		</NavLink>
 	}
 
 	@switch (AnalysisDto?.Formatted)
 	{
 		case true:
-			<div class="badge bg-success">Formatted</div>
+			<Badge Color="Color.Success" Pill>Formatted</Badge>
 			break;
 		case false:
-			<div class="badge bg-warning">Not Formatted</div>
+			<Badge Color="Color.Warning" Pill>Not Formatted</Badge>
 			break;
 		default:
-			if (PackageVersionDto is not null)
+			if (PackageVersionDto is not null && !Mirrored)
 			{
-				<div class="badge bg-secondary">Not analyzed yet</div>
+				<Badge Color="Color.Secondary" Pill>Not analyzed yet</Badge>
 			}
 			break;
 	}
 
 	@if (IsLatest == true)
 	{
-		<div class="badge bg-success">Latest version</div>
+		<Badge Color="Color.Success" Pill>Latest Version</Badge>
 	}
 	else if (IsLatest == false && !HideNonVersionSpecificBadges)
 	{
-		<div class="badge bg-warning">Not latest version</div>
+		<Badge Color="Color.Warning" Pill>Not latest version</Badge>
 	}
 
 	@if (IsDiscontinued && !HideNonVersionSpecificBadges)
 	{
-		<div class="badge bg-danger">Discontinued</div>
+		<Badge Color="Color.Danger" Pill>Discontinued</Badge>
 
 		@if (ReplacedBy is not null)
 		{
-			<NavLink href="@(HrefToReplacement(ReplacedBy))" class="badge bg-warning">Replaced by <code>@ReplacedBy</code></NavLink>
+			<NavLink href="@(HrefToReplacement(ReplacedBy))">
+				<Badge Color="Color.Warning" Pill>Replaced by <Code>@ReplacedBy</Code></Badge>
+			</NavLink>
 		}
 	}
 
 	@if (Retracted)
 	{
-		<div class="badge bg-danger">Retracted</div>
+		<Badge Color="Color.Danger" Pill>Retracted</Badge>
 	}
-</div>
+</Div>
 
 @code {
 

@@ -5,34 +5,45 @@
 
 <PageTitle>@Title</PageTitle>
 
-<h1>
-	<code>@Title</code>
+<Card>
+	<CardBody>
+		<CardTitle>
+			<Heading Size="HeadingSize.Is1">
+				@if (Version is null)
+				{
+					<Code>@Title</Code>
+				}
+				else
+				{
+					<ClickToCopyCode TextContent="@PubspecVersionText">
+						@Title
+					</ClickToCopyCode>
+				}
+			</Heading>
+		</CardTitle>
 
-	@if (Version is not null)
-	{
-		@:&nbsp;
-		<ClickToCopyButton Content="@PubspecVersionText"/>
-	}
-</h1>
+		<CardText TextColor="TextColor.Muted">
+			@if (Package is null)
+			{
+				<em>Loading...</em>
+			}
+			else
+			{
+				<Span>
+					Published by <AuthorLink Username="@AuthorUserName"/>
+				</Span>
 
-<p class="text-muted">
-	@if (Package is null)
-	{
-		<em>Loading...</em>
-	}
-	else
-	{
-		<span>
-			Published by <AuthorLink Username="@AuthorUserName"/>
-		</span>
+				@if (Version is not null)
+				{
+					@:&nbsp;
+					<Abbreviation Title="@Version.Published.ToString()">@(Version.Published.Humanize())</Abbreviation>
+				}
+			}
 
-		@if (Version is not null)
-		{
-			@:&nbsp;
-			<abbr title="@Version.Published">@(Version.Published.Humanize())</abbr>
-		}
-	}
-</p>
+			<AnalysisBadges Margin="Margin.Is3.FromTop" PackageDto="@Package" PackageVersionDto="@Version"/>
+		</CardText>
+	</CardBody>
+</Card>
 
 @code {
 	[Parameter]

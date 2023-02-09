@@ -4,16 +4,16 @@
 
 @if (Error is not null)
 {
-	<div class="alert alert-danger">
+	<Alert Color="Color.Danger" Visible>
 		<strong>Oops!</strong> @Error
-	</div>
+	</Alert>
 }
 
 @if (Success is not null)
 {
-	<div class="alert alert-success">
+	<Alert Color="Color.Success" Visible>
 		<strong>Alright!</strong> @Success
-	</div>
+	</Alert>
 }
 
 @if (FormModel is not null)

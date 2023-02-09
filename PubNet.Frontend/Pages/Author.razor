@@ -7,20 +7,20 @@
 
 <PageTitle>Package author @Username</PageTitle>
 
-<h1>@Username</h1>
+<Heading Size="HeadingSize.Is1">@Username</Heading>
 
 @if (AuthorModel is null && GeneralError is null)
 {
-	<p>
+	<Paragraph>
 		<em>Loading...</em>
-	</p>
+	</Paragraph>
 }
 
 @if (GeneralError is not null)
 {
-	<div class="alert alert-danger">
-		<strong>An error ocurred:</strong> @GeneralError
-	</div>
+	<Alert Color="Color.Danger" Visible>
+		<strong>An error occurred:</strong> @GeneralError
+	</Alert>
 }
 
 @if (AuthorModel is not null)
@@ -31,41 +31,43 @@
 	}
 	else
 	{
-		<p>@AuthorModel.Name</p>
+		<Paragraph>@AuthorModel.Name</Paragraph>
 
-		<p>Joined <abbr title="@AuthorModel.RegisteredAt">@AuthorModel.RegisteredAt.Humanize()</abbr></p>
+		<Paragraph>
+			Joined <Abbreviation Title="@AuthorModel.RegisteredAt.ToString()">@AuthorModel.RegisteredAt.Humanize()</Abbreviation>
+		</Paragraph>
 
 		@if (AuthorModel.Website is not null)
 		{
-			<p>
+			<Paragraph>
 				<a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a>
-			</p>
+			</Paragraph>
 		}
 
 		@if (IsSelf)
 		{
-			<div class="my-3" style="display: flex; align-items: center; gap: 0.25rem">
-				<button class="btn btn-sm btn-outline-info" @onclick="BeginEditing">
+			<Div Margin="Margin.Is3.OnY" style="display: flex; align-items: center; gap: 0.25rem">
+				<Button Size="Size.Small" Color="Color.Info" Clicked="BeginEditing">
 					Edit
-				</button>
-				<button class="btn btn-sm btn-outline-danger" @onclick="OnDeleteClicked">
+				</Button>
+				<Button Size="Size.Small" Color="Color.Danger" Clicked="OnDeleteClicked">
 					Delete
-				</button>
-			</div>
+				</Button>
+			</Div>
 		}
 
 		@if (AuthorError is not null)
 		{
-			<div class="alert alert-danger">
+			<Alert Color="Color.Danger" Visible>
 				<strong>Oh no!</strong> @AuthorError
-			</div>
+			</Alert>
 		}
 
 		@if (AuthorSuccess is not null)
 		{
-			<div class="alert alert-success">
+			<Alert Color="Color.Success" Visible>
 				<strong>Ok!</strong> @AuthorSuccess
-			</div>
+			</Alert>
 		}
 	}
 }
@@ -74,67 +76,64 @@
 
 @if (AuthorPackages is null && PackagesError is null)
 {
-	<p>
+	<Paragraph>
 		<em>Loading packages...</em>
-	</p>
+	</Paragraph>
 }
 
 @if (PackagesError is not null)
 {
-	<div class="alert alert-danger">
-		<strong>An error ocurred while loading the author packages:</strong> @PackagesError
-	</div>
+	<Alert Color="Color.Danger">
+		<strong>An error occurred while loading the author packages:</strong> @PackagesError
+	</Alert>
 }
 
 @if (AuthorPackages is not null)
 {
-	<h2>Packages</h2>
+	<Heading Size="HeadingSize.Is2">Packages</Heading>
 
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Latest Version</th>
-			<th>Published At</th>
-		</tr>
-		</thead>
-		<tbody>
+	<Table>
+		<TableHeader>
+			<TableRow>
+				<TableHeaderCell>Name</TableHeaderCell>
+				<TableHeaderCell>Latest Version</TableHeaderCell>
+				<TableHeaderCell>Published</TableHeaderCell>
+			</TableRow>
+		</TableHeader>
+		<TableBody>
 		@if (AuthorPackages.Any())
 		{
-			@foreach (var package in AuthorPackages.OrderByDescending(p => p.Name))
-			{
-				<tr>
-					<td>
-						<NavLink href="@("/package/" + package.Name)">@package.Name</NavLink>
-					</td>
-					@if (package.Latest is {} latest)
+			<Repeater Items="AuthorPackages.OrderByDescending(p => p.Name)">
+				<TableRow>
+					<TableRowCell>
+						<NavLink href="@("/packages/" + context.Name)">@context.Name</NavLink>
+					</TableRowCell>
+					@if (context.Latest is {} latest)
 					{
-						<td>@latest.Version</td>
-						<td>
-							<abbr title="@latest.Published">@(latest.Published.Humanize())</abbr>
-						</td>
+						<TableRowCell>@latest.Version</TableRowCell>
+						<TableRowCell>
+							<Abbreviation Title="@latest.Published.ToString()">@(latest.Published.Humanize())</Abbreviation>
+						</TableRowCell>
 					}
 					else
 					{
-						<td colspan="2" class="text-center text-muted">
+						<TableRowCell colspan="2" TextAlignment="TextAlignment.Center" TextColor="TextColor.Muted">
 							<em>No latest version available</em>
-						</td>
+						</TableRowCell>
 					}
-				</tr>
-			}
+				</TableRow>
+			</Repeater>
 		}
 		else
 		{
-			<tr>
-				<td colspan="3">
-					<p class="text-center">
-						This author has not published any packages yet.
-					</p>
-				</td>
-			</tr>
+			<TableRow>
+				<TableRowCell colspan="3" TextAlignment="TextAlignment.Center" TextColor="TextColor.Muted">
+					This author has not published any packages yet.
+				</TableRowCell>
+			</TableRow>
 		}
-		</tbody>
-	</table>
+		</TableBody>
+	</Table>
 }
 
 @code
@@ -248,14 +247,15 @@
 				return;
 			}
 
-
 			AuthorSuccess = successResponse.Success.Message;
 
 			await Auth.Logout();
 		}
 		else
 		{
-			AuthorError = "Failed to delete author";
+			var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+			AuthorError = errorResponse?.Error?.Message ?? "Failed to delete author";
 		}
 	}
 }

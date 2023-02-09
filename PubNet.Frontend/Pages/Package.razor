@@ -37,82 +37,83 @@
 	<PackageVersionOverview
 		Package="@PackageModel"
 		Version="@PackageVersionModel"
-		OnError="(e) => Error = e"
-		OnInfo="(i) => Info = i"
-		OnEditing="(e) => Editing = e"
+		OnError="e => Error = e"
+		OnInfo="i => Info = i"
+		OnEditing="e => Editing = e"
 		Editing="@Editing"
 		OnPackageDiscontinued="ReloadPackage" />
 
 	@if (PackageVersions is not null)
 	{
-		<h2 class="my-3">Versions</h2>
+		<Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromTop">Versions</Heading>
 
-		<table class="table">
-			<thead>
-			<tr>
-				<th>Version</th>
-				<th>Published At</th>
-				@if (!IsMirrored)
-				{
-					<th>Badges</th>
-				}
-				@if (ShowPackageAdminTools)
-				{
-					<th>Actions</th>
-				}
-			</tr>
-			</thead>
-			<tbody>
-			@foreach (var version in PackageVersions.OrderByDescending(v => v.Published).Take(10))
-			{
-				<tr>
-					<td>
-						<NavLink href="@($"/packages/{PackageName}/versions/{TextGenerator.VersionToUrlSegment(version.Version)}")">
-							<code>@version.Version</code>
-						</NavLink>
-
-						<ClickToCopyButton Content="@(PubspecVersionText(version.Version))"/>
-					</td>
-					<td>
-						<abbr title="@version.Published">@(version.Published.Humanize())</abbr>
-					</td>
+		<Table>
+			<TableHeader>
+				<TableRow>
+					<TableHeaderCell>Version</TableHeaderCell>
+					<TableHeaderCell>Published At</TableHeaderCell>
 					@if (!IsMirrored)
 					{
-						<td>
-							<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@version" HideNonVersionSpecificBadges="@true" />
-						</td>
+						<TableHeaderCell>Badges</TableHeaderCell>
 					}
 					@if (ShowPackageAdminTools)
 					{
-						<td>
+						<TableHeaderCell>Actions</TableHeaderCell>
+					}
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+			@foreach (var version in PackageVersions.OrderByDescending(v => v.Published).Take(10))
+			{
+				<TableRow>
+					<TableRowCell>
+						<NavLink href="@($"/packages/{PackageName}/versions/{TextGenerator.VersionToUrlSegment(version.Version)}")">
+							<Code>@version.Version</Code>
+						</NavLink>
+
+						<ClickToCopyButton Content="@(PubspecVersionText(version.Version))"/>
+					</TableRowCell>
+					<TableRowCell>
+						<Abbreviation Title="@version.Published.ToString()">@(version.Published.Humanize())</Abbreviation>
+					</TableRowCell>
+					@if (!IsMirrored)
+					{
+						<TableRowCell>
+							<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@version" HideNonVersionSpecificBadges="@true" />
+						</TableRowCell>
+					}
+					@if (ShowPackageAdminTools)
+					{
+						<TableRowCell>
 							<div style="display: flex; align-items: center; gap: 0.25rem">
 								@if (!version.Retracted)
 								{
-									<button class="btn btn-sm btn-outline-warning" @onclick="() => OnRetractVersionClicked(version.Version)" disabled="@Editing">Retract</button>
+									<Button Size="Size.Small" Color="Color.Warning" Clicked="() => OnRetractVersionClicked(version.Version)" Disabled="@Editing">Retract</Button>
 								}
-								<button class="btn btn-sm btn-outline-danger" @onclick="() => OnDeleteVersionClicked(version.Version)" disabled="@Editing">Delete</button>
+
+								<Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteVersionClicked(version.Version)" Disabled="@Editing">Delete</Button>
 							</div>
-						</td>
+						</TableRowCell>
 					}
-				</tr>
+				</TableRow>
 			}
 
 			@if (PackageVersions.Count > 10)
 			{
-				<tr>
-					<td colspan="3">
-						<span class="text-muted">... and @(PackageVersions.Count - 10) older versions</span>
-					</td>
-				</tr>
+				<TableRow>
+					<TableRowCell colspan="3" TextColor="TextColor.Muted">
+						&hellip; and @(PackageVersions.Count - 10) older versions
+					</TableRowCell>
+				</TableRow>
 			}
-			</tbody>
-		</table>
+			</TableBody>
+		</Table>
 	}
 	else
 	{
-		<p class="my-3">
+		<Paragraph Margin="Margin.Is3.FromTop" TextColor="TextColor.Muted">
 			<em>No versions found.</em>
-		</p>
+		</Paragraph>
 	}
 }
 

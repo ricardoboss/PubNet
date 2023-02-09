@@ -1,47 +1,10 @@
 ﻿@inherits LayoutComponentBase
-@inject AuthenticationService Auth
 
-<div class="page">
-	<div class="sidebar">
-		<NavMenu/>
-	</div>
-
-	<main>
-		<div class="top-row px-4">
-			@switch (Authenticated)
-			{
-				case true:
-					<strong>Welcome back, <AuthorLink Username="@UserName"/>!</strong>
-					<NavLink href="/logout" class="ms-3">Logout</NavLink>
-					break;
-				case false:
-					<NavLink href="/authenticate">Authenticate</NavLink>
-					break;
-				default:
-					<em>Please wait...</em>
-					break;
-			}
-		</div>
-
-		<article class="content px-4">
-			@Body
-		</article>
-	</main>
-</div>
-
-@code {
-	private bool? Authenticated { get; set; }
-
-	private string? UserName { get; set; }
-
-	/// <inheritdoc />
-	protected override async Task OnParametersSetAsync()
-	{
-		await base.OnParametersSetAsync();
-
-		Authenticated = await Auth.IsAuthenticatedAsync();
-		if (Authenticated == true)
-			UserName = (await Auth.GetSelfAsync()).UserName;
-	}
-
-}
+<Layout>
+	<LayoutHeader>
+		<NavBar />
+	</LayoutHeader>
+	<LayoutContent Margin="Margin.Is4">
+		@Body
+	</LayoutContent>
+</Layout>

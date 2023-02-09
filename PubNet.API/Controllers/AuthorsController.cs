@@ -57,7 +57,7 @@ public class AuthorsController : BaseController
 		}
 
 		return Ok(new AuthorsResponse(
-			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count))));
+			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count, a.RegisteredAtUtc))));
 	}
 
 	[HttpGet("{username}")]

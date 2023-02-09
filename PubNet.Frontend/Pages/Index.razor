@@ -5,59 +5,55 @@
 
 @if (MessageBoxContent is not null)
 {
-	<div class="alert alert-info">
+	<Alert Color="Color.Info" Dismisable Visible>
 		@MessageBoxContent
-	</div>
+	</Alert>
 }
 
-<h1>Welcome to PubNet!</h1>
+<Jumbotron Background="Background.Light">
+	<JumbotronTitle Size="JumbotronTitleSize.Is4">
+		Welcome to PubNet!
+	</JumbotronTitle>
+	<Divider />
+	<JumbotronSubtitle>
+		Private dart package hosting.
+	</JumbotronSubtitle>
+</Jumbotron>
 
-<p class="lead">
-	Private dart package hosting.
-</p>
+<Heading Size="HeadingSize.Is2" Margin="Margin.Is4.FromTop">What to do</Heading>
 
-<h2>What to do</h2>
+<UnorderedList>
+	<UnorderedListItem>Browse available packages: <NavLink href="/browse/packages">Browse Packages</NavLink></UnorderedListItem>
+	<UnorderedListItem>Look for authors who already uploaded packages: <NavLink href="/browse/authors">Browse Authors</NavLink></UnorderedListItem>
+</UnorderedList>
 
-<p>
-	You could...
-</p>
+<Heading Size="HeadingSize.Is2" Margin="Margin.Is4.FromTop">How to upload packages</Heading>
 
-<ul>
-	<li>Browse available packages: <NavLink href="/browse/packages">Browse Packages</NavLink></li>
-	<li>Look for authors who already uploaded packages: <NavLink href="/browse/authors">Browse Authors</NavLink></li>
-</ul>
-
-<h2>How to upload packages</h2>
-
-<ol>
+<OrderedList>
 	<OnlyGuest>
-		<li>
+		<OrderedListItem>
 			<NavLink href="/authenticate">Register/log in</NavLink> to obtain your personal OAuth token
-		</li>
+		</OrderedListItem>
 	</OnlyGuest>
 	<OnlyAuthenticated>
-		<li>
-			Add a <code>PUBNET_TOKEN</code> environment variable with the following value:
-			<ClickToCopyButton Content="@Token"/>
+		<OrderedListItem>
+			Add a <ClickToCopyCode TextContent="PUBNET_TOKEN" /> environment variable with the following value:
 
-			<code>
-				<pre style="width: 50vw">@Token</pre>
-			</code>
-		</li>
+			<ClickToCopyCode Masked TextContent="@Token" />
+		</OrderedListItem>
 	</OnlyAuthenticated>
-	<li>
-		Run <code>dart pub token add @PublishToUrl --env-var PUBNET_TOKEN</code>&ensp;
-		<ClickToCopyButton Content="@($"dart pub token add {PublishToUrl} --env-var PUBNET_TOKEN")"/>
-	</li>
-	<li>
+	<OrderedListItem>
+		Run <ClickToCopyCode TextContent="@PubAddTokenText" />
+	</OrderedListItem>
+	<OrderedListItem>
 		Add
-		<code>publish_to: @PublishToUrl</code>&ensp;<ClickToCopyButton Content="@($"publish_to: {PublishToUrl}")"/>
-		to your <code>pubspec.yaml</code>
-	</li>
-	<li>
-		Run <code>dart pub publish</code>&ensp;<ClickToCopyButton Content="dart pub publish" />
-	</li>
-</ol>
+		<ClickToCopyCode TextContent="@($"publish_to: {PublishToUrl}")" />
+		to your <Code>pubspec.yaml</Code>
+	</OrderedListItem>
+	<OrderedListItem>
+		Run <ClickToCopyCode TextContent="dart pub publish" />
+	</OrderedListItem>
+</OrderedList>
 
 @code {
 
@@ -66,9 +62,11 @@
 	public string? Message { get; set; }
 
 	private string? MessageBoxContent => Message switch {
+		"welcome-back" => "Login successful. Welcome back!",
+		"logged-out" => "Logout successful. cya!",
 		"package-deleted" => "The package has been deleted successfully.",
 		_ => null,
-		};
+	};
 
 	private string PublishToUrl
 	{
@@ -86,4 +84,6 @@
 	}
 
 	private string Token => Http.Token ?? "";
+
+	private string PubAddTokenText => $"dart pub token add {PublishToUrl} --env-var PUBNET_TOKEN";
 }

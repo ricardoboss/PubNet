@@ -2,44 +2,48 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8"/>
-	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-	<title>PubNet</title>
-	<base href="/"/>
-	<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet"/>
-	<link href="css/app.css" rel="stylesheet"/>
-	<link href="favicon.png" rel="icon" type="image/png"/>
-	<link href="PubNet.Frontend.styles.css" rel="stylesheet"/>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+
+    <title>PubNet</title>
+
+    <base href="/"/>
+
+    <link href="css/app.css" rel="stylesheet"/>
+    <link href="favicon.png" rel="icon" type="image/png"/>
+    <link href="PubNet.Frontend.styles.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" rel="stylesheet"/>
+    <link href="_content/Blazorise/blazorise.css" rel="stylesheet"/>
+    <link href="_content/Blazorise.Bulma/blazorise.bulma.css" rel="stylesheet"/>
+    <link href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" rel="stylesheet"/>
 </head>
 
 <body>
 <div id="app">
-	<svg class="loading-progress">
-		<circle cx="50%" cy="50%" r="40%"/>
-		<circle cx="50%" cy="50%" r="40%"/>
-	</svg>
-	<div class="loading-progress-text"></div>
+    <svg class="loading-progress">
+        <circle cx="50%" cy="50%" r="40%"/>
+        <circle cx="50%" cy="50%" r="40%"/>
+    </svg>
+    <div class="loading-progress-text"></div>
 </div>
 
 <div id="blazor-error-ui">
-	An unhandled error has occurred.
-	<a class="reload" href="">Reload</a>
-	<a class="dismiss">🗙</a>
+    An unhandled error has occurred.
+    <a class="reload" href="">Reload</a>
+    <a class="dismiss">🗙</a>
 </div>
 
-<script src="js/popper/popper.min.js"></script>
-<script src="js/bootstrap/bootstrap.bundle.min.js"></script>
 <script>
-	var Utils = Utils || {};
-	Utils.getProperty = function (element, property) {
-		let result = element[property];
-		if (typeof result === "undefined") return null;
-		return result;
-	};
+    var Utils = Utils || {};
+    Utils.getProperty = function (element, property) {
+        let result = element[property];
+        if (typeof result === "undefined") return null;
+        return result;
+    };
 
-	Utils.reloadTooltips = function () {
-		[...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-	}
+    Utils.reloadTooltips = function () {
+        [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    }
 </script>
 <script src="_framework/blazor.webassembly.js"></script>
 </body>

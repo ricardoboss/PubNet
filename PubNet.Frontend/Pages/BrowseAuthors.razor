@@ -6,44 +6,47 @@
 
 @if (_authors == null)
 {
-	<p>
+	<Paragraph>
 		<em>Loading...</em>
-	</p>
+	</Paragraph>
 }
 else
 {
-	<table class="table">
-		<thead>
-		<tr>
-			<th>Username</th>
-			<th>Name</th>
-			<th># of packages</th>
-		</tr>
-		</thead>
-		<tbody>
+	<Table>
+		<TableHeader>
+			<TableRow>
+				<TableHeaderCell>Username</TableHeaderCell>
+				<TableHeaderCell>Name</TableHeaderCell>
+				<TableHeaderCell># of packages</TableHeaderCell>
+				<TableHeaderCell>Joined</TableHeaderCell>
+			</TableRow>
+		</TableHeader>
+		<TableBody>
 		@if (!_authors.Authors.Any())
 		{
-			<tr>
-				<td colspan="3" style="text-align: center">
+			<TableRow>
+				<TableRowCell colspan="4" TextAlignment="TextAlignment.Center">
 					<strong>No authors found.</strong>
-				</td>
-			</tr>
+				</TableRowCell>
+			</TableRow>
 		}
 		else
 		{
-			@foreach (var author in _authors.Authors.OrderByDescending(a => a.UserName))
-			{
-				<tr>
-					<td>
-						<NavLink href="@("/authors/" + author.UserName)">@author.UserName</NavLink>
-					</td>
-					<td>@author.Name</td>
-					<td>@author.NumPackagesUploaded</td>
-				</tr>
-			}
+			<Repeater Items="_authors.Authors.OrderByDescending(a => a.UserName)">
+				<TableRow>
+					<TableRowCell>
+						<NavLink href="@("/authors/" + context.UserName)">@context.UserName</NavLink>
+					</TableRowCell>
+					<TableRowCell>@context.Name</TableRowCell>
+					<TableRowCell>@context.NumPackagesUploaded</TableRowCell>
+					<TableRowCell>
+						<Abbreviation Title="@(context.Joined.ToString())">@context.Joined.Humanize()</Abbreviation>
+					</TableRowCell>
+				</TableRow>
+			</Repeater>
 		}
-		</tbody>
-	</table>
+		</TableBody>
+	</Table>
 }
 
 @code {
