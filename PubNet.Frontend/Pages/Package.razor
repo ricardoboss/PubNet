@@ -5,9 +5,6 @@
 
 @using PubNet.API.DTO
 
-@inject ApiClient Http
-@inject AuthenticationService Auth
-@inject AlertService Alert
 @inject PackagesService Packages
 @inject AnalysisService Analysis
 
@@ -41,80 +38,7 @@
 		OnInfo="i => Info = i"
 		OnEditing="e => Editing = e"
 		Editing="@Editing"
-		OnPackageDiscontinued="ReloadPackage" />
-
-	@if (PackageVersions is not null)
-	{
-		<Heading Size="HeadingSize.Is2" Margin="Margin.Is3.FromTop">Versions</Heading>
-
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableHeaderCell>Version</TableHeaderCell>
-					<TableHeaderCell>Published At</TableHeaderCell>
-					@if (!IsMirrored)
-					{
-						<TableHeaderCell>Badges</TableHeaderCell>
-					}
-					@if (ShowPackageAdminTools)
-					{
-						<TableHeaderCell>Actions</TableHeaderCell>
-					}
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-			@foreach (var version in PackageVersions.OrderByDescending(v => v.Published).Take(10))
-			{
-				<TableRow>
-					<TableRowCell>
-						<NavLink href="@($"/packages/{PackageName}/versions/{TextGenerator.VersionToUrlSegment(version.Version)}")">
-							<Code>@version.Version</Code>
-						</NavLink>
-
-						<ClickToCopyButton Content="@(PubspecVersionText(version.Version))"/>
-					</TableRowCell>
-					<TableRowCell>
-						<Abbreviation Title="@version.Published.ToString()">@(version.Published.Humanize())</Abbreviation>
-					</TableRowCell>
-					@if (!IsMirrored)
-					{
-						<TableRowCell>
-							<AnalysisBadges PackageDto="@PackageModel" PackageVersionDto="@version" HideNonVersionSpecificBadges="@true" />
-						</TableRowCell>
-					}
-					@if (ShowPackageAdminTools)
-					{
-						<TableRowCell>
-							<div style="display: flex; align-items: center; gap: 0.25rem">
-								@if (!version.Retracted)
-								{
-									<Button Size="Size.Small" Color="Color.Warning" Clicked="() => OnRetractVersionClicked(version.Version)" Disabled="@Editing">Retract</Button>
-								}
-
-								<Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteVersionClicked(version.Version)" Disabled="@Editing">Delete</Button>
-							</div>
-						</TableRowCell>
-					}
-				</TableRow>
-			}
-
-			@if (PackageVersions.Count > 10)
-			{
-				<TableRow>
-					<TableRowCell colspan="3" TextColor="TextColor.Muted">
-						&hellip; and @(PackageVersions.Count - 10) older versions
-					</TableRowCell>
-				</TableRow>
-			}
-			</TableBody>
-		</Table>
-	}
-	else
-	{
-		<Paragraph Margin="Margin.Is3.FromTop" TextColor="TextColor.Muted">
-			<em>No versions found.</em>
-		</Paragraph>
-	}
+		OnPackageChanged="ReloadPackage" />
 }
 
 @code
@@ -135,8 +59,6 @@
 
 	private PackageVersionDto? PackageVersionModel { get; set; }
 
-	private List<PackageVersionDto>? PackageVersions => PackageModel?.Versions;
-
 	private string? Error { get; set; }
 
 	private string? Info { get; set; }
@@ -144,17 +66,6 @@
 	private bool Editing { get; set; }
 
 	private bool ShowUpstreamLink { get; set; }
-
-	private bool ShowPackageAdminTools { get; set; }
-
-	private string PubspecVersionText(string version)
-	{
-		return PackageName is null
-			? string.Empty
-			: TextGenerator.PubspecVersionText(PackageName, version, IsMirrored, Http.BaseAddress);
-	}
-
-	private bool IsMirrored => PackageModel?.Mirrored ?? false;
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -204,70 +115,12 @@
 			}
 		}
 
-		if (!IsMirrored)
+		if (!(PackageModel?.Mirrored ?? false))
 		{
 #pragma warning disable CS4014
 			if (PackageModel?.Versions is not null)
 				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => Analysis.GetAnalysisForVersion(PackageName, v.Version, false))).ContinueWith(_ => StateHasChanged());
 #pragma warning restore CS4014
-		}
-
-		ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(PackageModel?.Author?.UserName);
-	}
-
-	private async Task OnDeleteVersionClicked(string version)
-	{
-		var confirmed = await Alert.Confirm($"Are you sure you want to delete {PackageName}: {version}? This cannot be undone.");
-		if (!confirmed)
-			return;
-
-		Info = null;
-		Error = null;
-		Editing = true;
-
-		try
-		{
-			await Packages.DeletePackageVersion(PackageName!, version);
-
-			Info = $"Version {version} has been deleted.";
-
-			await ReloadPackage();
-		}
-		catch (Exception e)
-		{
-			Error = e.Message;
-		}
-		finally
-		{
-			Editing = false;
-		}
-	}
-
-	private async Task OnRetractVersionClicked(string version)
-	{
-		var confirmed = await Alert.Confirm($"Are you sure you want to retract {PackageName}: {version}? This cannot be undone.");
-		if (!confirmed)
-			return;
-
-		Info = null;
-		Error = null;
-		Editing = true;
-
-		try
-		{
-			await Packages.RetractVersion(PackageName!, version);
-
-			Info = $"Package version {version} has been marked as retracted.";
-
-			await ReloadPackage();
-		}
-		catch (Exception e)
-		{
-			Error = e.Message;
-		}
-		finally
-		{
-			Editing = false;
 		}
 	}
 }
