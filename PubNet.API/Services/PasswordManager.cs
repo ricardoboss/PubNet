@@ -1,4 +1,4 @@
-﻿using System.Security.Authentication;
+using System.Security.Authentication;
 using Microsoft.AspNetCore.Identity;
 using PubNet.Database;
 using PubNet.Database.Models;

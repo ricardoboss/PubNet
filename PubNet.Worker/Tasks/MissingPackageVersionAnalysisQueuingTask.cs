@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PubNet.Database;
 using PubNet.Database.Models;
 using PubNet.Worker.Models;

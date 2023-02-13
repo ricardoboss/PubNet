@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Primitives;
 using PubNet.API.Extensions;
 using PubNet.API.Services;
 

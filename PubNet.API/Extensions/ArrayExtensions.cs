@@ -1,4 +1,4 @@
-﻿namespace PubNet.API.Extensions;
+namespace PubNet.API.Extensions;
 
 public static class ArrayExtensions
 {

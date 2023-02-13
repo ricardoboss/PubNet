@@ -1,4 +1,4 @@
-﻿using PubNet.Worker.Models;
+using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
 

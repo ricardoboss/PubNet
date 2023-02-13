@@ -11,7 +11,8 @@ public class PackageVersionAnalysisDto
 	{
 		if (analysis is null) return null;
 
-		return new() {
+		return new()
+		{
 			Formatted = analysis.Formatted,
 			DocumentationHref = analysis.DocumentationLink,
 			ReadmeFound = analysis.ReadmeFound,

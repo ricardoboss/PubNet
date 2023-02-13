@@ -1,4 +1,4 @@
-﻿namespace PubNet.Common.Interfaces;
+namespace PubNet.Common.Interfaces;
 
 public interface IPackageStorageProvider
 {

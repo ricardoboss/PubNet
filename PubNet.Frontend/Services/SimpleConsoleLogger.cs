@@ -42,7 +42,8 @@ public class SimpleConsoleLogger : ILogger
 		if (!IsEnabled(logLevel) || logLevel == LogLevel.None) return;
 
 		_ = _jsRuntime.InvokeVoidAsync(
-			logLevel switch {
+			logLevel switch
+			{
 				LogLevel.Trace => "console.debug",
 				LogLevel.Debug => "console.debug",
 				LogLevel.Information => "console.log",

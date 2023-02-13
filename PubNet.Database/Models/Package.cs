@@ -1,4 +1,4 @@
-﻿namespace PubNet.Database.Models;
+namespace PubNet.Database.Models;
 
 public class Package
 {

@@ -1,4 +1,4 @@
-﻿using PubNet.Common.Interfaces;
+using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;

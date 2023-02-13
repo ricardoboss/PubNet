@@ -1,4 +1,4 @@
-﻿namespace PubNet.API.DTO;
+namespace PubNet.API.DTO;
 
 public class EditAuthorRequest
 {

@@ -9,7 +9,8 @@ public class AuthorDto
 	{
 		if (author is null) return null;
 
-		return new() {
+		return new()
+		{
 			UserName = author.UserName,
 			Name = author.Name,
 			Website = author.Website,

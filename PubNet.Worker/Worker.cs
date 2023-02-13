@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
 using PubNet.Worker.Tasks;
@@ -59,7 +59,7 @@ public class Worker : BackgroundService
 
 				await RunUnscheduledTasks(stoppingToken);
 
-				var sleepDuration  = wakeTime.Subtract(DateTime.Now);
+				var sleepDuration = wakeTime.Subtract(DateTime.Now);
 				if (sleepDuration <= TimeSpan.Zero)
 				{
 					_logger.LogInformation("Skipping sleep as wake time has already passed ({WakeTime})", wakeTime);

@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using PubNet.API.DTO;
 

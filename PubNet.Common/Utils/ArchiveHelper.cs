@@ -1,4 +1,4 @@
-﻿using SharpCompress.Readers;
+using SharpCompress.Readers;
 
 namespace PubNet.Common.Utils;
 

@@ -234,7 +234,7 @@ public class PackagesController : BaseController
 	[HttpGet("{name}/versions/{version}/analysis")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionAnalysisDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(VaryByQueryKeys = new [] { "includeReadme" }, Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
+	[ResponseCache(VaryByQueryKeys = new[] { "includeReadme" }, Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionAnalysis(string name, string version, [FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
 	{
 		using (_logger.BeginScope(new Dictionary<string, object>

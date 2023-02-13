@@ -1,4 +1,4 @@
-﻿namespace PubNet.Worker.Models;
+namespace PubNet.Worker.Models;
 
 public enum WorkerTaskResult
 {

@@ -1,3 +1,3 @@
-﻿namespace PubNet.API.DTO;
+namespace PubNet.API.DTO;
 
 public record JwtTokenResponse(string Token, DateTimeOffset ExpiresAt);
