@@ -40,7 +40,7 @@ else
                                             <em>No README.md found.</em>
                                         </Paragraph>
                                     }
-                                    else if (Package.Mirrored != true)
+                                    else if (IsMirrored != true)
                                     {
                                         <Paragraph TextColor="TextColor.Muted">
                                             <em>README analysis pending</em>
@@ -55,7 +55,7 @@ else
                                                 <TableRow>
                                                     <TableHeaderCell>Version</TableHeaderCell>
                                                     <TableHeaderCell>Published At</TableHeaderCell>
-                                                    @if (!Package.Mirrored)
+                                                    @if (!IsMirrored)
                                                     {
                                                         <TableHeaderCell>Badges</TableHeaderCell>
                                                     }
@@ -79,7 +79,7 @@ else
                                                         <TableRowCell>
                                                             <Abbreviation Title="@version.Published.ToString()">@(version.Published.Humanize())</Abbreviation>
                                                         </TableRowCell>
-                                                        @if (!Package.Mirrored)
+                                                        @if (!IsMirrored)
                                                         {
                                                             <TableRowCell>
                                                                 <AnalysisBadges PackageDto="@Package" PackageVersionDto="@version" HideNonVersionSpecificBadges="@true"/>
@@ -212,11 +212,13 @@ else
     [Parameter]
     public EventCallback OnPackageChanged { get; set; }
 
+    private bool IsMirrored => Package?.Mirrored ?? false;
+
     private string PubspecVersionText(string version)
     {
         return Package?.Name is null
             ? string.Empty
-            : TextGenerator.PubspecVersionText(Package.Name, version, Package.Mirrored, Http.BaseAddress);
+            : TextGenerator.PubspecVersionText(Package.Name, version, IsMirrored, Http.BaseAddress);
     }
 
     private PackageVersionAnalysisDto? Analysis { get; set; }
@@ -245,7 +247,7 @@ else
         if (Version is null)
             return;
 
-        ShowPackageAdminTools = !Package.Mirrored && await Auth.IsSelf(Package?.Author?.UserName);
+        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(Package.Author?.UserName);
 
         try
         {
@@ -317,7 +319,9 @@ else
 
     private async Task OnDeleteVersionClicked(string version)
     {
-        var confirmed = await Alert.Confirm($"Are you sure you want to delete {Package?.Name}: {version}? This cannot be undone.");
+        if (Package is null) return;
+
+        var confirmed = await Alert.Confirm($"Are you sure you want to delete {Package.Name}: {version}? This cannot be undone.");
         if (!confirmed)
             return;
 
@@ -327,7 +331,7 @@ else
 
         try
         {
-            await PackagesService.DeletePackageVersion(Package?.Name!, version);
+            await PackagesService.DeletePackageVersion(Package.Name, version);
 
             await OnInfo.InvokeAsync($"Version {version} has been deleted.");
 
@@ -345,7 +349,9 @@ else
 
     private async Task OnRetractVersionClicked(string version)
     {
-        var confirmed = await Alert.Confirm($"Are you sure you want to retract {Package?.Name}: {version}? This cannot be undone.");
+        if (Package is null) return;
+
+        var confirmed = await Alert.Confirm($"Are you sure you want to retract {Package.Name}: {version}? This cannot be undone.");
         if (!confirmed)
             return;
 
@@ -355,7 +361,7 @@ else
 
         try
         {
-            await PackagesService.RetractVersion(Package?.Name!, version);
+            await PackagesService.RetractVersion(Package.Name, version);
 
             await OnInfo.InvokeAsync($"Package version {version} has been marked as retracted.");
 
