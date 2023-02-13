@@ -46,6 +46,9 @@ public class ErrorResponse
 	public static ErrorResponse MissingPubspec =>
 		new(new("missing-pubspec", "The package archive is missing a pubspec.yaml"));
 
+	public static ErrorResponse MissingValues =>
+		new(new("missing-values", "The request you sent has missing values"));
+
 	public static ErrorResponse UsernameAlreadyInUse =>
 		new(new("username-already-in-use", "The username you provided is already in use"));
 

@@ -14,7 +14,6 @@ public class AuthenticationController : BaseController
 {
 	private readonly PubNetContext _db;
 	private readonly PasswordManager _passwordManager;
-
 	private readonly JwtTokenGenerator _tokenGenerator;
 
 	public AuthenticationController(JwtTokenGenerator tokenGenerator, PubNetContext db, PasswordManager passwordManager)
@@ -48,6 +47,9 @@ public class AuthenticationController : BaseController
 	public async Task<IActionResult> Register([FromBody] RegisterRequest dto,
 		CancellationToken cancellationToken = default)
 	{
+		if (dto.Username is null || dto.Name is null || dto.Password is null)
+			return UnprocessableEntity(ErrorResponse.MissingValues);
+
 		if (_db.Authors.Any(a => a.UserName == dto.Username))
 			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
 
@@ -56,16 +58,16 @@ public class AuthenticationController : BaseController
 
 		var author = new Author
 		{
-			UserName = dto.Username!,
+			UserName = dto.Username,
 			Email = dto.Email,
-			Name = dto.Name!,
+			Name = dto.Name,
 			Website = dto.Website,
 			Inactive = false,
 			RegisteredAtUtc = DateTimeOffset.UtcNow,
 			Packages = new List<Package>(),
 		};
 
-		author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password!, cancellationToken);
+		author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);
 
 		_db.Authors.Add(author);
 		await _db.SaveChangesAsync(cancellationToken);
