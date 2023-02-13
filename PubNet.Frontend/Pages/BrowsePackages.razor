@@ -5,7 +5,7 @@
 
 <PageTitle>Packages</PageTitle>
 
-@if (_packages == null)
+@if (_response == null)
 {
 	<Paragraph>
 		<em>Loading...</em>
@@ -13,60 +13,17 @@
 }
 else
 {
-	<Table>
-		<TableHeader>
-			<TableRow>
-				<TableHeaderCell>Name</TableHeaderCell>
-				<TableHeaderCell>Author</TableHeaderCell>
-				<TableHeaderCell>Latest Version</TableHeaderCell>
-				<TableHeaderCell>Published</TableHeaderCell>
-			</TableRow>
-		</TableHeader>
-		<TableBody>
-		@if (!_packages.Packages.Any())
-		{
-			<TableRow>
-				<TableRowCell colspan="4" TextAlignment="TextAlignment.Center">
-					<strong>No packages found.</strong>
-				</TableRowCell>
-			</TableRow>
-		}
-		else
-		{
-			<Repeater Items="_packages.Packages.OrderByDescending(p => p.LatestPublishedAtUtc)">
-				<TableRow>
-					<TableRowCell>
-						<NavLink href="@("/packages/" + context.Name)">@context.Name</NavLink>
-					</TableRowCell>
-					<TableRowCell>
-						<AuthorLink Username="@context.AuthorUserName"/>
-					</TableRowCell>
-					@if (context is not {LatestVersion: null, LatestPublishedAtUtc: null})
-					{
-						<TableRowCell>@context.LatestVersion</TableRowCell>
-						<TableRowCell>
-							<Abbreviation Title="@context.LatestPublishedAtUtc.ToString()">@(context.LatestPublishedAtUtc.Humanize())</Abbreviation>
-						</TableRowCell>
-					}
-					else
-					{
-						<TableRowCell colspan="2" TextAlignment="TextAlignment.Center" TextColor="TextColor.Muted">
-							<em>No latest version available</em>
-						</TableRowCell>
-					}
-				</TableRow>
-			</Repeater>
-		}
-		</TableBody>
-	</Table>
+	<PackagesList Packages="Packages" ShowAuthor="@true" />
 }
 
 @code {
-	private SearchPackagesResponse? _packages;
+	private SearchPackagesResponse? _response;
+
+	private IEnumerable<SearchResultPackage>? Packages => _response?.Packages;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		_packages = await Http.GetAsync<SearchPackagesResponse>("packages");
+		_response = await Http.GetAsync<SearchPackagesResponse>("packages");
 	}
 
 }
