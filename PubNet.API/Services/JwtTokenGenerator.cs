@@ -68,7 +68,7 @@ public class JwtTokenGenerator
 		{
 			new("id", author.Id.ToString()),
 			new("name", author.Name),
-			new("username", author.UserName ?? string.Empty),
+			new("username", author.UserName),
 		});
 
 		if (additionalClaims != null)

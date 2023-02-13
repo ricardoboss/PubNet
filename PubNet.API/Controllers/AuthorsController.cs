@@ -38,7 +38,7 @@ public class AuthorsController : BaseController
 				.OrderByDescending(p => p.RegisteredAtUtc)
 			;
 
-		if (q != null) packages = packages.Where(a => a.UserName!.StartsWith(q));
+		if (q != null) packages = packages.Where(a => a.UserName.StartsWith(q));
 
 		if (before.HasValue)
 		{

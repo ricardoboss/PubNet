@@ -20,9 +20,9 @@ public class AuthorDto
 		};
 	}
 
-	public string UserName { get; init; }
+	public string UserName { get; init; } = null!;
 
-	public string Name { get; init; }
+	public string Name { get; init; } = null!;
 
 	public string? Website { get; init; }
 

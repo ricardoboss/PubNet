@@ -5,7 +5,7 @@ namespace PubNet.API.DTO;
 
 public class PackageDto
 {
-	public string Name { get; init; }
+	public string Name { get; init; } = null!;
 
 	public List<PackageVersionDto>? Versions { get; init; }
 

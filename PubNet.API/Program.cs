@@ -190,7 +190,7 @@ try
 catch (Exception ex)
 {
 	if (ex is HostAbortedException)
-		Log.Warning(ex.Message);
+		Log.Warning("{Message}", ex.Message);
 	else
 		Log.Fatal(ex, "Application terminated unexpectedly");
 }

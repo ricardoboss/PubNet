@@ -1,5 +1,3 @@
-using PubNet.API.DTO;
-
 namespace PubNet.Frontend.Services;
 
 public static class TextGenerator

@@ -25,15 +25,8 @@ public class ClientExceptionFormatterMiddleware
 		}
 	}
 
-	private async Task Handle(HttpContext context, Exception e)
+	private static async Task Handle(HttpContext context, Exception e)
 	{
-		if (!ShouldHandle(e))
-		{
-			await _next.Invoke(context);
-
-			return;
-		}
-
 		if (e is BearerTokenException or InvalidCredentialException)
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -52,10 +45,5 @@ public class ClientExceptionFormatterMiddleware
 			options: null,
 			contentType: "application/vnd.pub.v2+json"
 		);
-	}
-
-	private bool ShouldHandle(Exception e)
-	{
-		return true;
 	}
 }

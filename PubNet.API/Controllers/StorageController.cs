@@ -163,10 +163,12 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			}
 
 			var packageName = pubSpec.Name;
+			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageName is null)
 				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package name"));
 
 			var packageVersionId = pubSpec.Version;
+			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageVersionId is null)
 				return UnprocessableEntity(
 					ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package version"));
