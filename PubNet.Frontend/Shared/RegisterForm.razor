@@ -16,38 +16,88 @@
 	</Alert>
 }
 
-<EditForm Model="RegisterRequest" OnSubmit="SubmitForm">
-	<div class="form-group">
-		<label for="register-username">Username</label>
-		<InputText type="text" required @bind-Value="RegisterRequest.Username" class="form-control" id="register-username"/>
-	</div>
-	<div class="form-group">
-		<label for="register-email">E-Mail</label>
-		<InputText type="email" required @bind-Value="RegisterRequest.Email" class="form-control" id="register-email"/>
-	</div>
-	<div class="form-group">
-		<label for="register-password">Password</label>
-		<InputText type="password" required @bind-Value="RegisterRequest.Password" class="form-control" id="register-password"/>
-	</div>
-	<div class="form-group">
-		<label for="register-name">Name</label>
-		<InputText type="text" required @bind-Value="RegisterRequest.Name" class="form-control" id="register-name"/>
-	</div>
-	<div class="form-group">
-		<label for="register-website">Website</label>
-		<InputText type="url" @bind-Value="RegisterRequest.Website" class="form-control" id="register-website"/>
-	</div>
-	<input type="submit" class="btn btn-primary mt-3" value="Register"/>
-</EditForm>
+<Form @onsubmit="Submit">
+	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@RegisterRequest.Email" Autocomplete="email">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@RegisterRequest.Password" Autocomplete="current-password">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your username" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Username" Autocomplete="username">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your name" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Name" Autocomplete="name">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your website" Role="@TextRole.Url" @bind-Text="@RegisterRequest.Website" Autocomplete="url">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Row>
+			<Column ColumnSize="ColumnSize.Is2"></Column>
+			<Column ColumnSize="ColumnSize.Is10">
+				<Button Color="Color.Primary" Clicked="@Submit">Register</Button>
+			</Column>
+		</Row>
+	</Validations>
+</Form>
 
 @code {
-	public RegisterRequest RegisterRequest { get; set; } = new();
+	private Validations? _validations;
 
-	public string? Error { get; set; }
-	public string? Success { get; set; }
+	private RegisterRequest RegisterRequest { get; set; } = new();
 
-	public async Task SubmitForm(EditContext e)
-	{
+	private string? Error { get; set; }
+	private string? Success { get; set; }
+
+	private async Task Submit() {
+		if (_validations is null || !await _validations.ValidateAll()) return;
+
 		Error = null;
 		Success = null;
 

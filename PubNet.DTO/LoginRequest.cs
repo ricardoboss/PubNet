@@ -4,7 +4,11 @@ namespace PubNet.API.DTO;
 
 public class LoginRequest
 {
-	[Required] public string? Email { get; set; }
+	[Required]
+	[EmailAddress(ErrorMessage = "Invalid email.")]
+	public string? Email { get; set; }
 
-	[Required] public string? Password { get; set; }
+	[Required]
+	[DataType(DataType.Password)]
+	public string? Password { get; set; }
 }

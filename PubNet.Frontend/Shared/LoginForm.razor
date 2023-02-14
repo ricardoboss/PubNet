@@ -5,38 +5,64 @@
 
 @if (Error is not null)
 {
-	<Alert Color="Color.Danger">
+	<Alert Color="Color.Danger" Visible>
 		<strong>That didn't work.</strong> @Error
 	</Alert>
 }
 
 @if (Success is not null)
 {
-	<Alert Color="Color.Success">
+	<Alert Color="Color.Success" Visible>
 		<strong>Success!</strong> @Success
 	</Alert>
 }
 
-<EditForm Model="LoginRequest" OnSubmit="SubmitForm">
-	<div class="form-group">
-		<label for="login-email">E-Mail</label>
-		<InputText type="email" required @bind-Value="LoginRequest.Email" class="form-control" id="login-email"/>
-	</div>
-	<div class="form-group">
-		<label for="login-password">Password</label>
-		<InputText type="password" required @bind-Value="LoginRequest.Password" class="form-control" id="login-password"/>
-	</div>
-	<input type="submit" class="btn btn-primary mt-3" value="Login"/>
-</EditForm>
+<Form @onsubmit="Submit">
+	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="LoginRequest">
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@LoginRequest.Email" Autocomplete="email">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@LoginRequest.Password" Autocomplete="current-password">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Row>
+			<Column ColumnSize="ColumnSize.Is2"></Column>
+			<Column ColumnSize="ColumnSize.Is10">
+				<Button Color="Color.Primary" Clicked="@Submit">Login</Button>
+			</Column>
+		</Row>
+	</Validations>
+</Form>
 
 @code {
+	private Validations? _validations;
+
 	private LoginRequest LoginRequest { get; set; } = new();
 
 	private string? Error { get; set; }
 	private string? Success { get; set; }
 
-	private async Task SubmitForm(EditContext e)
-	{
+	private async Task Submit() {
+		if (_validations is null || !await _validations.ValidateAll()) return;
+
 		Error = null;
 		Success = null;
 

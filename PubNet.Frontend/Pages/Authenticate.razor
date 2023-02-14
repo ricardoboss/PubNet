@@ -1,15 +1,15 @@
 ﻿@page "/authenticate"
 @inject ApiClient Http;
 
-<h1>Login</h1>
+<Heading Size="HeadingSize.Is1">Login</Heading>
 
 <LoginForm/>
 
-<hr class="my-5">
+<Divider/>
 
 @if (_showRegistration)
 {
-    <h1>Register</h1>
+    <Heading Size="HeadingSize.Is1">Register</Heading>
 
     <RegisterForm/>
 }
