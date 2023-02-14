@@ -18,27 +18,46 @@
 
 @if (FormModel is not null)
 {
-	<EditForm Model="FormModel" OnSubmit="OnFormSubmit">
-		<div class="form-group">
-			<label for="edit-author-name">Name</label>
-			<InputText @bind-Value="FormModel.Name" class="form-control" id="edit-author-name" required disabled="@Submitting"/>
-		</div>
-		<div class="form-group mt-1">
-			<label for="edit-author-website">Website</label>
-			<InputText type="url" @bind-Value="FormModel.Website" class="form-control" id="edit-author-website" disabled="@Submitting"/>
-		</div>
-		<div style="display: flex; align-items: center; gap: 0.5rem" class="my-3">
-			<button class="btn btn-success" type="submit" disabled="@Submitting">Save</button>
-			<button class="btn btn-outline-secondary" @onclick="OnAborted" type="button" disabled="@Submitting">Abort</button>
-			@if (Submitting)
-			{
-				<div class="spinner-border text-secondary"></div>
-			}
-		</div>
-	</EditForm>
+	<Form @onsubmit="Submit">
+		<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="FormModel">
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your name" Role="@TextRole.Text" @bind-Text="@FormModel.Name" Autocomplete="name">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextEdit Placeholder="Your website" Role="@TextRole.Url" @bind-Text="@FormModel.Website" Autocomplete="url">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextEdit>
+				</FieldBody>
+			</Field>
+		</Validation>
+			<Row>
+				<Column ColumnSize="ColumnSize.Is2"></Column>
+				<Column ColumnSize="ColumnSize.Is10">
+					<Button Color="Color.Success" Clicked="@Submit">Save</Button>
+					<Button Color="Color.Secondary" Outline Clicked="@OnAborted">Abort</Button>
+				</Column>
+			</Row>
+		</Validations>
+	</Form>
 }
 
 @code {
+
+	private Validations? _validations;
 
 	[Parameter]
 	public AuthorDto? Author { get; set; }
@@ -68,8 +87,10 @@
 		};
 	}
 
-	private async Task OnFormSubmit(EditContext context)
+	private async Task Submit()
 	{
+		if (_validations is null || !await _validations.ValidateAll()) return;
+
 		Submitting = true;
 
 		try
