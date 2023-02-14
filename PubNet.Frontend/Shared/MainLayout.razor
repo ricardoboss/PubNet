@@ -1,10 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<Layout>
+<Layout Style="height: auto">
 	<LayoutHeader>
 		<NavBar />
 	</LayoutHeader>
-	<LayoutContent Margin="Margin.Is4">
+	<LayoutContent Padding="Padding.Is4" Style="min-height: calc(100vh - 3rem)">
 		@Body
 	</LayoutContent>
+	<LayoutFooter>
+		<FooterBar />
+	</LayoutFooter>
 </Layout>
