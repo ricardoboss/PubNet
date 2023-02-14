@@ -98,7 +98,8 @@ Add a `backend-appsettings.json`:
   },
   "PackageStorage": {
     "Path": "./packages"
-  }
+  },
+  "OpenRegistration": true
 }
 
 ```
@@ -127,3 +128,7 @@ docker-compose up -d
 ```
 
 and access it at `https://localhost`.
+
+---
+
+When you are done playing around and are ready to deploy it, you may want to review the `OpenRegistration` setting in the `backend-appsettings.json`.

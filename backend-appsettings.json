@@ -12,5 +12,6 @@
   },
   "PackageStorage": {
     "Path": "./packages"
-  }
+  },
+  "OpenRegistration": true
 }
