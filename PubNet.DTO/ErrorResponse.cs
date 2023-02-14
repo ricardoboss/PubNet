@@ -2,6 +2,8 @@ namespace PubNet.API.DTO;
 
 public class ErrorResponse
 {
+	public ErrorResponseBody? Error { get; }
+
 	public ErrorResponse(ErrorResponseBody? error = null)
 	{
 		Error = error;
@@ -58,7 +60,8 @@ public class ErrorResponse
 	public static ErrorResponse PackageDiscontinued =>
 		new(new("package-discontinued", "The package you are trying to publish has been discontinued and new versions cannot be added to it"));
 
-	public ErrorResponseBody? Error { get; init; }
+	public static ErrorResponse RegistrationsDisabled =>
+		new(new("registrations-disabled", "Registrations are currently disabled"));
 
 	public static ErrorResponse VersionAlreadyExists(string packageName, string packageVersion)
 	{
@@ -84,11 +87,6 @@ public class ErrorResponse
 	public static ErrorResponse FromException(Exception e)
 	{
 		return new(new(e.GetType().Name, e.Message));
-	}
-
-	public void Deconstruct(out ErrorResponseBody? error)
-	{
-		error = Error;
 	}
 }
 

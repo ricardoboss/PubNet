@@ -15,12 +15,14 @@ public class AuthenticationController : BaseController
 	private readonly PubNetContext _db;
 	private readonly PasswordManager _passwordManager;
 	private readonly JwtTokenGenerator _tokenGenerator;
+	private readonly IConfiguration _configuration;
 
-	public AuthenticationController(JwtTokenGenerator tokenGenerator, PubNetContext db, PasswordManager passwordManager)
+	public AuthenticationController(JwtTokenGenerator tokenGenerator, PubNetContext db, PasswordManager passwordManager, IConfiguration configuration)
 	{
 		_tokenGenerator = tokenGenerator;
 		_db = db;
 		_passwordManager = passwordManager;
+		_configuration = configuration;
 	}
 
 	private static InvalidCredentialException EmailNotFound => new("E-Mail address not registered");
@@ -42,11 +44,15 @@ public class AuthenticationController : BaseController
 
 	[HttpPost("register")]
 	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
-	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
 	public async Task<IActionResult> Register([FromBody] RegisterRequest dto,
 		CancellationToken cancellationToken = default)
 	{
+		if (!RegistrationsEnabled())
+			return BadRequest(ErrorResponse.RegistrationsDisabled);
+
 		if (dto.Username is null || dto.Name is null || dto.Password is null)
 			return UnprocessableEntity(ErrorResponse.MissingValues);
 
@@ -84,5 +90,12 @@ public class AuthenticationController : BaseController
 		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
 
 		return Ok(AuthorDto.FromAuthor(author, true));
+	}
+
+	[HttpGet("registrations-enabled")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+	public bool RegistrationsEnabled()
+	{
+		return _configuration.GetValue<bool?>("OpenRegistration") ?? false;
 	}
 }

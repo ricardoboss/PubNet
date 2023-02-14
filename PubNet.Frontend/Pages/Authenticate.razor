@@ -1,4 +1,5 @@
 ﻿@page "/authenticate"
+@inject ApiClient Http;
 
 <h1>Login</h1>
 
@@ -6,6 +7,28 @@
 
 <hr class="my-5">
 
-<h1>Register</h1>
+@if (_showRegistration)
+{
+    <h1>Register</h1>
 
-<RegisterForm/>
+    <RegisterForm/>
+}
+else
+{
+    <p>
+        Registrations are currently disabled.
+    </p>
+}
+
+@code {
+
+    private bool _showRegistration;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _showRegistration = await Http.GetAsync<bool>("authentication/registrations-enabled");
+    }
+
+}
