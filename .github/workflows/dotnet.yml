@@ -23,10 +23,10 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet }}
+      - name: Update tooling
+        run: dotnet update -g dotnet-format
       - name: Check formatting
-        run: |
-          dotnet update -g dotnet-format
-          dotnet format --verify-no-changes --verbosity diagnostic
+        run: dotnet format --verify-no-changes --verbosity diagnostic
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
