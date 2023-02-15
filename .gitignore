@@ -4,5 +4,6 @@ riderModule.iml
 /_ReSharper.Caches/
 *.db*
 /PubNet.API/packages/
-/*.user
+**/*.user
 /packages/
+.vs/
