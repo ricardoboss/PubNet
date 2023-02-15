@@ -25,10 +25,10 @@ jobs:
           dotnet-version: ${{ matrix.dotnet }}
       - name: Update tooling
         run: dotnet tool update -g dotnet-format
-      - name: Check formatting
-        run: dotnet format --verify-no-changes --verbosity diagnostic
       - name: Restore dependencies
         run: dotnet restore
+      - name: Check code style
+        run: dotnet format style --no-restore --verify-no-changes --verbosity diagnostic
       - name: Build
         run: dotnet build --no-restore
       - name: Test
