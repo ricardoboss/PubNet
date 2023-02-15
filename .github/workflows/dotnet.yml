@@ -24,7 +24,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
       - name: Update tooling
-        run: dotnet update -g dotnet-format
+        run: dotnet tool update -g dotnet-format
       - name: Check formatting
         run: dotnet format --verify-no-changes --verbosity diagnostic
       - name: Restore dependencies
