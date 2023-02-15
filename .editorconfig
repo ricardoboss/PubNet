@@ -15,6 +15,7 @@ resharper_indent_braces_inside_statement_conditions = false
 
 [*.cs]
 indent_style = tab
+indent_size = tab
 
 [{*.ya?ml,*.json}]
 indent_size = 2
