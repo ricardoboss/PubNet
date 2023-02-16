@@ -32,7 +32,10 @@ public class AuthenticationController : BaseController
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	public async Task<IActionResult> Login(LoginRequest dto, CancellationToken cancellationToken = default)
 	{
-		var author = await _db.Authors.FirstOrDefaultAsync(a => a.Email == dto.Email, cancellationToken);
+		if (string.IsNullOrWhiteSpace(dto.Email))
+			throw EmailNotFound;
+
+		var author = await _db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
 		if (author is null)
 			throw EmailNotFound;
 
@@ -53,13 +56,13 @@ public class AuthenticationController : BaseController
 		if (!RegistrationsEnabled())
 			return BadRequest(ErrorResponse.RegistrationsDisabled);
 
-		if (dto.Username is null || dto.Name is null || dto.Password is null)
+		if (dto.Username is null || dto.Name is null || dto.Password is null || dto.Email is null)
 			return UnprocessableEntity(ErrorResponse.MissingValues);
 
-		if (_db.Authors.Any(a => a.UserName == dto.Username))
+		if (_db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
 			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
 
-		if (_db.Authors.Any(a => a.Email == dto.Email))
+		if (_db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
 			return UnprocessableEntity(ErrorResponse.EmailAlreadyInUse);
 
 		var author = new Author
