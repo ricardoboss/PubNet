@@ -48,8 +48,8 @@ public class Worker : BackgroundService
 
 				await RunScheduledTasksAsync(DateTime.Now, stoppingToken);
 
-				// adjust wake time after running scheduled tasks
-				var wakeTime = AdjustWakeTime(null, interval, out var runNow);
+				// calculate wake time after running scheduled tasks
+				var wakeTime = CalculateWakeTime(interval, out var runNow);
 				if (runNow)
 				{
 					_logger.LogInformation("Skipping unscheduled tasks and sleep as scheduled tasks are due now");
@@ -89,10 +89,10 @@ public class Worker : BackgroundService
 		_logger.LogWarning("Worker is stopping");
 	}
 
-	private DateTime AdjustWakeTime(DateTime? wakeTime, TimeSpan interval, out bool runNow)
+	private DateTime CalculateWakeTime(TimeSpan interval, out bool runNow)
 	{
 		runNow = false;
-		var calculatedWakeTime = wakeTime ?? DateTime.Now.Add(interval);
+		var calculatedWakeTime = DateTime.Now.Add(interval);
 		if (!_taskQueue.TryGetNextScheduledAt(out var scheduledTask, out var nextScheduledTime))
 		{
 			_logger.LogDebug("No scheduled tasks found");
