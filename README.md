@@ -27,6 +27,7 @@ The root of this repository contains a `docker-compose.yml`, which contains thre
 The only service you need to start is `database`, though the other services help during development.
 
 > **Note**
+>
 > You can also use a database you set up on your host, but currently only postgres is supported.
 
 ### Architecture
@@ -57,6 +58,7 @@ If you want to contribute improvements or bugfixes, fork this repository, create
 ## Hosting
 
 > **Note**
+>
 > In case you only need a simple, privately hosted pub package API, the API project alone is sufficient.
 
 When you are ready to deploy `PubNet`, you may want to review the `OpenRegistration` setting in the `backend-appsettings.json` to toggle whether anyone is able to register an account.
@@ -131,6 +133,7 @@ services:
 </details>
 
 > **Note**
+>
 > In this example, caddy is used as a reverse-proxy.
 >
 > You can also host the backend and frontend on different ports, and publish them directly, removing the need to configure a reverse proxy entirely.
