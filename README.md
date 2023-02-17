@@ -3,7 +3,7 @@
 
 # PubNet
 
-Private pub.dev alternative.
+Self-hosted pub.dev alternative.
 
 ## Contents
 
@@ -15,6 +15,10 @@ Private pub.dev alternative.
   - [Using `docker-compose.yml`](#using-docker-composeyml)
   - [Other approaches](#other-approaches)
 - [License](#license)
+
+---
+
+![PubNet Homepage](.github/media/homepage.png)
 
 ## Development
 
@@ -218,3 +222,9 @@ The frontend can be hosted from anywhere, as long as the `backend-appsettings.js
 ## License
 
 This project is licensed under the Apache 2.0 license. For more information, see [LICENSE](./LICENSE).
+
+## Screenshots
+
+This is a screenshot of how a package looks like after uploading and analysis:
+
+![Page for the package 'nmea'](.github/media/package_nmea.png)
