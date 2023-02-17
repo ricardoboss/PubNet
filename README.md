@@ -15,6 +15,7 @@ Self-hosted pub.dev alternative.
   - [Using `docker-compose.yml`](#using-docker-composeyml)
   - [Other approaches](#other-approaches)
 - [License](#license)
+- [Screenshots](#screenshots)
 
 ---
 
@@ -228,3 +229,7 @@ This project is licensed under the Apache 2.0 license. For more information, see
 This is a screenshot of how a package looks like after uploading and analysis:
 
 ![Page for the package 'nmea'](.github/media/package_nmea.png)
+
+This screenshot shows different versions in a table:
+
+![Page for the package 'nmea' versions](.github/media/package_nmea_versions.png)
