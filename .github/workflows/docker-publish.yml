@@ -8,6 +8,8 @@ on:
     paths:
       - '**.razor'
       - '**.css'
+      - '**.json'
+      - '**.ya?ml'
       - '**.cs'
       - '**.csproj'
       - '**.sln'
@@ -16,6 +18,8 @@ on:
     paths:
       - '**.razor'
       - '**.css'
+      - '**.json'
+      - '**.ya?ml'
       - '**.cs'
       - '**.csproj'
       - '**.sln'
