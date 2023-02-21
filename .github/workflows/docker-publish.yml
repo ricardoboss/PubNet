@@ -6,12 +6,16 @@ on:
   push:
     tags: [ 'v*.*.*' ]
     paths:
+      - '**.razor'
+      - '**.css'
       - '**.cs'
       - '**.csproj'
       - '**.sln'
       - '**/Dockerfile'
   pull_request:
     paths:
+      - '**.razor'
+      - '**.css'
       - '**.cs'
       - '**.csproj'
       - '**.sln'
