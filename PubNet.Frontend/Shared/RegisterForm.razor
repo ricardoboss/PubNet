@@ -4,119 +4,122 @@
 
 @if (Error is not null)
 {
-	<Alert Color="Color.Danger" Visible>
-		<strong>Oh no!</strong> @Error
-	</Alert>
+    <Alert Color="Color.Danger" Visible>
+        <strong>Oh no!</strong> @Error
+    </Alert>
 }
 
 @if (Success is not null)
 {
-	<Alert Color="Color.Success" Visible>
-		<strong>Great!</strong> @Success
-	</Alert>
+    <Alert Color="Color.Success" Visible>
+        <strong>Great!</strong> @Success
+    </Alert>
 }
 
 <Form @onsubmit="Submit">
-	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@RegisterRequest.Email" Autocomplete="email">
-						<Feedback>
-							<ValidationError />
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@RegisterRequest.Password" Autocomplete="current-password">
-						<Feedback>
-							<ValidationError />
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your username" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Username" Autocomplete="username">
-						<Feedback>
-							<ValidationError />
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your name" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Name" Autocomplete="name">
-						<Feedback>
-							<ValidationError />
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your website" Role="@TextRole.Url" @bind-Text="@RegisterRequest.Website" Autocomplete="url">
-						<Feedback>
-							<ValidationError />
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Row>
-			<Column ColumnSize="ColumnSize.Is2"></Column>
-			<Column ColumnSize="ColumnSize.Is10">
-				<Button Color="Color.Primary" Clicked="@Submit">Register</Button>
-			</Column>
-		</Row>
-	</Validations>
+    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
+        <Validation>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@RegisterRequest.Email" Autocomplete="email">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+        <Validation>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@RegisterRequest.Password" Autocomplete="current-password">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+        <Validation>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <TextEdit Placeholder="Your username" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Username" Autocomplete="username">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+        <Validation>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <TextEdit Placeholder="Your name" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Name" Autocomplete="name">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+        <Validation>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <TextEdit Placeholder="Your website" Role="@TextRole.Url" @bind-Text="@RegisterRequest.Website" Autocomplete="url">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+        <Validation>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is2" />
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <Button Color="Color.Primary" Clicked="@Submit">Register</Button>
+                </FieldBody>
+            </Field>
+        </Validation>
+    </Validations>
 </Form>
 
 @code {
-	private Validations? _validations;
+    private Validations? _validations;
 
-	private RegisterRequest RegisterRequest { get; set; } = new();
+    private RegisterRequest RegisterRequest { get; set; } = new();
 
-	private string? Error { get; set; }
-	private string? Success { get; set; }
+    private string? Error { get; set; }
+    private string? Success { get; set; }
 
-	private async Task Submit() {
-		if (_validations is null || !await _validations.ValidateAll()) return;
+    private async Task Submit()
+    {
+        if (_validations is null || !await _validations.ValidateAll()) return;
 
-		Error = null;
-		Success = null;
+        Error = null;
+        Success = null;
 
-		var response = await HttpClient.PostAsJsonAsync("authentication/register", RegisterRequest);
+        var response = await HttpClient.PostAsJsonAsync("authentication/register", RegisterRequest);
 
-		if (response.IsSuccessStatusCode)
-		{
-			await response.Content.ReadFromJsonAsync<Author>();
+        if (response.IsSuccessStatusCode)
+        {
+            await response.Content.ReadFromJsonAsync<Author>();
 
-			RegisterRequest = new();
+            RegisterRequest = new();
 
-			Success = "Registration complete. You can now log in.";
-		}
-		else
-		{
-			var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            Success = "Registration complete. You can now log in.";
+        }
+        else
+        {
+            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
 
-			Error = message?.Error?.Message;
-		}
-	}
+            Error = message?.Error?.Message;
+        }
+    }
 
 }
