@@ -5,25 +5,11 @@ on:
   #     - cron: '38 20 * * *'
   push:
     tags: [ 'v*.*.*' ]
-    paths:
-      - '**.razor'
-      - '**.css'
-      - '**.json'
-      - '**.ya?ml'
-      - '**.cs'
-      - '**.csproj'
-      - '**.sln'
-      - '**/Dockerfile'
+    branches:
+      - main
   pull_request:
-    paths:
-      - '**.razor'
-      - '**.css'
-      - '**.json'
-      - '**.ya?ml'
-      - '**.cs'
-      - '**.csproj'
-      - '**.sln'
-      - '**/Dockerfile'
+    branches:
+      - main
 
 env:
   # Use docker.io for Docker Hub if empty
