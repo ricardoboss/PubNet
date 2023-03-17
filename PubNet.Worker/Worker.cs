@@ -32,6 +32,7 @@ public class Worker : BackgroundService
 	{
 		_taskQueue.Enqueue(new CleanupOldPendingArchivesTask(GetInterval("Worker:PendingCleanupInterval")));
 		_taskQueue.Enqueue(new MissingPackageVersionAnalysisQueuingTask(GetInterval("Worker:QueueMissingAnalysisInterval")));
+		_taskQueue.Enqueue(new FlutterUpgradeTask(GetInterval("Worker:FlutterUpgradeInterval")));
 
 		await base.StartAsync(cancellationToken);
 	}
