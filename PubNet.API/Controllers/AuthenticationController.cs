@@ -73,7 +73,7 @@ public class AuthenticationController : BaseController
 			Website = dto.Website,
 			Inactive = false,
 			RegisteredAtUtc = DateTimeOffset.UtcNow,
-			Packages = new List<Package>(),
+			DartPackages = new List<DartPackage>(),
 		};
 
 		author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);

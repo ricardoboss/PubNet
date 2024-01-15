@@ -1,6 +1,6 @@
 namespace PubNet.Database.Models;
 
-public class Package
+public class DartPackage
 {
 	public int Id { get; set; }
 
@@ -10,9 +10,9 @@ public class Package
 
 	public string? ReplacedBy { get; set; }
 
-	public PackageVersion? Latest { get; set; }
+	public DartPackageVersion? Latest { get; set; }
 
-	public ICollection<PackageVersion> Versions { get; set; } = new List<PackageVersion>();
+	public ICollection<DartPackageVersion> Versions { get; set; } = new List<DartPackageVersion>();
 
 	public int? AuthorId { get; set; }
 

@@ -23,22 +23,22 @@ public class PackageDto
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public bool Mirrored { get; set; }
 
-	public static PackageDto FromPackage(Package package)
+	public static PackageDto FromPackage(DartPackage dartPackage)
 	{
-		var versions = package.Versions.Any()
-			? package.Versions.Select(PackageVersionDto.FromPackageVersion).ToList()
+		var versions = dartPackage.Versions.Any()
+			? dartPackage.Versions.Select(PackageVersionDto.FromPackageVersion).ToList()
 			: null;
 
-		var latestDto = package.Latest is null ? null : PackageVersionDto.FromPackageVersion(package.Latest);
+		var latestDto = dartPackage.Latest is null ? null : PackageVersionDto.FromPackageVersion(dartPackage.Latest);
 
-		var authorDto = AuthorDto.FromAuthor(package.Author, true);
+		var authorDto = AuthorDto.FromAuthor(dartPackage.Author, true);
 
 		return new()
 		{
-			Name = package.Name,
+			Name = dartPackage.Name,
 			Versions = versions,
-			IsDiscontinued = package.IsDiscontinued,
-			ReplacedBy = package.ReplacedBy,
+			IsDiscontinued = dartPackage.IsDiscontinued,
+			ReplacedBy = dartPackage.ReplacedBy,
 			Latest = latestDto,
 			Author = authorDto,
 			Mirrored = false,

@@ -186,7 +186,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 				{
 					Author = pending.Uploader,
 					Name = packageName,
-					Versions = new List<PackageVersion>(),
+					Versions = new List<DartPackageVersion>(),
 					IsDiscontinued = false,
 					ReplacedBy = null,
 					Latest = null,
@@ -222,7 +222,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 						cancellationToken);
 			}
 
-			var packageVersion = new PackageVersion
+			var packageVersion = new DartPackageVersion
 			{
 				PubSpec = pubSpec,
 				PackageName = packageName,

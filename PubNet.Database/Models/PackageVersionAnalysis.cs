@@ -8,7 +8,7 @@ public class PackageVersionAnalysis
 
 	public int VersionId { get; set; }
 
-	[NotNull] public PackageVersion? Version { get; set; }
+	[NotNull] public DartPackageVersion? Version { get; set; }
 
 	public bool? Formatted { get; set; }
 

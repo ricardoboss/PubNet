@@ -54,7 +54,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		return await UpdateAnalysis(analysis, _db, _taskQueue, _logger, cancellationToken);
 	}
 
-	private async Task<WorkerTaskResult> CreateAnalysis(PackageVersion version, PubNetContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
+	private async Task<WorkerTaskResult> CreateAnalysis(DartPackageVersion version, PubNetContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
 	{
 		try
 		{

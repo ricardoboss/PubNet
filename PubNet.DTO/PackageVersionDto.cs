@@ -24,7 +24,7 @@ public class PackageVersionDto
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public bool Mirrored { get; set; }
 
-	public static PackageVersionDto FromPackageVersion(PackageVersion version)
+	public static PackageVersionDto FromPackageVersion(DartPackageVersion version)
 	{
 		return new()
 		{

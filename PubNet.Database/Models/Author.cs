@@ -21,5 +21,5 @@ public class Author : IdentityUser<int>
 
 	public DateTimeOffset RegisteredAtUtc { get; set; }
 
-	public ICollection<Package> Packages { get; set; } = new List<Package>();
+	public ICollection<DartPackage> DartPackages { get; set; } = new List<DartPackage>();
 }

@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace PubNet.Database.Models;
 
-public class PackageVersion
+public class DartPackageVersion
 {
 	public int Id { get; set; }
 

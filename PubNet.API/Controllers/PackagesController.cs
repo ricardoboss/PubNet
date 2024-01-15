@@ -43,7 +43,7 @@ public class PackagesController : BaseController
 	{
 		const int maxLimit = 1000;
 
-		IQueryable<Package> packages = _db.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc);
+		IQueryable<DartPackage> packages = _db.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc);
 
 		if (q != null) packages = packages.Where(p => p.Name.StartsWith(q));
 
@@ -209,7 +209,7 @@ public class PackagesController : BaseController
 			var package = await _db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
-				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
+				.Include(nameof(DartPackage.Versions) + "." + nameof(DartPackageVersion.Analysis))
 				.FirstOrDefaultAsync(cancellationToken);
 
 			PackageVersionDto dto;
@@ -245,7 +245,7 @@ public class PackagesController : BaseController
 			var package = await _db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
-				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
+				.Include(nameof(DartPackage.Versions) + "." + nameof(DartPackageVersion.Analysis))
 				.FirstOrDefaultAsync(cancellationToken);
 
 			var packageVersionAnalysis = package?.Versions.FirstOrDefault(v => v.Version == version)?.Analysis;
@@ -320,7 +320,7 @@ public class PackagesController : BaseController
 			var package = await _db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
-				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
+				.Include(nameof(DartPackage.Versions) + "." + nameof(DartPackageVersion.Analysis))
 				.FirstOrDefaultAsync(cancellationToken);
 			if (package is null) return NotFound();
 

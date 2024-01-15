@@ -26,9 +26,9 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 		await startupScope.ServiceProvider.GetRequiredService<PubNetContext>().Database.MigrateAsync();
 	}
 
-	public DbSet<Package> Packages { get; set; } = null!;
+	public DbSet<DartPackage> Packages { get; set; } = null!;
 
-	public DbSet<PackageVersion> PackageVersions { get; set; } = null!;
+	public DbSet<DartPackageVersion> PackageVersions { get; set; } = null!;
 
 	public DbSet<Author> Authors { get; set; } = null!;
 
@@ -61,37 +61,37 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 			.HasIndex(a => a.UserName)
 			.IsUnique();
 
-		modelBuilder.Entity<Package>()
-			.HasOne<Author>(nameof(Package.Author))
-			.WithMany(a => a.Packages);
+		modelBuilder.Entity<DartPackage>()
+			.HasOne<Author>(nameof(DartPackage.Author))
+			.WithMany(a => a.DartPackages);
 
-		modelBuilder.Entity<Package>()
+		modelBuilder.Entity<DartPackage>()
 			.HasIndex(p => p.Name)
 			.IsUnique();
 
-		modelBuilder.Entity<Package>()
+		modelBuilder.Entity<DartPackage>()
 			.Navigation(p => p.Latest)
 			.AutoInclude();
 
-		modelBuilder.Entity<PackageVersion>()
+		modelBuilder.Entity<DartPackageVersion>()
 			.HasIndex(p => p.PublishedAtUtc)
 			.IsDescending();
 
-		modelBuilder.Entity<PackageVersion>()
+		modelBuilder.Entity<DartPackageVersion>()
 			.HasOne<PackageVersionAnalysis>(p => p.Analysis)
 			.WithOne(a => a.Version)
 			.HasForeignKey<PackageVersionAnalysis>(a => a.VersionId)
 			.IsRequired(false);
 
-		modelBuilder.Entity<PackageVersion>()
+		modelBuilder.Entity<DartPackageVersion>()
 			.HasIndex(p => p.Version);
 
-		modelBuilder.Entity<PackageVersion>()
+		modelBuilder.Entity<DartPackageVersion>()
 			.Property(v => v.PubSpec)
 			.HasColumnType("json");
 
 		modelBuilder.Entity<PackageVersionAnalysis>()
-			.HasOne<PackageVersion>(a => a.Version)
+			.HasOne<DartPackageVersion>(a => a.Version)
 			.WithOne(p => p.Analysis)
 			.IsRequired();
 

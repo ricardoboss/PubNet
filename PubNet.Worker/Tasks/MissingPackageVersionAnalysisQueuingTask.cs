@@ -91,12 +91,12 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 		foreach (var analysis in incompleteAnalyses) taskQueue.Enqueue(CreateTaskFor(analysis.Version));
 	}
 
-	private static PackageVersionAnalyzerTask CreateTaskFor(PackageVersion version)
+	private static PackageVersionAnalyzerTask CreateTaskFor(DartPackageVersion version)
 	{
 		return new(version.PackageName, version.Version);
 	}
 
-	private static bool TaskQueueContainsTaskFor(WorkerTaskQueue taskQueue, PackageVersion version)
+	private static bool TaskQueueContainsTaskFor(WorkerTaskQueue taskQueue, DartPackageVersion version)
 	{
 		return taskQueue.Tasks.Any(t =>
 			t is PackageVersionAnalyzerTask analyzerTask &&

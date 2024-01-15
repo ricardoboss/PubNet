@@ -57,7 +57,7 @@ public class AuthorsController : BaseController
 		}
 
 		return Ok(new AuthorsResponse(
-			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count, a.RegisteredAtUtc))));
+			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.DartPackages.Count, a.RegisteredAtUtc))));
 	}
 
 	[HttpGet("{username}")]
@@ -116,12 +116,12 @@ public class AuthorsController : BaseController
 	{
 		var author = await _db.Authors
 			.Where(a => a.UserName == username)
-			.Include(a => a.Packages)
+			.Include(a => a.DartPackages)
 			.FirstOrDefaultAsync(cancellationToken);
 
 		return author is null
 			? NotFound()
-			: Ok(new AuthorPackagesResponse(author.Packages.Select(PackageDto.FromPackage)));
+			: Ok(new AuthorPackagesResponse(author.DartPackages.Select(PackageDto.FromPackage)));
 	}
 
 	[HttpPatch("{username}")]
