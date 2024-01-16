@@ -18,7 +18,7 @@ public class DartPackageVersion
 
 	public DateTimeOffset PublishedAtUtc { get; set; }
 
-	[NotNull] public PubSpec? PubSpec { set; get; }
+	public PubSpec? PubSpec { set; get; }
 
 	public int? AnalysisId { get; set; }
 

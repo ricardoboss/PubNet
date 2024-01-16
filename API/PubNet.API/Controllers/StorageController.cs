@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Extensions;
 using PubNet.API.Interfaces;
-using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
+using PubNet.PackageStorage.Abstractions;
 using Semver;
 using SignedUrl.Abstractions;
 using YamlDotNet.Serialization;
@@ -21,14 +21,14 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	private readonly PubNetContext _db;
 	private readonly IUrlSigner _urlSigner;
 	private readonly ILogger<StorageController> _logger;
-	private readonly IPackageStorageProvider _storageProvider;
+	private readonly IArchiveStorage _archiveStorage;
 
 	public StorageController(ILogger<StorageController> logger, PubNetContext db,
-		IPackageStorageProvider storageProvider, IUrlSigner urlSigner)
+		IArchiveStorage archiveStorage, IUrlSigner urlSigner)
 	{
 		_logger = logger;
 		_db = db;
-		_storageProvider = storageProvider;
+		_archiveStorage = archiveStorage;
 		_urlSigner = urlSigner;
 	}
 
@@ -121,7 +121,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	public async Task<IActionResult> FinalizeUpload([FromQuery] string? pendingId,
 		CancellationToken cancellationToken = default)
 	{
-		if (!_urlSigner.Validate(Request.QueryString.ToString()))
+		if (!_urlSigner.Validate($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}"))
 			return BadRequest(ErrorResponse.InvalidSignedUrl);
 
 		if (pendingId is null)
@@ -214,13 +214,13 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
 			{
 				archiveSha256 =
-					await _storageProvider.StoreArchive(packageName, packageVersionId, archiveStream,
+					await _archiveStorage.StoreArchiveAsync(pending.Uploader!.UserName, packageName, packageVersionId, archiveStream,
 						cancellationToken);
 			}
 
 			var packageVersion = new DartPackageVersion
 			{
-				PubSpec = pubSpec,
+				// PubSpec = pubSpec,
 				PackageName = packageName,
 				Version = packageVersionId,
 				ArchiveUrl = _urlSigner.GenerateFullyQualified(Request,

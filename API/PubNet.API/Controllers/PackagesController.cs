@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
-using PubNet.Common.Interfaces;
 using PubNet.Database;
 using PubNet.Database.Models;
+using PubNet.DocsStorage.Abstractions;
+using PubNet.PackageStorage.Abstractions;
 
 namespace PubNet.API.Controllers;
 
@@ -18,13 +19,14 @@ public class PackagesController : BaseController
 	private readonly FileExtensionContentTypeProvider _fileTypeProvider;
 	private readonly ILogger<PackagesController> _logger;
 	private readonly PubDevPackageProvider _pubDevPackageProvider;
-	private readonly IPackageStorageProvider _storageProvider;
+	private readonly IArchiveStorage _archiveStorage;
+	private readonly IDocsStorage _docsStorage;
 
-	public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IPackageStorageProvider storageProvider, PubDevPackageProvider pubDevPackageProvider)
+	public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IArchiveStorage archiveStorage, PubDevPackageProvider pubDevPackageProvider, IDocsStorage docsStorage)
 	{
 		_logger = logger;
 		_db = db;
-		_storageProvider = storageProvider;
+		_archiveStorage = archiveStorage;
 		_fileTypeProvider = new()
 		{
 			Mappings =
@@ -33,6 +35,7 @@ public class PackagesController : BaseController
 			},
 		};
 		_pubDevPackageProvider = pubDevPackageProvider;
+		_docsStorage = docsStorage;
 	}
 
 	[HttpGet("")]
@@ -184,7 +187,7 @@ public class PackagesController : BaseController
 
 			try
 			{
-				await _storageProvider.DeletePackage(name, cancellationToken);
+				await _archiveStorage.DeleteArchivesAsync(author.UserName, name, cancellationToken);
 			}
 			catch (Exception e)
 			{
@@ -358,7 +361,7 @@ public class PackagesController : BaseController
 
 			try
 			{
-				await _storageProvider.DeletePackageVersion(name, version, cancellationToken);
+				await _archiveStorage.DeleteArchivesAsync(author.UserName, name, version, cancellationToken);
 			}
 			catch (Exception e)
 			{
@@ -377,7 +380,8 @@ public class PackagesController : BaseController
 	{
 		try
 		{
-			var stream = _storageProvider.ReadArchive(name, version);
+			// FIXME: how to get author name?
+			var stream = await _archiveStorage.ReadArchiveAsync("test", name, version, cancellationToken);
 
 			return new FileStreamResult(stream, "application/octet-stream")
 			{
@@ -411,21 +415,23 @@ public class PackagesController : BaseController
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path, CancellationToken cancellationToken = default)
 	{
-		var localPath = await _storageProvider.GetDocsPath(name, version, cancellationToken);
-
-		var notFoundPage = Path.Combine(localPath, "__404error.html");
-		if (!System.IO.File.Exists(notFoundPage))
-			return NotFound();
+		var docsFileProvider = _docsStorage.GetDocsFileProvider("test", name, version, cancellationToken);
 
 		string content;
 
-		var requestedFile = Path.Combine(localPath, path);
-		if (!System.IO.File.Exists(requestedFile))
-			content = await System.IO.File.ReadAllTextAsync(notFoundPage, cancellationToken);
-		else
-			content = await System.IO.File.ReadAllTextAsync(requestedFile, cancellationToken);
+		var requestedFile = docsFileProvider.GetFileInfo(path);
+		if (!requestedFile.Exists)
+		{
+			var notFoundPage = docsFileProvider.GetFileInfo("__404error.html");
+			if (!notFoundPage.Exists)
+				return NotFound();
 
-		if (!_fileTypeProvider.TryGetContentType(requestedFile, out var contentType))
+			content = await System.IO.File.ReadAllTextAsync(notFoundPage.PhysicalPath!, cancellationToken);
+		}
+		else
+			content = await System.IO.File.ReadAllTextAsync(requestedFile.PhysicalPath!, cancellationToken);
+
+		if (!_fileTypeProvider.TryGetContentType(requestedFile.PhysicalPath!, out var contentType))
 			contentType = "application/octet-stream";
 
 		return new ContentResult

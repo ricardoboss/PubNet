@@ -12,10 +12,14 @@ using PubNet.API.Converter;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
-using PubNet.Common.Interfaces;
-using PubNet.Common.Services;
+using PubNet.ArchiveStorage.BlobStorage;
+using PubNet.BlobStorage.Abstractions;
+using PubNet.BlobStorage.LocalFileBlobStorage;
 using PubNet.Database;
 using PubNet.Database.Models;
+using PubNet.DocsStorage.Abstractions;
+using PubNet.DocsStorage.LocalFileDocsStorage;
+using PubNet.PackageStorage.Abstractions;
 using Serilog;
 using Serilog.Events;
 using SignedUrl.Extensions;
@@ -92,7 +96,9 @@ try
 
 	// package storage
 	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
-	builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
+	builder.Services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
+	builder.Services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
+	builder.Services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
 
 	builder.Services.AddSignedUrl();
 
@@ -185,6 +191,9 @@ try
 	app.UseAuthorization();
 
 	app.MapControllers();
+
+	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+	app.Logger.LogInformation("Application started");
 
 	await app.RunAsync();
 }
