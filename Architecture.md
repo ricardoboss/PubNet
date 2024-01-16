@@ -9,7 +9,7 @@ flowchart LR
     subgraph PubNet
         caddy --> frontend["Frontend<br/>(Blazor WASM)"] & api["API<br/>(ASP.NET)"]
         api & worker["Worker<br/>(.NET)"] --- common((Common Services))
-        common --> db[("DB<br/>(Postgres)")] & storage[("File Storage<br/>(Minio)")] & search[("Search<br/>(Meilisearch)")]
+        common --> db[("DB<br/>(Postgres)")] & storage[("Blob Storage<br/>(Minio)")] & search[("Search<br/>(Meilisearch)")]
     end
 ```
 
