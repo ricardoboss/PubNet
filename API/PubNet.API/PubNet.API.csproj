@@ -33,19 +33,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\.dockerignore">
+		<Content Include="..\..\.dockerignore">
 			<Link>.dockerignore</Link>
 		</Content>
-		<Content Include="..\.gitignore">
+		<Content Include="..\..\.gitignore">
 			<Link>.gitignore</Link>
 		</Content>
 		<Content Remove="packages\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj" />
-		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj" />
-		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -58,6 +52,12 @@
 
 	<ItemGroup>
 		<None Remove="packages\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\DB\PubNet.Database\PubNet.Database.csproj" />
+      <ProjectReference Include="..\..\Common\PubNet.Common\PubNet.Common.csproj" />
+      <ProjectReference Include="..\..\Common\PubNet.DTO\PubNet.DTO.csproj" />
 	</ItemGroup>
 
 </Project>
