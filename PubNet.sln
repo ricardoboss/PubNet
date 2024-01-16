@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API", "Web\PubNet.API\PubNet.API.csproj", "{A1864A8B-C686-43BF-AD82-DBD5B4560CB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F717FC7-42F0-42E9-B731-D0443E2099C3}"

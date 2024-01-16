@@ -28,10 +28,10 @@ namespace PubNet.Database.Context.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IsDiscontinued = table.Column<bool>(type: "boolean", nullable: false),
                     ReplacedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LatestVersionId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -92,9 +92,9 @@ namespace PubNet.Database.Context.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Retracted = table.Column<bool>(type: "boolean", nullable: false),
                     PackageId = table.Column<Guid>(type: "uuid", nullable: false),
                     Version = table.Column<string>(type: "text", nullable: false),
-                    Retracted = table.Column<bool>(type: "boolean", nullable: false),
                     PublishedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>

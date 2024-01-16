@@ -1,39 +1,22 @@
-using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PubNet.Database.Entities.Packages;
 
 namespace PubNet.Database.Entities.Dart;
 
-public class DartPackageConfiguration : IEntityTypeConfiguration<DartPackage>
+public class DartPackageConfiguration : BasePackageConfiguration<DartPackage, DartPackageVersion>
 {
 	/// <inheritdoc />
-	public void Configure(EntityTypeBuilder<DartPackage> builder)
+	public override void Configure(EntityTypeBuilder<DartPackage> builder)
 	{
-		builder.HasKey(p => p.Id);
-
-		builder.HasIndex(p => new { p.AuthorId, p.Name })
-			.IsUnique();
-
-		builder.HasOne<Author>(p => p.Author)
-			.WithMany(a => a.DartPackages)
-			.HasForeignKey(p => p.AuthorId);
-
-		builder.HasMany<DartPackageVersion>(p => p.Versions)
-			.WithOne(v => v.Package)
-			.HasForeignKey(v => v.PackageId);
-
-		builder.HasOne<DartPackageVersion>(p => p.LatestVersion)
-			.WithOne()
-			.HasPrincipalKey<DartPackage>(p => p.LatestVersionId);
-
-		builder.Property(p => p.Name)
-			.HasMaxLength(50);
+		base.Configure(builder);
 
 		builder.Property(p => p.ReplacedBy)
 			.HasMaxLength(50);
+	}
 
-		builder.Navigation(p => p.LatestVersion)
-			.AutoInclude();
-
-		// TODO: enable lazy loading for author
+	protected override Expression<Func<Author, IEnumerable<DartPackage>?>> NavigateFromAuthorToPackages()
+	{
+		return a => a.DartPackages;
 	}
 }

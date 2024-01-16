@@ -1,19 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using PubNet.Database.Entities.Packages;
 
 namespace PubNet.Database.Entities.Dart;
 
 [EntityTypeConfiguration<DartPackageVersionConfiguration, DartPackageVersion>]
-public class DartPackageVersion
+public class DartPackageVersion : BasePackageVersion<DartPackage>
 {
-	public Guid Id { get; init; }
-
-	public Guid PackageId { get; init; }
-
-	public DartPackage Package { get; init; } = null!;
-
-	public string Version { get; init; } = null!;
-
 	public bool Retracted { get; init; }
-
-	public DateTimeOffset PublishedAt { get; init; }
 }
