@@ -1,7 +1,9 @@
-using PubNet.Common.Interfaces;
+using Microsoft.Extensions.FileProviders;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
+using PubNet.DocsStorage.Abstractions;
+using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
 
@@ -14,14 +16,14 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 	private readonly string _version;
 
 	private ILogger<DocumentationGeneratorTask>? _logger;
-	private IPackageStorageProvider? _storageProvider;
+	private IArchiveStorage? _archiveStorage;
+	private IDocsStorage? _docsStorage;
 	private DartCli? _dart;
 	private PubNetContext? _db;
 
 	public DocumentationGeneratorTask(PackageVersionAnalysis analysis) : base($"{nameof(DocumentationGeneratorTask)} for {analysis.Version.PackageName} {analysis.Version.Version}")
 	{
 		_analysis = analysis;
-
 		_package = _analysis.Version.PackageName;
 		_version = _analysis.Version.Version;
 	}
@@ -29,7 +31,8 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
 		_logger ??= services.GetRequiredService<ILogger<DocumentationGeneratorTask>>();
-		_storageProvider ??= services.GetRequiredService<IPackageStorageProvider>();
+		_archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
+		_docsStorage ??= services.GetRequiredService<IDocsStorage>();
 		_dart ??= services.GetRequiredService<DartCli>();
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 
@@ -41,7 +44,8 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {TaskName} in {WorkingDirectory}", Name, workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchive(_package, _version))
+		// FIXME: get author
+		await using (var archiveStream = await _archiveStorage.ReadArchiveAsync("test", _package, _version, cancellationToken))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}
@@ -68,8 +72,8 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 				return WorkerTaskResult.Failed;
 			}
 
-			var apiDocPath = Path.Combine(workingDir, "doc", "api");
-			await _storageProvider.StoreDocs(_package, _version, apiDocPath, cancellationToken);
+			var docsFileProvider = new PhysicalFileProvider(Path.Combine(workingDir, "doc", "api"));
+			await _docsStorage.StoreDocsAsync("test", _package, _version, docsFileProvider, cancellationToken);
 
 			_analysis.DocumentationLink = $"/packages/{_package}/versions/{_version}/docs/";
 

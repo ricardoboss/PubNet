@@ -1,7 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using PubNet.Common.Interfaces;
-using PubNet.Common.Services;
+using Npgsql;
+using PubNet.ArchiveStorage.BlobStorage;
+using PubNet.BlobStorage.Abstractions;
+using PubNet.BlobStorage.LocalFileBlobStorage;
 using PubNet.Database;
+using PubNet.DocsStorage.Abstractions;
+using PubNet.DocsStorage.LocalFileDocsStorage;
+using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker;
 using PubNet.Worker.Services;
 using Serilog;
@@ -25,6 +30,10 @@ try
 		)
 		.ConfigureServices((context, services) =>
 		{
+#pragma warning disable CS0618 // Type or member is obsolete
+			NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
+#pragma warning restore CS0618 // Type or member is obsolete
+
 			services.AddDbContext<PubNetContext>(
 				options => options
 					.UseNpgsql(context.Configuration.GetConnectionString("PubNet"))
@@ -37,7 +46,9 @@ try
 			services.AddSingleton<WorkerTaskQueue>();
 
 			// for managing packages stored on the local host
-			services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
+			services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
+			services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
+			services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
 
 			services.AddHostedService<Worker>();
 		});

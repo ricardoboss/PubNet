@@ -1,6 +1,6 @@
 namespace PubNet.Common.Utils;
 
-public class DirectoriesHelper
+public static class DirectoriesHelper
 {
 	public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
 	{

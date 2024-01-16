@@ -16,11 +16,13 @@ public class LocalFileDocsStorage(IConfiguration configuration) : IDocsStorage
 		var docsPath = Path.Combine(RootPath, author, name, version);
 
 		if (Directory.Exists(docsPath))
-			throw new DocsStorageException($"Docs already exist for {author}/{name}/{version}");
+			Directory.Delete(docsPath, true);
 
 		Directory.CreateDirectory(docsPath);
 
-		await CopyContentsRecursivelyAsync(new(fileProvider.GetFileInfo("").PhysicalPath!), new(docsPath), cancellationToken);
+		var fileProviderRoot = Path.GetDirectoryName(fileProvider.GetDirectoryContents("").First().PhysicalPath!)!;
+
+		await CopyContentsRecursivelyAsync(new(fileProviderRoot), new(docsPath), cancellationToken);
 	}
 
 	private async Task CopyContentsRecursivelyAsync(DirectoryInfo source, DirectoryInfo destination, CancellationToken cancellationToken = default)

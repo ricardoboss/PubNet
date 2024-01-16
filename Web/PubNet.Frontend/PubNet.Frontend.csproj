@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Common\PubNet.DTO\PubNet.DTO.csproj"/>
+        <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
     </ItemGroup>
 
 </Project>

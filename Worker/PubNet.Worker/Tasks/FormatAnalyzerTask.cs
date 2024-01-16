@@ -1,7 +1,7 @@
-using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
+using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
 
@@ -14,7 +14,7 @@ public class FormatAnalyzerTask : BaseWorkerTask
 	private readonly string _version;
 
 	private ILogger<FormatAnalyzerTask>? _logger;
-	private IPackageStorageProvider? _storageProvider;
+	private IArchiveStorage? _archiveStorage;
 	private DartCli? _dart;
 	private PubNetContext? _db;
 
@@ -29,7 +29,7 @@ public class FormatAnalyzerTask : BaseWorkerTask
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
 		_logger ??= services.GetRequiredService<ILogger<FormatAnalyzerTask>>();
-		_storageProvider ??= services.GetRequiredService<IPackageStorageProvider>();
+		_archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
 		_dart ??= services.GetRequiredService<DartCli>();
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 
@@ -41,7 +41,8 @@ public class FormatAnalyzerTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(FormatAnalyzerTask), workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchive(_package, _version))
+		// FIXME: author
+		await using (var archiveStream = await _archiveStorage.ReadArchiveAsync("test", _package, _version, cancellationToken))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
 using PubNet.API.Interfaces;
@@ -41,6 +42,10 @@ try
 			.Enrich.FromLogContext()
 			.WriteTo.Console()
 	);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+	NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
+#pragma warning restore CS0618 // Type or member is obsolete
 
 	builder.Services.AddDbContext<PubNetContext>(
 		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))

@@ -1,7 +1,7 @@
-using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
+using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
@@ -13,7 +13,7 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 	private readonly string _version;
 
 	private ILogger<ReadmeAnalyzerTask>? _logger;
-	private IPackageStorageProvider? _storageProvider;
+	private IArchiveStorage? _archiveStorage;
 	private PubNetContext? _db;
 
 	public ReadmeAnalyzerTask(PackageVersionAnalysis analysis) : base($"{nameof(ReadmeAnalyzerTask)} for {analysis.Version.PackageName} {analysis.Version.Version}")
@@ -27,7 +27,7 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
 		_logger ??= services.GetRequiredService<ILogger<ReadmeAnalyzerTask>>();
-		_storageProvider ??= services.GetRequiredService<IPackageStorageProvider>();
+		_archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
 		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 
 		await _db.Entry(_analysis).ReloadAsync(cancellationToken);
@@ -38,7 +38,8 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(ReadmeAnalyzerTask), workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchive(_package, _version))
+		// FIXME: author
+		await using (var archiveStream = await _archiveStorage.ReadArchiveAsync("test", _package, _version, cancellationToken))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}

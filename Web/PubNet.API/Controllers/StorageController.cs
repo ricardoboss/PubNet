@@ -220,7 +220,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 
 			var packageVersion = new DartPackageVersion
 			{
-				// PubSpec = pubSpec,
+				PubSpec = pubSpec,
 				PackageName = packageName,
 				Version = packageVersionId,
 				ArchiveUrl = _urlSigner.GenerateFullyQualified(Request,
