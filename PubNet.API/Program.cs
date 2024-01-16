@@ -18,6 +18,7 @@ using PubNet.Database;
 using PubNet.Database.Models;
 using Serilog;
 using Serilog.Events;
+using SignedUrl.Extensions;
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
@@ -92,7 +93,8 @@ try
 	// package storage
 	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
 	builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
-	builder.Services.AddSingleton<EndpointHelper>();
+
+	builder.Services.AddSignedUrl();
 
 	// mirror for pub.dev
 	builder.Services.AddHttpClient(PubDevPackageProvider.ClientName, options =>
@@ -178,7 +180,6 @@ try
 	app.UseResponseCaching();
 
 	app.UseMiddleware<ClientExceptionFormatterMiddleware>();
-	app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
 
 	app.UseAuthentication();
 	app.UseAuthorization();

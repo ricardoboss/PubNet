@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.Extensions;
 using PubNet.API.Interfaces;
-using PubNet.API.Services;
 using PubNet.Common.Interfaces;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
 using Semver;
+using SignedUrl.Abstractions;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -18,17 +19,17 @@ namespace PubNet.API.Controllers;
 public class StorageController : BaseController, IUploadEndpointGenerator
 {
 	private readonly PubNetContext _db;
-	private readonly EndpointHelper _endpointHelper;
+	private readonly IUrlSigner _urlSigner;
 	private readonly ILogger<StorageController> _logger;
 	private readonly IPackageStorageProvider _storageProvider;
 
 	public StorageController(ILogger<StorageController> logger, PubNetContext db,
-		IPackageStorageProvider storageProvider, EndpointHelper endpointHelper)
+		IPackageStorageProvider storageProvider, IUrlSigner urlSigner)
 	{
 		_logger = logger;
 		_db = db;
 		_storageProvider = storageProvider;
-		_endpointHelper = endpointHelper;
+		_urlSigner = urlSigner;
 	}
 
 	/// <inheritdoc />
@@ -38,7 +39,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var url = _endpointHelper.GenerateFullyQualified(request, "/api/storage/upload");
+		var url = _urlSigner.GenerateFullyQualified(request, "/api/storage/upload");
 		var fields = new Dictionary<string, string>
 		{
 			{ "author-id", author.Id.ToString() },
@@ -101,14 +102,9 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 
 		_logger.LogTrace("Added pending archive {ArchiveId}", pending.Uuid);
 
-		var finalizeUrl = _endpointHelper.GenerateFullyQualified(
+		var finalizeUrl = _urlSigner.GenerateFullyQualified(
 			Request,
-			"/api/storage/finalize",
-			new Dictionary<string, string?>
-			{
-				{ "pendingId", pendingId.ToString() },
-			},
-			true
+			$"/api/storage/finalize?pendingId={pendingId}"
 		);
 
 		_logger.LogTrace("Generated finalize url for archive {ArchiveId} to {FinalizeUrl}", pending.Uuid, finalizeUrl);
@@ -125,7 +121,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	public async Task<IActionResult> FinalizeUpload([FromQuery] string? pendingId,
 		CancellationToken cancellationToken = default)
 	{
-		if (!_endpointHelper.ValidateSignature(Request.QueryString.ToString()))
+		if (!_urlSigner.Validate(Request.QueryString.ToString()))
 			return BadRequest(ErrorResponse.InvalidSignedUrl);
 
 		if (pendingId is null)
@@ -227,7 +223,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 				PubSpec = pubSpec,
 				PackageName = packageName,
 				Version = packageVersionId,
-				ArchiveUrl = _endpointHelper.GenerateFullyQualified(Request,
+				ArchiveUrl = _urlSigner.GenerateFullyQualified(Request,
 					$"/api/packages/{packageName}/versions/{packageVersionId}.tar.gz"),
 				ArchiveSha256 = archiveSha256,
 				PublishedAtUtc = DateTimeOffset.UtcNow,
@@ -243,7 +239,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 
 			Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
 			return Ok(new SuccessResponse(new($"Successfully uploaded {packageName} version {packageVersionId}! " +
-				_endpointHelper.GenerateFullyQualified(Request,
+				_urlSigner.GenerateFullyQualified(Request,
 					$"/api/packages/{packageName}/versions/{packageVersionId}"))));
 		}
 		finally

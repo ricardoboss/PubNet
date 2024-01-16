@@ -4,20 +4,13 @@ using PubNet.API.DTO;
 
 namespace PubNet.API.Middlewares;
 
-public class ClientExceptionFormatterMiddleware
+public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 {
-	private readonly RequestDelegate _next;
-
-	public ClientExceptionFormatterMiddleware(RequestDelegate next)
-	{
-		_next = next;
-	}
-
 	public async Task Invoke(HttpContext context)
 	{
 		try
 		{
-			await _next.Invoke(context);
+			await next.Invoke(context);
 		}
 		catch (Exception e)
 		{
@@ -32,7 +25,7 @@ public class ClientExceptionFormatterMiddleware
 			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 			context.Response.Headers.WWWAuthenticate = new[]
 			{
-				$"Bearer realm=\"pub\", message=\"{e.Message}\"",
+				$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
 			};
 		}
 		else
