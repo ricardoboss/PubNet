@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="pubnet@localhost" uuid="b21dbfc6-aae3-4f0e-b877-340028e7497a">
+    <data-source source="LOCAL" name="pubnet@localhost" uuid="1cf84765-e08b-47e5-b4a4-2085a22c374a">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/pubnet</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost/pubnet?password=pubnet&amp;user=pubnet</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
