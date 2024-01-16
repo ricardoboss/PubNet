@@ -30,7 +30,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\PubNet.Common\PubNet.Common.csproj" />
-		<ProjectReference Include="..\..\DB\PubNet.Database\PubNet.Database.csproj" />
 		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj" />
 		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj" />

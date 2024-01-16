@@ -7,4 +7,6 @@ namespace PubNet.Database.Entities.Dart;
 public class DartPackageVersion : BasePackageVersion<DartPackage>
 {
 	public bool Retracted { get; init; }
+
+	public PubSpec PubSpec { get; init; } = null!;
 }

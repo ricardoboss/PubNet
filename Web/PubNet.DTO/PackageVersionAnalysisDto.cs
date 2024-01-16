@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using PubNet.Database.Models;
 
 namespace PubNet.API.DTO;
 

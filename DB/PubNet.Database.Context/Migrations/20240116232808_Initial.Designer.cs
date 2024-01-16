@@ -6,13 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.Database.Context;
+using PubNet.Database.Entities.Dart;
 
 #nullable disable
 
 namespace PubNet.Database.Context.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    [Migration("20240116200420_Initial")]
+    [Migration("20240116232808_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -57,7 +58,6 @@ namespace PubNet.Database.Context.Migrations
             modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("UserName")
@@ -111,8 +111,15 @@ namespace PubNet.Database.Context.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("DartPackageVersionAnalysisPackageVersionId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uuid");
+
+                    b.Property<PubSpec>("PubSpec")
+                        .IsRequired()
+                        .HasColumnType("json");
 
                     b.Property<DateTimeOffset>("PublishedAt")
                         .HasColumnType("timestamp with time zone");
@@ -126,6 +133,9 @@ namespace PubNet.Database.Context.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DartPackageVersionAnalysisPackageVersionId")
+                        .IsUnique();
+
                     b.HasIndex("PublishedAt")
                         .IsDescending();
 
@@ -133,6 +143,57 @@ namespace PubNet.Database.Context.Migrations
                         .IsUnique();
 
                     b.ToTable("DartPackageVersions");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersionAnalysis", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DocumentationLink")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("Formatted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PackageVersionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool?>("ReadmeFound")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ReadmeText")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DartPackageVersionAnalyses");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPendingArchive", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ArchivePath")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UploaderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DartPendingArchives");
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackage", b =>
@@ -187,6 +248,58 @@ namespace PubNet.Database.Context.Migrations
                     b.ToTable("NugetPackageVersions");
                 });
 
+            modelBuilder.Entity("PubNet.Database.Entities.Packages.PackageArchive", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ArchiveSha256")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ArchiveType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ArchiveUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PackageTypeDiscriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
+                    b.Property<Guid>("PackageVersionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageVersionId", "PackageTypeDiscriminator")
+                        .IsUnique();
+
+                    b.ToTable("PackageArchives", (string)null);
+
+                    b.HasDiscriminator<string>("PackageTypeDiscriminator").HasValue("PackageArchive");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersionArchive", b =>
+                {
+                    b.HasBaseType("PubNet.Database.Entities.Packages.PackageArchive");
+
+                    b.HasDiscriminator().HasValue("dart");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackageVersionArchive", b =>
+                {
+                    b.HasBaseType("PubNet.Database.Entities.Packages.PackageArchive");
+
+                    b.HasDiscriminator().HasValue("nuget");
+                });
+
             modelBuilder.Entity("PubNet.Database.Entities.Auth.Identity", b =>
                 {
                     b.HasOne("PubNet.Database.Entities.Author", "Author")
@@ -196,6 +309,16 @@ namespace PubNet.Database.Context.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
+                {
+                    b.HasOne("PubNet.Database.Entities.Dart.DartPendingArchive", null)
+                        .WithOne("Uploader")
+                        .HasForeignKey("PubNet.Database.Entities.Author", "Id")
+                        .HasPrincipalKey("PubNet.Database.Entities.Dart.DartPendingArchive", "UploaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackage", b =>
@@ -211,6 +334,11 @@ namespace PubNet.Database.Context.Migrations
 
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersion", b =>
                 {
+                    b.HasOne("PubNet.Database.Entities.Dart.DartPackageVersionAnalysis", null)
+                        .WithOne("PackageVersion")
+                        .HasForeignKey("PubNet.Database.Entities.Dart.DartPackageVersion", "DartPackageVersionAnalysisPackageVersionId")
+                        .HasPrincipalKey("PubNet.Database.Entities.Dart.DartPackageVersionAnalysis", "PackageVersionId");
+
                     b.HasOne("PubNet.Database.Entities.Dart.DartPackage", null)
                         .WithOne("LatestVersion")
                         .HasForeignKey("PubNet.Database.Entities.Dart.DartPackageVersion", "Id")
@@ -256,6 +384,28 @@ namespace PubNet.Database.Context.Migrations
                     b.Navigation("Package");
                 });
 
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersionArchive", b =>
+                {
+                    b.HasOne("PubNet.Database.Entities.Dart.DartPackageVersion", "PackageVersion")
+                        .WithMany()
+                        .HasForeignKey("PackageVersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PackageVersion");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackageVersionArchive", b =>
+                {
+                    b.HasOne("PubNet.Database.Entities.Nuget.NugetPackageVersion", "PackageVersion")
+                        .WithMany()
+                        .HasForeignKey("PackageVersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PackageVersion");
+                });
+
             modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
                 {
                     b.Navigation("DartPackages");
@@ -270,6 +420,18 @@ namespace PubNet.Database.Context.Migrations
                     b.Navigation("LatestVersion");
 
                     b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersionAnalysis", b =>
+                {
+                    b.Navigation("PackageVersion")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPendingArchive", b =>
+                {
+                    b.Navigation("Uploader")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackage", b =>

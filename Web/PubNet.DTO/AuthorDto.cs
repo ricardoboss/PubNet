@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using PubNet.Database.Models;
+using PubNet.Database.Entities;
 
 namespace PubNet.API.DTO;
 

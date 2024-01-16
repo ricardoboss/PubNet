@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using PubNet.Database.Entities.Dart;
 
 #nullable disable
 
@@ -12,6 +13,39 @@ namespace PubNet.Database.Context.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "DartPackageVersionAnalyses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PackageVersionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Formatted = table.Column<bool>(type: "boolean", nullable: true),
+                    DocumentationLink = table.Column<string>(type: "text", nullable: true),
+                    ReadmeFound = table.Column<bool>(type: "boolean", nullable: true),
+                    ReadmeText = table.Column<string>(type: "text", nullable: true),
+                    CompletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DartPackageVersionAnalyses", x => x.Id);
+                    table.UniqueConstraint("AK_DartPackageVersionAnalyses_PackageVersionId", x => x.PackageVersionId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DartPendingArchives",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ArchivePath = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    UploaderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UploadedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DartPendingArchives", x => x.Id);
+                    table.UniqueConstraint("AK_DartPendingArchives_UploaderId", x => x.UploaderId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Authors",
                 columns: table => new
                 {
@@ -21,6 +55,12 @@ namespace PubNet.Database.Context.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Authors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Authors_DartPendingArchives_Id",
+                        column: x => x.Id,
+                        principalTable: "DartPendingArchives",
+                        principalColumn: "UploaderId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,6 +133,8 @@ namespace PubNet.Database.Context.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Retracted = table.Column<bool>(type: "boolean", nullable: false),
+                    PubSpec = table.Column<PubSpec>(type: "json", nullable: false),
+                    DartPackageVersionAnalysisPackageVersionId = table.Column<Guid>(type: "uuid", nullable: true),
                     PackageId = table.Column<Guid>(type: "uuid", nullable: false),
                     Version = table.Column<string>(type: "text", nullable: false),
                     PublishedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
@@ -100,6 +142,11 @@ namespace PubNet.Database.Context.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DartPackageVersions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DartPackageVersions_DartPackageVersionAnalyses_DartPackageV~",
+                        column: x => x.DartPackageVersionAnalysisPackageVersionId,
+                        principalTable: "DartPackageVersionAnalyses",
+                        principalColumn: "PackageVersionId");
                     table.ForeignKey(
                         name: "FK_DartPackageVersions_DartPackages_Id",
                         column: x => x.Id,
@@ -140,6 +187,34 @@ namespace PubNet.Database.Context.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PackageArchives",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PackageVersionId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PackageTypeDiscriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
+                    ArchiveUrl = table.Column<string>(type: "text", nullable: false),
+                    ArchiveType = table.Column<string>(type: "text", nullable: false),
+                    ArchiveSha256 = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PackageArchives", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PackageArchives_DartPackageVersions_PackageVersionId",
+                        column: x => x.PackageVersionId,
+                        principalTable: "DartPackageVersions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PackageArchives_NugetPackageVersions_PackageVersionId",
+                        column: x => x.PackageVersionId,
+                        principalTable: "NugetPackageVersions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Authors_UserName",
                 table: "Authors",
@@ -150,6 +225,12 @@ namespace PubNet.Database.Context.Migrations
                 name: "IX_DartPackages_AuthorId_Name",
                 table: "DartPackages",
                 columns: new[] { "AuthorId", "Name" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DartPackageVersions_DartPackageVersionAnalysisPackageVersio~",
+                table: "DartPackageVersions",
+                column: "DartPackageVersionAnalysisPackageVersionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -193,19 +274,31 @@ namespace PubNet.Database.Context.Migrations
                 table: "NugetPackageVersions",
                 column: "PublishedAt",
                 descending: new bool[0]);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PackageArchives_PackageVersionId_PackageTypeDiscriminator",
+                table: "PackageArchives",
+                columns: new[] { "PackageVersionId", "PackageTypeDiscriminator" },
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DartPackageVersions");
-
-            migrationBuilder.DropTable(
                 name: "Identities");
 
             migrationBuilder.DropTable(
+                name: "PackageArchives");
+
+            migrationBuilder.DropTable(
+                name: "DartPackageVersions");
+
+            migrationBuilder.DropTable(
                 name: "NugetPackageVersions");
+
+            migrationBuilder.DropTable(
+                name: "DartPackageVersionAnalyses");
 
             migrationBuilder.DropTable(
                 name: "DartPackages");
@@ -215,6 +308,9 @@ namespace PubNet.Database.Context.Migrations
 
             migrationBuilder.DropTable(
                 name: "Authors");
+
+            migrationBuilder.DropTable(
+                name: "DartPendingArchives");
         }
     }
 }

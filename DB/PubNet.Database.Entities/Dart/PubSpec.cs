@@ -1,19 +1,19 @@
-using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace PubNet.Database.Models;
+namespace PubNet.Database.Entities.Dart;
 
+[NotMapped]
 public class PubSpec
 {
 	[JsonPropertyName("name")]
-	[NotNull]
-	public string? Name { get; set; }
+	public string Name { get; set; } = null!;
 
 	[JsonPropertyName("version")]
-	[NotNull]
-	public string? Version { get; set; }
+	public string Version { get; set; } = null!;
 
-	[JsonPropertyName("description")] public string? Description { get; set; }
+	[JsonPropertyName("description")]
+	public string? Description { get; set; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	[JsonPropertyName("homepage")]
@@ -59,7 +59,8 @@ public class PubSpec
 	[JsonPropertyName("dependency_overrides")]
 	public Dictionary<string, dynamic>? DependencyOverrides { get; set; }
 
-	[JsonPropertyName("environment")] public Dictionary<string, string>? Environment { get; set; }
+	[JsonPropertyName("environment")]
+	public Dictionary<string, string>? Environment { get; set; }
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	[JsonPropertyName("executables")]

@@ -61,7 +61,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\DB\PubNet.Database\PubNet.Database.csproj" />
       <ProjectReference Include="..\..\PubNet.Common\PubNet.Common.csproj" />
       <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj" />
