@@ -13,7 +13,7 @@ public class DartPendingArchiveConfiguration : IEntityTypeConfiguration<DartPend
 			.HasMaxLength(250);
 
 		builder.HasOne<Author>(a => a.Uploader)
-			.WithOne()
-			.HasPrincipalKey<DartPendingArchive>(a => a.UploaderId);
+			.WithMany()
+			.HasForeignKey(a => a.UploaderId);
 	}
 }

@@ -56,6 +56,7 @@ namespace PubNet.Database.Context.Migrations
             modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("RegisteredAt")
@@ -199,6 +200,8 @@ namespace PubNet.Database.Context.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UploaderId");
+
                     b.ToTable("DartPendingArchives");
                 });
 
@@ -317,16 +320,6 @@ namespace PubNet.Database.Context.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
-                {
-                    b.HasOne("PubNet.Database.Entities.Dart.DartPendingArchive", null)
-                        .WithOne("Uploader")
-                        .HasForeignKey("PubNet.Database.Entities.Author", "Id")
-                        .HasPrincipalKey("PubNet.Database.Entities.Dart.DartPendingArchive", "UploaderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackage", b =>
                 {
                     b.HasOne("PubNet.Database.Entities.Author", "Author")
@@ -365,6 +358,17 @@ namespace PubNet.Database.Context.Migrations
                     b.Navigation("Analysis");
 
                     b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPendingArchive", b =>
+                {
+                    b.HasOne("PubNet.Database.Entities.Author", "Uploader")
+                        .WithMany()
+                        .HasForeignKey("UploaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Uploader");
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackage", b =>
@@ -437,12 +441,6 @@ namespace PubNet.Database.Context.Migrations
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersionAnalysis", b =>
                 {
                     b.Navigation("PackageVersion")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPendingArchive", b =>
-                {
-                    b.Navigation("Uploader")
                         .IsRequired();
                 });
 
