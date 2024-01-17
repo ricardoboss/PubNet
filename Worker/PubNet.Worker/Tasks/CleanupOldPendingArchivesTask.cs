@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PubNet.Database;
+using PubNet.Database.Context;
 using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
@@ -28,8 +29,8 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 
 		var uploadedAtLowerLimit = DateTimeOffset.UtcNow.Subtract(maxAge);
 
-		var outdatedArchives = await _db.PendingArchives
-			.Where(p => p.UploadedAtUtc < uploadedAtLowerLimit)
+		var outdatedArchives = await _db.DartPendingArchives
+			.Where(p => p.UploadedAt < uploadedAtLowerLimit)
 			.ToListAsync(cancellationToken);
 
 		_logger.LogTrace("Found {Count} outdated archive(s)", outdatedArchives.Count);
@@ -42,7 +43,7 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 			var unpackedArchivePath = outdatedArchive.UnpackedArchivePath;
 			if (Directory.Exists(unpackedArchivePath)) Directory.Delete(unpackedArchivePath, true);
 
-			_db.PendingArchives.Remove(outdatedArchive);
+			_db.DartPendingArchives.Remove(outdatedArchive);
 		}
 
 		await _db.SaveChangesAsync(cancellationToken);

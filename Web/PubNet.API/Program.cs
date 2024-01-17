@@ -16,8 +16,8 @@ using PubNet.API.Services;
 using PubNet.ArchiveStorage.BlobStorage;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities.Auth;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
@@ -52,10 +52,6 @@ try
 	);
 
 	builder.Services
-		.AddIdentityCore<Author>()
-		.AddEntityFrameworkStores<PubNetContext>();
-
-	builder.Services
 		.AddAuthentication(o =>
 		{
 			o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,7 +75,7 @@ try
 		});
 
 	// used for verifying and creating password hashes
-	builder.Services.TryAddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
+	builder.Services.TryAddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
 	builder.Services.AddScoped<PasswordManager>();
 
 	// generates JWT tokens

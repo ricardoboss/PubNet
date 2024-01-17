@@ -12,7 +12,7 @@ public abstract class BasePackage<TVersion> where TVersion : class
 
 	public Guid? LatestVersionId { get; init; }
 
-	public TVersion? LatestVersion { get; init; }
+	public TVersion? LatestVersion { get; set; }
 
 	public ICollection<TVersion> Versions { get; init; } = null!;
 

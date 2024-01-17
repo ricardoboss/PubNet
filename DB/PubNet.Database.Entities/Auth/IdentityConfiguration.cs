@@ -22,6 +22,7 @@ public class IdentityConfiguration : IEntityTypeConfiguration<Identity>
 		builder.Property(i => i.Email)
 			.HasMaxLength(250);
 
-		builder.Property(i => i.PasswordHash);
+		builder.Property(i => i.PasswordHash)
+			.HasMaxLength(300);
 	}
 }

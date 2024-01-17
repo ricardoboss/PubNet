@@ -1,5 +1,5 @@
 using PubNet.API.DTO;
-using PubNet.Database.Models;
+using PubNet.Database.Entities;
 
 namespace PubNet.API.Interfaces;
 

@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using PubNet.Database.Models;
+using PubNet.Database.Entities.Dart;
 
 namespace PubNet.API.DTO;
 
@@ -9,12 +9,6 @@ public class PackageVersionDto
 
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public bool Retracted { get; set; }
-
-	[JsonPropertyName("archive_url")]
-	public string ArchiveUrl { get; init; } = null!;
-
-	[JsonPropertyName("archive_sha256")]
-	public string ArchiveSha256 { get; init; } = null!;
 
 	public DateTimeOffset Published { get; init; }
 
@@ -30,9 +24,7 @@ public class PackageVersionDto
 		{
 			Version = version.Version,
 			Retracted = version.Retracted,
-			ArchiveUrl = version.ArchiveUrl,
-			ArchiveSha256 = version.ArchiveSha256.ToLowerInvariant(),
-			Published = version.PublishedAtUtc,
+			Published = version.PublishedAt,
 			PubSpec = version.PubSpec,
 			Mirrored = false,
 		};

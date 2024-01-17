@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Services;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities;
+using PubNet.Database.Entities.Auth;
+using PubNet.Database.Entities.Dart;
+using PubNet.Database.Entities.Nuget;
 
 namespace PubNet.API.Controllers;
 
@@ -35,18 +38,18 @@ public class AuthenticationController : BaseController
 		if (string.IsNullOrWhiteSpace(dto.Email))
 			throw EmailNotFound;
 
-		var author = await _db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
-		if (author is null)
+		var identity = await _db.Identities.FirstOrDefaultAsync(i => EF.Functions.ILike(i.Email, dto.Email), cancellationToken);
+		if (identity is null)
 			throw EmailNotFound;
 
-		await _passwordManager.ThrowForInvalid(_db, author, dto.Password, cancellationToken);
+		await _passwordManager.ThrowForInvalid(_db, identity, dto.Password, cancellationToken);
 
-		var token = _tokenGenerator.Generate(author, out var expiresAt);
+		var token = _tokenGenerator.Generate(identity, out var expiresAt);
 		return Ok(new JwtTokenResponse(token, expiresAt));
 	}
 
 	[HttpPost("register")]
-	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
+	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AuthorDto))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
@@ -62,23 +65,29 @@ public class AuthenticationController : BaseController
 		if (_db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
 			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
 
-		if (_db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
+		if (_db.Authors.Any(a => EF.Functions.ILike(a.Identity.Email, dto.Email)))
 			return UnprocessableEntity(ErrorResponse.EmailAlreadyInUse);
 
 		var author = new Author
 		{
 			UserName = dto.Username,
-			Email = dto.Email,
-			Name = dto.Name,
-			Website = dto.Website,
-			Inactive = false,
-			RegisteredAtUtc = DateTimeOffset.UtcNow,
+			RegisteredAt = DateTimeOffset.UtcNow,
 			DartPackages = new List<DartPackage>(),
+			NugetPackages = new List<NugetPackage>(),
 		};
 
-		author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);
-
 		_db.Authors.Add(author);
+
+		var identity = new Identity
+		{
+			Email = dto.Email,
+			Author = author,
+		};
+
+		identity.PasswordHash = await _passwordManager.GenerateHashAsync(identity, dto.Password, cancellationToken);
+
+		_db.Identities.Add(identity);
+
 		await _db.SaveChangesAsync(cancellationToken);
 
 		return CreatedAtAction("Get", "Authors", new { username = author.UserName }, author);
@@ -90,9 +99,9 @@ public class AuthenticationController : BaseController
 	public async Task<IActionResult> Self(ApplicationRequestContext context,
 		CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
 
-		return Ok(AuthorDto.FromAuthor(author, true));
+		return Ok(AuthorDto.FromAuthor(identity.Author, true));
 	}
 
 	[HttpGet("registrations-enabled")]

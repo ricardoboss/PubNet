@@ -1,5 +1,4 @@
 @using PubNet.API.DTO
-@using PubNet.Database.Models
 @inject HttpClient HttpClient
 
 @if (Error is not null)
@@ -106,7 +105,7 @@
 
         if (response.IsSuccessStatusCode)
         {
-            await response.Content.ReadFromJsonAsync<Author>();
+            await response.Content.ReadFromJsonAsync<AuthorDto>();
 
             RegisterRequest = new();
 

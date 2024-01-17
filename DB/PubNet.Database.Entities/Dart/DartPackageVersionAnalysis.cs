@@ -11,15 +11,15 @@ public class DartPackageVersionAnalysis
 
 	public DartPackageVersion PackageVersion { get; init; } = null!;
 
-	public bool? Formatted { get; init; }
+	public bool? Formatted { get; set; }
 
-	public string? DocumentationLink { get; init; }
+	public string? DocumentationLink { get; set; }
 
-	public bool? ReadmeFound { get; init; }
+	public bool? ReadmeFound { get; set; }
 
-	public string? ReadmeText { get; init; }
+	public string? ReadmeText { get; set; }
 
-	public DateTimeOffset? CompletedAt { get; init; }
+	public DateTimeOffset? CompletedAt { get; set; }
 
 	public bool IsComplete()
 	{

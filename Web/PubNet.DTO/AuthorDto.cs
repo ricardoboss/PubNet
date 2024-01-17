@@ -12,22 +12,12 @@ public class AuthorDto
 		return new()
 		{
 			UserName = author.UserName,
-			Name = author.Name,
-			Website = author.Website,
-			Inactive = author.Inactive,
-			RegisteredAt = author.RegisteredAtUtc,
-			Packages = !ignorePackages && author.DartPackages.Any() ? author.DartPackages.Select(PackageDto.FromPackage) : null
+			RegisteredAt = author.RegisteredAt,
+			Packages = !ignorePackages && author.DartPackages.Count != 0 ? author.DartPackages.Select(PackageDto.FromPackage) : null,
 		};
 	}
 
 	public string UserName { get; init; } = null!;
-
-	public string Name { get; init; } = null!;
-
-	public string? Website { get; init; }
-
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-	public bool Inactive { get; init; }
 
 	public DateTimeOffset RegisteredAt { get; init; }
 

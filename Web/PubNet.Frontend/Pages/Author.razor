@@ -25,50 +25,33 @@
 
 @if (AuthorModel is not null)
 {
-	@if (Editing)
+	<Paragraph>@AuthorModel.UserName</Paragraph>
+
+	<Paragraph>
+		Joined <Abbreviation Title="@AuthorModel.RegisteredAt.ToString()">@AuthorModel.RegisteredAt.Humanize()</Abbreviation>
+	</Paragraph>
+
+	@if (IsSelf)
 	{
-		<EditAuthorForm Author="AuthorModel" OnDoneEditing="DoneEditing"/>
+		<Div Margin="Margin.Is3.OnY" style="display: flex; align-items: center; gap: 0.25rem">
+			<Button Size="Size.Small" Color="Color.Danger" Clicked="OnDeleteClicked">
+				Delete
+			</Button>
+		</Div>
 	}
-	else
+
+	@if (AuthorError is not null)
 	{
-		<Paragraph>@AuthorModel.Name</Paragraph>
+		<Alert Color="Color.Danger" Visible>
+			<strong>Oh no!</strong> @AuthorError
+		</Alert>
+	}
 
-		<Paragraph>
-			Joined <Abbreviation Title="@AuthorModel.RegisteredAt.ToString()">@AuthorModel.RegisteredAt.Humanize()</Abbreviation>
-		</Paragraph>
-
-		@if (AuthorModel.Website is not null)
-		{
-			<Paragraph>
-				<a href="@AuthorModel.Website" target="_blank">@AuthorModel.Website</a>
-			</Paragraph>
-		}
-
-		@if (IsSelf)
-		{
-			<Div Margin="Margin.Is3.OnY" style="display: flex; align-items: center; gap: 0.25rem">
-				<Button Size="Size.Small" Color="Color.Info" Clicked="BeginEditing">
-					Edit
-				</Button>
-				<Button Size="Size.Small" Color="Color.Danger" Clicked="OnDeleteClicked">
-					Delete
-				</Button>
-			</Div>
-		}
-
-		@if (AuthorError is not null)
-		{
-			<Alert Color="Color.Danger" Visible>
-				<strong>Oh no!</strong> @AuthorError
-			</Alert>
-		}
-
-		@if (AuthorSuccess is not null)
-		{
-			<Alert Color="Color.Success" Visible>
-				<strong>Ok!</strong> @AuthorSuccess
-			</Alert>
-		}
+	@if (AuthorSuccess is not null)
+	{
+		<Alert Color="Color.Success" Visible>
+			<strong>Ok!</strong> @AuthorSuccess
+		</Alert>
 	}
 }
 
@@ -101,7 +84,6 @@
 	public string? Username { get; set; }
 
 	private bool IsSelf { get; set; }
-	private bool Editing { get; set; }
 
 	private AuthorDto? AuthorModel { get; set; }
 	private string? GeneralError { get; set; }
@@ -169,21 +151,6 @@
 		{
 			PackagesError = "Failed loading authors packages";
 		}
-	}
-
-	private void BeginEditing()
-	{
-		Editing = true;
-	}
-
-	private async Task DoneEditing(bool edited)
-	{
-		if (edited)
-		{
-			await FetchAuthorModel();
-		}
-
-		Editing = false;
 	}
 
 	private async Task OnDeleteClicked()

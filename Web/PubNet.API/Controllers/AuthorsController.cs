@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Services;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities;
 
 namespace PubNet.API.Controllers;
 
@@ -34,8 +34,7 @@ public class AuthorsController : BaseController
 		const int maxLimit = 1000;
 
 		IQueryable<Author> packages = _db.Authors
-				.Where(a => !a.Inactive)
-				.OrderByDescending(p => p.RegisteredAtUtc)
+				.OrderByDescending(p => p.RegisteredAt)
 			;
 
 		if (q != null) packages = packages.Where(a => a.UserName.StartsWith(q));
@@ -46,7 +45,7 @@ public class AuthorsController : BaseController
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
-			packages = packages.Where(p => p.RegisteredAtUtc < publishedAtUpperLimit);
+			packages = packages.Where(p => p.RegisteredAt < publishedAtUpperLimit);
 		}
 
 		if (limit.HasValue)
@@ -57,7 +56,7 @@ public class AuthorsController : BaseController
 		}
 
 		return Ok(new AuthorsResponse(
-			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.DartPackages.Count, a.RegisteredAtUtc))));
+			packages.Select(a => new SearchResultAuthor(a.UserName, a.DartPackages.Count + a.NugetPackages.Count, a.RegisteredAt))));
 	}
 
 	[HttpGet("{username}")]
@@ -84,7 +83,8 @@ public class AuthorsController : BaseController
 	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
+		var author = identity.Author;
 
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -93,11 +93,11 @@ public class AuthorsController : BaseController
 		{
 			if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
 
-			if (!await _passwordManager.IsValid(_db, author, dto.Password, cancellationToken))
+			if (!await _passwordManager.IsValid(_db, identity, dto.Password, cancellationToken))
 				return Unauthorized(ErrorResponse.InvalidPasswordConfirmation);
 
-			foreach (var authorPackage in _db.Packages.Where(p => p.Author == author))
-				authorPackage.Author = null;
+			foreach (var authorPackage in _db.DartPackages.Where(p => p.Author == author))
+				_db.DartPackages.Remove(authorPackage);
 
 			await _db.SaveChangesAsync(cancellationToken);
 
@@ -122,33 +122,5 @@ public class AuthorsController : BaseController
 		return author is null
 			? NotFound()
 			: Ok(new AuthorPackagesResponse(author.DartPackages.Select(PackageDto.FromPackage)));
-	}
-
-	[HttpPatch("{username}")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto,
-		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
-	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
-
-		using (_logger.BeginScope(new Dictionary<string, object>
-		{
-			["AuthorUsername"] = author.UserName,
-		}))
-		{
-			if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
-
-			if (dto.Name is not null && author.Name != dto.Name) author.Name = dto.Name;
-
-			if (string.IsNullOrWhiteSpace(dto.Website) && author.Website is not null)
-				author.Website = null;
-			else if (author.Website != dto.Website) author.Website = dto.Website;
-
-			await _db.SaveChangesAsync(cancellationToken);
-
-			return NoContent();
-		}
 	}
 }

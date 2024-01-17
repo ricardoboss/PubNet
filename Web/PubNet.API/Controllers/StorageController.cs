@@ -4,8 +4,9 @@ using PubNet.API.DTO;
 using PubNet.API.Extensions;
 using PubNet.API.Interfaces;
 using PubNet.Common.Utils;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities;
+using PubNet.Database.Entities.Dart;
 using PubNet.PackageStorage.Abstractions;
 using Semver;
 using SignedUrl.Abstractions;
@@ -89,25 +90,25 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			await packageFile.CopyToAsync(fileStream);
 		}
 
-		var pending = new PendingArchive
+		var pending = new DartPendingArchive
 		{
-			Uuid = pendingId,
+			Id = pendingId,
 			ArchivePath = tempFile,
 			Uploader = author,
-			UploadedAtUtc = DateTimeOffset.UtcNow,
+			UploadedAt = DateTimeOffset.UtcNow,
 		};
 
-		_db.PendingArchives.Add(pending);
+		_db.DartPendingArchives.Add(pending);
 		await _db.SaveChangesAsync();
 
-		_logger.LogTrace("Added pending archive {ArchiveId}", pending.Uuid);
+		_logger.LogTrace("Added pending archive {ArchiveId}", pending.Id);
 
 		var finalizeUrl = _urlSigner.GenerateFullyQualified(
 			Request,
 			$"/api/storage/finalize?pendingId={pendingId}"
 		);
 
-		_logger.LogTrace("Generated finalize url for archive {ArchiveId} to {FinalizeUrl}", pending.Uuid, finalizeUrl);
+		_logger.LogTrace("Generated finalize url for archive {ArchiveId} to {FinalizeUrl}", pending.Id, finalizeUrl);
 
 		Response.Headers.Location = finalizeUrl;
 		return NoContent();
@@ -130,9 +131,9 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 		if (!Guid.TryParse(pendingId, out var uuid))
 			return FailedDependency(ErrorResponse.InvalidPendingId);
 
-		var pending = await _db.PendingArchives
+		var pending = await _db.DartPendingArchives
 			.Include(p => p.Uploader)
-			.FirstOrDefaultAsync(a => a.Uuid == uuid, cancellationToken);
+			.FirstOrDefaultAsync(a => a.Id == uuid, cancellationToken);
 		if (pending is null)
 			return FailedDependency(ErrorResponse.InvalidPendingId);
 
@@ -172,7 +173,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			if (!SemVersion.TryParse(packageVersionId, SemVersionStyles.Any, out var packageVersionSemver))
 				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The package version could not be parsed"));
 
-			var package = await _db.Packages.Where(p => p.Name == packageName)
+			var package = await _db.DartPackages.Where(p => p.Name == packageName)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
 
@@ -185,10 +186,10 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 					Versions = new List<DartPackageVersion>(),
 					IsDiscontinued = false,
 					ReplacedBy = null,
-					Latest = null,
+					LatestVersion = null,
 				};
 
-				_db.Packages.Add(package);
+				_db.DartPackages.Add(package);
 				await _db.SaveChangesAsync(cancellationToken);
 			}
 			else
@@ -202,11 +203,11 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 				if (package.Versions.Any(v => v.Version == packageVersionId))
 					return UnprocessableEntity(ErrorResponse.VersionAlreadyExists(packageName, packageVersionId));
 
-				if (package.Latest is not null)
+				if (package.LatestVersion is not null)
 				{
-					var latestSemver = SemVersion.Parse(package.Latest.Version, SemVersionStyles.Any);
+					var latestSemver = SemVersion.Parse(package.LatestVersion.Version, SemVersionStyles.Any);
 					if (packageVersionSemver.ComparePrecedenceTo(latestSemver) != 1)
-						return UnprocessableEntity(ErrorResponse.VersionOlderThanLatest(package.Latest.Version));
+						return UnprocessableEntity(ErrorResponse.VersionOlderThanLatest(package.LatestVersion.Version));
 				}
 			}
 
@@ -214,24 +215,24 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
 			{
 				archiveSha256 =
-					await _archiveStorage.StoreArchiveAsync(pending.Uploader!.UserName, packageName, packageVersionId, archiveStream,
+					await _archiveStorage.StoreArchiveAsync(pending.Uploader.UserName, packageName, packageVersionId, archiveStream,
 						cancellationToken);
 			}
 
 			var packageVersion = new DartPackageVersion
 			{
 				PubSpec = pubSpec,
-				PackageName = packageName,
+				Package = package,
 				Version = packageVersionId,
-				ArchiveUrl = _urlSigner.GenerateFullyQualified(Request,
-					$"/api/packages/{packageName}/versions/{packageVersionId}.tar.gz"),
-				ArchiveSha256 = archiveSha256,
-				PublishedAtUtc = DateTimeOffset.UtcNow,
+				// ArchiveUrl = _urlSigner.GenerateFullyQualified(Request,
+				// 	$"/api/packages/{packageName}/versions/{packageVersionId}.tar.gz"),
+				// ArchiveSha256 = archiveSha256,
+				PublishedAt = DateTimeOffset.UtcNow,
 			};
 
 			package.Versions.Add(packageVersion);
-			package.Latest = packageVersion;
-			_db.PendingArchives.Remove(pending);
+			package.LatestVersion = packageVersion;
+			_db.DartPendingArchives.Remove(pending);
 
 			await _db.SaveChangesAsync(cancellationToken);
 

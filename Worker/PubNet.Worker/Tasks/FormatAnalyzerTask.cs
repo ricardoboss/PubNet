@@ -1,6 +1,6 @@
 using PubNet.Common.Utils;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities.Dart;
 using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
@@ -9,7 +9,7 @@ namespace PubNet.Worker.Tasks;
 
 public class FormatAnalyzerTask : BaseWorkerTask
 {
-	private readonly PackageVersionAnalysis _analysis;
+	private readonly DartPackageVersionAnalysis _analysis;
 	private readonly string _package;
 	private readonly string _version;
 
@@ -18,12 +18,12 @@ public class FormatAnalyzerTask : BaseWorkerTask
 	private DartCli? _dart;
 	private PubNetContext? _db;
 
-	public FormatAnalyzerTask(PackageVersionAnalysis analysis) : base($"{nameof(FormatAnalyzerTask)} for {analysis.Version.PackageName} {analysis.Version.Version}")
+	public FormatAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(FormatAnalyzerTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
 		_analysis = analysis;
 
-		_package = _analysis.Version.PackageName;
-		_version = _analysis.Version.Version;
+		_package = _analysis.PackageVersion.Package.Name;
+		_version = _analysis.PackageVersion.Version;
 	}
 
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)

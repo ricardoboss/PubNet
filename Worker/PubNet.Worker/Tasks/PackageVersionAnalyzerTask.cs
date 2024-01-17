@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities.Dart;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
 
@@ -27,7 +27,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		_logger ??= services.GetRequiredService<ILogger<PackageVersionAnalyzerTask>>();
 		_taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
-		var package = await _db.Packages
+		var package = await _db.DartPackages
 			.Include(p => p.Versions)
 			.FirstOrDefaultAsync(p => p.Name == Package, cancellationToken);
 		if (package is null)
@@ -45,7 +45,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 			return WorkerTaskResult.Failed;
 		}
 
-		var analysis = await _db.PackageVersionAnalyses.FirstOrDefaultAsync(a => a.Version == version,
+		var analysis = await _db.DartPackageVersionAnalyses.FirstOrDefaultAsync(a => a.PackageVersion == version,
 			cancellationToken);
 		if (analysis is null) return await CreateAnalysis(version, _db, _taskQueue, _logger, cancellationToken);
 
@@ -58,12 +58,12 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 	{
 		try
 		{
-			var analysis = new PackageVersionAnalysis
+			var analysis = new DartPackageVersionAnalysis
 			{
-				Version = version,
+				PackageVersion = version,
 			};
 
-			db.PackageVersionAnalyses.Add(analysis);
+			db.DartPackageVersionAnalyses.Add(analysis);
 
 			await db.SaveChangesAsync(cancellationToken);
 			await db.Entry(analysis).ReloadAsync(cancellationToken);
@@ -80,13 +80,13 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		}
 	}
 
-	private async Task<WorkerTaskResult> UpdateAnalysis(PackageVersionAnalysis analysis, DbContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
+	private async Task<WorkerTaskResult> UpdateAnalysis(DartPackageVersionAnalysis analysis, DbContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (analysis.IsComplete())
 			{
-				analysis.CompletedAtUtc = DateTimeOffset.Now.ToUniversalTime();
+				analysis.CompletedAt = DateTimeOffset.Now.ToUniversalTime();
 
 				logger.LogTrace("Analysis for {PackageName} {PackageVersion} marked as completed", Package, Version);
 
@@ -107,7 +107,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		}
 	}
 
-	private void EnqueueMissingAnalyses(PackageVersionAnalysis analysis, WorkerTaskQueue taskQueue)
+	private void EnqueueMissingAnalyses(DartPackageVersionAnalysis analysis, WorkerTaskQueue taskQueue)
 	{
 		if (analysis.ReadmeFound is null)
 			taskQueue.Enqueue(new ReadmeAnalyzerTask(analysis));

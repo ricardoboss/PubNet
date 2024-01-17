@@ -1,31 +1,31 @@
 using System.Security.Authentication;
 using System.Security.Claims;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services;
 
 public class ApplicationRequestContext
 {
-	private Author? _author;
+	private Identity? _identity;
 
 	private static InvalidCredentialException MissingAuthentication => new(
 		"Missing authentication. Acquire a Bearer token at [POST /authentication/login] and send it in the 'Authenticate' header.");
 
-	public async Task<Author> RequireAuthorAsync(ClaimsPrincipal user, PubNetContext db,
+	public async Task<Identity> RequireIdentityAsync(ClaimsPrincipal user, PubNetContext db,
 		CancellationToken cancellationToken = default)
 	{
-		if (_author is not null)
-			return _author;
+		if (_identity is not null)
+			return _identity;
 
 		var idStr = user.FindFirstValue("id");
-		if (idStr is null || !int.TryParse(idStr, out var id))
+		if (idStr is null || !Guid.TryParse(idStr, out var id))
 			throw MissingAuthentication;
 
-		var author = await db.Authors.FindAsync([id], cancellationToken);
-		if (author is null)
+		var identity = await db.Identities.FindAsync([id], cancellationToken);
+		if (identity is null)
 			throw MissingAuthentication;
 
-		return _author = author;
+		return _identity = identity;
 	}
 }

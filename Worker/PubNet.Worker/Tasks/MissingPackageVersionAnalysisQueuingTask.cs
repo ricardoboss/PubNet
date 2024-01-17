@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities.Dart;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
 
@@ -52,9 +52,9 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
 		CancellationToken cancellationToken = default)
 	{
-		var versionsWithoutAnalysis = (await db.PackageVersions
-			.Where(v => !db.PackageVersionAnalyses.Any(a => a.Version == v))
-			.ToListAsync(cancellationToken))
+		var versionsWithoutAnalysis = (await db.DartPackageVersions
+				.Where(v => !db.DartPackageVersionAnalyses.Any(a => a.PackageVersion == v))
+				.ToListAsync(cancellationToken))
 			.Where(v => !TaskQueueContainsTaskFor(taskQueue, v))
 			.ToList();
 
@@ -73,10 +73,11 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
 		CancellationToken cancellationToken = default)
 	{
-		var incompleteAnalyses = (await db.PackageVersionAnalyses
-			.Where(a => a.CompletedAtUtc == null)
-			.ToListAsync(cancellationToken))
-			.Where(a => !TaskQueueContainsTaskFor(taskQueue, a.Version))
+		var incompleteAnalyses = (await db.DartPackageVersionAnalyses
+				.Where(a => a.CompletedAt == null)
+				.Include(dartPackageVersionAnalysis => dartPackageVersionAnalysis.PackageVersion)
+				.ToListAsync(cancellationToken))
+			.Where(a => !TaskQueueContainsTaskFor(taskQueue, a.PackageVersion))
 			.ToList();
 
 		if (incompleteAnalyses.Count == 0)
@@ -88,19 +89,19 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 
 		logger.LogTrace("Found {Count} incomplete package version analyses", incompleteAnalyses.Count);
 
-		foreach (var analysis in incompleteAnalyses) taskQueue.Enqueue(CreateTaskFor(analysis.Version));
+		foreach (var analysis in incompleteAnalyses) taskQueue.Enqueue(CreateTaskFor(analysis.PackageVersion));
 	}
 
 	private static PackageVersionAnalyzerTask CreateTaskFor(DartPackageVersion version)
 	{
-		return new(version.PackageName, version.Version);
+		return new(version.Package.Name, version.Version);
 	}
 
 	private static bool TaskQueueContainsTaskFor(WorkerTaskQueue taskQueue, DartPackageVersion version)
 	{
 		return taskQueue.Tasks.Any(t =>
 			t is PackageVersionAnalyzerTask analyzerTask &&
-			analyzerTask.Package == version.PackageName &&
+			analyzerTask.Package == version.Package.Name &&
 			analyzerTask.Version == version.Version);
 	}
 }

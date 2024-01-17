@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PubNet.Database.Entities;
 using PubNet.Database.Entities.Auth;
 using PubNet.Database.Entities.Dart;
@@ -41,5 +43,14 @@ public class PubNetContext(DbContextOptions<PubNetContext> options) : DbContext(
 	{
 		// can't use attribute because it gets inherited by child classes
 		new PackageArchiveConfiguration().Configure(modelBuilder.Entity<PackageArchive>());
+	}
+
+	public static async Task RunMigrations(IServiceProvider serviceProvider)
+	{
+		serviceProvider.GetRequiredService<ILogger<PubNetContext>>().LogInformation("Migrating database");
+
+		using var startupScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+		await startupScope.ServiceProvider.GetRequiredService<PubNetContext>().Database.MigrateAsync();
 	}
 }

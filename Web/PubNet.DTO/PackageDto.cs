@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using PubNet.Database.Models;
+using PubNet.Database.Entities.Dart;
 
 namespace PubNet.API.DTO;
 
@@ -29,7 +29,7 @@ public class PackageDto
 			? dartPackage.Versions.Select(PackageVersionDto.FromPackageVersion).ToList()
 			: null;
 
-		var latestDto = dartPackage.Latest is null ? null : PackageVersionDto.FromPackageVersion(dartPackage.Latest);
+		var latestDto = dartPackage.LatestVersion is null ? null : PackageVersionDto.FromPackageVersion(dartPackage.LatestVersion);
 
 		var authorDto = AuthorDto.FromAuthor(dartPackage.Author, true);
 

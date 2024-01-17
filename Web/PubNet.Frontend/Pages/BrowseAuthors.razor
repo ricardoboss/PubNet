@@ -16,7 +16,6 @@ else
 		<TableHeader>
 			<TableRow>
 				<TableHeaderCell>Username</TableHeaderCell>
-				<TableHeaderCell>Name</TableHeaderCell>
 				<TableHeaderCell># of packages</TableHeaderCell>
 				<TableHeaderCell>Joined</TableHeaderCell>
 			</TableRow>
@@ -37,7 +36,6 @@ else
 					<TableRowCell>
 						<NavLink href="@("/authors/" + context.UserName)">@context.UserName</NavLink>
 					</TableRowCell>
-					<TableRowCell>@context.Name</TableRowCell>
 					<TableRowCell>@context.NumPackagesUploaded</TableRowCell>
 					<TableRowCell>
 						<Abbreviation Title="@(context.Joined.ToString())">@context.Joined.Humanize()</Abbreviation>

@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using PubNet.Database.Models;
+using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services;
 
@@ -58,7 +58,7 @@ public class JwtTokenGenerator
 		return lifetime;
 	}
 
-	public string Generate(Author author, out DateTimeOffset expireTime, IEnumerable<Claim>? additionalClaims = null)
+	public string Generate(Identity identity, out DateTimeOffset expireTime, IEnumerable<Claim>? additionalClaims = null)
 	{
 		var issueTime = DateTimeOffset.Now;
 		expireTime = issueTime.AddSeconds(_tokenLifetimeInSeconds);
@@ -66,15 +66,14 @@ public class JwtTokenGenerator
 		var claims = new List<Claim>();
 		claims.AddRange(new Claim[]
 		{
-			new("id", author.Id.ToString()),
-			new("name", author.Name),
-			new("username", author.UserName),
+			new("id", identity.Id.ToString()),
+			new("username", identity.Author.UserName),
 		});
 
 		if (additionalClaims != null)
 			claims.AddRange(additionalClaims);
 
-		_logger.LogDebug("Generated new token for {Author} with claims: {Claims}", author.UserName, claims);
+		_logger.LogDebug("Generated new token for {Author} with claims: {Claims}", identity.Author.UserName, claims);
 
 		return _jstHandler.WriteToken(
 			new JwtSecurityToken(

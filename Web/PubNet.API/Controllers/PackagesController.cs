@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
-using PubNet.Database;
-using PubNet.Database.Models;
+using PubNet.Database.Context;
+using PubNet.Database.Entities.Dart;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.PackageStorage.Abstractions;
 
@@ -46,7 +46,7 @@ public class PackagesController : BaseController
 	{
 		const int maxLimit = 1000;
 
-		IQueryable<DartPackage> packages = _db.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc);
+		IQueryable<DartPackage> packages = _db.DartPackages.OrderByDescending(p => p.LatestVersion!.PublishedAt);
 
 		if (q != null) packages = packages.Where(p => p.Name.StartsWith(q));
 
@@ -56,7 +56,7 @@ public class PackagesController : BaseController
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
-			packages = packages.Where(p => p.Latest!.PublishedAtUtc < publishedAtUpperLimit);
+			packages = packages.Where(p => p.LatestVersion!.PublishedAt < publishedAtUpperLimit);
 		}
 
 		if (limit.HasValue)
@@ -66,13 +66,13 @@ public class PackagesController : BaseController
 			packages = packages.Take(resultLimit);
 		}
 
-		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version, p.Latest?.PublishedAtUtc))));
+		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.LatestVersion?.Version, p.LatestVersion?.PublishedAt))));
 	}
 
 	[HttpGet("{name}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(VaryByQueryKeys = new[] { "includeAuthor" }, Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
+	[ResponseCache(VaryByQueryKeys = ["includeAuthor"], Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
 	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, CancellationToken cancellationToken = default)
 	{
 		using (_logger.BeginScope(new Dictionary<string, object>
@@ -80,7 +80,7 @@ public class PackagesController : BaseController
 			["PackageName"] = name,
 		}))
 		{
-			var packageQuery = _db.Packages
+			var packageQuery = _db.DartPackages
 				.Include(p => p.Versions)
 				.Where(p => p.Name == name);
 
@@ -111,7 +111,8 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DiscontinueByName(string name, [FromBody] SetDiscontinuedDto dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
+		var author = identity.Author;
 
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -119,7 +120,7 @@ public class PackagesController : BaseController
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await _db.DartPackages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
@@ -142,7 +143,8 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
+		var author = identity.Author;
 
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -150,7 +152,7 @@ public class PackagesController : BaseController
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await _db.DartPackages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
@@ -160,29 +162,29 @@ public class PackagesController : BaseController
 			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
 			// decouple analyses from versions
-			await _db.PackageVersions
-				.Where(v => v.PackageName == name)
+			await _db.DartPackageVersions
+				.Where(v => v.Package.Name == name)
 				.ForEachAsync(v => v.Analysis = null, cancellationToken);
 			await _db.SaveChangesAsync(cancellationToken);
 
 			// remove decoupled analyses
-			_db.PackageVersionAnalyses.RemoveRange(
-				_db.PackageVersionAnalyses
-					.Include(a => a.Version)
-					.Where(a => package.Versions.Any(v => v == a.Version))
+			_db.DartPackageVersionAnalyses.RemoveRange(
+				_db.DartPackageVersionAnalyses
+					.Include(a => a.PackageVersion)
+					.Where(a => package.Versions.Any(v => v == a.PackageVersion))
 			);
 			await _db.SaveChangesAsync(cancellationToken);
 
 			// remove reference to latest version
-			package.Latest = null;
+			package.LatestVersion = null;
 			await _db.SaveChangesAsync(cancellationToken);
 
 			// remove package versions
-			_db.PackageVersions.RemoveRange(package.Versions);
+			_db.DartPackageVersions.RemoveRange(package.Versions);
 			await _db.SaveChangesAsync(cancellationToken);
 
 			// finally, delete the package itself
-			_db.Packages.Remove(package);
+			_db.DartPackages.Remove(package);
 			await _db.SaveChangesAsync(cancellationToken);
 
 			try
@@ -209,7 +211,7 @@ public class PackagesController : BaseController
 			["PackageName"] = name,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await _db.DartPackages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.Include(nameof(DartPackage.Versions) + "." + nameof(DartPackageVersion.Analysis))
@@ -245,7 +247,7 @@ public class PackagesController : BaseController
 			["PackageName"] = name,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await _db.DartPackages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.Include(nameof(DartPackage.Versions) + "." + nameof(DartPackageVersion.Analysis))
@@ -263,7 +265,8 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> RetractVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
+		var author = identity.Author;
 
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -271,7 +274,7 @@ public class PackagesController : BaseController
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await _db.DartPackages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
@@ -282,19 +285,19 @@ public class PackagesController : BaseController
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
 			if (packageVersion is null) return NotFound();
 
-			if (package.Latest == packageVersion)
+			if (package.LatestVersion == packageVersion)
 			{
 				if (package.Versions.Count > 1)
 				{
 					var newLatestPackage = package.Versions
 						.Where(v => v.Version != version && v.Retracted == false)
-						.MaxBy(v => v.PublishedAtUtc);
+						.MaxBy(v => v.PublishedAt);
 
-					package.Latest = newLatestPackage;
+					package.LatestVersion = newLatestPackage;
 				}
 				else
 				{
-					package.Latest = null;
+					package.LatestVersion = null;
 				}
 
 				await _db.SaveChangesAsync(cancellationToken);
@@ -312,7 +315,8 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
+		var author = identity.Author;
 
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
@@ -320,7 +324,7 @@ public class PackagesController : BaseController
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await _db.DartPackages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.Include(nameof(DartPackage.Versions) + "." + nameof(DartPackageVersion.Analysis))
@@ -332,19 +336,19 @@ public class PackagesController : BaseController
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
 			if (packageVersion is null) return NotFound();
 
-			if (package.Latest == packageVersion)
+			if (package.LatestVersion == packageVersion)
 			{
 				if (package.Versions.Count > 1)
 				{
 					var newLatestPackage = package.Versions
 						.Where(v => v.Version != version && v.Retracted == false)
-						.MaxBy(v => v.PublishedAtUtc);
+						.MaxBy(v => v.PublishedAt);
 
-					package.Latest = newLatestPackage;
+					package.LatestVersion = newLatestPackage;
 				}
 				else
 				{
-					package.Latest = null;
+					package.LatestVersion = null;
 				}
 
 				await _db.SaveChangesAsync(cancellationToken);
@@ -352,11 +356,11 @@ public class PackagesController : BaseController
 
 			if (packageVersion.Analysis is { } analysis)
 			{
-				_db.PackageVersionAnalyses.Remove(analysis);
+				_db.DartPackageVersionAnalyses.Remove(analysis);
 				await _db.SaveChangesAsync(cancellationToken);
 			}
 
-			_db.PackageVersions.Remove(packageVersion);
+			_db.DartPackageVersions.Remove(packageVersion);
 			await _db.SaveChangesAsync(cancellationToken);
 
 			try
@@ -394,7 +398,8 @@ public class PackagesController : BaseController
 			{
 				var pubDevPackageVersion = await _pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
 				if (pubDevPackageVersion is not null)
-					return Redirect(pubDevPackageVersion.ArchiveUrl);
+					// return Redirect(pubDevPackageVersion.ArchiveUrl);
+					throw new NotImplementedException("TODO: redirect to archive url");
 			}
 
 			_logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name, version);
@@ -447,7 +452,8 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var identity = await context.RequireIdentityAsync(User, _db, cancellationToken);
+		var author = identity.Author;
 
 		using (_logger.BeginScope(new Dictionary<string, object>
 		{
