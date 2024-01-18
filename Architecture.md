@@ -50,3 +50,18 @@ mindmap
             Docs(Docs)
             Analysis(Analysis)
 ```
+
+## Database Schema
+
+```mermaid
+erDiagram
+    Author ||--o| Identity: has
+    Author ||--o{ DartPackage: owns
+    DartPackage ||--o{ DartPackageVersion: contains
+    DartPackageVersion ||--o| DartPackageVersionAnalysis: has
+    DartPendingArchive }o--|| Author: "uploaded by"
+    Author ||--o{ NugetPackage: owns
+    NugetPackage ||--o{ NugetPackageVersion: contains
+    DartPackageVersion ||--|| PackageArchive: has
+    NugetPackageVersion ||--|| PackageArchive: has
+```
