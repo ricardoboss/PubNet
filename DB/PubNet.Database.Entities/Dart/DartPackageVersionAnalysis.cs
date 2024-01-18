@@ -13,7 +13,7 @@ public class DartPackageVersionAnalysis
 
 	public bool? Formatted { get; set; }
 
-	public string? DocumentationLink { get; set; }
+	public bool? DocumentationGenerated { get; set; }
 
 	public bool? ReadmeFound { get; set; }
 
@@ -23,6 +23,6 @@ public class DartPackageVersionAnalysis
 
 	public bool IsComplete()
 	{
-		return Formatted is not null && DocumentationLink is not null && ReadmeFound is not null;
+		return Formatted is not null && DocumentationGenerated is not null && ReadmeFound is not null;
 	}
 }

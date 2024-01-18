@@ -12,5 +12,8 @@ public class DartPackageVersionAnalysisConfiguration : IEntityTypeConfiguration<
 		builder.HasOne<DartPackageVersion>(a => a.PackageVersion)
 			.WithOne()
 			.HasPrincipalKey<DartPackageVersionAnalysis>(a => a.PackageVersionId);
+
+		builder.Property(a => a.ReadmeText)
+			.HasMaxLength(10000);
 	}
 }

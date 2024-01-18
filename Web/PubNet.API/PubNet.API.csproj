@@ -63,6 +63,8 @@
 	<ItemGroup>
       <ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj" />
       <ProjectReference Include="..\..\PubNet.Common\PubNet.Common.csproj" />
+      <ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj" />
+      <ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj" />
       <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj" />
@@ -70,6 +72,10 @@
       <ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Interfaces\" />
 	</ItemGroup>
 
 </Project>

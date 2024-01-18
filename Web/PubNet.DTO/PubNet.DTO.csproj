@@ -13,4 +13,8 @@
 	  <ProjectReference Include="..\..\DB\PubNet.Database.Entities\PubNet.Database.Entities.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Riok.Mapperly" Version="3.3.0" />
+	</ItemGroup>
+
 </Project>
