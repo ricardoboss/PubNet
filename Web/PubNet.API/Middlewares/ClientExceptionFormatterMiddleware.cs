@@ -1,6 +1,5 @@
 using System.Net;
 using System.Security.Authentication;
-using PubNet.API.DTO;
 
 namespace PubNet.API.Middlewares;
 
@@ -20,7 +19,7 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 
 	private static async Task Handle(HttpContext context, Exception e)
 	{
-		if (e is BearerTokenException or InvalidCredentialException)
+		if (e is InvalidCredentialException)
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 			context.Response.Headers.WWWAuthenticate = new[]
@@ -34,7 +33,11 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 		}
 
 		await context.Response.WriteAsJsonAsync(
-			ErrorResponse.FromException(e),
+			new
+			{
+				e.Message,
+				e.StackTrace,
+			},
 			options: null,
 			contentType: "application/vnd.pub.v2+json"
 		);

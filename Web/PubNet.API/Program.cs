@@ -8,9 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using Npgsql;
-using PubNet.API.Controllers;
 using PubNet.API.Converter;
-using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
 using PubNet.ArchiveStorage.BlobStorage;
@@ -81,9 +79,6 @@ try
 	// generates JWT tokens
 	builder.Services.AddSingleton<JwtTokenGenerator>();
 
-	// used to store request-specific data in a single place
-	builder.Services.AddScoped<ApplicationRequestContext>();
-
 	// needed to dynamically generate uris to controller actions
 	builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 	builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
@@ -96,23 +91,11 @@ try
 	});
 
 	// package storage
-	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
 	builder.Services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
 	builder.Services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
 	builder.Services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
 
 	builder.Services.AddSignedUrl();
-
-	// mirror for pub.dev
-	builder.Services.AddHttpClient(PubDevPackageProvider.ClientName, options =>
-	{
-		options.BaseAddress = new("https://pub.dev/api/");
-		options.DefaultRequestHeaders.Accept.Add(new("application/json"));
-		options.DefaultRequestHeaders.UserAgent.Clear();
-		options.DefaultRequestHeaders.UserAgent.Add(new("pub-net-mirror", "1.0.0"));
-		options.DefaultRequestHeaders.UserAgent.Add(new("(+https://github.com/ricardoboss/PubNet)"));
-	});
-	builder.Services.AddSingleton<PubDevPackageProvider>();
 
 	builder.Services.AddControllers()
 		.AddJsonOptions(options =>
