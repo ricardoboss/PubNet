@@ -9,7 +9,7 @@ namespace PubNet.API.Controllers.Packages.Nuget;
 public class NugetRootController : NugetController
 {
 	[HttpGet("index.json")]
-	public Task<IActionResult> GetServiceIndexAsync(CancellationToken cancellationToken = default)
+	public Task<NugetServiceIndexDto> GetServiceIndexAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
@@ -21,7 +21,7 @@ public class NugetRootController : NugetController
 	}
 
 	[HttpGet("vulnerabilities.json")]
-	public Task<IActionResult> GetVulnerabilitiesAsync(CancellationToken cancellationToken = default)
+	public Task<IEnumerable<NugetVulnerabilityIndexEntryDto>> GetVulnerabilitiesAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
@@ -34,6 +34,7 @@ public class NugetRootController : NugetController
 
 	[Authorize]
 	[HttpPut("Publish")]
+	[ProducesResponseType(StatusCodes.Status201Created)]
 	public Task<IActionResult> PublishAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
