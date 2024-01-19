@@ -7,7 +7,7 @@ namespace PubNet.API.Controllers.Authors;
 public class AuthorsRootController : AuthorsController
 {
 	[HttpGet("Search")]
-	public Task<IActionResult> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken? cancellationToken = default)
+	public Task<IActionResult> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

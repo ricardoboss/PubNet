@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
@@ -7,7 +8,7 @@ namespace PubNet.API.Controllers.Packages.Nuget;
 public class NugetPackagesByIdController : NugetController
 {
 	[HttpGet("index.json")]
-	public Task<IActionResult> GetPackageAsync(string id, CancellationToken cancellationToken = default)
+	public Task<NugetPackageIndexDto> GetPackageIndexAsync(string id, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

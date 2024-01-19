@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
@@ -14,7 +15,7 @@ public class NugetRootController : NugetController
 	}
 
 	[HttpGet("Autocomplete")]
-	public Task<IActionResult> AutocompleteAsync(CancellationToken cancellationToken = default)
+	public Task<NugetAutocompleteResultDto> AutocompleteAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
@@ -26,7 +27,7 @@ public class NugetRootController : NugetController
 	}
 
 	[HttpGet("Search")]
-	public Task<IActionResult> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken? cancellationToken = default)
+	public Task<NugetSearchResultDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
