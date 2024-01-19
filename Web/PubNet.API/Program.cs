@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
+using PubNet.API.Services.Packages.Nuget;
 using PubNet.ArchiveStorage.BlobStorage;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
@@ -88,6 +91,7 @@ try
 		return factory.GetUrlHelper(actionContext ??
 			throw new InvalidOperationException("Unable to get ActionContext"));
 	});
+	// builder.Services.AddScoped<IUrlGenerator, object>();
 
 	// package storage
 	builder.Services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
@@ -95,6 +99,9 @@ try
 	builder.Services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
 
 	builder.Services.AddSignedUrl();
+
+	builder.Services.AddScoped<IKnownUrlsProvider, KnownUrlsProvider>();
+	builder.Services.AddScoped<INugetServiceIndexProvider, NugetServiceIndexProvider>();
 
 	builder.Services.AddControllers()
 		.AddJsonOptions(options =>

@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using System.Net;
 using System.Security.Authentication;
 
 namespace PubNet.API.Middlewares;
 
+[DebuggerStepThrough]
 public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 {
 	public async Task Invoke(HttpContext context)

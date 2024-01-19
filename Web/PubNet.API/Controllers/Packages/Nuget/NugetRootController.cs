@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
 [Route("Packages/Nuget")]
 [Tags("Nuget")]
-public class NugetRootController : NugetController
+public class NugetRootController(INugetServiceIndexProvider serviceIndexProvider) : NugetController
 {
 	[HttpGet("index.json")]
 	public Task<NugetServiceIndexDto> GetServiceIndexAsync(CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		return serviceIndexProvider.GetServiceIndexAsync(cancellationToken);
 	}
 
 	[HttpGet("Autocomplete")]

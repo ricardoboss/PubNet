@@ -3,9 +3,9 @@ using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
-[Route("Packages/Nuget/Package/{id}")]
+[Route("Packages/Nuget/Registrations/{id}")]
 [Tags("Nuget")]
-public class NugetPackageByIdController : NugetController
+public class NugetPackageRegistrationsByIdController : NugetController
 {
 	/// <summary>
 	/// Used by dotnet to gather information about a specific package.
@@ -15,7 +15,7 @@ public class NugetPackageByIdController : NugetController
 	/// <returns></returns>
 	/// <exception cref="NotImplementedException"></exception>
 	[HttpGet("index.json")]
-	public Task<NugetPackageIndexDto> GetPackageIndexAsync(string id, CancellationToken cancellationToken = default)
+	public Task<NugetPackageRegistrationIndexDto> GetPackageRegistrationsIndexAsync(string id, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

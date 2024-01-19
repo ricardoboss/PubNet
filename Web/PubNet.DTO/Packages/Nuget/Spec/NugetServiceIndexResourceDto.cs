@@ -9,4 +9,7 @@ public class NugetServiceIndexResourceDto
 
 	[JsonPropertyName("@type")]
 	public string Type { get; init; }
+
+	[JsonPropertyName("comment")]
+	public string? Comment { get; init; }
 }
