@@ -46,12 +46,10 @@ public class LocalFileDocsStorage(IConfiguration configuration) : IDocsStorage
 	}
 
 	/// <inheritdoc />
-	public IFileProvider GetDocsFileProvider(string author, string name, string version, CancellationToken cancellationToken = default)
+	public IDocsFileProvider GetDocsFileProvider(string author, string name, string version, CancellationToken cancellationToken = default)
 	{
-		var docsPath = Path.Combine(RootPath, author, name, version);
+		var docsRoot = Path.Combine(RootPath, author, name, version);
 
-		return new PhysicalFileProvider(docsPath);
+		return new PhysicalDocsFileProvider(name, version, docsRoot, "__404.html");
 	}
 }
-
-public class DocsStorageException(string s) : Exception(s);

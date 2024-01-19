@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\DB\PubNet.Database.Entities\PubNet.Database.Entities.csproj" />
+      <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

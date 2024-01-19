@@ -1,8 +1,8 @@
 using Microsoft.Extensions.FileProviders;
 
-namespace PubNet.API.Abstractions.Packages.Dart.Docs;
+namespace PubNet.DocsStorage.Abstractions;
 
-public interface IDartPackageVersionDocsProvider : IFileProvider
+public interface IDocsFileProvider : IFileProvider
 {
 	string PackageName { get; }
 
