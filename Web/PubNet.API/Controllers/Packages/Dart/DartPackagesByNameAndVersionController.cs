@@ -17,7 +17,6 @@ public class DartPackagesByNameAndVersionController(
 {
 	[HttpGet("analysis.json")]
 	[ProducesResponseType(typeof(DartPackageVersionAnalysisDto), StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<DartPackageVersionAnalysisDto?> GetAnalysisAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		var analysis = await analysisProvider.GetAnalysisAsync(name, version, cancellationToken);
@@ -35,7 +34,6 @@ public class DartPackagesByNameAndVersionController(
 
 	[HttpGet("Docs/{**path}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetDocsAsync(string name, string version, string path, CancellationToken cancellationToken = default)
 	{
 		var docsProvider = await docsProviderFactory.CreateAsync(name, version, cancellationToken);
