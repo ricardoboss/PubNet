@@ -30,7 +30,7 @@ public class NugetRootController : NugetController
 		throw new NotImplementedException();
 	}
 
-	[HttpPost("Publish")]
+	[HttpPut("Publish")]
 	public Task<IActionResult> PublishAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();

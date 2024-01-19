@@ -4,7 +4,7 @@ namespace PubNet.API.Controllers.Packages.Nuget;
 
 [Route("Packages/Nuget/{id}/{version}")]
 [Tags("Nuget")]
-public class NugetPackagesByIdController : NugetController
+public class NugetPackagesByIdAndVersionController : NugetController
 {
 	[HttpGet("analysis.json")]
 	public Task<IActionResult> GetAnalysisAsync(string id, string version, CancellationToken cancellationToken = default)
