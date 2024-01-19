@@ -107,6 +107,18 @@ try
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen(o =>
 	{
+		o.SwaggerDoc("PubNet v1", new()
+		{
+			Title = "PubNet API",
+			Description = "An API for Dart and NuGet package hosting",
+			Version = "v1",
+			License = new()
+			{
+				Name = "AGPL-3.0",
+				Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
+			},
+		});
+
 		const string definitionName = "Bearer";
 
 		o.AddSecurityDefinition(definitionName, new()
