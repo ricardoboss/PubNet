@@ -5,4 +5,4 @@ namespace PubNet.API.DTO;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
-internal partial class SourceGenerationContext : JsonSerializerContext;
+internal partial class DtoGenerationContext : JsonSerializerContext;

@@ -38,7 +38,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 
 		await _db.Entry(_analysis).ReloadAsync(cancellationToken);
 
-		if (_analysis.DocumentationLink is not null) return WorkerTaskResult.Done;
+		if (_analysis.DocumentationGenerated is not null) return WorkerTaskResult.Done;
 
 		var workingDir = Path.Combine(Path.GetTempPath(), "PubNet", "Analysis", nameof(DocumentationGeneratorTask), _package, _version);
 
@@ -75,7 +75,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 			var docsFileProvider = new PhysicalFileProvider(Path.Combine(workingDir, "doc", "api"));
 			await _docsStorage.StoreDocsAsync("test", _package, _version, docsFileProvider, cancellationToken);
 
-			_analysis.DocumentationLink = $"/packages/{_package}/versions/{_version}/docs/";
+			_analysis.DocumentationGenerated = true;
 
 			await _db.SaveChangesAsync(cancellationToken);
 

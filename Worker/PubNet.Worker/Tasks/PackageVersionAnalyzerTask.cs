@@ -115,7 +115,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		if (analysis.Formatted is null)
 			taskQueue.Enqueue(new FormatAnalyzerTask(analysis));
 
-		if (analysis.DocumentationLink is null)
+		if (analysis.DocumentationGenerated is null)
 			taskQueue.Enqueue(new DocumentationGeneratorTask(analysis));
 	}
 }
