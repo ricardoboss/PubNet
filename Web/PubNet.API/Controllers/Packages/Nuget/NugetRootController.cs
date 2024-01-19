@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
@@ -30,6 +31,7 @@ public class NugetRootController : NugetController
 		throw new NotImplementedException();
 	}
 
+	[Authorize]
 	[HttpPut("Publish")]
 	public Task<IActionResult> PublishAsync(CancellationToken cancellationToken = default)
 	{

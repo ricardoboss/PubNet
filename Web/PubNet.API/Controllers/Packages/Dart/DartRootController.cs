@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
@@ -6,6 +7,7 @@ namespace PubNet.API.Controllers.Packages.Dart;
 [Tags("Dart")]
 public class DartRootController : DartController
 {
+	[Authorize]
 	[HttpPost("Create")]
 	[ProducesResponseType(StatusCodes.Status302Found)]
 	public Task<IActionResult> CreateNewAsync(CancellationToken cancellationToken = default)

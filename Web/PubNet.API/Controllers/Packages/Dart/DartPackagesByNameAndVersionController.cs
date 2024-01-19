@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
@@ -52,6 +53,7 @@ public class DartPackagesByNameAndVersionController(
 		return File(file.CreateReadStream(), mimeType, file.Name);
 	}
 
+	[Authorize]
 	[HttpPatch("Retract")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	public Task<IActionResult> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
