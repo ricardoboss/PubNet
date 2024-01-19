@@ -13,7 +13,7 @@ using PubNet.Database.Entities.Dart;
 namespace PubNet.Database.Context.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    [Migration("20240117232447_Initial")]
+    [Migration("20240119002533_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -164,8 +164,8 @@ namespace PubNet.Database.Context.Migrations
                     b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DocumentationLink")
-                        .HasColumnType("text");
+                    b.Property<bool?>("DocumentationGenerated")
+                        .HasColumnType("boolean");
 
                     b.Property<bool?>("Formatted")
                         .HasColumnType("boolean");
@@ -177,7 +177,8 @@ namespace PubNet.Database.Context.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("ReadmeText")
-                        .HasColumnType("text");
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
 
                     b.HasKey("Id");
 

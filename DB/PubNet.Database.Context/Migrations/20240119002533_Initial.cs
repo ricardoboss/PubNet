@@ -32,9 +32,9 @@ namespace PubNet.Database.Context.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PackageVersionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Formatted = table.Column<bool>(type: "boolean", nullable: true),
-                    DocumentationLink = table.Column<string>(type: "text", nullable: true),
+                    DocumentationGenerated = table.Column<bool>(type: "boolean", nullable: true),
                     ReadmeFound = table.Column<bool>(type: "boolean", nullable: true),
-                    ReadmeText = table.Column<string>(type: "text", nullable: true),
+                    ReadmeText = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
                     CompletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
