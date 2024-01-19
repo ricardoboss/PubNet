@@ -107,7 +107,7 @@ try
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen(o =>
 	{
-		o.SwaggerDoc("PubNet v1", new()
+		o.SwaggerDoc("v1", new()
 		{
 			Title = "PubNet API",
 			Description = "An API for Dart and NuGet package hosting",
@@ -119,23 +119,7 @@ try
 			},
 		});
 
-		const string definitionName = "Bearer";
-
-		o.AddSecurityDefinition(definitionName, new()
-		{
-			Type = SecuritySchemeType.Http,
-			BearerFormat = "JWT",
-			In = ParameterLocation.Header,
-			Scheme = "Bearer",
-		});
-
-		o.AddSecurityRequirement(new()
-		{
-			{
-				new() { Reference = new() { Type = ReferenceType.SecurityScheme, Id = definitionName } },
-				new List<string>()
-			},
-		});
+		o.InferSecuritySchemes();
 	});
 
 	builder.Services.AddCors(options =>
@@ -172,7 +156,11 @@ try
 	if (app.Environment.IsDevelopment())
 	{
 		app.UseSwagger();
-		app.UseSwaggerUI();
+		app.UseSwaggerUI(c =>
+		{
+			c.SwaggerEndpoint("/swagger/v1/swagger.json", "PubNet API v1");
+			c.EnableTryItOutByDefault();
+		});
 	}
 
 	app.UseHttpsRedirection();
