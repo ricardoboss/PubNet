@@ -2,17 +2,17 @@
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
-[ApiController]
-[Route("packages/dart/storage")]
-public class DartStorageController : ControllerBase
+[Route("Packages/Dart/Storage/{pendingId}")]
+[Tags("Dart")]
+public class DartStorageController : DartController
 {
-	[HttpPut("{pendingId}")]
+	[HttpPut]
 	public Task<IActionResult> UploadAsync(string pendingId, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
 
-	[HttpGet("{pendingId}")]
+	[HttpGet]
 	public Task<IActionResult> FinalizeAsync(string pendingId, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();

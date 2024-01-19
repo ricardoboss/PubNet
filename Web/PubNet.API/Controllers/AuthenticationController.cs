@@ -2,9 +2,19 @@
 
 namespace PubNet.API.Controllers;
 
-[ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
+[Tags("Authentication")]
 public class AuthenticationController : ControllerBase
 {
+	[HttpPost]
+	public Task<IActionResult> Login(CancellationToken cancellationToken = default)
+	{
+		throw new NotImplementedException();
+	}
 
+	[HttpPost]
+	public Task<IActionResult> Register(CancellationToken cancellationToken = default)
+	{
+		throw new NotImplementedException();
+	}
 }

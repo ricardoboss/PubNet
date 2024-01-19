@@ -6,13 +6,13 @@ using PubNet.API.DTO.Packages.Dart;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
-[ApiController]
-[Route("packages/dart/{name}/{version}")]
+[Route("Packages/Dart/{name}/{version}")]
+[Tags("Dart")]
 public class DartPackagesByNameAndVersionController(
 	IDartPackageVersionAnalysisProvider analysisProvider,
 	IDartPackageVersionDocsProviderFactory docsProviderFactory,
 	IMimeTypeProvider mimeTypeProvider
-) : ControllerBase
+) : DartController
 {
 	[HttpGet("analysis.json")]
 	[ProducesResponseType(typeof(DartPackageVersionAnalysisDto), StatusCodes.Status200OK)]
@@ -32,10 +32,10 @@ public class DartPackagesByNameAndVersionController(
 		throw new NotImplementedException();
 	}
 
-	[HttpGet("docs/{**path}")]
+	[HttpGet("Docs/{**path}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> GetFileAsync(string name, string version, string path, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> GetDocsAsync(string name, string version, string path, CancellationToken cancellationToken = default)
 	{
 		var docsProvider = await docsProviderFactory.CreateAsync(name, version, cancellationToken);
 
@@ -52,7 +52,7 @@ public class DartPackagesByNameAndVersionController(
 		return File(file.CreateReadStream(), mimeType, file.Name);
 	}
 
-	[HttpPatch("retract")]
+	[HttpPatch("Retract")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	public Task<IActionResult> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
