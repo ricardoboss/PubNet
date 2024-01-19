@@ -1,5 +1,3 @@
 namespace PubNet.BlobStorage.Extensions.Builders;
 
-public interface IArgsBuilder
-{
-}
+public interface IArgsBuilder;
