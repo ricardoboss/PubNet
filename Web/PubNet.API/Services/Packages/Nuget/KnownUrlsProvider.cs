@@ -33,6 +33,24 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor) : IKnownUrl
 	/// <inheritdoc />
 	public string GetPackagePublishUrl()
 	{
-		return GetBaseUrl() + "/Package/Nuget/Publish";
+		return GetBaseUrl() + "/Packages/Nuget/Publish";
+	}
+
+	/// <inheritdoc />
+	public string GetSearchAutocompleteServiceUrl()
+	{
+		return GetBaseUrl() + "/Packages/Nuget/Autocomplete";
+	}
+
+	/// <inheritdoc />
+	public string GetSearchQueryServiceUrl()
+	{
+		return GetBaseUrl() + "/Packages/Nuget/Search";
+	}
+
+	/// <inheritdoc />
+	public string GetVulnerabilityInfoUrl()
+	{
+		return GetBaseUrl() + "/Packages/Nuget/vulnerabilities.json";
 	}
 }

@@ -17,38 +17,52 @@ public class NugetServiceIndexProvider(IKnownUrlsProvider knownUrlsProvider) : I
 	private IEnumerable<NugetServiceIndexResourceDto> GetResources()
 	{
 		return from map in GetResourceTypesMaps()
-			from alias in map.Aliases
 			select new NugetServiceIndexResourceDto
 			{
 				Id = map.Id,
-				Type = alias.Type,
-				Comment = alias.Comment,
+				Type = map.Type,
+				Comment = map.Comment,
 			};
 	}
 
-	private record ResourceTypesMap(string Id, (string Type, string? Comment)[] Aliases);
+	private record ResourceTypesMap(string Id, string Type, string? Comment = null);
 
 	private IEnumerable<ResourceTypesMap> GetResourceTypesMaps()
 	{
 		yield return new(
 			knownUrlsProvider.GetRegistrationsBaseUrl(),
-			[
-				("RegistrationsBaseUrl/3.6.0", "Includes SemVer 2.0.0 packages"),
-			]
+			"RegistrationsBaseUrl/3.6.0",
+			"Includes SemVer 2.0.0 packages"
 		);
 
 		yield return new(
 			knownUrlsProvider.GetPackageBaseAddress(),
-			[
-				("PackageBaseAddress/3.0.0", "The initial release"),
-			]
+			"PackageBaseAddress/3.0.0",
+			"The initial release"
 		);
 
 		yield return new(
 			knownUrlsProvider.GetPackagePublishUrl(),
-			[
-				("PackagePublish/2.0.0", "The initial release"),
-			]
+			"PackagePublish/2.0.0",
+			"The initial release"
+		);
+
+		yield return new(
+			knownUrlsProvider.GetSearchAutocompleteServiceUrl(),
+			"SearchAutocompleteService/3.5.0",
+			"Includes support for packageType query parameter"
+		);
+
+		yield return new(
+			knownUrlsProvider.GetSearchQueryServiceUrl(),
+			"SearchQueryService/3.5.0",
+			"Includes support for packageType query parameter"
+		);
+
+		yield return new(
+			knownUrlsProvider.GetVulnerabilityInfoUrl(),
+			"VulnerabilityInfo/6.7.0",
+			"The initial release"
 		);
 	}
 }

@@ -2,9 +2,15 @@ namespace PubNet.API.Abstractions.Packages.Nuget;
 
 public interface IKnownUrlsProvider
 {
-	public string GetRegistrationsBaseUrl();
+	string GetRegistrationsBaseUrl();
 
-	public string GetPackageBaseAddress();
+	string GetPackageBaseAddress();
 
-	public string GetPackagePublishUrl();
+	string GetPackagePublishUrl();
+
+	string GetSearchAutocompleteServiceUrl();
+
+	string GetSearchQueryServiceUrl();
+
+	string GetVulnerabilityInfoUrl();
 }
