@@ -1,13 +1,26 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.DTO;
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
+
+#region Packages
+
+#region Authentication
+[JsonSerializable(typeof(CreateAccountDto))]
+[JsonSerializable(typeof(CreateTokenDto))]
+[JsonSerializable(typeof(TokenCreatedDto))]
+#endregion
+
+#region Dart
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
-[JsonSerializable(typeof(NugetAlternatePackageDto))]
-[JsonSerializable(typeof(NugetAlternatePackageDto))]
+#endregion
+
+#region Nuget
 [JsonSerializable(typeof(NugetAlternatePackageDto))]
 [JsonSerializable(typeof(NugetAutocompleteResultDto))]
 [JsonSerializable(typeof(NugetCatalogEntryDto))]
@@ -26,4 +39,7 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(NugetServiceIndexDto))]
 [JsonSerializable(typeof(NugetServiceIndexResourceDto))]
 [JsonSerializable(typeof(NugetVulnerabilityIndexEntryDto))]
+#endregion
+
+#endregion
 internal partial class DtoGenerationContext : JsonSerializerContext;

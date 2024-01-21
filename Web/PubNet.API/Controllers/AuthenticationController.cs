@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO.Authentication;
 
 namespace PubNet.API.Controllers;
 
@@ -7,13 +8,15 @@ namespace PubNet.API.Controllers;
 public class AuthenticationController : ControllerBase
 {
 	[HttpPost]
-	public Task<IActionResult> Login(CancellationToken cancellationToken = default)
+	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
+	public Task<TokenCreatedDto> CreateToken(CreateTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
 
 	[HttpPost]
-	public Task<IActionResult> Register(CancellationToken cancellationToken = default)
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	public Task<IActionResult> CreateAccount(CreateAccountDto dto, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
