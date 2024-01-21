@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 /// <summary>
@@ -18,9 +16,7 @@ public class NugetPackageDependencyGroupDto
 	/// <summary>
 	/// The target framework that these dependencies are applicable to.
 	/// </summary>
-	[JsonPropertyName("targetFramework")]
 	public string? TargetFramework { get; init; }
 
-	[JsonPropertyName("dependencies")]
 	public IEnumerable<NugetPackageDependencyDto>? Dependencies { get; init; }
 }

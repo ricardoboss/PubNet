@@ -16,12 +16,10 @@ public class NugetPackageRegistrationLeafDto
 	/// <summary>
 	/// The catalog entry containing the package metadata.
 	/// </summary>
-	[JsonPropertyName("catalogEntry")]
 	public required NugetCatalogEntryDto CatalogEntry { get; init; }
 
 	/// <summary>
 	/// The URL to the package content (.nupkg).
 	/// </summary>
-	[JsonPropertyName("packageContent")]
 	public required string PackageContent { get; init; }
 }

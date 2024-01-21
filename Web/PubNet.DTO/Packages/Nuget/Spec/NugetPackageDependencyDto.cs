@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 /// <summary>
@@ -12,19 +10,16 @@ public class NugetPackageDependencyDto
 	/// <summary>
 	/// The ID of the package dependency.
 	/// </summary>
-	[JsonPropertyName("id")]
 	public required string Id { get; init; }
 
 	/// <summary>
 	/// The allowed <a href="https://learn.microsoft.com/en-us/nuget/concepts/package-versioning#version-ranges">version
 	/// tange</a> of the dependency.
 	/// </summary>
-	[JsonPropertyName("range")]
 	public string? Range { get; init; }
 
 	/// <summary>
 	/// The URL to the registration index for this dependency.
 	/// </summary>
-	[JsonPropertyName("registration")]
 	public string? Registration { get; init; }
 }

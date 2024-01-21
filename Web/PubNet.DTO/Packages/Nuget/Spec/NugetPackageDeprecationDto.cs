@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 /// <summary>
@@ -36,18 +34,15 @@ public class NugetPackageDeprecationDto
 	/// <summary>
 	/// The reasons why the package was deprecated.
 	/// </summary>
-	[JsonPropertyName("reasons")]
 	public required IEnumerable<string> Reasons { get; init; } = [];
 
 	/// <summary>
 	/// The additional details about this deprecation.
 	/// </summary>
-	[JsonPropertyName("message")]
 	public string? Message { get; init; }
 
 	/// <summary>
 	/// The alternate package that should be used instead.
 	/// </summary>
-	[JsonPropertyName("alternatePackage")]
 	public NugetAlternatePackageDto? AlternatePackage { get; init; }
 }

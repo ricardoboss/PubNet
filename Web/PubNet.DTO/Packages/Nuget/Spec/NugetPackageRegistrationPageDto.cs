@@ -36,7 +36,6 @@ public class NugetPackageRegistrationPageDto
 	/// <summary>
 	/// The URL to the registration index.
 	/// </summary>
-	[JsonPropertyName("parent")]
 	public string? Parent { get; init; }
 
 	/// <summary>
@@ -48,24 +47,20 @@ public class NugetPackageRegistrationPageDto
 	/// <summary>
 	/// The number of registration leaves in the page.
 	/// </summary>
-	[JsonPropertyName("count")]
 	public required int Count { get; init; }
 
 	/// <summary>
 	/// The array of registration leaves and their associate metadata.
 	/// </summary>
-	[JsonPropertyName("items")]
 	public IEnumerable<NugetPackageRegistrationLeafDto>? Items { get; init; }
 
 	/// <summary>
 	/// The lowest SemVer 2.0.0 version in the page (inclusive).
 	/// </summary>
-	[JsonPropertyName("lower")]
 	public required string Lower { get; init; }
 
 	/// <summary>
 	/// The highest SemVer 2.0.0 version in the page (inclusive).
 	/// </summary>
-	[JsonPropertyName("upper")]
 	public required string Upper { get; init; }
 }

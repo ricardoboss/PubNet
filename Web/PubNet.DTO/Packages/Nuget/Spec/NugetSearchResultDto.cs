@@ -1,12 +1,14 @@
-using System.Text.Json.Serialization;
-
 namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 public class NugetSearchResultDto
 {
-	[JsonPropertyName("totalHits")]
-	public long TotalHits { get; init; }
+	/// <summary>
+	/// The total number of matches, disregarding <c>skip</c> and <c>take</c>.
+	/// </summary>
+	public required long TotalHits { get; init; }
 
-	[JsonPropertyName("data")]
-	public IEnumerable<NugetSearchResultHitDto> Data { get; init; } = [];
+	/// <summary>
+	/// The search results matched by the request.
+	/// </summary>
+	public required IEnumerable<NugetSearchResultHitDto> Data { get; init; } = [];
 }

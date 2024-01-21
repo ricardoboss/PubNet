@@ -5,11 +5,10 @@ namespace PubNet.API.DTO.Packages.Nuget.Spec;
 public class NugetServiceIndexResourceDto
 {
 	[JsonPropertyName("@id")]
-	public string Id { get; init; }
+	public required string Id { get; init; }
 
 	[JsonPropertyName("@type")]
-	public string Type { get; init; }
+	public required string Type { get; init; }
 
-	[JsonPropertyName("comment")]
 	public string? Comment { get; init; }
 }

@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +6,9 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
-using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
+using PubNet.API.DTO;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
 using PubNet.API.Services.Packages.Nuget;
@@ -106,7 +105,8 @@ try
 	builder.Services.AddControllers()
 		.AddJsonOptions(options =>
 		{
-			options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+			options.JsonSerializerOptions.AddDtoSourceGenerators();
+
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 		});
 
