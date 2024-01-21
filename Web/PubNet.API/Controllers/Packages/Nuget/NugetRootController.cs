@@ -15,7 +15,7 @@ public class NugetRootController(INugetServiceIndexProvider serviceIndexProvider
 		return serviceIndexProvider.GetServiceIndexAsync(cancellationToken);
 	}
 
-	[HttpGet("Autocomplete")]
+	[HttpGet("autocomplete.json")]
 	public Task<NugetAutocompleteResultDto> AutocompleteAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
@@ -27,7 +27,7 @@ public class NugetRootController(INugetServiceIndexProvider serviceIndexProvider
 		throw new NotImplementedException();
 	}
 
-	[HttpGet("Search")]
+	[HttpGet("search.json")]
 	public Task<NugetSearchResultDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();

@@ -39,13 +39,13 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor) : IKnownUrl
 	/// <inheritdoc />
 	public string GetSearchAutocompleteServiceUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/Autocomplete";
+		return GetBaseUrl() + "/Packages/Nuget/autocomplete.json";
 	}
 
 	/// <inheritdoc />
 	public string GetSearchQueryServiceUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/Search";
+		return GetBaseUrl() + "/Packages/Nuget/search.json";
 	}
 
 	/// <inheritdoc />
