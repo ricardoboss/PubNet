@@ -8,7 +8,8 @@ namespace PubNet.API.DTO;
 
 #region Authentication
 [JsonSerializable(typeof(CreateAccountDto))]
-[JsonSerializable(typeof(CreateTokenDto))]
+[JsonSerializable(typeof(CreateLoginTokenDto))]
+[JsonSerializable(typeof(CreatePersonalAccessTokenDto))]
 [JsonSerializable(typeof(TokenCreatedDto))]
 #endregion
 

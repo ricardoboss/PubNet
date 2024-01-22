@@ -1,6 +1,6 @@
 ﻿namespace PubNet.API.DTO.Authentication;
 
-public class CreateTokenDto
+public class CreateLoginTokenDto
 {
 	public required string Username { get; init; }
 
