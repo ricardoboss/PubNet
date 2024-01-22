@@ -7,8 +7,6 @@ namespace PubNet.API.Services.CQRS.Commands;
 
 public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerator) : ITokenDmo
 {
-	private const int TokenLength = 32;
-
 	public async Task<Token> CreateTokenAsync(
 		Identity owner,
 		string name,
@@ -23,7 +21,7 @@ public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerato
 		{
 			Identity = owner,
 			Name = name,
-			Value = tokenGenerator.GenerateSecureToken(TokenLength),
+			Value = tokenGenerator.GenerateSecureToken(ITokenDmo.TokenLength),
 			ExpiresAtUtc = DateTimeOffset.UtcNow + lifetime,
 			Scopes = scopes.ToArray(),
 			CreatedAtUtc = DateTimeOffset.UtcNow,
@@ -32,6 +30,8 @@ public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerato
 		await context.Tokens.AddAsync(token, cancellationToken);
 
 		await context.SaveChangesAsync(cancellationToken);
+
+		await context.Entry(token).ReloadAsync(cancellationToken);
 
 		return token;
 	}

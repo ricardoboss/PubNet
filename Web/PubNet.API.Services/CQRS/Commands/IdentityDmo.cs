@@ -10,6 +10,9 @@ public class IdentityDmo(PubNetContext context, IPasswordHasher<Identity> passwo
 {
 	public async Task<Identity> CreateIdentityAsync(Author author, string email, string password, CancellationToken cancellationToken = default)
 	{
+		// TODO: validate email
+		// TODO: validate password
+
 		var identity = new Identity
 		{
 			Author = author,
