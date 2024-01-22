@@ -7,11 +7,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
 using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Authentication;
+using PubNet.API.Abstractions.CQRS.Commands;
+using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
+using PubNet.API.Services.Authentication;
+using PubNet.API.Services.CQRS.Commands;
+using PubNet.API.Services.CQRS.Queries;
 using PubNet.API.Services.Packages.Nuget;
 using PubNet.ArchiveStorage.BlobStorage;
 using PubNet.BlobStorage.Abstractions;
@@ -21,6 +27,7 @@ using PubNet.Database.Entities.Auth;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
+using PubNet.Web.Abstractions;
 using Serilog;
 using SignedUrl.Extensions;
 
@@ -189,9 +196,9 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 
 			o.TokenValidationParameters = new()
 			{
-				ValidIssuer = JwtTokenGenerator.GetIssuer(builder.Configuration),
-				ValidAudience = JwtTokenGenerator.GetAudience(builder.Configuration),
-				IssuerSigningKey = JwtTokenGenerator.GetSecretKey(builder.Configuration),
+				ValidIssuer = JwtFactory.GetIssuer(builder.Configuration),
+				ValidAudience = JwtFactory.GetAudience(builder.Configuration),
+				IssuerSigningKey = JwtFactory.GetSecretKey(builder.Configuration),
 				ValidateIssuer = true,
 				ValidateAudience = true,
 				ValidateLifetime = true,
@@ -199,12 +206,16 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 			};
 		});
 
-	// used for verifying and creating password hashes
-	builder.Services.TryAddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
-	builder.Services.AddScoped<PasswordManager>();
+	builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
+	builder.Services.AddScoped<IPasswordVerifier, PasswordVerifier>();
+	builder.Services.AddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
+	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
+	builder.Services.AddScoped<ITokenDmo, TokenDmo>();
+	builder.Services.AddSingleton<ISecureTokenGenerator, SecureTokenGenerator>();
+	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
+	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 
-	// generates JWT tokens
-	builder.Services.AddSingleton<JwtTokenGenerator>();
+	builder.Services.AddSingleton<IAccountService, AccountService>();
 }
 
 void ConfigureDatabase(WebApplicationBuilder builder)

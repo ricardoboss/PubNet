@@ -42,5 +42,11 @@ namespace PubNet.API.DTO;
 
 #endregion
 
+#region Other
+
+[JsonSerializable(typeof(GenericErrorDto))]
+
+#endregion
+
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-internal partial class DtoGenerationContext : JsonSerializerContext;
+public partial class DtoGenerationContext : JsonSerializerContext;

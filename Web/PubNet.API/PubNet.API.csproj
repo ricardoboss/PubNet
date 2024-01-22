@@ -74,8 +74,4 @@
       <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Commands\" />
-	</ItemGroup>
-
 </Project>

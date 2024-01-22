@@ -1,12 +1,13 @@
 using System.Diagnostics;
 using System.Net;
 using System.Security.Authentication;
+using PubNet.API.DTO;
 
 namespace PubNet.API.Middlewares;
 
-[DebuggerStepThrough]
 public class ExceptionFormatterMiddleware(RequestDelegate next)
 {
+	[DebuggerStepThrough]
 	public async Task Invoke(HttpContext context)
 	{
 		try
@@ -21,9 +22,9 @@ public class ExceptionFormatterMiddleware(RequestDelegate next)
 
 	private static async Task Handle(HttpContext context, Exception e)
 	{
-		if (e is InvalidCredentialException)
+		if (e is InvalidCredentialException or AuthenticationException or UnauthorizedAccessException)
 		{
-			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 			context.Response.Headers.WWWAuthenticate = new[]
 			{
 				$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
@@ -31,20 +32,23 @@ public class ExceptionFormatterMiddleware(RequestDelegate next)
 		}
 		else
 		{
-			context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+			context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 		}
 
 		await context.Response.WriteAsJsonAsync(
-			new
+			new GenericErrorDto
 			{
-				error = new {
-					code = e.GetType().Name,
-					e.Message,
-					StackTrace = e.StackTrace?.Split("\r\n").Select(x => x.Split("\n")).ToList(),
+				Error = new()
+				{
+					Code = e.GetType().Name,
+					Message = e.Message,
+					StackTrace = e.StackTrace?.Split("\r\n")
+						.SelectMany(x => x.Split("\n"))
+						.ToArray(),
 				},
 			},
-			options: null,
-			contentType: "application/json"
+			options: DtoGenerationContext.Default.Options,
+			cancellationToken: context.RequestAborted
 		);
 	}
 }

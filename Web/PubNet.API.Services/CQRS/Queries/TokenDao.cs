@@ -3,7 +3,7 @@ using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
 
-namespace PubNet.API.Queries;
+namespace PubNet.API.Services.CQRS.Queries;
 
 public class TokenDao(PubNetContext context) : ITokenDao
 {
