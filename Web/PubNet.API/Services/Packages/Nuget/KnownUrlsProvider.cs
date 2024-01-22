@@ -17,7 +17,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 		var scheme = request.Scheme;
 		var host = request.Host;
 		var pathBase = request.PathBase;
-		return $"{scheme}://{host}{pathBase}";
+		return $"{scheme}://{host}{pathBase}/";
 	});
 
 	private string BaseUrl => _baseUrl.Value;
@@ -30,7 +30,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 			nameof(NugetPackageRegistrationsByIdController.GetPackageRegistrationsIndexAsync)
 		);
 
-		return BaseUrl + "/" + route[..^"/{id}/index.json".Length];
+		return BaseUrl + route[..^"/{id}/index.json".Length];
 	}
 
 	/// <inheritdoc />
@@ -41,7 +41,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 			nameof(NugetPackageByIdController.GetPackageIndexAsync)
 		);
 
-		return BaseUrl + "/" + route[..^"/{id}/index.json".Length];
+		return BaseUrl + route[..^"/{id}/index.json".Length];
 	}
 
 	/// <inheritdoc />
@@ -52,7 +52,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 			nameof(NugetRootController.PublishAsync)
 		);
 
-		return BaseUrl + "/" + route;
+		return BaseUrl + route;
 	}
 
 	/// <inheritdoc />
@@ -63,7 +63,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 			nameof(NugetRootController.AutocompleteAsync)
 		);
 
-		return BaseUrl + "/" + route;
+		return BaseUrl + route;
 	}
 
 	/// <inheritdoc />
@@ -74,7 +74,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 			nameof(NugetRootController.SearchAsync)
 		);
 
-		return BaseUrl + "/" + route;
+		return BaseUrl + route;
 	}
 
 	/// <inheritdoc />
@@ -85,6 +85,6 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 			nameof(NugetRootController.GetVulnerabilitiesAsync)
 		);
 
-		return BaseUrl + "/" + route;
+		return BaseUrl + route;
 	}
 }
