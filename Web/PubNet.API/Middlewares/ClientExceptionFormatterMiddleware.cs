@@ -38,7 +38,7 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 			new
 			{
 				e.Message,
-				e.StackTrace,
+				StackTrace = e.StackTrace?.Split("\r\n"),
 			},
 			options: null,
 			contentType: "application/json"
