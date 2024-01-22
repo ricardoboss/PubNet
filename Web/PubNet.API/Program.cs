@@ -69,7 +69,7 @@ try
 				IssuerSigningKey = JwtTokenGenerator.GetSecretKey(builder.Configuration),
 				ValidateIssuer = true,
 				ValidateAudience = true,
-				ValidateLifetime = false,
+				ValidateLifetime = true,
 				ValidateIssuerSigningKey = true,
 			};
 		});
