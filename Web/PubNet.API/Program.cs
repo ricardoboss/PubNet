@@ -177,7 +177,7 @@ try
 
 	app.UseResponseCaching();
 
-	app.UseMiddleware<ClientExceptionFormatterMiddleware>();
+	app.UseMiddleware<ExceptionFormatterMiddleware>();
 
 	app.UseAuthentication();
 	app.UseAuthorization();

@@ -5,7 +5,7 @@ using System.Security.Authentication;
 namespace PubNet.API.Middlewares;
 
 [DebuggerStepThrough]
-public class ClientExceptionFormatterMiddleware(RequestDelegate next)
+public class ExceptionFormatterMiddleware(RequestDelegate next)
 {
 	public async Task Invoke(HttpContext context)
 	{
@@ -37,8 +37,11 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 		await context.Response.WriteAsJsonAsync(
 			new
 			{
-				e.Message,
-				StackTrace = e.StackTrace?.Split("\r\n"),
+				error = new {
+					code = e.GetType().Name,
+					e.Message,
+					StackTrace = e.StackTrace?.Split("\r\n").Select(x => x.Split("\n")).ToList(),
+				},
 			},
 			options: null,
 			contentType: "application/json"
