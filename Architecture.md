@@ -13,6 +13,65 @@ flowchart LR
     end
 ```
 
+## API Layers
+
+```mermaid
+graph
+    subgraph API
+        direction TB
+
+        subgraph Routes
+            AuthorByNameRoute["/api/Authors/{name}"]
+            CreateTokenRoute["/api/Authentication/CreateToken"]
+            GetDartArchiveRoute["/api/Packages/Dart/.../archive.tar.gz"]
+            PublishDartArchiveRoute["/api/Packages/Dart/Upload"]
+        end
+
+        subgraph Controllers
+            AuthenticationController
+            AuthorsByNameController
+            DartStorageController
+        end
+
+        subgraph Services
+            AuthenticationService
+            TokenService
+            DartPackageService
+        end
+
+        subgraph EF
+            Identities
+            Authors
+            Tokens
+            DartPackages
+        end
+
+        subgraph Storage
+            DB[(DB)]
+            Blob[(Blob Storage)]
+        end
+
+        CreateTokenRoute --> AuthenticationController
+        AuthenticationController --> AuthenticationService
+        AuthenticationService --> TokenService
+        TokenService --> Tokens
+        AuthenticationService --> Identities & Authors
+        Identities & Authors & Tokens --> DB
+
+        AuthorByNameRoute --> AuthorsByNameController
+        AuthorsByNameController --> Authors
+
+        GetDartArchiveRoute --> DartStorageController
+        DartStorageController --> Blob
+
+        PublishDartArchiveRoute --> DartStorageController
+        DartStorageController --> DartPackageService
+        DartPackageService --> Blob
+        DartPackageService --> DartPackages
+        DartPackages --> DB
+    end
+```
+
 ## API Overview
 
 ```mermaid
@@ -58,7 +117,7 @@ mindmap
 ```mermaid
 erDiagram
     Author ||--o| Identity: has
-    Identity ||--o| Token: has
+    Identity ||--o{ Token: has
     Author ||--o{ DartPackage: owns
     DartPackage ||--o{ DartPackageVersion: contains
     DartPackageVersion ||--o| DartPackageVersionAnalysis: has
