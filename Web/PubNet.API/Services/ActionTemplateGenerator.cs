@@ -8,11 +8,14 @@ public class ActionTemplateGenerator(IActionDescriptorCollectionProvider actionD
 {
 	public string GetActionRoute(string controllerName, string actionName)
 	{
+		var normalizedControllerName = controllerName.EndsWith("Controller") ? controllerName[..^"Controller".Length] : controllerName;
+		var normalizedActionName = actionName.EndsWith("Async") ? actionName[..^"Async".Length] : actionName;
+
 		var endpoint = actionDescriptorCollectionProvider.ActionDescriptors.Items
 			.Where(d => d is ControllerActionDescriptor)
 			.Cast<ControllerActionDescriptor>()
-			.Where(c => c.ControllerName == controllerName[..^"Controller".Length])
-			.First(c => c.ActionName == actionName[..^"Async".Length]);
+			.Where(c => c.ControllerName == normalizedControllerName)
+			.First(c => c.ActionName == normalizedActionName);
 
 		return endpoint.AttributeRouteInfo?.Template ?? throw new InvalidOperationException("Endpoint has no route");
 	}
