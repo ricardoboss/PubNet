@@ -6,15 +6,13 @@ using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.DTO;
 
-[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-
-#region Packages
-
 #region Authentication
 [JsonSerializable(typeof(CreateAccountDto))]
 [JsonSerializable(typeof(CreateTokenDto))]
 [JsonSerializable(typeof(TokenCreatedDto))]
 #endregion
+
+#region Packages
 
 #region Dart
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
@@ -42,4 +40,6 @@ namespace PubNet.API.DTO;
 #endregion
 
 #endregion
+
+[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 internal partial class DtoGenerationContext : JsonSerializerContext;
