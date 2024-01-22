@@ -1,6 +1,7 @@
+using PubNet.API.Abstractions.CQRS.Exceptions;
 using PubNet.Database.Entities.Auth;
 
-namespace PubNet.API.Abstractions.Queries;
+namespace PubNet.API.Abstractions.CQRS.Queries;
 
 public interface ITokenDao
 {

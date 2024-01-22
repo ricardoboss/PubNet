@@ -1,3 +1,3 @@
-namespace PubNet.API.Abstractions.Queries;
+namespace PubNet.API.Abstractions.CQRS.Exceptions;
 
 public class TokenNotFoundException(Guid tokenId) : Exception($"Token {tokenId} not found");

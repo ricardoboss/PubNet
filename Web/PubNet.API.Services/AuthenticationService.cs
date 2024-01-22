@@ -1,31 +1,21 @@
 using PubNet.API.Abstractions.Authentication;
-using PubNet.API.Abstractions.Commands;
-using PubNet.API.Abstractions.Commands.Authentication;
-using PubNet.API.Abstractions.Queries;
+using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.DTO.Authentication;
+using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services;
 
-public class AuthenticationService(IAsyncCommandHandler<CreateTokenCommand, TokenCreatedResult> createTokenAsyncCommandHandler, ITokenDao tokenDao) : IAuthenticationService
+public class AuthenticationService(ITokenDmo tokenDmo) : IAuthenticationService
 {
 	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		// TODO: validate username/password
-		var identityId = Guid.NewGuid(); // TODO: get identity id from database
+		Identity identity = null!; // TODO: get identity id from database
+		var name = "Login";
+		var lifetime = TimeSpan.FromDays(90);
+		string[] scopes = ["urn:pubnet:author:username:read"];
 
-		var command = new CreateTokenCommand
-		{
-			Name = "Login",
-			Lifetime = TimeSpan.FromDays(90), // TODO: make this configurable
-			Scopes = [
-				// TODO: add all scopes required for website interaction
-			],
-			IdentityId = identityId,
-		};
-
-		var result = await createTokenAsyncCommandHandler.HandleAsync(command, cancellationToken);
-
-		var token = await tokenDao.FindByIdAsync(result.TokenId, cancellationToken);
+		var token = await tokenDmo.CreateTokenAsync(identity, name, lifetime, scopes, cancellationToken);
 
 		return new()
 		{

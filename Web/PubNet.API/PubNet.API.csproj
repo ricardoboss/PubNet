@@ -75,7 +75,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Interfaces\" />
+	  <Folder Include="Commands\" />
 	</ItemGroup>
 
 </Project>

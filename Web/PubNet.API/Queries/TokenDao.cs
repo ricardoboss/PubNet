@@ -1,4 +1,5 @@
-using PubNet.API.Abstractions.Queries;
+using PubNet.API.Abstractions.CQRS.Exceptions;
+using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
 
