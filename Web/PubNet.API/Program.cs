@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
@@ -99,6 +100,7 @@ try
 
 	builder.Services.AddSignedUrl();
 
+	builder.Services.AddScoped<IActionTemplateGenerator, ActionTemplateGenerator>();
 	builder.Services.AddScoped<IKnownUrlsProvider, KnownUrlsProvider>();
 	builder.Services.AddScoped<INugetServiceIndexProvider, NugetServiceIndexProvider>();
 

@@ -1,10 +1,12 @@
+using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Packages.Nuget;
+using PubNet.API.Controllers.Packages.Nuget;
 
 namespace PubNet.API.Services.Packages.Nuget;
 
-public class KnownUrlsProvider(IHttpContextAccessor contextAccessor) : IKnownUrlsProvider
+public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemplateGenerator actionTemplateGenerator) : IKnownUrlsProvider
 {
-	private string GetBaseUrl()
+	private readonly Lazy<string> _baseUrl = new(() =>
 	{
 		var request = contextAccessor.HttpContext?.Request;
 		if (request is null)
@@ -16,41 +18,73 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor) : IKnownUrl
 		var host = request.Host;
 		var pathBase = request.PathBase;
 		return $"{scheme}://{host}{pathBase}";
-	}
+	});
+
+	private string BaseUrl => _baseUrl.Value;
 
 	/// <inheritdoc />
 	public string GetRegistrationsBaseUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/Registrations";
+		var route = actionTemplateGenerator.GetActionRoute(
+			nameof(NugetPackageRegistrationsByIdController),
+			nameof(NugetPackageRegistrationsByIdController.GetPackageRegistrationsIndexAsync)
+		);
+
+		return BaseUrl + "/" + route[..^"/{id}/index.json".Length];
 	}
 
 	/// <inheritdoc />
 	public string GetPackageBaseAddress()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/Package";
+		var route = actionTemplateGenerator.GetActionRoute(
+			nameof(NugetPackageByIdController),
+			nameof(NugetPackageByIdController.GetPackageIndexAsync)
+		);
+
+		return BaseUrl + "/" + route[..^"/{id}/index.json".Length];
 	}
 
 	/// <inheritdoc />
 	public string GetPackagePublishUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/Publish";
+		var route = actionTemplateGenerator.GetActionRoute(
+			nameof(NugetRootController),
+			nameof(NugetRootController.PublishAsync)
+		);
+
+		return BaseUrl + "/" + route;
 	}
 
 	/// <inheritdoc />
 	public string GetSearchAutocompleteServiceUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/autocomplete.json";
+		var route = actionTemplateGenerator.GetActionRoute(
+			nameof(NugetRootController),
+			nameof(NugetRootController.AutocompleteAsync)
+		);
+
+		return BaseUrl + "/" + route;
 	}
 
 	/// <inheritdoc />
 	public string GetSearchQueryServiceUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/search.json";
+		var route = actionTemplateGenerator.GetActionRoute(
+			nameof(NugetRootController),
+			nameof(NugetRootController.SearchAsync)
+		);
+
+		return BaseUrl + "/" + route;
 	}
 
 	/// <inheritdoc />
 	public string GetVulnerabilityInfoUrl()
 	{
-		return GetBaseUrl() + "/Packages/Nuget/vulnerabilities.json";
+		var route = actionTemplateGenerator.GetActionRoute(
+			nameof(NugetRootController),
+			nameof(NugetRootController.GetVulnerabilitiesAsync)
+		);
+
+		return BaseUrl + "/" + route;
 	}
 }
