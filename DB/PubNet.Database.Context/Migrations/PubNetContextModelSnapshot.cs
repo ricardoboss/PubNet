@@ -53,13 +53,63 @@ namespace PubNet.Database.Context.Migrations
                     b.ToTable("Identities");
                 });
 
+            modelBuilder.Entity("PubNet.Database.Entities.Auth.Token", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdentityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset?>("RevokedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string[]>("Scopes")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Value")
+                        .IsUnique();
+
+                    b.HasIndex("IdentityId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Tokens");
+                });
+
             modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("RegisteredAt")
+                    b.Property<DateTimeOffset>("RegisteredAtUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserName")
@@ -321,6 +371,17 @@ namespace PubNet.Database.Context.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("PubNet.Database.Entities.Auth.Token", b =>
+                {
+                    b.HasOne("PubNet.Database.Entities.Auth.Identity", "Identity")
+                        .WithMany("Tokens")
+                        .HasForeignKey("IdentityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Identity");
+                });
+
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackage", b =>
                 {
                     b.HasOne("PubNet.Database.Entities.Author", "Author")
@@ -421,6 +482,11 @@ namespace PubNet.Database.Context.Migrations
                         .IsRequired();
 
                     b.Navigation("PackageVersion");
+                });
+
+            modelBuilder.Entity("PubNet.Database.Entities.Auth.Identity", b =>
+                {
+                    b.Navigation("Tokens");
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Author", b =>

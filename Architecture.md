@@ -19,7 +19,9 @@ flowchart LR
 mindmap
   root((PubNet))
     Authentication(Authentication)
-      Login(Login)
+      Tokens(Tokens)
+        By Id(By Id)
+          Revoke(Revoke)
       Register(Register)
     Authors(Authors)
       By Username(By Username)
@@ -56,6 +58,7 @@ mindmap
 ```mermaid
 erDiagram
     Author ||--o| Identity: has
+    Identity ||--o| Token: has
     Author ||--o{ DartPackage: owns
     DartPackage ||--o{ DartPackageVersion: contains
     DartPackageVersion ||--o| DartPackageVersionAnalysis: has

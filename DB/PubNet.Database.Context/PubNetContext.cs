@@ -13,7 +13,13 @@ public class PubNetContext(DbContextOptions<PubNetContext> options) : DbContext(
 {
 	public DbSet<Author> Authors { get; init; } = null!;
 
+	#region Authentication
+
 	public DbSet<Identity> Identities { get; init; } = null!;
+
+	public DbSet<Token> Tokens { get; init; } = null!;
+
+	#endregion
 
 	#region Dart Packages
 

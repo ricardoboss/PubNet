@@ -18,7 +18,7 @@ namespace PubNet.Database.Context.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    RegisteredAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    RegisteredAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,6 +168,32 @@ namespace PubNet.Database.Context.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    IpAddress = table.Column<string>(type: "text", nullable: false),
+                    UserAgent = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Scopes = table.Column<string[]>(type: "text[]", maxLength: 2000, nullable: false),
+                    CreatedAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ExpiresAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    RevokedAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tokens_Identities_IdentityId",
+                        column: x => x.IdentityId,
+                        principalTable: "Identities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NugetPackageVersions",
                 columns: table => new
                 {
@@ -296,6 +322,18 @@ namespace PubNet.Database.Context.Migrations
                 table: "PackageArchives",
                 columns: new[] { "PackageVersionId", "PackageTypeDiscriminator" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tokens_IdentityId_Name",
+                table: "Tokens",
+                columns: new[] { "IdentityId", "Name" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tokens_Value",
+                table: "Tokens",
+                column: "Value",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -305,16 +343,19 @@ namespace PubNet.Database.Context.Migrations
                 name: "DartPendingArchives");
 
             migrationBuilder.DropTable(
-                name: "Identities");
+                name: "PackageArchives");
 
             migrationBuilder.DropTable(
-                name: "PackageArchives");
+                name: "Tokens");
 
             migrationBuilder.DropTable(
                 name: "DartPackageVersions");
 
             migrationBuilder.DropTable(
                 name: "NugetPackageVersions");
+
+            migrationBuilder.DropTable(
+                name: "Identities");
 
             migrationBuilder.DropTable(
                 name: "DartPackageVersionAnalyses");

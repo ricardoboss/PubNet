@@ -17,4 +17,6 @@ public class Identity
 	public string Email { get; set; } = null!;
 
 	public string PasswordHash { get; set; } = null!;
+
+	public ICollection<Token> Tokens { get; set; } = [];
 }

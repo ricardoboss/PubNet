@@ -15,7 +15,7 @@ public class Author
 
 	public string UserName { get; init; } = null!;
 
-	public DateTimeOffset RegisteredAt { get; init; }
+	public DateTimeOffset RegisteredAtUtc { get; init; }
 
 	public Identity? Identity { get; init; }
 
