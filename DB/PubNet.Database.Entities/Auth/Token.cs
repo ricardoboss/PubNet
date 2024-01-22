@@ -20,7 +20,7 @@ public class Token
 
 	public string UserAgent { get; set; } = null!;
 
-	public string? Name { get; set; }
+	public string Name { get; set; } = null!;
 
 	public string[] Scopes { get; set; } = null!;
 

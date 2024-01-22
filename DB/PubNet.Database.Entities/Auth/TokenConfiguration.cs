@@ -31,5 +31,12 @@ public class TokenConfiguration : IEntityTypeConfiguration<Token>
 				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
 			)
 			.HasMaxLength(2000);
+
+		builder.Property(t => t.Value)
+			.HasMaxLength(100);
+
+		// https://stackoverflow.com/a/166157/5107884
+		builder.Property(t => t.IpAddress)
+			.HasMaxLength(45);
 	}
 }

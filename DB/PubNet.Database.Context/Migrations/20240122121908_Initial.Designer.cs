@@ -13,7 +13,7 @@ using PubNet.Database.Entities.Dart;
 namespace PubNet.Database.Context.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    [Migration("20240122102515_Initial")]
+    [Migration("20240122121908_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -73,9 +73,11 @@ namespace PubNet.Database.Context.Migrations
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -93,7 +95,8 @@ namespace PubNet.Database.Context.Migrations
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
