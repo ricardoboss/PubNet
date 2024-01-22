@@ -1,4 +1,5 @@
-﻿using PubNet.API.Abstractions.CQRS.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using PubNet.API.Abstractions.CQRS.Exceptions;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
@@ -14,5 +15,10 @@ public class IdentityDao(PubNetContext context) : IIdentityDao
 			throw new IdentityNotFoundException(id);
 
 		return identity;
+	}
+
+	public Task<Identity?> TryFindByEmailAsync(string email, CancellationToken cancellationToken = default)
+	{
+		return context.Identities.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
 	}
 }

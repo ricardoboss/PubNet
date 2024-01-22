@@ -206,16 +206,21 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 			};
 		});
 
-	builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
-	builder.Services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 	builder.Services.AddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
-	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
-	builder.Services.AddScoped<ITokenDmo, TokenDmo>();
 	builder.Services.AddSingleton<ISecureTokenGenerator, SecureTokenGenerator>();
-	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
 	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 
-	builder.Services.AddSingleton<IAccountService, AccountService>();
+	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
+	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
+
+	builder.Services.AddScoped<ITokenDmo, TokenDmo>();
+	builder.Services.AddScoped<IAuthorDmo, AuthorDmo>();
+	builder.Services.AddScoped<IIdentityDmo, IdentityDmo>();
+
+	builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
+	builder.Services.AddScoped<IPasswordVerifier, PasswordVerifier>();
+	builder.Services.AddScoped<IAccountService, AccountService>();
+	builder.Services.AddScoped<IAuthProvider, HttpAuthProvider>();
 }
 
 void ConfigureDatabase(WebApplicationBuilder builder)
