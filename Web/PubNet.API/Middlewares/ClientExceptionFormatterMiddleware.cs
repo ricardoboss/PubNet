@@ -41,7 +41,7 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 				e.StackTrace,
 			},
 			options: null,
-			contentType: "application/vnd.pub.v2+json"
+			contentType: "application/json"
 		);
 	}
 }
