@@ -19,6 +19,9 @@ public class IdentityConfiguration : IEntityTypeConfiguration<Identity>
 			.IsRequired()
 			.OnDelete(DeleteBehavior.Cascade);
 
+		builder.Navigation(i => i.Author)
+			.AutoInclude();
+
 		builder.Property(i => i.Email)
 			.HasMaxLength(250);
 

@@ -8,19 +8,18 @@ using PubNet.Web.Abstractions;
 
 namespace PubNet.API.Services.Authentication;
 
-public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo tokenDmo, IAuthorDao authorDao, IJwtFactory jwtFactory) : IAccessTokenService
+public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo tokenDmo, IIdentityDao identityDao, IJwtFactory jwtFactory) : IAccessTokenService
 {
+	private static InvalidCredentialException InvalidCredentials => new("The given credentials are incorrect.");
+
 	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
 	{
-		var author = await authorDao.TryFindByUsernameAsync(dto.Username, cancellationToken);
-		if (author is null)
-			throw new UserNameNotFoundException(dto.Username);
-
-		if (author.Identity is not {} identity)
-			throw new NoAuthorIdentityException(author);
+		var identity = await identityDao.TryFindByEmailAsync(dto.Email, cancellationToken);
+		if (identity is null)
+			throw InvalidCredentials;
 
 		if (!await passwordVerifier.VerifyAsync(identity.Id, dto.Password, cancellationToken))
-			throw new InvalidCredentialException("The given password is incorrect.");
+			throw InvalidCredentials;
 
 		const string loginTokenName = "Login";
 		var lifetime = TimeSpan.FromDays(90); // TODO: Make configurable

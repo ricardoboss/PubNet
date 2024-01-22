@@ -22,8 +22,10 @@ public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerato
 			Identity = owner,
 			Name = name,
 			Value = tokenGenerator.GenerateSecureToken(ITokenDmo.TokenLength),
-			ExpiresAtUtc = DateTimeOffset.UtcNow + lifetime,
 			Scopes = scopes.ToArray(),
+			IpAddress = ipAddress,
+			UserAgent = userAgent,
+			ExpiresAtUtc = DateTimeOffset.UtcNow + lifetime,
 			CreatedAtUtc = DateTimeOffset.UtcNow,
 		};
 
