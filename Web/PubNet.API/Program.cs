@@ -22,12 +22,11 @@ using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
 using Serilog;
-using Serilog.Events;
 using SignedUrl.Extensions;
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
-	.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+	.MinimumLevel.Verbose()
 	.Enrich.FromLogContext()
 	.CreateBootstrapLogger();
 
@@ -35,22 +34,148 @@ try
 {
 	var builder = WebApplication.CreateBuilder(args);
 
-	builder.Host.UseSerilog((context, services, configuration) =>
-		configuration.ReadFrom.Configuration(context.Configuration)
-			.ReadFrom.Services(services)
-			.Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
-			.Enrich.FromLogContext()
-			.WriteTo.Console()
-	);
+	ConfigureServices(builder);
 
-#pragma warning disable CS0618 // Type or member is obsolete
-	NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
-#pragma warning restore CS0618 // Type or member is obsolete
+	var app = builder.Build();
 
-	builder.Services.AddDbContext<PubNetContext>(
-		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
-	);
+	ConfigureHttpPipeline(app);
 
+	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+
+	await PubNetContext.RunMigrations(app.Services);
+
+	app.Logger.LogInformation("Application started");
+
+	await app.RunAsync();
+}
+catch (Exception ex)
+{
+	if (ex is HostAbortedException)
+		Log.Warning("{Message}", ex.Message);
+	else
+		Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+	Log.CloseAndFlush();
+}
+
+return;
+
+void ConfigureServices(WebApplicationBuilder webApplicationBuilder)
+{
+	ConfigureLogging(webApplicationBuilder);
+
+	ConfigureDatabase(webApplicationBuilder);
+
+	ConfigureAuthentication(webApplicationBuilder);
+
+	ConfigureDynamicUrlGeneration(webApplicationBuilder);
+
+	ConfigurePackageStorage(webApplicationBuilder);
+
+	ConfigureNugetServices(webApplicationBuilder);
+
+	ConfigureControllers(webApplicationBuilder);
+
+	ConfigureSwagger(webApplicationBuilder);
+
+	ConfigureCors(webApplicationBuilder);
+
+	ConfigureHttpServices(webApplicationBuilder);
+}
+
+void ConfigureHttpServices(IHostApplicationBuilder builder)
+{
+	builder.Services.AddResponseCaching();
+}
+
+void ConfigureCors(WebApplicationBuilder builder)
+{
+	builder.Services.AddCors(options =>
+	{
+		options.AddDefaultPolicy(policy =>
+		{
+			var origins = builder.Configuration
+				.GetRequiredSection("AllowedOrigins")
+				.GetChildren()
+				.Select(s => s.Value!)
+				.ToArray();
+
+			policy.WithOrigins(origins);
+			policy.AllowCredentials();
+			policy.AllowAnyHeader();
+			policy.AllowAnyMethod();
+		});
+	});
+}
+
+void ConfigureSwagger(IHostApplicationBuilder builder)
+{
+	builder.Services.AddEndpointsApiExplorer();
+	builder.Services.AddSwaggerGen(o =>
+	{
+		o.SwaggerDoc("v1", new()
+		{
+			Title = "PubNet API",
+			Description = "An API for Dart and NuGet package hosting",
+			Version = "v1",
+			License = new()
+			{
+				Name = "AGPL-3.0",
+				Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
+			},
+		});
+
+		o.InferSecuritySchemes();
+	});
+}
+
+void ConfigureControllers(IHostApplicationBuilder builder)
+{
+	builder.Services.AddControllers()
+		.AddJsonOptions(options =>
+		{
+			options.JsonSerializerOptions.AddDtoSourceGenerators();
+
+			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+		});
+}
+
+void ConfigureNugetServices(IHostApplicationBuilder builder)
+{
+	builder.Services.AddScoped<IKnownUrlsProvider, KnownUrlsProvider>();
+	builder.Services.AddScoped<INugetServiceIndexProvider, NugetServiceIndexProvider>();
+}
+
+void ConfigurePackageStorage(IHostApplicationBuilder builder)
+{
+	// package storage
+	builder.Services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
+	builder.Services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
+	builder.Services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
+
+	// needed for unauthenticated file uploads
+	builder.Services.AddSignedUrl();
+}
+
+void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)
+{
+	// needed to dynamically generate uris to controller actions
+	builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+	builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+	builder.Services.AddScoped<IUrlHelper>(services =>
+	{
+		var actionContext = services.GetRequiredService<IActionContextAccessor>().ActionContext;
+		var factory = services.GetRequiredService<IUrlHelperFactory>();
+		return factory.GetUrlHelper(actionContext ??
+			throw new InvalidOperationException("Unable to get ActionContext"));
+	});
+	builder.Services.AddScoped<IActionTemplateGenerator, ActionTemplateGenerator>();
+}
+
+void ConfigureAuthentication(WebApplicationBuilder builder)
+{
 	builder.Services
 		.AddAuthentication(o =>
 		{
@@ -80,74 +205,32 @@ try
 
 	// generates JWT tokens
 	builder.Services.AddSingleton<JwtTokenGenerator>();
+}
 
-	// needed to dynamically generate uris to controller actions
-	builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-	builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-	builder.Services.AddScoped<IUrlHelper>(services =>
-	{
-		var actionContext = services.GetRequiredService<IActionContextAccessor>().ActionContext;
-		var factory = services.GetRequiredService<IUrlHelperFactory>();
-		return factory.GetUrlHelper(actionContext ??
-			throw new InvalidOperationException("Unable to get ActionContext"));
-	});
-	// builder.Services.AddScoped<IUrlGenerator, object>();
+void ConfigureDatabase(WebApplicationBuilder builder)
+{
+#pragma warning disable CS0618 // Type or member is obsolete
+	NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
+#pragma warning restore CS0618 // Type or member is obsolete
 
-	// package storage
-	builder.Services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
-	builder.Services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
-	builder.Services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
+	builder.Services.AddDbContext<PubNetContext>(
+		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
+	);
+}
 
-	builder.Services.AddSignedUrl();
+void ConfigureLogging(WebApplicationBuilder builder)
+{
+	builder.Host.UseSerilog((context, services, configuration) =>
+		configuration.ReadFrom.Configuration(context.Configuration)
+			.ReadFrom.Services(services)
+			.Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
+			.Enrich.FromLogContext()
+			.WriteTo.Console()
+	);
+}
 
-	builder.Services.AddScoped<IActionTemplateGenerator, ActionTemplateGenerator>();
-	builder.Services.AddScoped<IKnownUrlsProvider, KnownUrlsProvider>();
-	builder.Services.AddScoped<INugetServiceIndexProvider, NugetServiceIndexProvider>();
-
-	builder.Services.AddControllers()
-		.AddJsonOptions(options =>
-		{
-			options.JsonSerializerOptions.AddDtoSourceGenerators();
-
-			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-		});
-
-	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwaggerGen(o =>
-	{
-		o.SwaggerDoc("v1", new()
-		{
-			Title = "PubNet API",
-			Description = "An API for Dart and NuGet package hosting",
-			Version = "v1",
-			License = new()
-			{
-				Name = "AGPL-3.0",
-				Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
-			},
-		});
-
-		o.InferSecuritySchemes();
-	});
-
-	builder.Services.AddCors(options =>
-	{
-		options.AddDefaultPolicy(policy =>
-		{
-			policy.WithOrigins(builder.Configuration.GetRequiredSection("AllowedOrigins").GetChildren()
-				.Select(s => s.Value!).ToArray());
-			policy.AllowCredentials();
-			policy.AllowAnyHeader();
-			policy.AllowAnyMethod();
-		});
-	});
-
-	builder.Services.AddResponseCaching();
-
-	var app = builder.Build();
-
-	await PubNetContext.RunMigrations(app.Services);
-
+void ConfigureHttpPipeline(WebApplication app)
+{
 	app.UsePathBase("/api");
 
 	app.UseSerilogRequestLogging(options =>
@@ -183,20 +266,4 @@ try
 	app.UseAuthorization();
 
 	app.MapControllers();
-
-	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
-	app.Logger.LogInformation("Application started");
-
-	await app.RunAsync();
-}
-catch (Exception ex)
-{
-	if (ex is HostAbortedException)
-		Log.Warning("{Message}", ex.Message);
-	else
-		Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-	Log.CloseAndFlush();
 }
