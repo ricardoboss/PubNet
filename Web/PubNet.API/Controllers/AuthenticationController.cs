@@ -10,15 +10,11 @@ namespace PubNet.API.Controllers;
 [Tags("Authentication")]
 public class AuthenticationController(IAccessTokenService accessTokenService, IAccountService accountService, IAuthProvider authProvider) : ControllerBase
 {
-	private string IpAddress => HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-
-	private string UserAgent => Request.Headers.UserAgent.ToString();
-
 	[HttpPost]
 	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
 	public Task<TokenCreatedDto> CreateLoginToken(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
-		return accessTokenService.CreateLoginTokenAsync(dto, IpAddress, UserAgent, cancellationToken);
+		return accessTokenService.CreateLoginTokenAsync(dto, cancellationToken);
 	}
 
 	[Authorize]
@@ -28,7 +24,7 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	{
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
 
-		return await accessTokenService.CreatePersonalAccessTokenAsync(identity, dto, IpAddress, UserAgent, cancellationToken);
+		return await accessTokenService.CreatePersonalAccessTokenAsync(identity, dto, cancellationToken);
 	}
 
 	[HttpPost]

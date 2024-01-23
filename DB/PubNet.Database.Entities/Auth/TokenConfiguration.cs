@@ -38,5 +38,14 @@ public class TokenConfiguration : IEntityTypeConfiguration<Token>
 		// https://stackoverflow.com/a/166157/5107884
 		builder.Property(t => t.IpAddress)
 			.HasMaxLength(45);
+
+		builder.Property(t => t.DeviceType)
+			.HasMaxLength(100);
+
+		builder.Property(t => t.Browser)
+			.HasMaxLength(100);
+
+		builder.Property(t => t.Platform)
+			.HasMaxLength(100);
 	}
 }

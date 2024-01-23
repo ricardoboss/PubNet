@@ -12,7 +12,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 {
 	private static InvalidCredentialException InvalidCredentials => new("The given credentials are incorrect.");
 
-	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var identity = await identityDao.TryFindByEmailAsync(dto.Email, cancellationToken);
 		if (identity is null)
@@ -25,7 +25,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 		var lifetime = TimeSpan.FromDays(90); // TODO: Make configurable
 		string[] scopes = ["all"]; // TODO: replace with actual scopes
 
-		var token = await tokenDmo.CreateTokenAsync(identity, loginTokenName, ipAddress, userAgent, scopes, lifetime, cancellationToken);
+		var token = await tokenDmo.CreateTokenAsync(identity, loginTokenName, scopes, lifetime, cancellationToken);
 
 		var jwt = jwtFactory.Create(token);
 
@@ -36,11 +36,11 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 		};
 	}
 
-	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(Identity owner, CreatePersonalAccessTokenDto dto, string ipAddress, string userAgent, CancellationToken cancellationToken = default)
+	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(Identity owner, CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var lifetime = TimeSpan.FromDays(dto.LifetimeInDays);
 
-		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, ipAddress, userAgent, dto.Scopes, lifetime, cancellationToken);
+		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, dto.Scopes, lifetime, cancellationToken);
 
 		var jwt = jwtFactory.Create(token);
 

@@ -20,6 +20,12 @@ public class Token
 
 	public string UserAgent { get; set; } = null!;
 
+	public string DeviceType { get; set; } = null!;
+
+	public string Browser { get; set; } = null!;
+
+	public string Platform { get; set; } = null!;
+
 	public string Name { get; set; } = null!;
 
 	public string[] Scopes { get; set; } = null!;

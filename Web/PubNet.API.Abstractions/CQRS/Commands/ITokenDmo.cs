@@ -6,6 +6,6 @@ public interface ITokenDmo
 {
 	const int TokenLength = 32;
 
-	Task<Token> CreateTokenAsync(Identity owner, string name, string ipAddress, string userAgent, string[] scopes,
+	Task<Token> CreateTokenAsync(Identity owner, string name, string[] scopes,
 		TimeSpan lifetime, CancellationToken cancellationToken = default);
 }
