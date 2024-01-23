@@ -6,7 +6,7 @@ namespace PubNet.API.Services.Packages.Nuget;
 
 public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemplateGenerator actionTemplateGenerator) : IKnownUrlsProvider
 {
-	private readonly Lazy<string> _baseUrl = new(() =>
+	private readonly Lazy<string> baseUrl = new(() =>
 	{
 		var request = contextAccessor.HttpContext?.Request;
 		if (request is null)
@@ -20,7 +20,7 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 		return $"{scheme}://{host}{pathBase}/";
 	});
 
-	private string BaseUrl => _baseUrl.Value;
+	private string BaseUrl => baseUrl.Value;
 
 	/// <inheritdoc />
 	public string GetRegistrationsBaseUrl()

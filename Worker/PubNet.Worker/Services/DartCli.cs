@@ -5,20 +5,20 @@ namespace PubNet.Worker.Services;
 
 public class DartCli
 {
-	private readonly ILogger<DartCli> _logger;
-	private string? _dartBinary;
+	private readonly ILogger<DartCli> logger;
+	private string? dartBinary;
 
 	public DartCli(ILogger<DartCli> logger)
 	{
-		_logger = logger;
+		this.logger = logger;
 	}
 
 	private async Task<string> FindDartBinaryAsync(CancellationToken cancellationToken = default)
 	{
-		if (_dartBinary is not null)
-			return _dartBinary;
+		if (dartBinary is not null)
+			return dartBinary;
 
-		async Task<string> RunProcess(string findBin, string dartBin)
+		async Task<string> ConfigureRunProcess(string findBin, string dartBin)
 		{
 			var process = Process.Start(new ProcessStartInfo
 			{
@@ -44,15 +44,15 @@ public class DartCli
 		}
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			_dartBinary = await RunProcess("where.exe", "dart.bat");
+			dartBinary = await ConfigureRunProcess("where.exe", "dart.bat");
 		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			_dartBinary = await RunProcess("which", "dart");
+			dartBinary = await ConfigureRunProcess("which", "dart");
 		else
 			throw new NotSupportedException("Your platform is not supported.");
 
-		Debug.Assert(_dartBinary is not null, "_dartBinary is not null");
+		Debug.Assert(dartBinary is not null, "dartBinary is not null");
 
-		return _dartBinary;
+		return dartBinary;
 	}
 
 	public async Task<int> Format(string folder, string workingDir, CancellationToken cancellationToken = default)
@@ -76,7 +76,7 @@ public class DartCli
 			UseShellExecute = true,
 		};
 
-		_logger.LogTrace("Invoking dart binary with {Command} in {WorkingDirectory}", command, workingDirectory);
+		logger.LogTrace("Invoking dart binary with {Command} in {WorkingDirectory}", command, workingDirectory);
 
 		using var proc = Process.Start(psi);
 		if (proc is null) throw new("Unable to start dart process");

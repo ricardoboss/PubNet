@@ -5,18 +5,18 @@ namespace PubNet.BlobStorage.Extensions.Builders;
 
 public class ListBucketsBuilder(IBlobStorage storage) : IArgsBuilder
 {
-	private string? _pattern;
+	private string? pattern;
 
-	public ListBucketsBuilder WithPattern(string pattern)
+	public ListBucketsBuilder WithPattern(string newPattern)
 	{
-		_pattern = pattern;
+		pattern = newPattern;
 
 		return this;
 	}
 
 	public IAsyncEnumerable<IBucketItem> RunAsync(CancellationToken cancellationToken = default)
 	{
-		var args = new ListBucketsArgs(_pattern);
+		var args = new ListBucketsArgs(pattern);
 
 		return storage.ListBucketsAsync(args, cancellationToken);
 	}

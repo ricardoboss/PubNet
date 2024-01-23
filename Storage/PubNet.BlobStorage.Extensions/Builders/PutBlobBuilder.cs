@@ -5,54 +5,54 @@ namespace PubNet.BlobStorage.Extensions.Builders;
 
 public class PutBlobBuilder(IBlobStorage storage) : IArgsBuilder
 {
-	private string? _bucketName;
-	private string? _blobName;
-	private string? _contentType;
-	private Stream? _contentStream;
+	private string? bucketName;
+	private string? blobName;
+	private string? contentType;
+	private Stream? contentStream;
 
-	public PutBlobBuilder WithBucketName(string bucketName)
+	public PutBlobBuilder WithBucketName(string name)
 	{
-		_bucketName = bucketName;
+		bucketName = name;
 
 		return this;
 	}
 
-	public PutBlobBuilder WithBlobName(string blobName)
+	public PutBlobBuilder WithBlobName(string name)
 	{
-		_blobName = blobName;
+		blobName = name;
 
 		return this;
 	}
 
-	public PutBlobBuilder WithContentType(string contentType)
+	public PutBlobBuilder WithContentType(string newContentType)
 	{
-		_contentType = contentType;
+		contentType = newContentType;
 
 		return this;
 	}
 
-	public PutBlobBuilder WithContentStream(Stream contentStream)
+	public PutBlobBuilder WithContentStream(Stream newContentStream)
 	{
-		_contentStream = contentStream;
+		contentStream = newContentStream;
 
 		return this;
 	}
 
 	public Task<string> RunAsync(CancellationToken cancellationToken = default)
 	{
-		if (string.IsNullOrWhiteSpace(_bucketName))
+		if (string.IsNullOrWhiteSpace(bucketName))
 			throw new MissingBucketNameException("The bucket name was empty or whitespace but is required.");
 
-		if (string.IsNullOrWhiteSpace(_blobName))
+		if (string.IsNullOrWhiteSpace(blobName))
 			throw new MissingBlobNameException("The blob name was empty or whitespace but is required.");
 
-		if (string.IsNullOrWhiteSpace(_contentType))
+		if (string.IsNullOrWhiteSpace(contentType))
 			throw new MissingBlobContentTypeException("The content type was empty or whitespace but is required.");
 
-		if (_contentStream is null)
+		if (contentStream is null)
 			throw new MissingBlobContentStreamException("The content stream was null but is required.");
 
-		var args = new PutBlobArgs(_bucketName, _blobName, _contentType, _contentStream);
+		var args = new PutBlobArgs(bucketName, blobName, contentType, contentStream);
 
 		return storage.PutBlobAsync(args, cancellationToken);
 	}

@@ -7,7 +7,7 @@ public class FlutterUpgradeTask : BaseScheduledWorkerTask
 {
 	private static readonly TimeSpan MaxBackOffInterval = TimeSpan.FromDays(3);
 
-	private ILogger<FlutterUpgradeTask>? _logger;
+	private ILogger<FlutterUpgradeTask>? maybeLogger;
 
 	/// <inheritdoc />
 	public FlutterUpgradeTask(TimeSpan interval) : base(interval, DateTime.Now, nameof(FlutterUpgradeTask), true)
@@ -17,13 +17,13 @@ public class FlutterUpgradeTask : BaseScheduledWorkerTask
 	/// <inheritdoc />
 	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
-		_logger ??= services.GetRequiredService<ILogger<FlutterUpgradeTask>>();
+		maybeLogger ??= services.GetRequiredService<ILogger<FlutterUpgradeTask>>();
 
-		var upgradeResult = await RunFlutterCommand(_logger, "upgrade", cancellationToken);
+		var upgradeResult = await RunFlutterCommand(maybeLogger, "upgrade", cancellationToken);
 		if (!upgradeResult.IsSuccess())
 			return upgradeResult;
 
-		return await RunFlutterCommand(_logger, "precache", cancellationToken);
+		return await RunFlutterCommand(maybeLogger, "precache", cancellationToken);
 	}
 
 	private async Task<WorkerTaskResult> RunFlutterCommand(ILogger logger, string command, CancellationToken cancellationToken = default)

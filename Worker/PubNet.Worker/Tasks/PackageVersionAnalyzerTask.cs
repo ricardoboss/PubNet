@@ -11,9 +11,9 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 	public readonly string Package;
 	public readonly string Version;
 
-	private PubNetContext? _db;
-	private ILogger<PackageVersionAnalyzerTask>? _logger;
-	private WorkerTaskQueue? _taskQueue;
+	private PubNetContext? maybeDb;
+	private ILogger<PackageVersionAnalyzerTask>? maybeLogger;
+	private WorkerTaskQueue? maybeTaskQueue;
 
 	public PackageVersionAnalyzerTask(string package, string version) : base($"{nameof(PackageVersionAnalyzerTask)} for {package} {version}")
 	{
@@ -23,16 +23,16 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
-		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
-		_logger ??= services.GetRequiredService<ILogger<PackageVersionAnalyzerTask>>();
-		_taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
+		maybeDb ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		maybeLogger ??= services.GetRequiredService<ILogger<PackageVersionAnalyzerTask>>();
+		maybeTaskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
-		var package = await _db.DartPackages
+		var package = await maybeDb.DartPackages
 			.Include(p => p.Versions)
 			.FirstOrDefaultAsync(p => p.Name == Package, cancellationToken);
 		if (package is null)
 		{
-			_logger.LogError("Could not find package {PackageName} for pubspec.yaml analysis", Package);
+			maybeLogger.LogError("Could not find package {PackageName} for pubspec.yaml analysis", Package);
 
 			return WorkerTaskResult.Failed;
 		}
@@ -40,18 +40,18 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		var version = package.Versions.FirstOrDefault(v => v.Version == Version);
 		if (version is null)
 		{
-			_logger.LogError("Could not find package {PackageName} version {PackageVersion} for pubspec.yaml analysis", Package, Version);
+			maybeLogger.LogError("Could not find package {PackageName} version {PackageVersion} for pubspec.yaml analysis", Package, Version);
 
 			return WorkerTaskResult.Failed;
 		}
 
-		var analysis = await _db.DartPackageVersionAnalyses.FirstOrDefaultAsync(a => a.PackageVersion == version,
+		var analysis = await maybeDb.DartPackageVersionAnalyses.FirstOrDefaultAsync(a => a.PackageVersion == version,
 			cancellationToken);
-		if (analysis is null) return await CreateAnalysis(version, _db, _taskQueue, _logger, cancellationToken);
+		if (analysis is null) return await CreateAnalysis(version, maybeDb, maybeTaskQueue, maybeLogger, cancellationToken);
 
-		_logger.LogTrace("Updating existing analysis for {PackageName} {PackageVersion}", Package, Version);
+		maybeLogger.LogTrace("Updating existing analysis for {PackageName} {PackageVersion}", Package, Version);
 
-		return await UpdateAnalysis(analysis, _db, _taskQueue, _logger, cancellationToken);
+		return await UpdateAnalysis(analysis, maybeDb, maybeTaskQueue, maybeLogger, cancellationToken);
 	}
 
 	private async Task<WorkerTaskResult> CreateAnalysis(DartPackageVersion version, PubNetContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)

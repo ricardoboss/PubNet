@@ -8,9 +8,9 @@ namespace PubNet.Worker.Tasks;
 
 public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 {
-	private PubNetContext? _db;
-	private ILogger<MissingPackageVersionAnalysisQueuingTask>? _logger;
-	private WorkerTaskQueue? _taskQueue;
+	private PubNetContext? db;
+	private ILogger<MissingPackageVersionAnalysisQueuingTask>? logger;
+	private WorkerTaskQueue? taskQueue;
 
 	public MissingPackageVersionAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
 	{
@@ -21,29 +21,29 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,
 		CancellationToken cancellationToken = default)
 	{
-		_logger ??= services.GetRequiredService<ILogger<MissingPackageVersionAnalysisQueuingTask>>();
-		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
-		_taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
+		logger ??= services.GetRequiredService<ILogger<MissingPackageVersionAnalysisQueuingTask>>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
 		var anyFailed = false;
 		try
 		{
-			await EnqueueMissingAnalyses(_db, _logger, _taskQueue, cancellationToken);
+			await EnqueueMissingAnalyses(db, logger, taskQueue, cancellationToken);
 		}
 		catch (Exception e)
 		{
 			anyFailed = true;
-			_logger.LogError(e, "Failed to enqueue missing analyses");
+			logger.LogError(e, "Failed to enqueue missing analyses");
 		}
 
 		try
 		{
-			await EnqueueIncompleteAnalyses(_db, _logger, _taskQueue, cancellationToken);
+			await EnqueueIncompleteAnalyses(db, logger, taskQueue, cancellationToken);
 		}
 		catch (Exception e)
 		{
 			anyFailed = true;
-			_logger.LogError(e, "Failed to enqueue incomplete analyses");
+			logger.LogError(e, "Failed to enqueue incomplete analyses");
 		}
 
 		return anyFailed ? WorkerTaskResult.FailedRecoverable : WorkerTaskResult.Requeue;

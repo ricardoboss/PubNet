@@ -5,21 +5,21 @@ namespace PubNet.BlobStorage.Extensions.Builders;
 
 public class GetBucketBuilder(IBlobStorage storage) : IArgsBuilder
 {
-	private string? _bucketName;
+	private string? bucketName;
 
-	public GetBucketBuilder WithBucketName(string bucketName)
+	public GetBucketBuilder WithBucketName(string name)
 	{
-		_bucketName = bucketName;
+		bucketName = name;
 
 		return this;
 	}
 
 	public Task<IBucketItem> RunAsync(CancellationToken cancellationToken = default)
 	{
-		if (string.IsNullOrWhiteSpace(_bucketName))
+		if (string.IsNullOrWhiteSpace(bucketName))
 			throw new MissingBucketNameException("The bucket name was empty or whitespace but is required.");
 
-		var args = new GetBucketArgs(_bucketName);
+		var args = new GetBucketArgs(bucketName);
 
 		return storage.GetBucketAsync(args, cancellationToken);
 	}

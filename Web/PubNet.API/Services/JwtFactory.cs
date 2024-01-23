@@ -11,21 +11,21 @@ namespace PubNet.API.Services;
 
 public class JwtFactory : IJwtFactory
 {
-	private readonly string _audience;
-	private readonly string _issuer;
-	private readonly JwtSecurityTokenHandler _jstHandler;
-	private readonly JwtHeader _jwtHeader;
+	private readonly string audience;
+	private readonly string issuer;
+	private readonly JwtSecurityTokenHandler jstHandler;
+	private readonly JwtHeader jwtHeader;
 
 	public JwtFactory(IConfiguration configuration)
 	{
-		_jstHandler = new();
+		jstHandler = new();
 
 		var secretKey = GetSecretKey(configuration);
 		var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-		_jwtHeader = new(credentials);
+		jwtHeader = new(credentials);
 
-		_issuer = GetIssuer(configuration);
-		_audience = GetAudience(configuration);
+		issuer = GetIssuer(configuration);
+		audience = GetAudience(configuration);
 	}
 
 	public static SecurityKey GetSecretKey(IConfiguration configuration)
@@ -54,17 +54,17 @@ public class JwtFactory : IJwtFactory
 		};
 
 		var jst = new JwtSecurityToken(
-			_jwtHeader,
+			jwtHeader,
 			new(
-				_issuer,
-				_audience,
+				issuer,
+				audience,
 				claims,
 				DateTimeOffset.UtcNow.DateTime,
 				token.ExpiresAtUtc.DateTime
 			)
 		);
 
-		var jwtValue = _jstHandler.WriteToken(jst)!;
+		var jwtValue = jstHandler.WriteToken(jst)!;
 
 		return JsonWebToken.From(jwtValue);
 	}

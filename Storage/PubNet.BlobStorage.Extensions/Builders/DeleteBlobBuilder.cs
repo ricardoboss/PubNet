@@ -5,32 +5,32 @@ namespace PubNet.BlobStorage.Extensions.Builders;
 
 public class DeleteBlobBuilder(IBlobStorage storage) : IArgsBuilder
 {
-	private string? _bucketName;
-	private string? _blobName;
+	private string? bucketName;
+	private string? blobName;
 
-	public DeleteBlobBuilder WithBucketName(string bucketName)
+	public DeleteBlobBuilder WithBucketName(string name)
 	{
-		_bucketName = bucketName;
+		this.bucketName = name;
 
 		return this;
 	}
 
-	public DeleteBlobBuilder WithBlobName(string blobName)
+	public DeleteBlobBuilder WithBlobName(string name)
 	{
-		_blobName = blobName;
+		blobName = name;
 
 		return this;
 	}
 
 	public Task<bool> RunAsync(CancellationToken cancellationToken = default)
 	{
-		if (string.IsNullOrWhiteSpace(_bucketName))
+		if (string.IsNullOrWhiteSpace(bucketName))
 			throw new MissingBucketNameException("The bucket name was empty or whitespace but is required.");
 
-		if (string.IsNullOrWhiteSpace(_blobName))
+		if (string.IsNullOrWhiteSpace(blobName))
 			throw new MissingBlobNameException("The blob name was empty or whitespace but is required.");
 
-		var args = new DeleteBlobArgs(_bucketName, _blobName);
+		var args = new DeleteBlobArgs(bucketName, blobName);
 
 		return storage.DeleteBlobAsync(args, cancellationToken);
 	}

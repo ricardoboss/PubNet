@@ -8,61 +8,61 @@ namespace PubNet.Worker.Tasks;
 
 public class ReadmeAnalyzerTask : BaseWorkerTask
 {
-	private readonly DartPackageVersionAnalysis _analysis;
-	private readonly string _package;
-	private readonly string _version;
+	private readonly DartPackageVersionAnalysis analysis;
+	private readonly string package;
+	private readonly string version;
 
-	private ILogger<ReadmeAnalyzerTask>? _logger;
-	private IArchiveStorage? _archiveStorage;
-	private PubNetContext? _db;
+	private ILogger<ReadmeAnalyzerTask>? logger;
+	private IArchiveStorage? archiveStorage;
+	private PubNetContext? db;
 
 	public ReadmeAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(ReadmeAnalyzerTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
-		_analysis = analysis;
+		this.analysis = analysis;
 
-		_package = _analysis.PackageVersion.Package.Name;
-		_version = _analysis.PackageVersion.Version;
+		package = this.analysis.PackageVersion.Package.Name;
+		version = this.analysis.PackageVersion.Version;
 	}
 
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
-		_logger ??= services.GetRequiredService<ILogger<ReadmeAnalyzerTask>>();
-		_archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
-		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		logger ??= services.GetRequiredService<ILogger<ReadmeAnalyzerTask>>();
+		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 
-		await _db.Entry(_analysis).ReloadAsync(cancellationToken);
+		await db.Entry(analysis).ReloadAsync(cancellationToken);
 
-		if (_analysis.ReadmeFound is not null) return WorkerTaskResult.Done;
+		if (analysis.ReadmeFound is not null) return WorkerTaskResult.Done;
 
-		var workingDir = Path.Combine(Path.GetTempPath(), "PubNet", "Analysis", nameof(ReadmeAnalyzerTask), _package, _version);
+		var workingDir = Path.Combine(Path.GetTempPath(), "PubNet", "Analysis", nameof(ReadmeAnalyzerTask), package, version);
 
-		_logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(ReadmeAnalyzerTask), workingDir);
+		logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(ReadmeAnalyzerTask), workingDir);
 
 		// FIXME: author
-		await using (var archiveStream = await _archiveStorage.ReadArchiveAsync("test", _package, _version, cancellationToken))
+		await using (var archiveStream = await archiveStorage.ReadArchiveAsync("test", package, version, cancellationToken))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}
 
 		try
 		{
-			_logger.LogTrace("Looking for a README file in package {PackageName} version {PackageVersion}", _package,
-				_version);
+			logger.LogTrace("Looking for a README file in package {PackageName} version {PackageVersion}", package,
+				version);
 
 			var readmePath = await PathHelper.GetCaseInsensitivePath(workingDir, "readme.md", cancellationToken);
 			if (readmePath is null || !File.Exists(readmePath))
 			{
-				_analysis.ReadmeFound = false;
+				analysis.ReadmeFound = false;
 
-				await _db.SaveChangesAsync(cancellationToken);
+				await db.SaveChangesAsync(cancellationToken);
 
 				return WorkerTaskResult.Done;
 			}
 
-			_analysis.ReadmeFound = true;
-			_analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
+			analysis.ReadmeFound = true;
+			analysis.ReadmeText = await File.ReadAllTextAsync(readmePath, cancellationToken);
 
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			return WorkerTaskResult.Done;
 		}

@@ -9,53 +9,53 @@ namespace PubNet.Worker.Tasks;
 
 public class FormatAnalyzerTask : BaseWorkerTask
 {
-	private readonly DartPackageVersionAnalysis _analysis;
-	private readonly string _package;
-	private readonly string _version;
+	private readonly DartPackageVersionAnalysis analysis;
+	private readonly string package;
+	private readonly string version;
 
-	private ILogger<FormatAnalyzerTask>? _logger;
-	private IArchiveStorage? _archiveStorage;
-	private DartCli? _dart;
-	private PubNetContext? _db;
+	private ILogger<FormatAnalyzerTask>? logger;
+	private IArchiveStorage? archiveStorage;
+	private DartCli? dart;
+	private PubNetContext? db;
 
 	public FormatAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(FormatAnalyzerTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
-		_analysis = analysis;
+		this.analysis = analysis;
 
-		_package = _analysis.PackageVersion.Package.Name;
-		_version = _analysis.PackageVersion.Version;
+		package = this.analysis.PackageVersion.Package.Name;
+		version = this.analysis.PackageVersion.Version;
 	}
 
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
-		_logger ??= services.GetRequiredService<ILogger<FormatAnalyzerTask>>();
-		_archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
-		_dart ??= services.GetRequiredService<DartCli>();
-		_db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		logger ??= services.GetRequiredService<ILogger<FormatAnalyzerTask>>();
+		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
+		dart ??= services.GetRequiredService<DartCli>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 
-		await _db.Entry(_analysis).ReloadAsync(cancellationToken);
+		await db.Entry(analysis).ReloadAsync(cancellationToken);
 
-		if (_analysis.Formatted is not null) return WorkerTaskResult.Done;
+		if (analysis.Formatted is not null) return WorkerTaskResult.Done;
 
-		var workingDir = Path.Combine(Path.GetTempPath(), "PubNet", "Analysis", nameof(FormatAnalyzerTask), _package, _version);
+		var workingDir = Path.Combine(Path.GetTempPath(), "PubNet", "Analysis", nameof(FormatAnalyzerTask), package, version);
 
-		_logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(FormatAnalyzerTask), workingDir);
+		logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(FormatAnalyzerTask), workingDir);
 
 		// FIXME: author
-		await using (var archiveStream = await _archiveStorage.ReadArchiveAsync("test", _package, _version, cancellationToken))
+		await using (var archiveStream = await archiveStorage.ReadArchiveAsync("test", package, version, cancellationToken))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}
 
 		try
 		{
-			_logger.LogTrace("Check if package {PackageName} version {PackageVersion} is formatted", _package, _version);
+			logger.LogTrace("Check if package {PackageName} version {PackageVersion} is formatted", package, version);
 
-			var exitCode = await _dart.Format("lib", workingDir, cancellationToken);
+			var exitCode = await dart.Format("lib", workingDir, cancellationToken);
 
-			_analysis.Formatted = exitCode == 0;
+			analysis.Formatted = exitCode == 0;
 
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			return WorkerTaskResult.Done;
 		}
