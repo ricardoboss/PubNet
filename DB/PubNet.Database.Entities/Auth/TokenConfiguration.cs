@@ -13,9 +13,6 @@ public class TokenConfiguration : IEntityTypeConfiguration<Token>
 		builder.HasIndex(t => t.Value)
 			.IsUnique();
 
-		builder.HasIndex(t => new { t.IdentityId, t.Name })
-			.IsUnique();
-
 		builder.HasOne<Identity>(t => t.Identity)
 			.WithMany(i => i.Tokens)
 			.HasForeignKey(t => t.IdentityId)

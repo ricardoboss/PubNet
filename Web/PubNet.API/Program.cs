@@ -94,6 +94,8 @@ void ConfigureServices(WebApplicationBuilder webApplicationBuilder)
 
 void ConfigureHttpServices(IHostApplicationBuilder builder)
 {
+	builder.Services.AddDetection();
+
 	builder.Services.AddResponseCaching();
 }
 
@@ -274,6 +276,8 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseHttpsRedirection();
 
 	app.UseCors();
+
+	app.UseDetection();
 
 	app.UseResponseCaching();
 
