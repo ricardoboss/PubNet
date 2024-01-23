@@ -221,7 +221,7 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 	builder.Services.AddScoped<IPasswordVerifier, PasswordVerifier>();
 	builder.Services.AddScoped<IAccountService, AccountService>();
 	builder.Services.AddScoped<IAuthProvider, HttpAuthProvider>();
-	builder.Services.AddScoped<IClientInformationProvider, SimpleClientInformationProvider>();
+	builder.Services.AddScoped<IClientInformationProvider, WangkanaiDetectionClientInformationProvider>();
 }
 
 void ConfigureDatabase(WebApplicationBuilder builder)
