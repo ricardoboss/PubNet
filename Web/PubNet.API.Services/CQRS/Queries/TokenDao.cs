@@ -13,6 +13,9 @@ public class TokenDao(PubNetContext context) : ITokenDao
 		if (token is null)
 			throw new TokenNotFoundException(id);
 
+		if (token.ExpiresAtUtc < DateTimeOffset.UtcNow)
+			throw new TokenExpiredException(token);
+
 		return token;
 	}
 }
