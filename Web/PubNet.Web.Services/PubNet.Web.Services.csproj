@@ -7,7 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Vogen" Version="3.0.24" />
+      <ProjectReference Include="..\PubNet.Web.Abstractions\PubNet.Web.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
     </ItemGroup>
 
 </Project>

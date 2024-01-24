@@ -1,4 +1,5 @@
 using PubNet.Database.Entities.Auth;
+using PubNet.Web.Abstractions.Models;
 
 namespace PubNet.API.Abstractions.CQRS.Commands;
 
@@ -6,6 +7,6 @@ public interface ITokenDmo
 {
 	const int TokenLength = 32;
 
-	Task<Token> CreateTokenAsync(Identity owner, string name, string[] scopes,
+	Task<Token> CreateTokenAsync(Identity owner, string name, IEnumerable<Scope> scopes,
 		TimeSpan lifetime, CancellationToken cancellationToken = default);
 }

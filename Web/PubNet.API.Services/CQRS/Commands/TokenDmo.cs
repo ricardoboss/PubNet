@@ -2,6 +2,7 @@
 using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
+using PubNet.Web.Abstractions.Models;
 
 namespace PubNet.API.Services.CQRS.Commands;
 
@@ -10,17 +11,20 @@ public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerato
 	public async Task<Token> CreateTokenAsync(
 		Identity owner,
 		string name,
-		string[] scopes,
+		IEnumerable<Scope> scopes,
 		TimeSpan lifetime,
 		CancellationToken cancellationToken = default
 	)
 	{
+		var tokenValue = tokenGenerator.GenerateSecureToken(ITokenDmo.TokenLength);
+		var scopesArray = scopes.Select(s => s.Value!).ToArray();
+
 		var token = new Token
 		{
 			Identity = owner,
 			Name = name,
-			Value = tokenGenerator.GenerateSecureToken(ITokenDmo.TokenLength),
-			Scopes = scopes,
+			Value = tokenValue,
+			Scopes = scopesArray,
 			IpAddress = clientInformationProvider.IpAddress,
 			UserAgent = clientInformationProvider.UserAgent,
 			DeviceType = clientInformationProvider.DeviceType,

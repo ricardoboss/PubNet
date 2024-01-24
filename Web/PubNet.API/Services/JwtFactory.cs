@@ -15,7 +15,7 @@ public class JwtFactory : IJwtFactory
 	private readonly JwtSecurityTokenHandler _jstHandler;
 	private readonly JwtHeader _jwtHeader;
 
-	public JwtFactory(IConfiguration configuration, ILogger<JwtFactory> logger)
+	public JwtFactory(IConfiguration configuration)
 	{
 		_jstHandler = new();
 
@@ -49,7 +49,7 @@ public class JwtFactory : IJwtFactory
 		var claims = new List<Claim>
 		{
 			new(JwtClaims.Token, token.Value),
-			new(JwtClaims.Scope, string.Join(" ", token.Scopes)),
+			new(JwtClaims.Scope, string.Join(JwtClaims.ScopeSeparator, token.Scopes)),
 		};
 
 		var jst = new JwtSecurityToken(

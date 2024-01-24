@@ -29,6 +29,8 @@ using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
 using PubNet.Web.Abstractions;
+using PubNet.Web.Abstractions.Services;
+using PubNet.Web.Services;
 using Serilog;
 using SignedUrl.Extensions;
 
@@ -235,6 +237,7 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 	builder.Services.AddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
 	builder.Services.AddSingleton<ISecureTokenGenerator, SecureTokenGenerator>();
 	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
+	builder.Services.AddSingleton<IGuard, Guard>();
 
 	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
 	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
