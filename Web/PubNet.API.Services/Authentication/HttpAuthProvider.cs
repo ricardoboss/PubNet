@@ -4,6 +4,7 @@ using PubNet.API.Abstractions.Authentication;
 using PubNet.Database.Context;
 using PubNet.Database.Entities;
 using PubNet.Database.Entities.Auth;
+using PubNet.Web.Abstractions;
 
 namespace PubNet.API.Services.Authentication;
 
@@ -12,7 +13,7 @@ public class HttpAuthProvider(IHttpContextAccessor contextAccessor, PubNetContex
 	private string? TryGetTokenValue()
 	{
 		var httpContext = contextAccessor.HttpContext;
-		var principal = httpContext?.User.FindFirst(c => c.Type == "t"); // TODO: move this somewhere central
+		var principal = httpContext?.User.FindFirst(c => c.Type == JwtClaims.Token); // TODO: move this somewhere central
 		return principal?.Value;
 	}
 

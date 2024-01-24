@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Authentication;
@@ -137,6 +138,29 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 		});
 
 		o.InferSecuritySchemes();
+
+		// o.AddSecurityDefinition("Bearer", new()
+		// {
+		// 	In = ParameterLocation.Header,
+		// 	Description = "Please insert JWT with Bearer into field",
+		// 	Name = "Authorization",
+		// 	Type = SecuritySchemeType.ApiKey
+		// });
+
+		o.AddSecurityRequirement(new()
+		{
+			{
+				new()
+				{
+					Reference = new()
+					{
+						Type = ReferenceType.SecurityScheme,
+						Id = "Bearer",
+					},
+				},
+				Array.Empty<string>()
+			},
+		});
 	});
 }
 
@@ -262,17 +286,6 @@ void ConfigureHttpPipeline(WebApplication app)
 		};
 	});
 
-	// Configure the HTTP request pipeline.
-	if (app.Environment.IsDevelopment())
-	{
-		app.UseSwagger();
-		app.UseSwaggerUI(c =>
-		{
-			c.SwaggerEndpoint("/swagger/v1/swagger.json", "PubNet API v1");
-			c.EnableTryItOutByDefault();
-		});
-	}
-
 	app.UseHttpsRedirection();
 
 	app.UseCors();
@@ -287,4 +300,14 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseAuthorization();
 
 	app.MapControllers();
+
+	if (!app.Environment.IsDevelopment())
+		return;
+
+	app.UseSwagger();
+	app.UseSwaggerUI(c =>
+	{
+		c.SwaggerEndpoint("/swagger/v1/swagger.json", "PubNet API v1");
+		c.EnableTryItOutByDefault();
+	});
 }

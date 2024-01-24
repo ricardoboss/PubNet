@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.Database.Entities.Auth;
+using PubNet.Web.Abstractions;
 
 namespace PubNet.API.Services;
 
@@ -13,12 +14,9 @@ public class JwtFactory : IJwtFactory
 	private readonly string _issuer;
 	private readonly JwtSecurityTokenHandler _jstHandler;
 	private readonly JwtHeader _jwtHeader;
-	private readonly ILogger<JwtFactory> _logger;
 
 	public JwtFactory(IConfiguration configuration, ILogger<JwtFactory> logger)
 	{
-		_logger = logger;
-
 		_jstHandler = new();
 
 		var secretKey = GetSecretKey(configuration);
@@ -46,36 +44,12 @@ public class JwtFactory : IJwtFactory
 		return configuration["JWT:Audience"] ?? throw new("Key 'JWT:Audience' is missing in configuration");
 	}
 
-	public string Generate(Token token, DateTimeOffset expireTime)
-	{
-		var claims = new List<Claim>();
-		claims.AddRange(new Claim[]
-		{
-			new("t", token.Value),
-		});
-
-		_logger.LogDebug("Generated new token for {Author} with claims: {Claims}", token.Identity.Author.UserName, claims);
-
-		return _jstHandler.WriteToken(
-			new JwtSecurityToken(
-				_jwtHeader,
-				new(
-					_issuer,
-					_audience,
-					claims,
-					DateTimeOffset.UtcNow.DateTime,
-					expireTime.DateTime
-				)
-			)
-		);
-	}
-
 	public string Create(Token token)
 	{
 		var claims = new List<Claim>
 		{
-			new(IJwtFactory.TokenValueClaim, token.Value),
-			new(IJwtFactory.ScopeClaim, string.Join(" ", token.Scopes)),
+			new(JwtClaims.Token, token.Value),
+			new(JwtClaims.Scope, string.Join(" ", token.Scopes)),
 		};
 
 		var jst = new JwtSecurityToken(
@@ -89,6 +63,6 @@ public class JwtFactory : IJwtFactory
 			)
 		);
 
-		return _jstHandler.WriteToken(jst);
+		return _jstHandler.WriteToken(jst)!;
 	}
 }
