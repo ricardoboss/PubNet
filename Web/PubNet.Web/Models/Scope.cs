@@ -42,13 +42,7 @@ public readonly partial struct Scope
 		return false;
 	}
 
-	public bool EqualsOrIsParentOf(Scope scope)
-	{
-		Debug.Assert(Value != null, nameof(Value) + " != null");
-		Debug.Assert(scope.Value != null, nameof(Value) + " != null");
-
-		return string.Equals(scope.Value, Value, StringComparison.Ordinal) || IsParentOf(scope);
-	}
+	public bool EqualsOrIsParentOf(Scope scope) => Equals(scope) || IsParentOf(scope);
 
 	private static Validation Validate(string input)
 	{
