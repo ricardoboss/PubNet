@@ -28,8 +28,8 @@ using PubNet.Database.Entities.Auth;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
-using PubNet.Web.Abstractions.Services;
-using PubNet.Web.Services;
+using PubNet.Web;
+using PubNet.Web.ServiceInterfaces;
 using Serilog;
 using SignedUrl.Extensions;
 

@@ -2,7 +2,7 @@
 using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions.Models;
+using PubNet.Web.Models;
 
 namespace PubNet.API.Services.CQRS.Commands;
 

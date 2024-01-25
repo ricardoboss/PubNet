@@ -1,6 +1,6 @@
-﻿using PubNet.Web.Abstractions.Models;
+﻿using PubNet.Web.Models;
 
-namespace PubNet.Web.Abstractions.Services;
+namespace PubNet.Web.ServiceInterfaces;
 
 public interface IGuardThrowsBuilder
 {

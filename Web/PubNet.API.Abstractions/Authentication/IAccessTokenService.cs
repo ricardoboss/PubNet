@@ -1,7 +1,7 @@
 using System.Security.Authentication;
 using PubNet.API.DTO.Authentication;
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions.Models;
+using PubNet.Web.Models;
 
 namespace PubNet.API.Abstractions.Authentication;
 

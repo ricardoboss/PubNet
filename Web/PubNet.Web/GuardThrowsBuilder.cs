@@ -1,7 +1,7 @@
-﻿using PubNet.Web.Abstractions.Models;
-using PubNet.Web.Abstractions.Services;
+﻿using PubNet.Web.Models;
+using PubNet.Web.ServiceInterfaces;
 
-namespace PubNet.Web.Services;
+namespace PubNet.Web;
 
 public class GuardThrowsBuilder(IGuard guard, ScopesClaim claim) : IGuardThrowsBuilder
 {

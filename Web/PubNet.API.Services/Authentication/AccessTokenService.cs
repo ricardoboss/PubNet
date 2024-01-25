@@ -4,8 +4,8 @@ using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.DTO.Authentication;
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions.Models;
-using PubNet.Web.Abstractions.Services;
+using PubNet.Web.Models;
+using PubNet.Web.ServiceInterfaces;
 
 namespace PubNet.API.Services.Authentication;
 

@@ -4,7 +4,7 @@ using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.Services.Extensions;
-using PubNet.Web.Abstractions;
+using PubNet.Web;
 
 namespace PubNet.API.Controllers;
 

@@ -1,4 +1,4 @@
-﻿namespace PubNet.Web.Abstractions.Services;
+﻿namespace PubNet.Web.ServiceInterfaces;
 
 public interface IPasswordVerifier
 {

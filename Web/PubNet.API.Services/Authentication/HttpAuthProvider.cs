@@ -4,7 +4,7 @@ using PubNet.API.Abstractions.Authentication;
 using PubNet.Database.Context;
 using PubNet.Database.Entities;
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions;
+using PubNet.Web;
 
 namespace PubNet.API.Services.Authentication;
 

@@ -1,4 +1,4 @@
-﻿using PubNet.Web.Abstractions.Models;
+﻿using PubNet.Web.Models;
 
 namespace PubNet.API.Attributes;
 

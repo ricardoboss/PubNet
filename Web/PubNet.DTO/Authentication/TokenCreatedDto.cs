@@ -1,4 +1,4 @@
-﻿using PubNet.Web.Abstractions.Models;
+﻿using PubNet.Web.Models;
 using Riok.Mapperly.Abstractions;
 
 namespace PubNet.API.DTO.Authentication;

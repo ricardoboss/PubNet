@@ -1,7 +1,7 @@
-﻿using PubNet.Web.Abstractions.Models;
-using PubNet.Web.Abstractions.Services;
+﻿using PubNet.Web.Models;
+using PubNet.Web.ServiceInterfaces;
 
-namespace PubNet.Web.Services.Extensions;
+namespace PubNet.Web.Extensions;
 
 public static class GuardExtensions
 {

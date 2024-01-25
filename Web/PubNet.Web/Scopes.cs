@@ -1,4 +1,4 @@
-﻿namespace PubNet.Web.Abstractions;
+﻿namespace PubNet.Web;
 
 public static class Scopes
 {

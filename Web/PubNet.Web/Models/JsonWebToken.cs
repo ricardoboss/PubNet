@@ -1,6 +1,6 @@
 ﻿using Vogen;
 
-namespace PubNet.Web.Abstractions.Models;
+namespace PubNet.Web.Models;
 
 [ValueObject<string>]
 public readonly partial struct JsonWebToken

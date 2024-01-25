@@ -1,7 +1,7 @@
 ﻿using PubNet.API.Attributes;
 using PubNet.API.Services.Extensions;
-using PubNet.Web.Abstractions.Services;
-using PubNet.Web.Services.Extensions;
+using PubNet.Web.Extensions;
+using PubNet.Web.ServiceInterfaces;
 
 namespace PubNet.API.Middlewares;
 

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Vogen;
 
-namespace PubNet.Web.Abstractions.Models;
+namespace PubNet.Web.Models;
 
 [ValueObject<string>(conversions: Conversions.SystemTextJson)]
 [Instance("Any", "*")]
@@ -13,15 +13,15 @@ public readonly partial struct Scope
 
 	public static Scope operator +(Scope left, Scope right)
 	{
-		Debug.Assert(left.Value != null, nameof(left.Value) + " != null");
-		Debug.Assert(right.Value != null, nameof(right.Value) + " != null");
+		Debug.Assert(left.Value != null, nameof(Value) + " != null");
+		Debug.Assert(right.Value != null, nameof(Value) + " != null");
 
 		return From(left.Value + SeparatorChar + right.Value);
 	}
 
 	public static Scope operator +(Scope left, string right)
 	{
-		Debug.Assert(left.Value != null, nameof(left.Value) + " != null");
+		Debug.Assert(left.Value != null, nameof(Value) + " != null");
 
 		return From(left.Value + SeparatorChar + right);
 	}
@@ -29,12 +29,12 @@ public readonly partial struct Scope
 	public bool IsParentOf(Scope scope)
 	{
 		Debug.Assert(Value != null, nameof(Value) + " != null");
-		Debug.Assert(scope.Value != null, nameof(scope.Value) + " != null");
+		Debug.Assert(scope.Value != null, nameof(Value) + " != null");
 
 		var segments = Value.Split(SeparatorChar);
 		var otherSegments = scope.Value.Split(SeparatorChar);
 
-		var minSegments = Math.Min(segments.Length, otherSegments.Length);
+		var minSegments = Math.Min((int)segments.Length, (int)otherSegments.Length);
 		for (var i = 0; i < minSegments; i++)
 			if (!string.Equals(segments[i], otherSegments[i], StringComparison.Ordinal))
 				return segments[i] == Any || otherSegments[i] == Any;
@@ -45,7 +45,7 @@ public readonly partial struct Scope
 	public bool EqualsOrIsParentOf(Scope scope)
 	{
 		Debug.Assert(Value != null, nameof(Value) + " != null");
-		Debug.Assert(scope.Value != null, nameof(scope.Value) + " != null");
+		Debug.Assert(scope.Value != null, nameof(Value) + " != null");
 
 		return string.Equals(scope.Value, Value, StringComparison.Ordinal) || IsParentOf(scope);
 	}

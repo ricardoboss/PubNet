@@ -4,8 +4,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions;
-using PubNet.Web.Abstractions.Models;
+using PubNet.Web;
+using PubNet.Web.Models;
 
 namespace PubNet.API.Services;
 

@@ -1,5 +1,5 @@
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions.Models;
+using PubNet.Web.Models;
 
 namespace PubNet.API.Abstractions.CQRS.Commands;
 

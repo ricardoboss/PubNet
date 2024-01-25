@@ -24,12 +24,12 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
 		<PackageReference Include="Semver" Version="2.3.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="6.0.0" />
 		<PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
 		<PackageReference Include="SignedUrl.Extensions" Version="1.2.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="YamlDotNet" Version="13.7.1" />
+		<PackageReference Include="YamlDotNet" Version="15.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,7 +72,7 @@
       <ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj" />
       <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj" />
-      <ProjectReference Include="..\PubNet.Web.Services\PubNet.Web.Services.csproj" />
+      <ProjectReference Include="..\PubNet.Web\PubNet.Web.csproj" />
 	</ItemGroup>
 
 </Project>
