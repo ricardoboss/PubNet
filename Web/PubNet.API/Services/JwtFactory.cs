@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.Database.Entities.Auth;
 using PubNet.Web.Abstractions;
+using PubNet.Web.Abstractions.Models;
 
 namespace PubNet.API.Services;
 
@@ -44,7 +45,7 @@ public class JwtFactory : IJwtFactory
 		return configuration["JWT:Audience"] ?? throw new("Key 'JWT:Audience' is missing in configuration");
 	}
 
-	public string Create(Token token)
+	public JsonWebToken Create(Token token)
 	{
 		var claims = new List<Claim>
 		{
@@ -63,6 +64,8 @@ public class JwtFactory : IJwtFactory
 			)
 		);
 
-		return _jstHandler.WriteToken(jst)!;
+		var jwtValue = _jstHandler.WriteToken(jst)!;
+
+		return JsonWebToken.From(jwtValue);
 	}
 }

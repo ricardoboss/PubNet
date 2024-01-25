@@ -1,8 +1,13 @@
-﻿namespace PubNet.API.DTO.Authentication;
+﻿using PubNet.Web.Abstractions.Models;
+using Riok.Mapperly.Abstractions;
 
-public class TokenCreatedDto
+namespace PubNet.API.DTO.Authentication;
+
+[Mapper]
+public partial class TokenCreatedDto
 {
-	public required string Token { get; set; }
+	[MapProperty(nameof(JsonWebToken.Value), nameof(Token))]
+	public static partial TokenCreatedDto MapFrom(JsonWebToken token);
 
-	public required DateTimeOffset ExpiresAtUtc { get; set; }
+	public required string Token { get; set; }
 }

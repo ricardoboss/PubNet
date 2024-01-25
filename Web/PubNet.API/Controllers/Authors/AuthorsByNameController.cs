@@ -7,7 +7,7 @@ namespace PubNet.API.Controllers.Authors;
 public class AuthorsByNameController : AuthorsController
 {
 	[HttpGet]
-	public Task<IActionResult> GetAuthorByUsernameAsync(string username, CancellationToken cancellationToken = default)
+	public Task<IActionResult> GetAuthorByUserNameAsync(string username, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

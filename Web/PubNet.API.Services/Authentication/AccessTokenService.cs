@@ -4,7 +4,6 @@ using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.DTO.Authentication;
 using PubNet.Database.Entities.Auth;
-using PubNet.Web.Abstractions;
 using PubNet.Web.Abstractions.Models;
 using PubNet.Web.Abstractions.Services;
 
@@ -14,7 +13,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 {
 	private static InvalidCredentialException InvalidCredentials => new("The given credentials are incorrect.");
 
-	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<JsonWebToken> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var identity = await identityDao.TryFindByEmailAsync(dto.Email, cancellationToken);
 		if (identity is null)
@@ -29,27 +28,15 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 
 		var token = await tokenDmo.CreateTokenAsync(identity, loginTokenName, scopes, lifetime, cancellationToken);
 
-		var jwt = jwtFactory.Create(token);
-
-		return new()
-		{
-			Token = jwt,
-			ExpiresAtUtc = token.ExpiresAtUtc,
-		};
+		return jwtFactory.Create(token);
 	}
 
-	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(Identity owner, CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<JsonWebToken> CreatePersonalAccessTokenAsync(Identity owner, CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var lifetime = TimeSpan.FromDays(dto.LifetimeInDays);
 
 		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, dto.Scopes.Select(Scope.From), lifetime, cancellationToken);
 
-		var jwt = jwtFactory.Create(token);
-
-		return new()
-		{
-			Token = jwt,
-			ExpiresAtUtc = token.ExpiresAtUtc,
-		};
+		return jwtFactory.Create(token);
 	}
 }

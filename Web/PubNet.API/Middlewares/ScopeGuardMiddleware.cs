@@ -13,7 +13,7 @@ public class ScopeGuardMiddleware(IGuard guard) : IMiddleware
 		if (endpoint is not null)
 		{
 			var scopes = endpoint.Metadata
-				.GetOrderedMetadata<ScopeGuardAttribute>()
+				.GetOrderedMetadata<GuardAttribute>()
 				.Select(x => x.Require);
 
 			foreach (var scope in scopes)

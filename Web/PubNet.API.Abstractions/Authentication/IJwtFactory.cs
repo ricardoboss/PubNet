@@ -1,8 +1,9 @@
 ﻿using PubNet.Database.Entities.Auth;
+using PubNet.Web.Abstractions.Models;
 
 namespace PubNet.API.Abstractions.Authentication;
 
 public interface IJwtFactory
 {
-	string Create(Token token);
+	JsonWebToken Create(Token token);
 }
