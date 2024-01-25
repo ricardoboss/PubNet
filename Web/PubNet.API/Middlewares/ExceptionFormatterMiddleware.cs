@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Security.Authentication;
 using PubNet.API.DTO;
+using PubNet.API.Exceptions;
 
 namespace PubNet.API.Middlewares;
 
@@ -28,6 +29,10 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			{
 				$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
 			};
+		}
+		else if (e is ApiException apiException)
+		{
+			context.Response.StatusCode = apiException.StatusCode;
 		}
 		else
 		{

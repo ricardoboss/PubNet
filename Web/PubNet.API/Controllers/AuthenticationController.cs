@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Authentication;
+using PubNet.API.Exceptions.Authentication;
 using PubNet.API.Services.Extensions;
 using PubNet.Web;
 
@@ -10,7 +11,7 @@ namespace PubNet.API.Controllers;
 
 [Route("[controller]")]
 [Tags("Authentication")]
-public class AuthenticationController(IAccessTokenService accessTokenService, IAccountService accountService, IAuthProvider authProvider) : ControllerBase
+public class AuthenticationController(IAccessTokenService accessTokenService, IAccountService accountService, IAuthProvider authProvider, IConfiguration configuration) : ControllerBase
 {
 	[HttpPost("LoginToken")]
 	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
@@ -39,11 +40,20 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	public async Task<AccountCreatedDto> CreateAccount(CreateAccountDto dto, CancellationToken cancellationToken = default)
 	{
+		if (!AreRegistrationsOpen())
+			throw new RegistrationsClosedException();
+
 		var identity = await accountService.CreateAccountAsync(dto, cancellationToken);
 
 		var accountCreatedDto = AccountCreatedDto.MapFrom(identity);
 
 		Response.StatusCode = StatusCodes.Status201Created;
 		return accountCreatedDto;
+	}
+
+	[HttpGet("RegistrationsOpen")]
+	public bool AreRegistrationsOpen()
+	{
+		return configuration.GetValue<bool>("RegistrationsOpen");
 	}
 }
