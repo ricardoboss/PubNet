@@ -34,7 +34,7 @@ public readonly partial struct Scope
 		var segments = Value.Split(SeparatorChar);
 		var otherSegments = scope.Value.Split(SeparatorChar);
 
-		var minSegments = Math.Min((int)segments.Length, (int)otherSegments.Length);
+		var minSegments = Math.Min(segments.Length, otherSegments.Length);
 		for (var i = 0; i < minSegments; i++)
 			if (!string.Equals(segments[i], otherSegments[i], StringComparison.Ordinal))
 				return segments[i] == Any || otherSegments[i] == Any;
