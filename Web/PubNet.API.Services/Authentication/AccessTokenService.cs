@@ -25,7 +25,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 
 		const string loginTokenName = "Login";
 		var lifetime = TimeSpan.FromDays(90); // TODO: Make configurable
-		Scope[] scopes = [Scopes.Any]; // TODO: determine what scopes are needed for website usage
+		Scope[] scopes = [Scope.Any]; // TODO: determine what scopes are needed for website usage
 
 		var token = await tokenDmo.CreateTokenAsync(identity, loginTokenName, scopes, lifetime, cancellationToken);
 

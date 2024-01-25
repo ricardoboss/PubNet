@@ -1,14 +1,13 @@
 using System.Diagnostics;
-using System.Net;
 using System.Security.Authentication;
 using PubNet.API.DTO;
 
 namespace PubNet.API.Middlewares;
 
-public class ExceptionFormatterMiddleware(RequestDelegate next)
+public class ExceptionFormatterMiddleware : IMiddleware
 {
 	[DebuggerStepThrough]
-	public async Task Invoke(HttpContext context)
+	public async Task InvokeAsync(HttpContext context, RequestDelegate next)
 	{
 		try
 		{
@@ -42,9 +41,11 @@ public class ExceptionFormatterMiddleware(RequestDelegate next)
 				{
 					Code = e.GetType().Name,
 					Message = e.Message,
+#if DEBUG
 					StackTrace = e.StackTrace?.Split("\r\n")
 						.SelectMany(x => x.Split("\n"))
 						.ToArray(),
+#endif
 				},
 			},
 			options: DtoGenerationContext.Default.Options,

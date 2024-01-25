@@ -28,7 +28,6 @@ using PubNet.Database.Entities.Auth;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
-using PubNet.Web.Abstractions;
 using PubNet.Web.Abstractions.Services;
 using PubNet.Web.Services;
 using Serilog;
@@ -38,7 +37,7 @@ Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
 	.MinimumLevel.Verbose()
 	.Enrich.FromLogContext()
-	.CreateBootstrapLogger();
+	.CreateBootstrapLogger()!;
 
 try
 {
@@ -72,27 +71,29 @@ finally
 
 return;
 
-void ConfigureServices(WebApplicationBuilder webApplicationBuilder)
+void ConfigureServices(WebApplicationBuilder builder)
 {
-	ConfigureLogging(webApplicationBuilder);
+	ConfigureLogging(builder);
 
-	ConfigureDatabase(webApplicationBuilder);
+	ConfigureDatabase(builder);
 
-	ConfigureAuthentication(webApplicationBuilder);
+	ConfigureAuthentication(builder);
 
-	ConfigureDynamicUrlGeneration(webApplicationBuilder);
+	ConfigureDataServices(builder);
 
-	ConfigurePackageStorage(webApplicationBuilder);
+	ConfigureDynamicUrlGeneration(builder);
 
-	ConfigureNugetServices(webApplicationBuilder);
+	ConfigurePackageStorage(builder);
 
-	ConfigureControllers(webApplicationBuilder);
+	ConfigureNugetServices(builder);
 
-	ConfigureSwagger(webApplicationBuilder);
+	ConfigureControllers(builder);
 
-	ConfigureCors(webApplicationBuilder);
+	ConfigureSwagger(builder);
 
-	ConfigureHttpServices(webApplicationBuilder);
+	ConfigureCors(builder);
+
+	ConfigureHttpServices(builder);
 }
 
 void ConfigureHttpServices(IHostApplicationBuilder builder)
@@ -100,6 +101,8 @@ void ConfigureHttpServices(IHostApplicationBuilder builder)
 	builder.Services.AddDetection();
 
 	builder.Services.AddResponseCaching();
+
+	builder.Services.AddSingleton<ExceptionFormatterMiddleware>();
 }
 
 void ConfigureCors(WebApplicationBuilder builder)
@@ -140,14 +143,6 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 		});
 
 		o.InferSecuritySchemes();
-
-		// o.AddSecurityDefinition("Bearer", new()
-		// {
-		// 	In = ParameterLocation.Header,
-		// 	Description = "Please insert JWT with Bearer into field",
-		// 	Name = "Authorization",
-		// 	Type = SecuritySchemeType.ApiKey
-		// });
 
 		o.AddSecurityRequirement(new()
 		{
@@ -239,6 +234,11 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 	builder.Services.AddSingleton<IGuard, Guard>();
 
+	builder.Services.AddSingleton<ScopeGuardMiddleware>();
+}
+
+void ConfigureDataServices(IHostApplicationBuilder builder)
+{
 	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
 	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
 
@@ -268,7 +268,7 @@ void ConfigureLogging(WebApplicationBuilder builder)
 {
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
-			.ReadFrom.Services(services)
+			.ReadFrom.Services(services)!
 			.Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
 			.Enrich.FromLogContext()
 			.WriteTo.Console()
@@ -291,16 +291,18 @@ void ConfigureHttpPipeline(WebApplication app)
 
 	app.UseHttpsRedirection();
 
+	app.UseMiddleware<ExceptionFormatterMiddleware>();
+
 	app.UseCors();
 
 	app.UseDetection();
 
-	app.UseResponseCaching();
-
-	app.UseMiddleware<ExceptionFormatterMiddleware>();
-
 	app.UseAuthentication();
 	app.UseAuthorization();
+
+	app.UseMiddleware<ScopeGuardMiddleware>();
+
+	app.UseResponseCaching();
 
 	app.MapControllers();
 
