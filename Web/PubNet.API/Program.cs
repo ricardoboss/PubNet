@@ -103,6 +103,7 @@ void ConfigureHttpServices(IHostApplicationBuilder builder)
 	builder.Services.AddResponseCaching();
 
 	builder.Services.AddSingleton<ExceptionFormatterMiddleware>();
+	builder.Services.AddSingleton<PubClientRewriterMiddleware>();
 }
 
 void ConfigureCors(WebApplicationBuilder builder)
@@ -296,6 +297,8 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseCors();
 
 	app.UseDetection();
+
+	app.UseMiddleware<PubClientRewriterMiddleware>();
 
 	app.UseAuthentication();
 	app.UseAuthorization();
