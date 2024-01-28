@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Packages.Dart;
+using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.DTO;
@@ -16,6 +17,12 @@ namespace PubNet.API.DTO;
 #region Packages
 
 #region Dart
+[JsonSerializable(typeof(DartMessageDto))]
+[JsonSerializable(typeof(DartNewVersionDto))]
+[JsonSerializable(typeof(DartPackageIndexDto))]
+[JsonSerializable(typeof(DartPackageVersionDto))]
+[JsonSerializable(typeof(DartPubSpecDto))]
+[JsonSerializable(typeof(DartSuccessDto))]
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
 #endregion
 
