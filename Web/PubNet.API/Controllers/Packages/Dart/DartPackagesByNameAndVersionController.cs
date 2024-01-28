@@ -4,6 +4,7 @@ using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
 using PubNet.API.DTO.Packages.Dart;
+using PubNet.API.DTO.Packages.Dart.Spec;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
@@ -54,7 +55,7 @@ public class DartPackagesByNameAndVersionController(
 	[Authorize]
 	[HttpPatch("Retract")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	public Task<IActionResult> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
+	public Task<DartSuccessDto> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

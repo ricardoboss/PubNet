@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO.Packages.Dart.Spec;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
@@ -8,9 +9,8 @@ namespace PubNet.API.Controllers.Packages.Dart;
 public class DartRootController : DartController
 {
 	[Authorize]
-	[HttpPost("Create")]
-	[ProducesResponseType(StatusCodes.Status302Found)]
-	public Task<IActionResult> CreateNewAsync(CancellationToken cancellationToken = default)
+	[HttpPost("Versions/New")]
+	public Task<DartNewVersionDto> CreateNewAsync(CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
