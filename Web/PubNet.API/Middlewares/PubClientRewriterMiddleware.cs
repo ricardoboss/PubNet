@@ -4,17 +4,28 @@ namespace PubNet.API.Middlewares;
 
 public class PubClientRewriterMiddleware(ILogger<PubClientRewriterMiddleware> logger) : IMiddleware
 {
-	public Task InvokeAsync(HttpContext context, RequestDelegate next)
+	private const string PubContentType = "application/vnd.pub.v2+json";
+
+	public async Task InvokeAsync(HttpContext context, RequestDelegate next)
 	{
 		if (!MatchesPubClientRequest(context, out var path))
-			return next(context);
+		{
+			await next(context);
+
+			return;
+		}
 
 		// rewrite request from /api/packages/ to /Packages/Dart/
 		context.Request.Path = path.Replace("/api/packages/", "/Packages/Dart/", StringComparison.OrdinalIgnoreCase);
 
 		logger.LogTrace("Rewrote request path from {OldPath} to {NewPath}", path, context.Request.Path.Value);
 
-		return next(context);
+		await next(context);
+
+		if (context.Response.HasStarted)
+			return;
+
+		context.Response.Headers.ContentType = PubContentType;
 	}
 
 	private static bool MatchesPubClientRequest(HttpContext context, [NotNullWhen(true)] out string? path)
@@ -28,9 +39,7 @@ public class PubClientRewriterMiddleware(ILogger<PubClientRewriterMiddleware> lo
 			return false;
 
 		var accept = context.Request.GetTypedHeaders().Accept;
-		if (!accept.Any(x => x.MediaType.StartsWith("application/vnd.pub.v2+json", StringComparison.OrdinalIgnoreCase)))
-			return false;
 
-		return true;
+		return accept.Any(x => x.MediaType.StartsWith(PubContentType, StringComparison.OrdinalIgnoreCase));
 	}
 }
