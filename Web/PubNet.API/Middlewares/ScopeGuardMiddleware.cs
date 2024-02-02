@@ -12,13 +12,11 @@ public class ScopeGuardMiddleware(IGuard guard) : IMiddleware
 		var endpoint = context.GetEndpoint();
 		if (endpoint is not null)
 		{
-			var scopes = endpoint.Metadata
-				.GetOrderedMetadata<GuardAttribute>()
-				.Select(x => x.Require);
+			var scopeAttrs = endpoint.Metadata.GetOrderedMetadata<RequireScopeAttribute>();
 
-			foreach (var scope in scopes)
+			foreach (var scopeAttribute in scopeAttrs)
 			{
-				guard.ThrowIf(context.User).DoesntHave(scope);
+				guard.ThrowIf(context.User).DoesntHave(scopeAttribute.Scope);
 			}
 		}
 

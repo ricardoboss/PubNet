@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.CQRS.Commands.Packages;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
+using PubNet.API.Attributes;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
+using PubNet.Web;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
@@ -13,11 +16,13 @@ namespace PubNet.API.Controllers.Packages.Dart;
 public class DartPackagesByNameAndVersionController(
 	IDartPackageVersionAnalysisProvider analysisProvider,
 	IDartPackageVersionDocsProviderFactory docsProviderFactory,
-	IMimeTypeProvider mimeTypeProvider
+	IMimeTypeProvider mimeTypeProvider,
+	IDartPackageArchiveProvider archiveProvider,
+	IDartPackageDmo dartPackageDmo
 ) : DartController
 {
 	[HttpGet("analysis.json")]
-	[ProducesResponseType(typeof(DartPackageVersionAnalysisDto), StatusCodes.Status200OK)]
+	[ProducesResponseType<DartPackageVersionAnalysisDto>(StatusCodes.Status200OK)]
 	public async Task<DartPackageVersionAnalysisDto?> GetAnalysisAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		var analysis = await analysisProvider.GetAnalysisAsync(name, version, cancellationToken);
@@ -27,10 +32,14 @@ public class DartPackagesByNameAndVersionController(
 	}
 
 	[HttpGet("archive.tar.gz")]
-	[ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
-	public Task<IActionResult> GetArchiveAsync(string name, string version, CancellationToken cancellationToken = default)
+	[ProducesResponseType<byte[]>(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetArchiveAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		var stream = await archiveProvider.GetArchiveAsync(name, version, cancellationToken);
+		if (stream is null)
+			return NotFound();
+
+		return File(stream, "application/gzip", $"{name}-{version}.tar.gz");
 	}
 
 	[HttpGet("Docs/{**path}")]
@@ -52,11 +61,13 @@ public class DartPackagesByNameAndVersionController(
 		return File(file.CreateReadStream(), mimeType, file.Name);
 	}
 
-	[Authorize]
 	[HttpPatch("Retract")]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	public Task<DartSuccessDto> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
+	[Authorize, RequireScope(Scopes.Dart.Retract)]
+	[ProducesResponseType<DartSuccessDto>(StatusCodes.Status200OK)]
+	public async Task<DartSuccessDto> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		await dartPackageDmo.RetractAsync(name, version, cancellationToken);
+
+		return DartSuccessDto.WithMessage($"Package '{name}' version '{version}' has been retracted");
 	}
 }

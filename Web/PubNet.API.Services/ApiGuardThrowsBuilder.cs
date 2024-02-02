@@ -12,10 +12,8 @@ public class ApiGuardThrowsBuilder(IGuard guard, ClaimsPrincipal user) : IGuardT
 		get
 		{
 			var scopesClaimValue = user.FindFirstValue(JwtClaims.Scope);
-			if (scopesClaimValue is null)
-				throw new UnauthorizedAccessException("Missing scopes claim. Are you authenticated?");
 
-			return ScopesClaim.From(scopesClaimValue);
+			return scopesClaimValue is null ? ScopesClaim.Empty : ScopesClaim.From(scopesClaimValue);
 		}
 	}
 

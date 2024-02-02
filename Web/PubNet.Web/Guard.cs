@@ -15,9 +15,4 @@ public class Guard : IGuard
 			.Select(Scope.From)
 			.Any(s => s.EqualsOrIsParentOf(scope));
 	}
-
-	public bool Denies(ScopesClaim claim, Scope scope)
-	{
-		return !Allows(claim, scope);
-	}
 }

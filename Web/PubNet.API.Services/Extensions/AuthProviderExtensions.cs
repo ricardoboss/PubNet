@@ -14,4 +14,14 @@ public static class AuthProviderExtensions
 
 		return maybeIdentity;
 	}
+
+	/// <exception cref="UnauthorizedAccessException">Thrown when the <see cref="IAuthProvider"/> fails to provide a <see cref="Token"/></exception>
+	public static async Task<Token> GetCurrentTokenAsync(this IAuthProvider authProvider, CancellationToken cancellationToken = default)
+	{
+		var maybeToken = await authProvider.TryGetCurrentTokenAsync(cancellationToken);
+		if (maybeToken is null)
+			throw new UnauthorizedAccessException("Unauthorized request");
+
+		return maybeToken;
+	}
 }

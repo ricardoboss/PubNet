@@ -24,7 +24,7 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	}
 
 	[HttpPost("PersonalAccessToken")]
-	[Authorize, Guard(Scopes.PersonalAccessTokens.Create)]
+	[Authorize, RequireScope(Scopes.PersonalAccessTokens.Create)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	public async Task<TokenCreatedDto> CreatePersonalAccessToken(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{

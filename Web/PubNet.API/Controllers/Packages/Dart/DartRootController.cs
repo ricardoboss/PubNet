@@ -1,23 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.Abstractions.Authentication;
+using PubNet.API.Abstractions.Packages.Dart;
+using PubNet.API.Attributes;
 using PubNet.API.DTO.Packages.Dart.Spec;
+using PubNet.API.Services.Extensions;
+using PubNet.Web;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
 [Route("Packages/Dart")]
 [Tags("Dart")]
-public class DartRootController : DartController
+public class DartRootController(IAuthProvider authProvider, IDartPackageUploadService uploadService) : DartController
 {
-	[Authorize]
 	[HttpPost("Versions/New")]
-	public Task<DartNewVersionDto> CreateNewAsync(CancellationToken cancellationToken = default)
+	[Authorize, RequireScope(Scopes.Dart.New)]
+	public async Task<DartNewVersionDto> CreateNewAsync(CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
-	}
+		var token = await authProvider.GetCurrentTokenAsync(cancellationToken);
 
-	[HttpGet("Search")]
-	public Task<IActionResult> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
-	{
-		throw new NotImplementedException();
+		return await uploadService.CreateNewAsync(token, cancellationToken);
 	}
 }
