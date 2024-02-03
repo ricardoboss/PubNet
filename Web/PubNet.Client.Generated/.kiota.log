@@ -1,1 +1,0 @@
-Critical: KiotaBuilder error generating the client: Could not download the file at https://localhost:7171/swagger/v1/swagger.json, reason: No connection could be made because the target machine actively refused it. (localhost:7171)
