@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
+        <ProjectReference Include="..\PubNet.Client.Generated\PubNet.Client.Generated.csproj" />
     </ItemGroup>
 
 </Project>

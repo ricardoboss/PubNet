@@ -1,4 +1,4 @@
-﻿@using PubNet.API.DTO
+﻿@using ApiSdk.Models
 <Table>
 	<TableHeader>
 		<TableRow>
@@ -22,14 +22,14 @@
 					@if (ShowAuthor)
 					{
 						<TableRowCell>
-							<AuthorLink Username="@(context.AuthorUserName)"/>
+							@* <AuthorLink Username="@(context.AuthorUserName)"/> *@
 						</TableRowCell>
 					}
-					@if (context.LatestVersion is not null)
+					@if (context.Latest is not null)
 					{
-						<TableRowCell>@context.LatestVersion</TableRowCell>
+						<TableRowCell>@context.Latest.Version</TableRowCell>
 						<TableRowCell>
-							<Abbreviation Title="@context.LatestPublishedAtUtc.ToString()">@(context.LatestPublishedAtUtc.Humanize())</Abbreviation>
+							<Abbreviation Title="@context.Latest.PublishedAt.ToString()">@(context.Latest.PublishedAt.Humanize())</Abbreviation>
 						</TableRowCell>
 					}
 					else
@@ -54,7 +54,7 @@
 
 @code {
 	[Parameter]
-	public IEnumerable<SearchResultPackage>? Packages { get; set; }
+	public IEnumerable<PackageVersionDtoPackageDto>? Packages { get; set; }
 
 	[Parameter]
 	public bool ShowAuthor { get; set; }
