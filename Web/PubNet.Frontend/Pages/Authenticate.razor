@@ -7,7 +7,7 @@
 
 <Divider/>
 
-@if (_showRegistration)
+@if (showRegistration)
 {
     <Heading Size="HeadingSize.Is1">Register</Heading>
 
@@ -22,13 +22,13 @@ else
 
 @code {
 
-    private bool _showRegistration;
+    private bool showRegistration;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        _showRegistration = await Http.GetAsync<bool>("authentication/registrations-enabled");
+        showRegistration = await Http!.Authentication!.RegistrationsOpen!.GetAsync() ?? false;
     }
 
 }
