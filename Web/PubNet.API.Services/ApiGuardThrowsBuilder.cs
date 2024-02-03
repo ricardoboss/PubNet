@@ -24,4 +24,13 @@ public class ApiGuardThrowsBuilder(IGuard guard, ClaimsPrincipal user) : IGuardT
 
 		throw new UnauthorizedAccessException(message ?? $"Missing claim for: {scope}");
 	}
+
+	public void CannotAny(IEnumerable<Scope> scopes, string? message = null)
+	{
+		var scopesArray = scopes.ToArray();
+		if (scopesArray.Any(scope => guard.Allows(Claim, scope)))
+			return;
+
+		throw new UnauthorizedAccessException(message ?? $"Missing claim for any of: {string.Join(", ", scopesArray)}");
+	}
 }
