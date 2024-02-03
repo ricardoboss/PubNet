@@ -17,19 +17,23 @@
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
 	</PropertyGroup>
 
+	<Target Name="CreateSwaggerJson" AfterTargets="Build" Condition="$(Configuration) == 'Debug'">
+		<Exec Command="dotnet swagger tofile --output ../openapi-spec.json $(OutputPath)$(AssemblyName).dll v1" WorkingDirectory="$(ProjectDir)"/>
+	</Target>
+
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-		<PackageReference Include="Semver" Version="2.3.0" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="6.0.0" />
-		<PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
-		<PackageReference Include="SignedUrl.Extensions" Version="1.2.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="YamlDotNet" Version="15.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.1"/>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1"/>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1"/>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0"/>
+		<PackageReference Include="Semver" Version="2.3.0"/>
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1"/>
+		<PackageReference Include="Serilog.Sinks.Seq" Version="6.0.0"/>
+		<PackageReference Include="SerilogAnalyzer" Version="0.15.0"/>
+		<PackageReference Include="SignedUrl.Extensions" Version="1.2.0"/>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+		<PackageReference Include="YamlDotNet" Version="15.1.0"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,40 +43,40 @@
 		<Content Include="..\..\.gitignore">
 			<Link>.gitignore</Link>
 		</Content>
-		<Content Remove="packages\**" />
+		<Content Remove="packages\**"/>
 		<Content Update="appsettings.Development.json">
-		  <DependentUpon>appsettings.json</DependentUpon>
+			<DependentUpon>appsettings.json</DependentUpon>
 		</Content>
 		<Content Update="appsettings.Production.json">
-		  <DependentUpon>appsettings.json</DependentUpon>
+			<DependentUpon>appsettings.json</DependentUpon>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Remove="packages\**" />
+		<Compile Remove="packages\**"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Remove="packages\**" />
+		<EmbeddedResource Remove="packages\**"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="packages\**" />
+		<None Remove="packages\**"/>
 	</ItemGroup>
 
 	<ItemGroup>
-      <ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj" />
-      <ProjectReference Include="..\..\PubNet.Common\PubNet.Common.csproj" />
-      <ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj" />
-      <ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj" />
-      <ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj" />
-      <ProjectReference Include="..\PubNet.Web\PubNet.Web.csproj" />
+		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Common\PubNet.Common.csproj"/>
+		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj"/>
+		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj"/>
+		<ProjectReference Include="..\PubNet.Web\PubNet.Web.csproj"/>
 	</ItemGroup>
 
 </Project>
