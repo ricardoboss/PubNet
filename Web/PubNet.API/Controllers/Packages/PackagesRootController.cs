@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO.Packages;
 
 namespace PubNet.API.Controllers.Packages;
 
@@ -8,7 +9,7 @@ namespace PubNet.API.Controllers.Packages;
 public class PackagesRootController : PackagesController
 {
 	[HttpGet("Search")]
-	public Task<IActionResult> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+	public Task<PackageListDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

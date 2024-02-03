@@ -23,10 +23,10 @@ public class DartPackagesByNameController(IDartPackageDmo dartPackageDmo, IDartP
 	}
 
 	[HttpGet]
-	public async Task<DartPackageIndexDto?> GetAsync(string name, CancellationToken cancellationToken = default)
+	public async Task<DartPackageDto?> GetAsync(string name, CancellationToken cancellationToken = default)
 	{
 		var package = await dartPackageDao.TryGetByNameAsync(name, cancellationToken);
 
-		return package is null ? null : DartPackageIndexDto.MapFrom(package);
+		return package is null ? null : DartPackageDto.MapFrom(package);
 	}
 }

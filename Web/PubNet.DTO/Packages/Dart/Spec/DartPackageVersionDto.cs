@@ -2,7 +2,7 @@
 
 namespace PubNet.API.DTO.Packages.Dart.Spec;
 
-public class DartPackageVersionDto
+public class DartPackageVersionDto : PackageVersionDto
 {
 	public static DartPackageVersionDto MapFrom(DartPackageVersion version)
 	{
@@ -13,10 +13,9 @@ public class DartPackageVersionDto
 			ArchiveSha256 = "", // TODO
 			Retracted = version.Retracted,
 			Pubspec = new(),
+			PublishedAt = version.PublishedAt,
 		};
 	}
-
-	public required string Version { get; init; }
 
 	public bool? Retracted { get; init; }
 

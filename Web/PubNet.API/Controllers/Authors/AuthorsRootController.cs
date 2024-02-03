@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO.Authors;
 
 namespace PubNet.API.Controllers.Authors;
 
@@ -7,7 +8,7 @@ namespace PubNet.API.Controllers.Authors;
 public class AuthorsRootController : AuthorsController
 {
 	[HttpGet("Search")]
-	public Task<IActionResult> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+	public Task<AuthorListDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

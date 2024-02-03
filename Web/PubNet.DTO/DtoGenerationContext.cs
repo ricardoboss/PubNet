@@ -1,8 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PubNet.API.DTO.Authentication;
+using PubNet.API.DTO.Authors;
+using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
+using PubNet.API.DTO.Packages.Nuget;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.DTO;
@@ -14,16 +17,26 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(TokenCreatedDto))]
 #endregion
 
+#region Authors
+[JsonSerializable(typeof(AuthorDto))]
+[JsonSerializable(typeof(AuthorListDto))]
+#endregion
+
 #region Packages
+
+[JsonSerializable(typeof(PackageDto))]
+[JsonSerializable(typeof(PackageListDto))]
+[JsonSerializable(typeof(PackageVersionDto))]
 
 #region Dart
 [JsonSerializable(typeof(DartMessageDto))]
 [JsonSerializable(typeof(DartNewVersionDto))]
-[JsonSerializable(typeof(DartPackageIndexDto))]
+[JsonSerializable(typeof(DartPackageDto))]
 [JsonSerializable(typeof(DartPackageVersionDto))]
 [JsonSerializable(typeof(DartPubSpecDto))]
 [JsonSerializable(typeof(DartSuccessDto))]
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
+[JsonSerializable(typeof(DartPackageListDto))]
 #endregion
 
 #region Nuget
@@ -45,6 +58,9 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(NugetServiceIndexDto))]
 [JsonSerializable(typeof(NugetServiceIndexResourceDto))]
 [JsonSerializable(typeof(NugetVulnerabilityIndexEntryDto))]
+[JsonSerializable(typeof(NugetPackageDto))]
+[JsonSerializable(typeof(NugetPackageListDto))]
+[JsonSerializable(typeof(NugetPackageVersionDto))]
 #endregion
 
 #endregion

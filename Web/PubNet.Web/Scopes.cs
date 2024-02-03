@@ -20,4 +20,11 @@ public static class Scopes
 
 		public const string Retract = Prefix + "retract";
 	}
+
+	public static class Nuget
+	{
+		private const string Prefix = "nuget:";
+
+		public const string Delete = Prefix + "delete";
+	}
 }
