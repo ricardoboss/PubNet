@@ -29,7 +29,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5499F184-A74F-4D6D-9BA8-4CBC02A109F8}"
 	ProjectSection(SolutionItems) = preProject
 		Web\Makefile = Web\Makefile
-		Web\openapi-spec.json = Web\openapi-spec.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{FBB066E9-FB52-4AA7-8D4C-B796063DC723}"

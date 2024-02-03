@@ -18,7 +18,11 @@
 	</PropertyGroup>
 
 	<Target Name="CreateSwaggerJson" AfterTargets="Build" Condition="$(Configuration) == 'Debug'">
-		<Exec Command="dotnet swagger tofile --output ../openapi-spec.json $(OutputPath)$(AssemblyName).dll v1" WorkingDirectory="$(ProjectDir)"/>
+		<Exec Command="dotnet swagger tofile --output openapi-spec.json $(OutputPath)$(AssemblyName).dll v1" WorkingDirectory="$(ProjectDir)"/>
+	</Target>
+
+	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug'">
+		<Exec Command="kiota generate --openapi openapi-spec.json --language CSharp --output ../PubNet.Client.Generated --namespace-name PubNet.Client.Generated --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
 	<ItemGroup>

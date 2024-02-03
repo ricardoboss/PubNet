@@ -237,6 +237,25 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAuthorDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAuthorDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAuthorDto"
+              }
+            }
+          }
+        },
         "responses": {
           "204": {
             "description": "No Content"
@@ -1364,6 +1383,16 @@
         "properties": {
           "success": {
             "$ref": "#/components/schemas/DartMessageDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteAuthorDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

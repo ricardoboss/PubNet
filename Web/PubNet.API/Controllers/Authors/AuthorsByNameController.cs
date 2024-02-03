@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Attributes;
+using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Dart;
@@ -40,7 +41,7 @@ public class AuthorsByNameController : AuthorsController
 	[HttpDelete]
 	[Authorize, RequireAnyScope(Scopes.Authors.Delete.Self, Scopes.Authors.Delete.Any)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	public Task<IActionResult> DeleteAuthorAsync(string username, CancellationToken cancellationToken = default)
+	public Task<IActionResult> DeleteAuthorAsync(string username, DeleteAuthorDto dto, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
