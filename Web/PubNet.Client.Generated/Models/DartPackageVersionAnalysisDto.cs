@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
-namespace ApiSdk.Models {
+namespace PubNet.Client.Generated.Models {
     public class DartPackageVersionAnalysisDto : IParsable {
         /// <summary>The completedAt property</summary>
         public DateTimeOffset? CompletedAt { get; set; }

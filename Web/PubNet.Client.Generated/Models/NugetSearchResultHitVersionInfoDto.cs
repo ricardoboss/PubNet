@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
-namespace ApiSdk.Models {
+namespace PubNet.Client.Generated.Models {
     public class NugetSearchResultHitVersionInfoDto : IParsable {
         /// <summary>The downloads property</summary>
         public int? Downloads { get; set; }

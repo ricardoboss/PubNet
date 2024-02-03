@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System;
-namespace ApiSdk.Models {
+namespace PubNet.Client.Generated.Models {
     public class DartPackageDto : IParsable {
         /// <summary>The isDiscontinued property</summary>
         public bool? IsDiscontinued { get; set; }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace ApiSdk.Packages.Nuget.Publish {
+namespace PubNet.Client.Generated.Packages.Nuget.Publish {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\Publish
     /// </summary>

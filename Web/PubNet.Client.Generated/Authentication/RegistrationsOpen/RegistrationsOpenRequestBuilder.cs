@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace ApiSdk.Authentication.RegistrationsOpen {
+namespace PubNet.Client.Generated.Authentication.RegistrationsOpen {
     /// <summary>
     /// Builds and executes requests for operations under \Authentication\RegistrationsOpen
     /// </summary>

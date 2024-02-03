@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace ApiSdk.Packages.Dart.Item.Discontinue {
+namespace PubNet.Client.Generated.Packages.Dart.Item.Discontinue {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\{name}\Discontinue
     /// </summary>

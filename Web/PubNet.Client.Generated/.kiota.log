@@ -1,2 +1,1 @@
-Warning: KiotaBuilder OpenAPI warning: #/ - A servers entry (v3) or host + basePath + schemes properties (v2) was not present in the OpenAPI description. The root URL will need to be set manually with the request adapter.
-Warning: KiotaBuilder No server url found in the OpenAPI document. The base url will need to be set when using the client.
+Critical: KiotaBuilder error generating the client: Could not download the file at https://localhost:7171/swagger/v1/swagger.json, reason: No connection could be made because the target machine actively refused it. (localhost:7171)

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace ApiSdk.Packages.Dart.Storage.Item {
+namespace PubNet.Client.Generated.Packages.Dart.Storage.Item {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\Storage\{pendingId}
     /// </summary>

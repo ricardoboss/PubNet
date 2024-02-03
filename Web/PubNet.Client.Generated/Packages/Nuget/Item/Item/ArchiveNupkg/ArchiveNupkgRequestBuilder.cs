@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace ApiSdk.Packages.Nuget.Item.Item.ArchiveNupkg {
+namespace PubNet.Client.Generated.Packages.Nuget.Item.Item.ArchiveNupkg {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\{id}\{version}\archive.nupkg
     /// </summary>
