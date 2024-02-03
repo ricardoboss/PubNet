@@ -27,4 +27,18 @@ public static class Scopes
 
 		public const string Delete = Prefix + "delete";
 	}
+
+	public static class Authors
+	{
+		private const string Prefix = "author:";
+
+		public static class Delete
+		{
+			private const string Prefix = Authors.Prefix + "delete:";
+
+			public const string Self = Prefix + "self";
+
+			public const string Any = Prefix + "*";
+		}
+	}
 }
