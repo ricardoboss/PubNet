@@ -3,8 +3,6 @@
 @page "/package/{PackageName}/version/{PackageVersionUrl}"
 @page "/packages/{PackageName}/versions/{PackageVersionUrl}"
 
-@using PubNet.API.DTO
-
 @inject PackagesService Packages
 @inject AnalysisService Analysis
 
@@ -55,7 +53,7 @@
 		set => PackageVersionUrl = value is null ? null : TextGenerator.VersionToUrlSegment(value);
 	}
 
-	private PackageDto? PackageModel { get; set; }
+	private PackageVersionDtoPackageDto? PackageModel { get; set; }
 
 	private PackageVersionDto? PackageVersionModel { get; set; }
 
