@@ -1,0 +1,32 @@
+{
+  "descriptionHash": "27929850ED155329EDABC0F0A4B1A67A286958C47126B51F9BB5401F5A8B0140BB8659C5CAD42CBD7968B77197E84643EF4E903DC20E68FA86A620C856C38136",
+  "descriptionLocation": "https://localhost:7171/swagger/v1/swagger.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.10.1",
+  "clientClassName": "ApiClient",
+  "clientNamespaceName": "ApiSdk",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}
