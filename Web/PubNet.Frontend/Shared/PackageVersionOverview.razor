@@ -1,5 +1,4 @@
-﻿@using PubNet.API.DTO
-@using System.Net
+﻿@using System.Net
 
 @inject PackagesService PackagesService
 @inject AnalysisService AnalysisService
@@ -32,7 +31,7 @@ else
                                 <TabPanel Name="readme">
                                     @if (Analysis?.ReadmeText is not null)
                                     {
-                                        <Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.PubSpec.Repository"/>
+                                        <Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.Pubspec."/>
                                     }
                                     else if (Analysis?.ReadmeFound is false)
                                     {
@@ -195,7 +194,7 @@ else
     public PackageVersionDtoPackageDto? Package { get; set; }
 
     [Parameter]
-    public PackageVersionDto? Version { get; set; }
+    public DartPackageVersionDto? Version { get; set; }
 
     [Parameter]
     public EventCallback<string?> OnError { get; set; }

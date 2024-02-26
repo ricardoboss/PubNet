@@ -4,6 +4,7 @@ using PubNet.Client.Generated.Authentication.Account;
 using PubNet.Client.Generated.Authentication.LoginToken;
 using PubNet.Client.Generated.Authentication.PersonalAccessToken;
 using PubNet.Client.Generated.Authentication.RegistrationsOpen;
+using PubNet.Client.Generated.Authentication.Self;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,10 @@ namespace PubNet.Client.Generated.Authentication {
         /// <summary>The RegistrationsOpen property</summary>
         public RegistrationsOpenRequestBuilder RegistrationsOpen { get =>
             new RegistrationsOpenRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The Self property</summary>
+        public SelfRequestBuilder Self { get =>
+            new SelfRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new AuthenticationRequestBuilder and sets the default values.

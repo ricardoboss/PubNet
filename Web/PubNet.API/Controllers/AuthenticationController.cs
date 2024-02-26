@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Authentication;
+using PubNet.API.DTO.Authors;
 using PubNet.API.Exceptions.Authentication;
 using PubNet.API.Services.Extensions;
 using PubNet.Web;
@@ -55,5 +56,14 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	public bool AreRegistrationsOpen()
 	{
 		return configuration.GetValue<bool>("RegistrationsOpen");
+	}
+
+	[HttpGet("Self")]
+	[ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
+	public async Task<AuthorDto> GetSelfAsync(CancellationToken cancellationToken = default)
+	{
+		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
+
+		return AuthorDto.MapFrom(identity.Author);
 	}
 }

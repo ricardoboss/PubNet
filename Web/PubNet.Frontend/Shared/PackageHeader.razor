@@ -1,6 +1,4 @@
-﻿@using PubNet.API.DTO
-
-@inject PackagesService Packages
+﻿@inject PackagesService Packages
 @inject ApiClient Http
 
 <PageTitle>@Title</PageTitle>
@@ -36,7 +34,7 @@
 				@if (Version is not null)
 				{
 					@:&nbsp;
-					<Abbreviation Title="@Version.Published.ToString()">@(Version.Published.Humanize())</Abbreviation>
+					<Abbreviation Title="@Version.PublishedAt.ToString()">@(Version.PublishedAt.Humanize())</Abbreviation>
 				}
 			}
 
@@ -47,21 +45,22 @@
 
 @code {
 	[Parameter]
-	public PackageDto? Package { get; set; }
+	public DartPackageDto? Package { get; set; }
 
 	[Parameter]
-	public PackageVersionDto? Version { get; set; }
+	public DartPackageVersionDto? Version { get; set; }
 
 	private bool Loading { get; set; }
 
 	private string? PackageName => Package?.Name;
 
-	private string PubspecVersionText => PackageName is null || Version is null
-		? string.Empty
-		: TextGenerator.PubspecVersionText(PackageName, Version.Version, Package?.Mirrored ?? false, Http.BaseAddress);
+	// private string PubspecVersionText => PackageName is null || Version is null
+	// 	? string.Empty
+	// 	: TextGenerator.PubspecVersionText(PackageName, Version.Version, Package?.Mirrored ?? false, Http.BaseAddress);
+	private string PubspecVersionText => "dummy"; // TODO(rbo): implement
 
 	private string Title => PackageName + (Version is null ? string.Empty : $": {Version.Version}");
 
-	private string? AuthorUserName => Package?.Author?.UserName;
+	private string? AuthorUserName => null; //Package?.Author?.UserName;
 
 }

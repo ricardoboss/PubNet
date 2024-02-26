@@ -1,34 +1,23 @@
-using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using PubNet.API.DTO;
+using PubNet.Client.Generated;
+using PubNet.Client.Generated.Models;
 
 namespace PubNet.Frontend.Services;
 
-public class AuthenticationService
+public class AuthenticationService(
+	ILocalStorageService localStorage,
+	ApiClient apiClient,
+	FetchLock<AuthenticationService> fetchLock)
 {
 	private const string TokenStorageName = "authentication.token";
 	private const string SelfStorageName = "authentication.self";
 
-	private readonly ApiClient _apiClient;
-	private readonly ILocalStorageService _localStorage;
-	private readonly FetchLock<AuthenticationService> _fetchLock;
-
 	private AuthorDto? _self;
 	private bool _fetchedSelf;
 
-	public event EventHandler? OnLogout;
-	public event EventHandler? OnLogin;
-
-	public AuthenticationService(ILocalStorageService localStorage, ApiClient apiClient, FetchLock<AuthenticationService> fetchLock)
+	public ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
 	{
-		_localStorage = localStorage;
-		_apiClient = apiClient;
-		_fetchLock = fetchLock;
-	}
-
-	public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
-	{
-		return _apiClient.Token ??= await _localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
+		return localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
 	}
 
 	public async ValueTask<bool> IsAuthenticatedAsync(CancellationToken cancellationToken = default)
@@ -38,29 +27,23 @@ public class AuthenticationService
 
 	public async Task StoreTokenAsync(string token, CancellationToken cancellationToken = default)
 	{
-		await _localStorage.SetItemAsync(TokenStorageName, token, cancellationToken);
-
-		_apiClient.Token = token;
+		await localStorage.SetItemAsync(TokenStorageName, token, cancellationToken);
 	}
 
 	public async Task Logout(CancellationToken cancellationToken = default)
 	{
 		await RemoveTokenAsync(cancellationToken);
 		await RemoveSelfAsync(cancellationToken);
-
-		OnLogout?.Invoke(this, EventArgs.Empty);
 	}
 
 	private async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
 	{
-		await _localStorage.RemoveItemAsync(TokenStorageName, cancellationToken);
-
-		_apiClient.Token = null;
+		await localStorage.RemoveItemAsync(TokenStorageName, cancellationToken);
 	}
 
 	private async Task RemoveSelfAsync(CancellationToken cancellationToken = default)
 	{
-		await _localStorage.RemoveItemAsync(SelfStorageName, cancellationToken);
+		await localStorage.RemoveItemAsync(SelfStorageName, cancellationToken);
 
 		_self = null;
 		_fetchedSelf = false;
@@ -68,18 +51,15 @@ public class AuthenticationService
 
 	public async Task<AuthorDto> GetSelfAsync(CancellationToken cancellationToken = default)
 	{
-		if (_apiClient.Token is null)
-			throw new UnauthenticatedException("Not authenticated");
-
-		await _fetchLock.UntilFreed();
+		await fetchLock.UntilFreed();
 
 		if (_self is not null)
 			return _self;
 
-		_fetchLock.Lock();
+		fetchLock.Lock();
 		try
 		{
-			var storedSelf = await _localStorage.GetItemAsync<AuthorDto>(SelfStorageName, cancellationToken);
+			var storedSelf = await localStorage.GetItemAsync<AuthorDto>(SelfStorageName, cancellationToken);
 			if (_fetchedSelf && storedSelf is not null)
 			{
 				_self = storedSelf;
@@ -87,25 +67,19 @@ public class AuthenticationService
 				return _self;
 			}
 
-			var response = await _apiClient.GetAsync("authentication/self", cancellationToken);
-			if (!response.IsSuccessStatusCode)
-				throw new UnauthenticatedException("Request failed");
-
-			_self = await response.Content.ReadFromJsonAsync<AuthorDto>(cancellationToken: cancellationToken);
+			_self = await apiClient.Authentication.Self.GetAsync(cancellationToken: cancellationToken);
 			if (_self is null)
-				throw new UnauthenticatedException("Unable to deserialize");
+				throw new UnauthenticatedException("Failed to fetch self");
 
-			await _localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
+			await localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
 
 			_fetchedSelf = true;
-
-			OnLogin?.Invoke(this, EventArgs.Empty);
 
 			return _self;
 		}
 		finally
 		{
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 
@@ -127,9 +101,4 @@ public class AuthenticationService
 	}
 }
 
-public class UnauthenticatedException : Exception
-{
-	public UnauthenticatedException(string message) : base(message)
-	{
-	}
-}
+public class UnauthenticatedException(string message) : Exception(message);

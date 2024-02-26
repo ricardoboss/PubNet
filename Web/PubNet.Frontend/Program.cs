@@ -4,6 +4,10 @@ using Blazorise.Bulma;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
+using PubNet.Client.Generated;
 using PubNet.Frontend;
 using PubNet.Frontend.Services;
 
@@ -29,15 +33,18 @@ builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif
 
 // API client services
-builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILogger<ApiClient>>())
-{
-#if DEBUG
-	BaseAddress = "https://localhost:7171/api/",
-#else
-	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
-#endif
-});
+builder.Services.AddSingleton<IAccessTokenProvider, AccessTokenProvider>();
+builder.Services.AddSingleton<IAuthenticationProvider, BaseBearerTokenAuthenticationProvider>();
+builder.Services.AddSingleton<HttpClient>();
+builder.Services.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>();
+builder.Services.AddSingleton<ApiClient>();
+// {
+// #if DEBUG
+// 	BaseAddress = "https://localhost:7171/api/",
+// #else
+// 	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
+// #endif
+// });
 
 // set up Blazorise
 builder.Services

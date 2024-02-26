@@ -1,29 +1,22 @@
-using System.Net.Http.Json;
-using PubNet.API.DTO;
+using PubNet.Client.Generated;
+using PubNet.Client.Generated.Models;
 
 namespace PubNet.Frontend.Services;
 
-public class AnalysisService
+public class AnalysisService(ApiClient http, FetchLock<AnalysisService> fetchLock)
 {
-	private readonly ApiClient _http;
-	private readonly Dictionary<string, Dictionary<(string, bool), PackageVersionAnalysisDto?>> _analyses = new();
-	private readonly FetchLock<AnalysisService> _fetchLock;
-
-	public AnalysisService(ApiClient http, FetchLock<AnalysisService> fetchLock)
-	{
-		_http = http;
-		_fetchLock = fetchLock;
-	}
+	private readonly Dictionary<string, Dictionary<(string, bool), DartPackageVersionAnalysisDto?>> _analyses =
+		new Dictionary<string, Dictionary<(string, bool), DartPackageVersionAnalysisDto?>>();
 
 	public void InvalidateAnalysisFor(string name, string? version = null)
 	{
-		if (!_analyses.ContainsKey(name))
+		if (!_analyses.TryGetValue(name, out var value))
 			return;
 
 		if (version is not null)
 		{
-			_analyses[name].Remove((version, true));
-			_analyses[name].Remove((version, false));
+			value.Remove((version, true));
+			value.Remove((version, false));
 		}
 		else
 		{
@@ -31,9 +24,9 @@ public class AnalysisService
 		}
 	}
 
-	public async Task<PackageVersionAnalysisDto?> GetAnalysisForVersion(string name, string version, bool includeReadme, CancellationToken cancellationToken = default)
+	public async Task<DartPackageVersionAnalysisDto?> GetAnalysisForVersion(string name, string version, bool includeReadme, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.UntilFreed(taskName: $"GetAnalysisForVersion({name}, {version}, {includeReadme})");
+		await fetchLock.UntilFreed(taskName: $"GetAnalysisForVersion({name}, {version}, {includeReadme})");
 
 		if (_analyses.TryGetValue(name, out var versions))
 		{
@@ -45,18 +38,15 @@ public class AnalysisService
 				return value;
 		}
 
-		_fetchLock.Lock($"GetAnalysisForVersion({name}, {version}, {includeReadme})");
+		fetchLock.Lock($"GetAnalysisForVersion({name}, {version}, {includeReadme})");
 		try
 		{
-			var analysisResponse = await _http.GetAsync($"packages/{name}/versions/{version}/analysis?includeReadme={includeReadme}", cancellationToken);
-			PackageVersionAnalysisDto? analysis;
-			if (analysisResponse.IsSuccessStatusCode)
-				analysis = await analysisResponse.Content.ReadFromJsonAsync<PackageVersionAnalysisDto>(cancellationToken: cancellationToken);
-			else
-				analysis = null;
+			// TODO(rbo): incorporate includeReadme param
+			var analysis = await http.Packages.Dart[name][version].AnalysisJson
+				.GetAsync(cancellationToken: cancellationToken);
 
 			if (!_analyses.ContainsKey(name))
-				_analyses[name] = new();
+				_analyses[name] = new Dictionary<(string, bool), DartPackageVersionAnalysisDto?>();
 
 			_analyses[name][(version, includeReadme)] = analysis;
 
@@ -64,7 +54,7 @@ public class AnalysisService
 		}
 		finally
 		{
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 }

@@ -1,4 +1,3 @@
-@using PubNet.API.DTO
 @inject ApiClient ApiClient
 @inject AuthenticationService Auth
 @inject NavigationManager Nav
@@ -55,7 +54,7 @@
 @code {
     private Validations? _validations;
 
-    private LoginRequest LoginRequest { get; set; } = new();
+    private CreateLoginTokenDto LoginRequest { get; set; } = new CreateLoginTokenDto();
 
     private string? Error { get; set; }
     private string? Success { get; set; }
@@ -67,24 +66,14 @@
         Error = null;
         Success = null;
 
-        var response = await ApiClient.PostAsync("authentication/login", LoginRequest);
-        if (response.IsSuccessStatusCode)
-        {
-            var token = await response.Content.ReadFromJsonAsync<JwtTokenResponse>();
-            if (token is null)
-                return;
+        var response = await ApiClient.Authentication.LoginToken.PostAsync(LoginRequest);
+        if (response is null)
+            return;
 
-            await Auth.StoreTokenAsync(token.Token);
-            await Auth.GetSelfAsync();
+        await Auth.StoreTokenAsync(response.Token!);
+        await Auth.GetSelfAsync();
 
-            Nav.NavigateTo("/?message=welcome-back", true);
-        }
-        else
-        {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-            Error = message?.Error?.Message;
-        }
+        Nav.NavigateTo("/?message=welcome-back", true);
     }
 
 }

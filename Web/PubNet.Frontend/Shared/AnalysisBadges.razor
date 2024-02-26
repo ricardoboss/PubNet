@@ -1,5 +1,4 @@
 @inherits BaseComponent
-@using PubNet.API.DTO
 @inject ApiClient Http
 @inject PackagesService Packages
 @inject AnalysisService Analysis
@@ -13,12 +12,13 @@
 		</a>
 	}
 
-	@if (AnalysisDto?.DocumentationHref is not null)
-	{
-		<NavLink href="@(DocumentationUrl(AnalysisDto.DocumentationHref))">
-			<Badge Color="Color.Info" Pill>Docs</Badge>
-		</NavLink>
-	}
+	@* TODO(rbo): add documentation href *@
+	@* @if (AnalysisDto?.DocumentationHref is not null) *@
+	@* { *@
+	@* 	<NavLink href="@(DocumentationUrl(AnalysisDto.DocumentationHref))"> *@
+	@* 		<Badge Color="Color.Info" Pill>Docs</Badge> *@
+	@* 	</NavLink> *@
+	@* } *@
 
 	@switch (AnalysisDto?.Formatted)
 	{
@@ -66,21 +66,21 @@
 @code {
 
 	[Parameter]
-	public PackageDto? PackageDto { get; set; }
+	public DartPackageDto? PackageDto { get; set; }
 
 	[Parameter]
-	public PackageVersionDto? PackageVersionDto { get; set; }
+	public DartPackageVersionDto? PackageVersionDto { get; set; }
 
 	[Parameter]
 	public bool HideNonVersionSpecificBadges { get; set; }
 
 	private bool? IsLatest => PackageDto?.Latest?.Version is null ? null : PackageDto?.Latest?.Version == PackageVersionDto?.Version;
 
-	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
+	private DartPackageVersionAnalysisDto? AnalysisDto { get; set; }
 
-	private string? PackageName => PackageDto?.Name ?? PackageVersionDto?.PubSpec.Name;
+	private string? PackageName => PackageDto?.Name; // ?? PackageVersionDto?.Pubspec.Name; // TODO: implement fallback to pubspec
 
-	private bool Mirrored => PackageDto?.Mirrored ?? false;
+	private bool Mirrored => false; // TODO(rbo): implement mirroring of packages
 
 	private bool IsDiscontinued => PackageDto?.IsDiscontinued ?? false;
 
@@ -90,7 +90,10 @@
 
 	private static string HrefToReplacement(string name) => "/packages/" + name;
 
-	private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+	private string DocumentationUrl(string uri)
+	{
+		return Http.Packages.Dart[PackageDto!.Name!][PackageVersionDto!.Version!].Docs[uri].ToGetRequestInformation().URI.ToString();
+	}
 
 	/// <inheritdoc />
 	protected override async Task OnInitializedAsync()
@@ -99,10 +102,11 @@
 
 		if (PackageVersionDto is null) return;
 
-		if (!(PackageDto?.Mirrored ?? false))
-		{
-			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.PubSpec.Name, PackageVersionDto.Version, false);
-		}
+		// TODO(rbo): implement mirroring
+		// if (!(PackageDto?.Mirrored ?? false))
+		// {
+		// 	AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.PubSpec.Name, PackageVersionDto.Version, false);
+		// }
 	}
 
 }

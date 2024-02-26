@@ -1,6 +1,5 @@
 ﻿@inherits BaseComponent
 
-@using PubNet.API.DTO
 <div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (!IsDiscontinued)
 	{
@@ -12,7 +11,7 @@
 
 @code {
 	[Parameter]
-	public PackageDto? Package { get; set; }
+	public DartPackageDto? Package { get; set; }
 
 	[Parameter]
 	public bool Editing { get; set; }
