@@ -1,5 +1,4 @@
-@using PubNet.API.DTO
-@inject HttpClient HttpClient
+@inject ApiClient Api
 
 @if (Error is not null)
 {
@@ -16,12 +15,12 @@
 }
 
 <Form @onsubmit="Submit">
-    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
+    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="CreateAccountForm">
         <Validation>
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@RegisterRequest.Email" Autocomplete="email">
+                    <TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@CreateAccountForm.Email" Autocomplete="email">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -33,7 +32,7 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@RegisterRequest.Password" Autocomplete="current-password">
+                    <TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@CreateAccountForm.Password" Autocomplete="current-password">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -45,31 +44,7 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your username" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Username" Autocomplete="username">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextEdit>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your name" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Name" Autocomplete="name">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextEdit>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your website" Role="@TextRole.Url" @bind-Text="@RegisterRequest.Website" Autocomplete="url">
+                    <TextEdit Placeholder="Your username" Role="@TextRole.Text" @bind-Text="@CreateAccountForm.UserName" Autocomplete="username">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -89,7 +64,7 @@
 @code {
     private Validations? _validations;
 
-    private RegisterRequest RegisterRequest { get; set; } = new();
+    private CreateAccountDto CreateAccountForm { get; set; } = new CreateAccountDto();
 
     private string? Error { get; set; }
     private string? Success { get; set; }
@@ -101,21 +76,14 @@
         Error = null;
         Success = null;
 
-        var response = await HttpClient.PostAsJsonAsync("authentication/register", RegisterRequest);
+        // var response = await HttpClient.PostAsJsonAsync("authentication/register", CreateAccountForm);
+        var response = await Api.Authentication.Account.PostAsync(CreateAccountForm);
 
-        if (response.IsSuccessStatusCode)
+        if (response is not null)
         {
-            await response.Content.ReadFromJsonAsync<AuthorDto>();
-
-            RegisterRequest = new();
+            CreateAccountForm = new();
 
             Success = "Registration complete. You can now log in.";
-        }
-        else
-        {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-            Error = message?.Error?.Message;
         }
     }
 

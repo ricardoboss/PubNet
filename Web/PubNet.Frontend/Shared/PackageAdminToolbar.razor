@@ -6,7 +6,7 @@
 		<Button Size="Size.Small" Color="Color.Warning" Clicked="OnDiscontinueClicked" Disabled="@Editing">Discontinue</Button>
 	}
 
-	<Button Size="Size.Small" Color="Color.Danger" Clicked="OnDeleteClicked" Disabled="@Editing">Delete</Button>
+	@* <Button Size="Size.Small" Color="Color.Danger" Clicked="OnDeleteClicked" Disabled="@Editing">Delete</Button> *@
 </div>
 
 @code {
@@ -16,8 +16,8 @@
 	[Parameter]
 	public bool Editing { get; set; }
 
-	[Parameter]
-	public EventCallback OnDeleteClicked { get; set; }
+	// [Parameter]
+	// public EventCallback OnDeleteClicked { get; set; }
 
 	[Parameter]
 	public EventCallback OnDiscontinueClicked { get; set; }

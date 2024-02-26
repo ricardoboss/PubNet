@@ -31,7 +31,8 @@ else
                                 <TabPanel Name="readme">
                                     @if (Analysis?.ReadmeText is not null)
                                     {
-                                        <Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.Pubspec."/>
+	                                    @* TODO: re-implement readme display *@
+	                                    @* <Markdown Content="@Analysis.ReadmeText" BaseUrl="@Version.Pubspec"/> *@
                                     }
                                     else if (Analysis?.ReadmeFound is false)
                                     {
@@ -65,7 +66,7 @@ else
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                @foreach (var version in PackageVersions.OrderByDescending(v => v.Published).Take(10))
+                                                @foreach (var version in PackageVersions.OrderByDescending(v => v.PublishedAt).Take(10))
                                                 {
                                                     <TableRow>
                                                         <TableRowCell>
@@ -76,7 +77,7 @@ else
                                                             <ClickToCopyButton Content="@(PubspecVersionText(version.Version))"/>
                                                         </TableRowCell>
                                                         <TableRowCell>
-                                                            <Abbreviation Title="@version.Published.ToString()">@(version.Published.Humanize())</Abbreviation>
+                                                            <Abbreviation Title="@version.PublishedAt.ToString()">@(version.PublishedAt.Humanize())</Abbreviation>
                                                         </TableRowCell>
                                                         @if (!IsMirrored)
                                                         {
@@ -88,12 +89,12 @@ else
                                                         {
                                                             <TableRowCell>
                                                                 <div style="display: flex; align-items: center; gap: 0.25rem">
-                                                                    @if (!version.Retracted)
-                                                                    {
-                                                                        <Button Size="Size.Small" Color="Color.Warning" Clicked="() => OnRetractVersionClicked(version.Version)" Disabled="@Editing">Retract</Button>
-                                                                    }
+                                                                    @* @if (!version.Retracted) *@
+                                                                    @* { *@
+                                                                    @*     <Button Size="Size.Small" Color="Color.Warning" Clicked="() => OnRetractVersionClicked(version.Version)" Disabled="@Editing">Retract</Button> *@
+                                                                    @* } *@
 
-                                                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteVersionClicked(version.Version)" Disabled="@Editing">Delete</Button>
+                                                                    @* <Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteVersionClicked(version.Version)" Disabled="@Editing">Delete</Button> *@
                                                                 </div>
                                                             </TableRowCell>
                                                         }
@@ -133,57 +134,58 @@ else
                     Margin="Margin.Is3.OnY"
                     Package="@Package"
                     Editing="@Editing"
-                    OnDeleteClicked="OnDeleteClicked"
+                    @* OnDeleteClicked="OnDeleteClicked" *@
                     OnDiscontinueClicked="OnDiscontinueClicked"/>
             }
 
             <Heading Size="HeadingSize.Is3">Description</Heading>
 
-            <Lead Margin="Margin.Is3.OnY">
-                @(Version.PubSpec.Description)
-            </Lead>
+            @* TODO: re-implement pubspec getters *@
+            @* <Lead Margin="Margin.Is3.OnY"> *@
+            @*     @(Version.Pubspec.Description) *@
+            @* </Lead> *@
 
             <Heading Size="HeadingSize.Is3">Dependencies</Heading>
 
-            @if (Version.PubSpec.Dependencies is null or { Count: 0 })
-            {
-                <Paragraph Margin="Margin.Is3.OnY">
-                    <em>No dependencies.</em>
-                </Paragraph>
-            }
-            else
-            {
-                <Div Class="content">
-                    <UnorderedList Margin="Margin.Is3.OnY">
-                        <Repeater Items="Version.PubSpec.Dependencies.Keys">
-                            <UnorderedListItem>
-                                <NavLink href="@TextGenerator.HrefToDependency(context)">@context</NavLink>
-                            </UnorderedListItem>
-                        </Repeater>
-                    </UnorderedList>
-                </Div>
-            }
+            @* @if (Version.PubSpec.Dependencies is null or { Count: 0 }) *@
+            @* { *@
+            @*     <Paragraph Margin="Margin.Is3.OnY"> *@
+            @*         <em>No dependencies.</em> *@
+            @*     </Paragraph> *@
+            @* } *@
+            @* else *@
+            @* { *@
+            @*     <Div Class="content"> *@
+            @*         <UnorderedList Margin="Margin.Is3.OnY"> *@
+            @*             <Repeater Items="Version.PubSpec.Dependencies.Keys"> *@
+            @*                 <UnorderedListItem> *@
+            @*                     <NavLink href="@TextGenerator.HrefToDependency(context)">@context</NavLink> *@
+            @*                 </UnorderedListItem> *@
+            @*             </Repeater> *@
+            @*         </UnorderedList> *@
+            @*     </Div> *@
+            @* } *@
 
             <Heading Size="HeadingSize.Is3">Dev Dependencies</Heading>
 
-            @if (Version.PubSpec.DevDependencies is null or { Count: 0 })
-            {
-                <Paragraph Margin="Margin.Is3.OnY">
-                    <em>No dev dependencies.</em>
-                </Paragraph>
-            }
-            else
-            {
-                <Div Class="content">
-                    <UnorderedList Margin="Margin.Is3.OnY">
-                        <Repeater Items="Version.PubSpec.DevDependencies.Keys">
-                            <UnorderedListItem>
-                                <NavLink href="@TextGenerator.HrefToDependency(context)">@context</NavLink>
-                            </UnorderedListItem>
-                        </Repeater>
-                    </UnorderedList>
-                </Div>
-            }
+            @* @if (Version.PubSpec.DevDependencies is null or { Count: 0 }) *@
+            @* { *@
+            @*     <Paragraph Margin="Margin.Is3.OnY"> *@
+            @*         <em>No dev dependencies.</em> *@
+            @*     </Paragraph> *@
+            @* } *@
+            @* else *@
+            @* { *@
+            @*     <Div Class="content"> *@
+            @*         <UnorderedList Margin="Margin.Is3.OnY"> *@
+            @*             <Repeater Items="Version.PubSpec.DevDependencies.Keys"> *@
+            @*                 <UnorderedListItem> *@
+            @*                     <NavLink href="@TextGenerator.HrefToDependency(context)">@context</NavLink> *@
+            @*                 </UnorderedListItem> *@
+            @*             </Repeater> *@
+            @*         </UnorderedList> *@
+            @*     </Div> *@
+            @* } *@
         </Column>
     </Row>
 }
@@ -191,7 +193,7 @@ else
 @code {
 
     [Parameter]
-    public PackageVersionDtoPackageDto? Package { get; set; }
+    public DartPackageDto? Package { get; set; }
 
     [Parameter]
     public DartPackageVersionDto? Version { get; set; }
@@ -211,20 +213,20 @@ else
     [Parameter]
     public EventCallback OnPackageChanged { get; set; }
 
-    private bool IsMirrored => Package?.Mirrored ?? false;
+    private bool IsMirrored => false;//Package?.Mirrored ?? false; // TODO: implement mirrored packages
 
     private string PubspecVersionText(string version)
     {
         return Package?.Name is null
             ? string.Empty
-            : TextGenerator.PubspecVersionText(Package.Name, version, IsMirrored, Http.BaseAddress);
+            : TextGenerator.PubspecVersionText(Package.Name, version, IsMirrored, null); // TODO: pass base address
     }
 
-    private PackageVersionAnalysisDto? Analysis { get; set; }
+    private DartPackageVersionAnalysisDto? Analysis { get; set; }
 
     private bool ShowPackageAdminTools { get; set; }
 
-    private List<PackageVersionDto>? PackageVersions => Package?.Versions;
+    private List<DartPackageVersionDto>? PackageVersions => Package?.Versions;
 
     string _selectedTab = "readme";
 
@@ -246,11 +248,12 @@ else
         if (Version is null)
             return;
 
-        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(Package.Author?.UserName);
+        // TODO: add author getter to package
+        // ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(Package.Author?.UserName);
 
         try
         {
-            Analysis = await AnalysisService.GetAnalysisForVersion(Version.PubSpec.Name, Version.Version, true);
+            Analysis = await AnalysisService.GetAnalysisForVersion(Package.Name, Version.Version, true);
         }
         catch (Exception)
         {
@@ -288,63 +291,63 @@ else
         }
     }
 
-    private async Task OnDeleteClicked()
-    {
-        if (Package is null) return;
+    // private async Task OnDeleteClicked()
+    // {
+    //     if (Package is null) return;
+    //
+    //     var confirmed = await Alert.Confirm("Are you sure? All versions will be deleted and you can no longer 'pub get' it.");
+    //     if (!confirmed)
+    //         return;
+    //
+    //     await OnInfo.InvokeAsync(null);
+    //     await OnError.InvokeAsync(null);
+    //     await OnEditing.InvokeAsync(true);
+    //
+    //     try
+    //     {
+    //         await PackagesService.DeletePackage(Package.Name);
+    //
+    //         Nav.NavigateTo("/?message=package-deleted");
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         await OnError.InvokeAsync(e.Message);
+    //     }
+    //     finally
+    //     {
+    //         await OnEditing.InvokeAsync(false);
+    //     }
+    // }
 
-        var confirmed = await Alert.Confirm("Are you sure? All versions will be deleted and you can no longer 'pub get' it.");
-        if (!confirmed)
-            return;
-
-        await OnInfo.InvokeAsync(null);
-        await OnError.InvokeAsync(null);
-        await OnEditing.InvokeAsync(true);
-
-        try
-        {
-            await PackagesService.DeletePackage(Package.Name);
-
-            Nav.NavigateTo("/?message=package-deleted");
-        }
-        catch (Exception e)
-        {
-            await OnError.InvokeAsync(e.Message);
-        }
-        finally
-        {
-            await OnEditing.InvokeAsync(false);
-        }
-    }
-
-    private async Task OnDeleteVersionClicked(string version)
-    {
-        if (Package is null) return;
-
-        var confirmed = await Alert.Confirm($"Are you sure you want to delete {Package.Name}: {version}? This cannot be undone.");
-        if (!confirmed)
-            return;
-
-        await OnInfo.InvokeAsync(null);
-        await OnError.InvokeAsync(null);
-        await OnEditing.InvokeAsync(true);
-
-        try
-        {
-            await PackagesService.DeletePackageVersion(Package.Name, version);
-
-            await OnInfo.InvokeAsync($"Version {version} has been deleted.");
-
-            await OnPackageChanged.InvokeAsync();
-        }
-        catch (Exception e)
-        {
-            await OnError.InvokeAsync(e.Message);
-        }
-        finally
-        {
-            Editing = false;
-        }
-    }
+    // private async Task OnDeleteVersionClicked(string version)
+    // {
+    //     if (Package is null) return;
+    //
+    //     var confirmed = await Alert.Confirm($"Are you sure you want to delete {Package.Name}: {version}? This cannot be undone.");
+    //     if (!confirmed)
+    //         return;
+    //
+    //     await OnInfo.InvokeAsync(null);
+    //     await OnError.InvokeAsync(null);
+    //     await OnEditing.InvokeAsync(true);
+    //
+    //     try
+    //     {
+    //         await PackagesService.DeletePackageVersion(Package.Name, version);
+    //
+    //         await OnInfo.InvokeAsync($"Version {version} has been deleted.");
+    //
+    //         await OnPackageChanged.InvokeAsync();
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         await OnError.InvokeAsync(e.Message);
+    //     }
+    //     finally
+    //     {
+    //         Editing = false;
+    //     }
+    // }
 
     private async Task OnRetractVersionClicked(string version)
     {

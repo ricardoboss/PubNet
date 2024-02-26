@@ -1,6 +1,5 @@
 ﻿@page "/browse"
 @page "/browse/packages"
-@using PubNet.API.DTO
 @inject ApiClient Http
 
 <PageTitle>Packages</PageTitle>
@@ -17,13 +16,13 @@ else
 }
 
 @code {
-	private SearchPackagesResponse? _response;
+	private PackageListDto? _response;
 
-	private IEnumerable<SearchResultPackage>? Packages => _response?.Packages;
+	private IEnumerable<PackageVersionDtoPackageDto>? Packages => _response?.Packages;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		_response = await Http.GetAsync<SearchPackagesResponse>("packages");
+		_response = await Http.Packages.Search.GetAsync();
 	}
 
 }

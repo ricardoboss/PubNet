@@ -72,7 +72,8 @@
 	{
 		get
 		{
-			var address = Http.BaseAddress ?? "";
+			// var address = Http.BaseAddress ?? "";
+			var address = "";
 
 			address = address.TrimEnd('/');
 
@@ -83,7 +84,7 @@
 		}
 	}
 
-	private string Token => Http.Token ?? "";
+	private string Token => string.Empty;//Http.Token ?? "";
 
 	private string PubAddTokenText => $"dart pub token add {PublishToUrl} --env-var PUBNET_TOKEN";
 }

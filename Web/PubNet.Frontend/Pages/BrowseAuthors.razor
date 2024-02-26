@@ -1,5 +1,4 @@
 ﻿@page "/browse/authors"
-@using PubNet.API.DTO
 @inject ApiClient Http
 
 <PageTitle>Authors</PageTitle>
@@ -16,7 +15,7 @@ else
 		<TableHeader>
 			<TableRow>
 				<TableHeaderCell>Username</TableHeaderCell>
-				<TableHeaderCell># of packages</TableHeaderCell>
+				@* <TableHeaderCell># of packages</TableHeaderCell> *@
 				<TableHeaderCell>Joined</TableHeaderCell>
 			</TableRow>
 		</TableHeader>
@@ -36,9 +35,9 @@ else
 					<TableRowCell>
 						<NavLink href="@("/authors/" + context.UserName)">@context.UserName</NavLink>
 					</TableRowCell>
-					<TableRowCell>@context.NumPackagesUploaded</TableRowCell>
+					@* <TableRowCell>@context.NumPackagesUploaded</TableRowCell> *@
 					<TableRowCell>
-						<Abbreviation Title="@(context.Joined.ToString())">@context.Joined.Humanize()</Abbreviation>
+						<Abbreviation Title="@(context.RegisteredAtUtc.ToString())">@context.RegisteredAtUtc.Humanize()</Abbreviation>
 					</TableRowCell>
 				</TableRow>
 			</Repeater>
@@ -48,11 +47,11 @@ else
 }
 
 @code {
-	private AuthorsResponse? _authors;
+	private AuthorListDto? _authors;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		_authors = await Http.GetAsync<AuthorsResponse>("authors");
+		_authors = await Http.Authors.Search.GetAsync();
 	}
 
 }
