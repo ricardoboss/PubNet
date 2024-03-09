@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
 [Route("Packages/Nuget/Registrations/{id}")]
 [Tags("Nuget")]
-public class NugetPackageRegistrationsByIdController : NugetController
+public class NugetPackageRegistrationsByIdController(INugetPackageDao nugetPackageDao) : NugetController
 {
 	/// <summary>
 	/// Used by dotnet to gather information about a specific package.
@@ -15,8 +16,10 @@ public class NugetPackageRegistrationsByIdController : NugetController
 	/// <returns></returns>
 	/// <exception cref="NotImplementedException"></exception>
 	[HttpGet("index.json")]
-	public Task<NugetPackageRegistrationIndexDto> GetPackageRegistrationsIndexAsync(string id, CancellationToken cancellationToken = default)
+	public async Task<NugetPackageRegistrationIndexDto?> GetPackageRegistrationsIndexAsync(string id, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		var package = await nugetPackageDao.TryGetByPackageIdAsync(id, cancellationToken);
+
+		return package is null ? null : NugetPackageRegistrationIndexDto.FromNugetPackage(package);
 	}
 }

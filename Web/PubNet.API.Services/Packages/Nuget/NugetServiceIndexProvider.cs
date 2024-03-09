@@ -41,28 +41,28 @@ public class NugetServiceIndexProvider(IKnownUrlsProvider knownUrlsProvider) : I
 			"The initial release"
 		);
 
-		yield return new(
-			knownUrlsProvider.GetPackagePublishUrl(),
-			"PackagePublish/2.0.0",
-			"The initial release"
-		);
+		// yield return new(
+		// 	knownUrlsProvider.GetPackagePublishUrl(),
+		// 	"PackagePublish/2.0.0",
+		// 	"The initial release"
+		// );
 
-		yield return new(
-			knownUrlsProvider.GetSearchAutocompleteServiceUrl(),
-			"SearchAutocompleteService/3.5.0",
-			"Includes support for packageType query parameter"
-		);
+		// yield return new(
+		// 	knownUrlsProvider.GetSearchAutocompleteServiceUrl(),
+		// 	"SearchAutocompleteService/3.5.0",
+		// 	"Includes support for packageType query parameter"
+		// );
 
-		yield return new(
-			knownUrlsProvider.GetSearchQueryServiceUrl(),
-			"SearchQueryService/3.5.0",
-			"Includes support for packageType query parameter"
-		);
+		// yield return new(
+		// 	knownUrlsProvider.GetSearchQueryServiceUrl(),
+		// 	"SearchQueryService/3.5.0",
+		// 	"Includes support for packageType query parameter"
+		// );
 
-		yield return new(
-			knownUrlsProvider.GetVulnerabilityInfoUrl(),
-			"VulnerabilityInfo/6.7.0",
-			"The initial release"
-		);
+		// yield return new(
+		// 	knownUrlsProvider.GetVulnerabilityInfoUrl(),
+		// 	"VulnerabilityInfo/6.7.0",
+		// 	"The initial release"
+		// );
 	}
 }
