@@ -45,13 +45,7 @@ The solution consists of a few projects, three of them compose the whole PubNet 
 
 ### Debugging
 
-You can use any IDE you want, as long as it supports debugging .NET 7 or higher.
-
-The API needs to be hosted using `https`, because the `dart pub` tool refuses to authenticate against `http` APIs.
-
-> **Note**
-> 
-> As soon as https://github.com/dart-lang/pub/pull/3777 appears in a release of the `pub` tool, the API can be hosted using `http` 🎉
+You can use any IDE you want, as long as it supports debugging .NET 8 or higher.
 
 For the `PubNet.Frontend` project, it is recommended to run it using `dotnet-watch`.
 
