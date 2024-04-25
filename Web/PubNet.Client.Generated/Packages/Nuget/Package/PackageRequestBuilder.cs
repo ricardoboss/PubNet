@@ -10,27 +10,35 @@ namespace PubNet.Client.Generated.Packages.Nuget.Package {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\Package
     /// </summary>
-    public class PackageRequestBuilder : BaseRequestBuilder {
+    public class PackageRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>Gets an item from the PubNet.Client.Generated.Packages.Nuget.Package.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        public PackageItemRequestBuilder this[string position] { get {
-            var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("id", position);
-            return new PackageItemRequestBuilder(urlTplParams, RequestAdapter);
-        } }
+        /// <returns>A <see cref="PackageItemRequestBuilder"/></returns>
+        public PackageItemRequestBuilder this[string position]
+        {
+            get
+            {
+                var urlTplParams = new Dictionary<string, object>(PathParameters);
+                urlTplParams.Add("id", position);
+                return new PackageItemRequestBuilder(urlTplParams, RequestAdapter);
+            }
+        }
         /// <summary>
-        /// Instantiates a new PackageRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="PackageRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PackageRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Package", pathParameters) {
+        public PackageRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Package", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new PackageRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="PackageRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PackageRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Package", rawUrl) {
+        public PackageRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Package", rawUrl)
+        {
         }
     }
 }

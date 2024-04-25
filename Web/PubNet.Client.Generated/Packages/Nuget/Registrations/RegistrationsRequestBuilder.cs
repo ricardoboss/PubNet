@@ -10,27 +10,35 @@ namespace PubNet.Client.Generated.Packages.Nuget.Registrations {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\Registrations
     /// </summary>
-    public class RegistrationsRequestBuilder : BaseRequestBuilder {
+    public class RegistrationsRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>Gets an item from the PubNet.Client.Generated.Packages.Nuget.Registrations.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        public RegistrationsItemRequestBuilder this[string position] { get {
-            var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("id", position);
-            return new RegistrationsItemRequestBuilder(urlTplParams, RequestAdapter);
-        } }
+        /// <returns>A <see cref="RegistrationsItemRequestBuilder"/></returns>
+        public RegistrationsItemRequestBuilder this[string position]
+        {
+            get
+            {
+                var urlTplParams = new Dictionary<string, object>(PathParameters);
+                urlTplParams.Add("id", position);
+                return new RegistrationsItemRequestBuilder(urlTplParams, RequestAdapter);
+            }
+        }
         /// <summary>
-        /// Instantiates a new RegistrationsRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="RegistrationsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public RegistrationsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations", pathParameters) {
+        public RegistrationsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new RegistrationsRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="RegistrationsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public RegistrationsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations", rawUrl) {
+        public RegistrationsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations", rawUrl)
+        {
         }
     }
 }

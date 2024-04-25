@@ -10,27 +10,35 @@ namespace PubNet.Client.Generated.Packages.Dart.Item.Item.Docs {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\{name}\{version}\Docs
     /// </summary>
-    public class DocsRequestBuilder : BaseRequestBuilder {
+    public class DocsRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>Gets an item from the PubNet.Client.Generated.Packages.Dart.item.item.Docs.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        public WithPathItemRequestBuilder this[string position] { get {
-            var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("path", position);
-            return new WithPathItemRequestBuilder(urlTplParams, RequestAdapter);
-        } }
+        /// <returns>A <see cref="WithPathItemRequestBuilder"/></returns>
+        public WithPathItemRequestBuilder this[string position]
+        {
+            get
+            {
+                var urlTplParams = new Dictionary<string, object>(PathParameters);
+                urlTplParams.Add("path", position);
+                return new WithPathItemRequestBuilder(urlTplParams, RequestAdapter);
+            }
+        }
         /// <summary>
-        /// Instantiates a new DocsRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="DocsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DocsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/Docs", pathParameters) {
+        public DocsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/Docs", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new DocsRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="DocsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public DocsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/Docs", rawUrl) {
+        public DocsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/Docs", rawUrl)
+        {
         }
     }
 }

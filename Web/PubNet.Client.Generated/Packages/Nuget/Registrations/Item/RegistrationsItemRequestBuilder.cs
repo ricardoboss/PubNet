@@ -10,24 +10,28 @@ namespace PubNet.Client.Generated.Packages.Nuget.Registrations.Item {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\Registrations\{id}
     /// </summary>
-    public class RegistrationsItemRequestBuilder : BaseRequestBuilder {
+    public class RegistrationsItemRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>The indexJson property</summary>
-        public IndexJsonRequestBuilder IndexJson { get =>
-            new IndexJsonRequestBuilder(PathParameters, RequestAdapter);
+        public IndexJsonRequestBuilder IndexJson
+        {
+            get => new IndexJsonRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new RegistrationsItemRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="RegistrationsItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public RegistrationsItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations/{id}", pathParameters) {
+        public RegistrationsItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations/{id}", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new RegistrationsItemRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="RegistrationsItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public RegistrationsItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations/{id}", rawUrl) {
+        public RegistrationsItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Registrations/{id}", rawUrl)
+        {
         }
     }
 }

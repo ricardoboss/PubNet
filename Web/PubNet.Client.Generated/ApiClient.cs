@@ -17,24 +17,29 @@ namespace PubNet.Client.Generated {
     /// <summary>
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
-    public class ApiClient : BaseRequestBuilder {
+    public class ApiClient : BaseRequestBuilder 
+    {
         /// <summary>The Authentication property</summary>
-        public AuthenticationRequestBuilder Authentication { get =>
-            new AuthenticationRequestBuilder(PathParameters, RequestAdapter);
+        public AuthenticationRequestBuilder Authentication
+        {
+            get => new AuthenticationRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Authors property</summary>
-        public AuthorsRequestBuilder Authors { get =>
-            new AuthorsRequestBuilder(PathParameters, RequestAdapter);
+        public AuthorsRequestBuilder Authors
+        {
+            get => new AuthorsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Packages property</summary>
-        public PackagesRequestBuilder Packages { get =>
-            new PackagesRequestBuilder(PathParameters, RequestAdapter);
+        public PackagesRequestBuilder Packages
+        {
+            get => new PackagesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new ApiClient and sets the default values.
+        /// Instantiates a new <see cref="ApiClient"/> and sets the default values.
         /// </summary>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ApiClient(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>()) {
+        public ApiClient(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>())
+        {
             ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultSerializer<TextSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultSerializer<FormSerializationWriterFactory>();

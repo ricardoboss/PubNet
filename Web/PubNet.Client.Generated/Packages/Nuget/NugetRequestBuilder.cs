@@ -17,55 +17,70 @@ namespace PubNet.Client.Generated.Packages.Nuget {
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget
     /// </summary>
-    public class NugetRequestBuilder : BaseRequestBuilder {
+    public class NugetRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>The autocompleteJson property</summary>
-        public AutocompleteJsonRequestBuilder AutocompleteJson { get =>
-            new AutocompleteJsonRequestBuilder(PathParameters, RequestAdapter);
+        public AutocompleteJsonRequestBuilder AutocompleteJson
+        {
+            get => new AutocompleteJsonRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The indexJson property</summary>
-        public IndexJsonRequestBuilder IndexJson { get =>
-            new IndexJsonRequestBuilder(PathParameters, RequestAdapter);
+        public IndexJsonRequestBuilder IndexJson
+        {
+            get => new IndexJsonRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Package property</summary>
-        public PackageRequestBuilder Package { get =>
-            new PackageRequestBuilder(PathParameters, RequestAdapter);
+        public PackageRequestBuilder Package
+        {
+            get => new PackageRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Publish property</summary>
-        public PublishRequestBuilder Publish { get =>
-            new PublishRequestBuilder(PathParameters, RequestAdapter);
+        public PublishRequestBuilder Publish
+        {
+            get => new PublishRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Registrations property</summary>
-        public RegistrationsRequestBuilder Registrations { get =>
-            new RegistrationsRequestBuilder(PathParameters, RequestAdapter);
+        public RegistrationsRequestBuilder Registrations
+        {
+            get => new RegistrationsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The searchJson property</summary>
-        public SearchJsonRequestBuilder SearchJson { get =>
-            new SearchJsonRequestBuilder(PathParameters, RequestAdapter);
+        public SearchJsonRequestBuilder SearchJson
+        {
+            get => new SearchJsonRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The vulnerabilitiesJson property</summary>
-        public VulnerabilitiesJsonRequestBuilder VulnerabilitiesJson { get =>
-            new VulnerabilitiesJsonRequestBuilder(PathParameters, RequestAdapter);
+        public VulnerabilitiesJsonRequestBuilder VulnerabilitiesJson
+        {
+            get => new VulnerabilitiesJsonRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the PubNet.Client.Generated.Packages.Nuget.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        public NugetItemRequestBuilder this[string position] { get {
-            var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("id", position);
-            return new NugetItemRequestBuilder(urlTplParams, RequestAdapter);
-        } }
+        /// <returns>A <see cref="NugetItemRequestBuilder"/></returns>
+        public NugetItemRequestBuilder this[string position]
+        {
+            get
+            {
+                var urlTplParams = new Dictionary<string, object>(PathParameters);
+                urlTplParams.Add("id", position);
+                return new NugetItemRequestBuilder(urlTplParams, RequestAdapter);
+            }
+        }
         /// <summary>
-        /// Instantiates a new NugetRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="NugetRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public NugetRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget", pathParameters) {
+        public NugetRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new NugetRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="NugetRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public NugetRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget", rawUrl) {
+        public NugetRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget", rawUrl)
+        {
         }
     }
 }

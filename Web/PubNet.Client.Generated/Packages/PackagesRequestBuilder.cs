@@ -12,32 +12,38 @@ namespace PubNet.Client.Generated.Packages {
     /// <summary>
     /// Builds and executes requests for operations under \Packages
     /// </summary>
-    public class PackagesRequestBuilder : BaseRequestBuilder {
+    public class PackagesRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>The Dart property</summary>
-        public DartRequestBuilder Dart { get =>
-            new DartRequestBuilder(PathParameters, RequestAdapter);
+        public DartRequestBuilder Dart
+        {
+            get => new DartRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Nuget property</summary>
-        public NugetRequestBuilder Nuget { get =>
-            new NugetRequestBuilder(PathParameters, RequestAdapter);
+        public NugetRequestBuilder Nuget
+        {
+            get => new NugetRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Search property</summary>
-        public SearchRequestBuilder Search { get =>
-            new SearchRequestBuilder(PathParameters, RequestAdapter);
+        public SearchRequestBuilder Search
+        {
+            get => new SearchRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new PackagesRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="PackagesRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PackagesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages", pathParameters) {
+        public PackagesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new PackagesRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="PackagesRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PackagesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages", rawUrl) {
+        public PackagesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages", rawUrl)
+        {
         }
     }
 }

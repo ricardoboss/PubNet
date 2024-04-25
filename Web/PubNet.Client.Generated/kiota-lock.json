@@ -2,7 +2,7 @@
   "descriptionHash": "ADC4507B992E8A36107A48EB0F42B5BCD296BDF842F3588886E314AB2B7EA414D6A3C0F7955C100F6CDF8F6BC47E99B5FAB3367F19F9C50FFCCE5A476B8C7E75",
   "descriptionLocation": "..\\PubNet.API\\openapi-spec.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.11.1",
+  "kiotaVersion": "1.13.0",
   "clientClassName": "ApiClient",
   "clientNamespaceName": "PubNet.Client.Generated",
   "language": "CSharp",

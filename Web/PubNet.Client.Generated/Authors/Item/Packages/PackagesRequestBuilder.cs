@@ -14,48 +14,59 @@ namespace PubNet.Client.Generated.Authors.Item.Packages {
     /// <summary>
     /// Builds and executes requests for operations under \Authors\{username}\Packages
     /// </summary>
-    public class PackagesRequestBuilder : BaseRequestBuilder {
+    public class PackagesRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>The Dart property</summary>
-        public DartRequestBuilder Dart { get =>
-            new DartRequestBuilder(PathParameters, RequestAdapter);
+        public DartRequestBuilder Dart
+        {
+            get => new DartRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Nuget property</summary>
-        public NugetRequestBuilder Nuget { get =>
-            new NugetRequestBuilder(PathParameters, RequestAdapter);
+        public NugetRequestBuilder Nuget
+        {
+            get => new NugetRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new PackagesRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="PackagesRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PackagesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages", pathParameters) {
+        public PackagesRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new PackagesRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="PackagesRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PackagesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages", rawUrl) {
+        public PackagesRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages", rawUrl)
+        {
         }
+        /// <returns>A <see cref="PackageListDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<PackageListDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default) {
+        public async Task<PackageListDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        {
 #nullable restore
 #else
-        public async Task<PackageListDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default) {
+        public async Task<PackageListDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             return await RequestAdapter.SendAsync<PackageListDto>(requestInfo, PackageListDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
+        /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default) {
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default) {
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
@@ -65,8 +76,10 @@ namespace PubNet.Client.Generated.Authors.Item.Packages {
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
+        /// <returns>A <see cref="PackagesRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public PackagesRequestBuilder WithUrl(string rawUrl) {
+        public PackagesRequestBuilder WithUrl(string rawUrl)
+        {
             return new PackagesRequestBuilder(rawUrl, RequestAdapter);
         }
     }

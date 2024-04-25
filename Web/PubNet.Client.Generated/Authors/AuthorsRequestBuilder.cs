@@ -11,31 +11,40 @@ namespace PubNet.Client.Generated.Authors {
     /// <summary>
     /// Builds and executes requests for operations under \Authors
     /// </summary>
-    public class AuthorsRequestBuilder : BaseRequestBuilder {
+    public class AuthorsRequestBuilder : BaseRequestBuilder 
+    {
         /// <summary>The Search property</summary>
-        public SearchRequestBuilder Search { get =>
-            new SearchRequestBuilder(PathParameters, RequestAdapter);
+        public SearchRequestBuilder Search
+        {
+            get => new SearchRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the PubNet.Client.Generated.Authors.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
-        public WithUsernameItemRequestBuilder this[string position] { get {
-            var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("username", position);
-            return new WithUsernameItemRequestBuilder(urlTplParams, RequestAdapter);
-        } }
+        /// <returns>A <see cref="WithUsernameItemRequestBuilder"/></returns>
+        public WithUsernameItemRequestBuilder this[string position]
+        {
+            get
+            {
+                var urlTplParams = new Dictionary<string, object>(PathParameters);
+                urlTplParams.Add("username", position);
+                return new WithUsernameItemRequestBuilder(urlTplParams, RequestAdapter);
+            }
+        }
         /// <summary>
-        /// Instantiates a new AuthorsRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="AuthorsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AuthorsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors", pathParameters) {
+        public AuthorsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors", pathParameters)
+        {
         }
         /// <summary>
-        /// Instantiates a new AuthorsRequestBuilder and sets the default values.
+        /// Instantiates a new <see cref="AuthorsRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AuthorsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors", rawUrl) {
+        public AuthorsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors", rawUrl)
+        {
         }
     }
 }
