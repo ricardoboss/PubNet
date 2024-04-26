@@ -6,7 +6,7 @@ public abstract class BasePackageVersion<TPackage> where TPackage : class
 
 	public Guid PackageId { get; init; }
 
-	public TPackage Package { get; init; } = null!;
+	public virtual TPackage Package { get; init; } = null!;
 
 	public string Version { get; init; } = null!;
 

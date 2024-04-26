@@ -268,7 +268,9 @@ void ConfigureDatabase(WebApplicationBuilder builder)
 #pragma warning restore CS0618 // Type or member is obsolete
 
 	builder.Services.AddDbContext<PubNetContext>(
-		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
+		options => options
+			.UseLazyLoadingProxies()
+			.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
 	);
 }
 

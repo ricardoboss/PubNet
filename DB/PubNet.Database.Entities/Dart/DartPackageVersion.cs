@@ -8,9 +8,9 @@ public class DartPackageVersion : BasePackageVersion<DartPackage>
 {
 	public bool Retracted { get; set; }
 
-	public PubSpec PubSpec { get; init; } = null!;
+	public virtual PubSpec PubSpec { get; init; } = null!;
 
 	public Guid? AnalysisId { get; init; }
 
-	public DartPackageVersionAnalysis? Analysis { get; set; }
+	public virtual DartPackageVersionAnalysis? Analysis { get; set; }
 }

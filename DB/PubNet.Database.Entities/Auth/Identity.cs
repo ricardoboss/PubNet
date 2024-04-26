@@ -12,11 +12,11 @@ public class Identity
 
 	public Guid AuthorId { get; set; }
 
-	public Author Author { get; set; } = null!;
+	public virtual Author Author { get; set; } = null!;
 
 	public string Email { get; set; } = null!;
 
 	public string PasswordHash { get; set; } = null!;
 
-	public ICollection<Token> Tokens { get; set; } = [];
+	public virtual ICollection<Token> Tokens { get; set; } = [];
 }

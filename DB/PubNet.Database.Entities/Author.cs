@@ -17,9 +17,9 @@ public class Author
 
 	public DateTimeOffset RegisteredAtUtc { get; init; }
 
-	public Identity? Identity { get; init; }
+	public virtual Identity? Identity { get; init; }
 
-	public ICollection<DartPackage> DartPackages { get; init; } = null!;
+	public virtual ICollection<DartPackage> DartPackages { get; init; } = null!;
 
-	public ICollection<NugetPackage> NugetPackages { get; init; } = null!;
+	public virtual ICollection<NugetPackage> NugetPackages { get; init; } = null!;
 }

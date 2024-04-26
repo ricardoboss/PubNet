@@ -15,5 +15,15 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
 
 		builder.Property(a => a.UserName)
 			.HasMaxLength(50);
+
+		builder.HasMany(a => a.DartPackages)
+			.WithOne(p => p.Author)
+			.HasForeignKey(p => p.AuthorId)
+			.OnDelete(DeleteBehavior.Cascade);
+
+		builder.HasMany(a => a.NugetPackages)
+			.WithOne(p => p.Author)
+			.HasForeignKey(p => p.AuthorId)
+			.OnDelete(DeleteBehavior.Cascade);
 	}
 }

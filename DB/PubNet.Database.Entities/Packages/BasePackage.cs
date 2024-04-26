@@ -6,14 +6,14 @@ public abstract class BasePackage<TVersion> where TVersion : class
 
 	public Guid AuthorId { get; init; }
 
-	public Author Author { get; init; } = null!;
+	public virtual Author Author { get; init; } = null!;
 
 	public string Name { get; init; } = null!;
 
 	public Guid? LatestVersionId { get; init; }
 
-	public TVersion? LatestVersion { get; set; }
+	public virtual TVersion? LatestVersion { get; set; }
 
-	public ICollection<TVersion> Versions { get; init; } = null!;
+	public virtual ICollection<TVersion> Versions { get; init; } = [];
 
 }

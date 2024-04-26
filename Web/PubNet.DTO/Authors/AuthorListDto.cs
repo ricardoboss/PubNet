@@ -4,5 +4,5 @@ public class AuthorListDto
 {
 	public required int TotalHits { get; init; }
 
-	public required List<AuthorDto> Authors { get; init; }
+	public required IEnumerable<AuthorDto> Authors { get; init; }
 }

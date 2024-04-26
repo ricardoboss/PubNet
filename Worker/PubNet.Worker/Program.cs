@@ -36,6 +36,7 @@ try
 
 			services.AddDbContext<PubNetContext>(
 				options => options
+					.UseLazyLoadingProxies()
 					.UseNpgsql(context.Configuration.GetConnectionString("PubNet"))
 			);
 

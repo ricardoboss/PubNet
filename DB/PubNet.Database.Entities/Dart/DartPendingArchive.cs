@@ -13,7 +13,7 @@ public class DartPendingArchive
 
 	public Guid UploaderId { get; init; }
 
-	public Author Uploader { get; init; } = null!;
+	public virtual Author Uploader { get; init; } = null!;
 
 	public DateTimeOffset UploadedAt { get; init; }
 }

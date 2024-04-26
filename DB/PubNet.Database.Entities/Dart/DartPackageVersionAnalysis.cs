@@ -9,7 +9,7 @@ public class DartPackageVersionAnalysis
 
 	public Guid PackageVersionId { get; init; }
 
-	public DartPackageVersion PackageVersion { get; init; } = null!;
+	public virtual DartPackageVersion PackageVersion { get; init; } = null!;
 
 	public bool? Formatted { get; set; }
 

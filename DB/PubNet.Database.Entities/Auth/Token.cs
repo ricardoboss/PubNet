@@ -12,7 +12,7 @@ public class Token
 
 	public Guid IdentityId { get; set; }
 
-	public Identity Identity { get; set; } = null!;
+	public virtual Identity Identity { get; set; } = null!;
 
 	public string Value { get; set; } = null!;
 

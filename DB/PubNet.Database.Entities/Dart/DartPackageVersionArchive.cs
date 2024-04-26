@@ -4,5 +4,5 @@ namespace PubNet.Database.Entities.Dart;
 
 public class DartPackageVersionArchive : PackageArchive
 {
-	public DartPackageVersion PackageVersion { get; init; } = null!;
+	public virtual DartPackageVersion PackageVersion { get; init; } = null!;
 }

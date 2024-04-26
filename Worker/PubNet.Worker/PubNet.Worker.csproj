@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CliWrap" Version="3.6.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
