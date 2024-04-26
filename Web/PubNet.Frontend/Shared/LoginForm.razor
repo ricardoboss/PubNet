@@ -1,5 +1,6 @@
 @inject ApiClient ApiClient
 @inject AuthenticationService Auth
+@inject AccessTokenProvider TokenProvider
 @inject NavigationManager Nav
 
 @if (Error is not null)
@@ -70,7 +71,7 @@
         if (response is null)
             return;
 
-        await Auth.StoreTokenAsync(response.Token!);
+        await TokenProvider.StoreTokenAsync(response.Token!);
         await Auth.GetSelfAsync();
 
         Nav.NavigateTo("/?message=welcome-back", true);

@@ -33,25 +33,27 @@ builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif
 
 // API client services
-builder.Services.AddSingleton<IAccessTokenProvider, AccessTokenProvider>();
-builder.Services.AddSingleton<IAuthenticationProvider, BaseBearerTokenAuthenticationProvider>();
-builder.Services.AddSingleton<HttpClient>();
-builder.Services.AddSingleton<IRequestAdapter, HttpClientRequestAdapter>();
-builder.Services.AddSingleton<ApiClient>();
-// {
-// #if DEBUG
-// 	BaseAddress = "https://localhost:7171/api/",
-// #else
-// 	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
-// #endif
-// });
+builder.Services
+	.AddScoped<AccessTokenProvider>()
+	.AddTransient<IAccessTokenProvider>(sp => sp.GetRequiredService<AccessTokenProvider>())
+	.AddScoped<IAuthenticationProvider, BaseBearerTokenAuthenticationProvider>()
+	.AddScoped<HttpClient>(sp =>
+	{
+		return new HttpClient()
+		{
+#if DEBUG
+			BaseAddress = new Uri("https://localhost:7171/api/", UriKind.Absolute),
+#else
+			BaseAddress = new Uri(builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/", UriKind.Absolute),
+#endif
+		};
+	})
+	.AddScoped<IRequestAdapter, HttpClientRequestAdapter>()
+	.AddScoped<ApiClient>();
 
 // set up Blazorise
 builder.Services
-	.AddBlazorise(options =>
-	{
-		options.Immediate = true;
-	})
+	.AddBlazorise(options => { options.Immediate = true; })
 	.AddBulmaProviders()
 	.AddFontAwesomeIcons();
 
@@ -59,8 +61,8 @@ builder.Services
 builder.Services
 	.AddBlazoredLocalStorage()
 	.AddScoped<AuthenticationService>()
-	.AddScoped<ClipboardService>()
-	.AddScoped<AlertService>()
+	.AddSingleton<ClipboardService>()
+	.AddSingleton<AlertService>()
 	.AddScoped<PackagesService>()
 	.AddScoped<AnalysisService>()
 	.AddTransient(typeof(FetchLock<>));

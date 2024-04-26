@@ -6,39 +6,25 @@ namespace PubNet.Frontend.Services;
 
 public class AuthenticationService(
 	ILocalStorageService localStorage,
+	AccessTokenProvider accessTokenProvider,
 	ApiClient apiClient,
 	FetchLock<AuthenticationService> fetchLock)
 {
-	private const string TokenStorageName = "authentication.token";
 	private const string SelfStorageName = "authentication.self";
 
 	private AuthorDto? _self;
 	private bool _fetchedSelf;
 
-	public ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
-	{
-		return localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
-	}
-
 	public async ValueTask<bool> IsAuthenticatedAsync(CancellationToken cancellationToken = default)
 	{
-		return await GetTokenAsync(cancellationToken) is not null;
-	}
-
-	public async Task StoreTokenAsync(string token, CancellationToken cancellationToken = default)
-	{
-		await localStorage.SetItemAsync(TokenStorageName, token, cancellationToken);
+		return await accessTokenProvider.GetTokenAsync(cancellationToken) is not null;
 	}
 
 	public async Task Logout(CancellationToken cancellationToken = default)
 	{
-		await RemoveTokenAsync(cancellationToken);
-		await RemoveSelfAsync(cancellationToken);
-	}
+		await accessTokenProvider.RemoveTokenAsync(cancellationToken);
 
-	private async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
-	{
-		await localStorage.RemoveItemAsync(TokenStorageName, cancellationToken);
+		await RemoveSelfAsync(cancellationToken);
 	}
 
 	private async Task RemoveSelfAsync(CancellationToken cancellationToken = default)
@@ -100,5 +86,3 @@ public class AuthenticationService(
 		}
 	}
 }
-
-public class UnauthenticatedException(string message) : Exception(message);

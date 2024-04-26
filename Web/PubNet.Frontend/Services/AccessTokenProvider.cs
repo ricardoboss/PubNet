@@ -1,18 +1,34 @@
-﻿using Microsoft.Kiota.Abstractions.Authentication;
+﻿using Blazored.LocalStorage;
+using Microsoft.Kiota.Abstractions.Authentication;
 
 namespace PubNet.Frontend.Services;
 
-public class AccessTokenProvider(AuthenticationService authenticationService) : IAccessTokenProvider
+public class AccessTokenProvider(ILocalStorageService localStorage) : IAccessTokenProvider
 {
-	public async Task<string> GetAuthorizationTokenAsync(Uri uri, Dictionary<string, object>? additionalAuthenticationContext = null,
-		CancellationToken cancellationToken = new CancellationToken())
-	{
-		var token = await authenticationService.GetTokenAsync(cancellationToken);
+	private const string TokenStorageName = "authentication.token";
 
-		return $"Bearer {token}";
+	public ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
+	{
+		return localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
 	}
 
-	public AllowedHostsValidator AllowedHostsValidator { get; } = new AllowedHostsValidator
+	public async Task StoreTokenAsync(string token, CancellationToken cancellationToken = default)
+	{
+		await localStorage.SetItemAsync(TokenStorageName, token, cancellationToken);
+	}
+
+	public async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
+	{
+		await localStorage.RemoveItemAsync(TokenStorageName, cancellationToken);
+	}
+
+	public async Task<string> GetAuthorizationTokenAsync(Uri uri, Dictionary<string, object>? additionalAuthenticationContext = null,
+		CancellationToken cancellationToken = default)
+	{
+		return await GetTokenAsync(cancellationToken) ?? string.Empty;
+	}
+
+	public AllowedHostsValidator AllowedHostsValidator { get; } = new()
 	{
 		AllowedHosts =
 		[
