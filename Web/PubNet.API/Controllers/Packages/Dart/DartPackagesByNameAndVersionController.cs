@@ -35,7 +35,7 @@ public class DartPackagesByNameAndVersionController(
 	[ProducesResponseType<byte[]>(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetArchiveAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
-		var stream = await archiveProvider.GetArchiveAsync(name, version, cancellationToken);
+		var stream = await archiveProvider.GetArchiveContentAsync(name, version, cancellationToken);
 		if (stream is null)
 			return NotFound();
 

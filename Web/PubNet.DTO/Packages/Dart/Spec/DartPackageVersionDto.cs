@@ -4,13 +4,13 @@ namespace PubNet.API.DTO.Packages.Dart.Spec;
 
 public class DartPackageVersionDto : PackageVersionDto
 {
-	public static DartPackageVersionDto MapFrom(DartPackageVersion version)
+	public static DartPackageVersionDto MapFrom(DartPackageVersion version, Uri archiveUrl, string archiveSha256)
 	{
 		return new()
 		{
 			Version = version.Version,
-			ArchiveUrl = "", // TODO
-			ArchiveSha256 = "", // TODO
+			ArchiveUrl = archiveUrl,
+			ArchiveSha256 = archiveSha256,
 			Retracted = version.Retracted,
 			Pubspec = new(),
 			PublishedAt = version.PublishedAt,
@@ -24,7 +24,7 @@ public class DartPackageVersionDto : PackageVersionDto
 	/// server to return signed URLs for S3, GCS, or other blob storage services. If temporary URLs are returned it is
 	/// wise to not set expiration to less than 25 minutes (to allow for retries and clock drift).
 	/// </summary>
-	public required string ArchiveUrl { get; init; }
+	public required Uri ArchiveUrl { get; init; }
 
 	/// <summary>
 	/// <para>

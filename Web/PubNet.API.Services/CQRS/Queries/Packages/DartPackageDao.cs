@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
+using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.Database.Context;
@@ -7,7 +8,7 @@ using PubNet.Database.Entities.Dart;
 
 namespace PubNet.API.Services.CQRS.Queries.Packages;
 
-public class DartPackageDao(PubNetContext context) : IDartPackageDao
+public class DartPackageDao(PubNetContext context, IDartPackageArchiveProvider archiveProvider) : IDartPackageDao
 {
 	public async Task<DartPackage?> TryGetByNameAsync(string name, CancellationToken cancellationToken = default)
 	{
@@ -34,7 +35,7 @@ public class DartPackageDao(PubNetContext context) : IDartPackageDao
 		return new()
 		{
 			TotalHits = total,
-			Packages = packages.Select(p => DartPackageDto.MapFrom(p)),
+			Packages = packages.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash)),
 		};
 	}
 }

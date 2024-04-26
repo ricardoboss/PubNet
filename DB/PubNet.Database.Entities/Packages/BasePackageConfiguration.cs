@@ -8,8 +8,6 @@ public abstract class BasePackageConfiguration<TPackage, TVersion> : IEntityType
 {
 	public virtual void Configure(EntityTypeBuilder<TPackage> builder)
 	{
-		// TODO: split up into multiple methods
-
 		builder.HasKey(p => p.Id);
 
 		builder.HasIndex(p => new { p.AuthorId, p.Name })
@@ -32,8 +30,6 @@ public abstract class BasePackageConfiguration<TPackage, TVersion> : IEntityType
 
 		builder.Navigation(p => p.LatestVersion)
 			.AutoInclude();
-
-		// TODO: enable lazy loading for author
 	}
 
 	protected abstract Expression<Func<Author, IEnumerable<TPackage>?>> NavigateFromAuthorToPackages();

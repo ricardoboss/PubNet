@@ -192,6 +192,7 @@ void ConfigureNugetServices(IHostApplicationBuilder builder)
 void ConfigureDartServices(IHostApplicationBuilder builder)
 {
 	builder.Services.AddScoped<IDartPackageUploadService, DartPackageUploadService>();
+	builder.Services.AddScoped<IDartPackageArchiveProvider, DartPackageArchiveProvider>();
 }
 
 void ConfigurePackageStorage(IHostApplicationBuilder builder)

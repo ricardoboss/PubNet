@@ -2,16 +2,22 @@
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.CQRS.Commands.Packages;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
+using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Attributes;
 using PubNet.API.DTO;
 using PubNet.API.DTO.Packages.Dart.Spec;
+using PubNet.Database.Entities.Dart;
 using PubNet.Web;
 
 namespace PubNet.API.Controllers.Packages.Dart;
 
 [Route("Packages/Dart/{name}")]
 [Tags("Dart")]
-public class DartPackagesByNameController(IDartPackageDmo dartPackageDmo, IDartPackageDao dartPackageDao) : DartController
+public class DartPackagesByNameController(
+	IDartPackageDmo dartPackageDmo,
+	IDartPackageDao dartPackageDao,
+	IDartPackageArchiveProvider archiveProvider
+) : DartController
 {
 	[HttpPatch("Discontinue")]
 	[Authorize, RequireScope(Scopes.Dart.Discontinue)]
@@ -39,6 +45,6 @@ public class DartPackagesByNameController(IDartPackageDmo dartPackageDmo, IDartP
 				},
 			});
 
-		return Ok(DartPackageDto.MapFrom(package));
+		return Ok(DartPackageDto.MapFrom(package, archiveProvider.GetArchiveUriAndHash));
 	}
 }
