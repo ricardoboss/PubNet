@@ -157,10 +157,10 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 
 		var blobPath = GetBlobPath(args.BucketName, args.BlobName);
 
-		if (!File.Exists(blobPath))
+		if (!Directory.Exists(blobPath))
 			return Task.FromResult(false);
 
-		File.Delete(blobPath);
+		Directory.Delete(blobPath, recursive: true);
 
 		return Task.FromResult(true);
 	}
