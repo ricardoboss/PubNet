@@ -10,8 +10,10 @@ namespace PubNet.BlobStorage.LocalFileBlobStorage;
 
 public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 {
+	public const string ServiceKey = nameof(LocalFileBlobStorage);
+
 	/// <inheritdoc />
-	public string Name => configuration["Name"] ?? "LocalFileBlobStorage";
+	public string Name => configuration["Name"] ?? ServiceKey;
 
 	private string RootPath => configuration["RootPath"] ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PubNet.BlobStorage.LocalFileBlobStorage");
 

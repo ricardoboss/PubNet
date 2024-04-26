@@ -47,7 +47,9 @@ try
 			services.AddSingleton<WorkerTaskQueue>();
 
 			// for managing packages stored on the local host
-			services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
+			services.AddKeyedSingleton<IBlobStorage, LocalFileBlobStorage>(LocalFileBlobStorage.ServiceKey);
+			services.AddTransient<IBlobStorage>(sp =>
+				sp.GetRequiredKeyedService<IBlobStorage>(LocalFileBlobStorage.ServiceKey));
 			services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
 			services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
 

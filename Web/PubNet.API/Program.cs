@@ -196,10 +196,14 @@ void ConfigureDartServices(IHostApplicationBuilder builder)
 
 void ConfigurePackageStorage(IHostApplicationBuilder builder)
 {
-	// package storage
-	builder.Services.AddSingleton<IBlobStorage, LocalFileBlobStorage>();
 	builder.Services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
 	builder.Services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
+
+	// register blob storages with a key
+	builder.Services.AddKeyedSingleton<IBlobStorage, LocalFileBlobStorage>(LocalFileBlobStorage.ServiceKey);
+
+	// default blob storage is local file storage
+	builder.Services.AddTransient<IBlobStorage>(sp => sp.GetRequiredKeyedService<IBlobStorage>(LocalFileBlobStorage.ServiceKey));
 
 	// needed for unauthenticated file uploads
 	builder.Services.AddSignedUrl();
