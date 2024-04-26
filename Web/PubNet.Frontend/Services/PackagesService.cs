@@ -24,6 +24,12 @@ public class PackagesService(ApiClient http, AnalysisService analysis, FetchLock
 
 			return fetchedPackage;
 		}
+		catch (GenericErrorDto e) when (e.Error?.Code is "package-not-found")
+		{
+			_packages[name] = null;
+
+			throw NotFound();
+		}
 		finally
 		{
 			fetchLock.Free();

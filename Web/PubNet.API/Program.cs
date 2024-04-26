@@ -10,6 +10,7 @@ using Npgsql;
 using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.CQRS.Commands;
+using PubNet.API.Abstractions.CQRS.Commands.Packages;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Packages.Nuget;
@@ -19,6 +20,7 @@ using PubNet.API.Middlewares;
 using PubNet.API.Services;
 using PubNet.API.Services.Authentication;
 using PubNet.API.Services.CQRS.Commands;
+using PubNet.API.Services.CQRS.Commands.Packages;
 using PubNet.API.Services.CQRS.Queries;
 using PubNet.API.Services.CQRS.Queries.Packages;
 using PubNet.API.Services.Packages.Nuget;
@@ -245,10 +247,12 @@ void ConfigureDataServices(IHostApplicationBuilder builder)
 	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
 	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
 	builder.Services.AddScoped<INugetPackageDao, NugetPackageDao>();
+	builder.Services.AddScoped<IDartPackageDao, DartPackageDao>();
 
 	builder.Services.AddScoped<ITokenDmo, TokenDmo>();
 	builder.Services.AddScoped<IAuthorDmo, AuthorDmo>();
 	builder.Services.AddScoped<IIdentityDmo, IdentityDmo>();
+	builder.Services.AddScoped<IDartPackageDmo, DartPackageDmo>();
 
 	builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 	builder.Services.AddScoped<IPasswordVerifier, PasswordVerifier>();

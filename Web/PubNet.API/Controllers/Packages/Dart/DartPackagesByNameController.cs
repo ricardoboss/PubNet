@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.CQRS.Commands.Packages;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Attributes;
+using PubNet.API.DTO;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.Web;
 
@@ -14,7 +15,6 @@ public class DartPackagesByNameController(IDartPackageDmo dartPackageDmo, IDartP
 {
 	[HttpPatch("Discontinue")]
 	[Authorize, RequireScope(Scopes.Dart.Discontinue)]
-	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	public async Task<DartSuccessDto> Discontinue(string name, CancellationToken cancellationToken = default)
 	{
 		await dartPackageDmo.DiscontinueAsync(name, cancellationToken);
@@ -23,10 +23,22 @@ public class DartPackagesByNameController(IDartPackageDmo dartPackageDmo, IDartP
 	}
 
 	[HttpGet]
-	public async Task<DartPackageDto?> GetAsync(string name, CancellationToken cancellationToken = default)
+	[ProducesResponseType<DartPackageDto>(200)]
+	[ProducesResponseType<GenericErrorDto>(404)]
+	public async Task<IActionResult> GetAsync(string name, CancellationToken cancellationToken = default)
 	{
 		var package = await dartPackageDao.TryGetByNameAsync(name, cancellationToken);
 
-		return package is null ? null : DartPackageDto.MapFrom(package);
+		if (package is null)
+			return NotFound(new GenericErrorDto
+			{
+				Error = new()
+				{
+					Code = "package-not-found",
+					Message = $"Package '{name}' not found",
+				},
+			});
+
+		return Ok(DartPackageDto.MapFrom(package));
 	}
 }

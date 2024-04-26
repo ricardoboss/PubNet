@@ -22,21 +22,28 @@ public class ExceptionFormatterMiddleware : IMiddleware
 
 	private static async Task Handle(HttpContext context, Exception e)
 	{
-		if (e is InvalidCredentialException or AuthenticationException or UnauthorizedAccessException)
+		switch (e)
 		{
-			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-			context.Response.Headers.WWWAuthenticate = new[]
-			{
-				$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
-			};
-		}
-		else if (e is ApiException apiException)
-		{
-			context.Response.StatusCode = apiException.StatusCode;
-		}
-		else
-		{
-			context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+			case OperationCanceledException:
+				context.Connection.RequestClose();
+
+				return;
+			case InvalidCredentialException or AuthenticationException or UnauthorizedAccessException:
+				context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+				context.Response.Headers.WWWAuthenticate = new[]
+				{
+					$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
+				};
+
+				break;
+			case ApiException apiException:
+				context.Response.StatusCode = apiException.StatusCode;
+
+				break;
+			default:
+				context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+				break;
 		}
 
 		await context.Response.WriteAsJsonAsync(
