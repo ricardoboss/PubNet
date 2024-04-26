@@ -33,6 +33,8 @@ namespace PubNet.Client.Generated.Models {
 #else
         public string ReplacedBy { get; set; }
 #endif
+        /// <summary>The type property</summary>
+        public int? Type { get; set; }
         /// <summary>The versions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -63,6 +65,7 @@ namespace PubNet.Client.Generated.Models {
                 {"latest", n => { Latest = n.GetObjectValue<DartPackageVersionDto>(DartPackageVersionDto.CreateFromDiscriminatorValue); } },
                 {"name", n => { Name = n.GetStringValue(); } },
                 {"replacedBy", n => { ReplacedBy = n.GetStringValue(); } },
+                {"type", n => { Type = n.GetIntValue(); } },
                 {"versions", n => { Versions = n.GetCollectionOfObjectValues<DartPackageVersionDto>(DartPackageVersionDto.CreateFromDiscriminatorValue)?.ToList(); } },
             };
         }
@@ -77,6 +80,7 @@ namespace PubNet.Client.Generated.Models {
             writer.WriteObjectValue<DartPackageVersionDto>("latest", Latest);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("replacedBy", ReplacedBy);
+            writer.WriteIntValue("type", Type);
             writer.WriteCollectionOfObjectValues<DartPackageVersionDto>("versions", Versions);
         }
     }

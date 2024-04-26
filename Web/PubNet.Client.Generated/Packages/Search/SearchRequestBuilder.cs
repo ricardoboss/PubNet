@@ -19,7 +19,7 @@ namespace PubNet.Client.Generated.Packages.Search {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SearchRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skip*,take*}", pathParameters)
+        public SearchRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skip*,take*,type*}", pathParameters)
         {
         }
         /// <summary>
@@ -27,7 +27,7 @@ namespace PubNet.Client.Generated.Packages.Search {
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SearchRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skip*,take*}", rawUrl)
+        public SearchRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skip*,take*,type*}", rawUrl)
         {
         }
         /// <returns>A <see cref="PackageListDto"/></returns>
@@ -85,6 +85,8 @@ namespace PubNet.Client.Generated.Packages.Search {
             public int? Skip { get; set; }
             [QueryParameter("take")]
             public int? Take { get; set; }
+            [QueryParameter("type")]
+            public int? Type { get; set; }
         }
     }
 }

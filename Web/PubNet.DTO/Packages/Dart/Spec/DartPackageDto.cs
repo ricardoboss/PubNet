@@ -21,6 +21,7 @@ public class DartPackageDto : PackageDto<DartPackageVersionDto>
 			IsDiscontinued = package.IsDiscontinued,
 			Latest = latestVersion,
 			Versions = versions,
+			Type = PackageType.Dart,
 		};
 	}
 

@@ -1173,6 +1173,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "$ref": "#/components/schemas/PackageTypeFilter"
+            }
           }
         ],
         "responses": {
@@ -1337,6 +1345,9 @@
           "name": {
             "type": "string",
             "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/PackageType"
           },
           "latest": {
             "$ref": "#/components/schemas/DartPackageVersionDto"
@@ -1687,6 +1698,9 @@
             "type": "string",
             "nullable": true
           },
+          "type": {
+            "$ref": "#/components/schemas/PackageType"
+          },
           "latest": {
             "$ref": "#/components/schemas/NugetPackageVersionDto"
           },
@@ -2030,6 +2044,24 @@
         },
         "additionalProperties": false
       },
+      "PackageType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "PackageTypeFilter": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "PackageVersionDto": {
         "type": "object",
         "properties": {
@@ -2050,6 +2082,9 @@
           "name": {
             "type": "string",
             "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/PackageType"
           },
           "latest": {
             "$ref": "#/components/schemas/PackageVersionDto"

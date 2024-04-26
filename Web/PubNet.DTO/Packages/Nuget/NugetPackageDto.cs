@@ -19,6 +19,7 @@ public class NugetPackageDto : PackageDto<NugetPackageVersionDto>
 			Name = package.Name,
 			Latest = latestVersion,
 			Versions = versions,
+			Type = PackageType.Nuget,
 		};
 	}
 }
