@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using PubNet.BlobStorage.Abstractions;
+using PubNet.BlobStorage.Extensions;
 using PubNet.Database.Context;
 using PubNet.Worker.Models;
 
@@ -23,7 +25,7 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 		logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
 		configuration ??= services.GetRequiredService<IConfiguration>();
 
-		if (!TimeSpan.TryParse(configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7", out var maxAge))
+		if (!TimeSpan.TryParse(configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7d", out var maxAge))
 			throw new("Unable to parse PackageStorage:PendingMaxAge as a valid TimeSpan");
 
 		var uploadedAtLowerLimit = DateTimeOffset.UtcNow.Subtract(maxAge);
@@ -36,11 +38,52 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 
 		foreach (var outdatedArchive in outdatedArchives)
 		{
-			var archivePath = outdatedArchive.ArchivePath;
-			if (File.Exists(archivePath)) File.Delete(archivePath);
+			if (!outdatedArchive.ArchivePath.StartsWith("blob://"))
+			{
+				logger.LogError("Archive {ArchiveId}: Not a blob archive ({ArchivePath})", outdatedArchive.Id,
+					outdatedArchive.ArchivePath);
 
-			var unpackedArchivePath = outdatedArchive.UnpackedArchivePath;
-			if (Directory.Exists(unpackedArchivePath)) Directory.Delete(unpackedArchivePath, true);
+				continue;
+			}
+
+			var parts = outdatedArchive.ArchivePath["blob://".Length..].Split("/", 3);
+			if (parts.Length != 3)
+			{
+				logger.LogError("Archive {ArchiveId}: Invalid blob archive path ({ArchivePath})",
+					outdatedArchive.Id,
+					outdatedArchive.ArchivePath);
+
+				continue;
+			}
+
+			var (storageName, bucketName, blobName) = (parts[0], parts[1], parts[2]);
+
+			var blobStorage = services.GetKeyedService<IBlobStorage>(storageName);
+			if (blobStorage is null)
+			{
+				logger.LogError("Archive {ArchiveId}: Unknown blob storage type ({StorageName})", outdatedArchive.Id,
+					storageName);
+
+				continue;
+			}
+
+			var success = await blobStorage
+				.DeleteBlob()
+				.WithBucketName(bucketName)
+				.WithBlobName(blobName)
+				.RunAsync(cancellationToken);
+
+			if (!success)
+			{
+				logger.LogError("Archive {ArchiveId}: Failed to delete blob archive ({ArchivePath})",
+					outdatedArchive.Id, outdatedArchive.ArchivePath);
+
+				continue;
+			}
+
+			logger.LogInformation("Archive {ArchiveId}: Deleted blob archive ({ArchivePath})",
+				outdatedArchive.Id,
+				outdatedArchive.ArchivePath);
 
 			db.DartPendingArchives.Remove(outdatedArchive);
 		}
