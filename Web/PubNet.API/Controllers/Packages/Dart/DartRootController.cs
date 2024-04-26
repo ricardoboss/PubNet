@@ -13,7 +13,7 @@ namespace PubNet.API.Controllers.Packages.Dart;
 [Tags("Dart")]
 public class DartRootController(IAuthProvider authProvider, IDartPackageUploadService uploadService) : DartController
 {
-	[HttpPost("Versions/New")]
+	[HttpGet("Versions/New")]
 	[Authorize, RequireScope(Scopes.Dart.New)]
 	public async Task<DartNewVersionDto> CreateNewAsync(CancellationToken cancellationToken = default)
 	{

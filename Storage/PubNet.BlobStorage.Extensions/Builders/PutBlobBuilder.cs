@@ -38,6 +38,13 @@ public class PutBlobBuilder(IBlobStorage storage) : IArgsBuilder
 		return this;
 	}
 
+	public PutBlobBuilder WithContent(byte[] content)
+	{
+		contentStream = new MemoryStream(content);
+
+		return this;
+	}
+
 	public Task<string> RunAsync(CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(bucketName))

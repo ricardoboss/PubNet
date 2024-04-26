@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using Npgsql;
+using PubNet.API;
 using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.Abstractions.CQRS.Commands.Packages;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
+using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
@@ -23,6 +26,7 @@ using PubNet.API.Services.CQRS.Commands;
 using PubNet.API.Services.CQRS.Commands.Packages;
 using PubNet.API.Services.CQRS.Queries;
 using PubNet.API.Services.CQRS.Queries.Packages;
+using PubNet.API.Services.Packages.Dart;
 using PubNet.API.Services.Packages.Nuget;
 using PubNet.ArchiveStorage.BlobStorage;
 using PubNet.BlobStorage.Abstractions;
@@ -91,6 +95,8 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 	ConfigureNugetServices(builder);
 
+	ConfigureDartServices(builder);
+
 	ConfigureControllers(builder);
 
 	ConfigureSwagger(builder);
@@ -107,7 +113,7 @@ void ConfigureHttpServices(IHostApplicationBuilder builder)
 	builder.Services.AddResponseCaching();
 
 	builder.Services.AddSingleton<ExceptionFormatterMiddleware>();
-	builder.Services.AddSingleton<PubClientRewriterMiddleware>();
+	// builder.Services.AddSingleton<PubClientRewriterMiddleware>();
 }
 
 void ConfigureCors(WebApplicationBuilder builder)
@@ -181,6 +187,11 @@ void ConfigureNugetServices(IHostApplicationBuilder builder)
 {
 	builder.Services.AddScoped<IKnownUrlsProvider, KnownUrlsProvider>();
 	builder.Services.AddScoped<INugetServiceIndexProvider, NugetServiceIndexProvider>();
+}
+
+void ConfigureDartServices(IHostApplicationBuilder builder)
+{
+	builder.Services.AddScoped<IDartPackageUploadService, DartPackageUploadService>();
 }
 
 void ConfigurePackageStorage(IHostApplicationBuilder builder)
@@ -287,6 +298,8 @@ void ConfigureLogging(WebApplicationBuilder builder)
 
 void ConfigureHttpPipeline(WebApplication app)
 {
+	app.UseRewriter(new RewriteOptions().Add(new PubClientRewriteRule()));
+
 	app.UsePathBase("/api");
 
 	app.UseSerilogRequestLogging(options =>
@@ -307,7 +320,7 @@ void ConfigureHttpPipeline(WebApplication app)
 
 	app.UseDetection();
 
-	app.UseMiddleware<PubClientRewriterMiddleware>();
+	// app.UseMiddleware<PubClientRewriterMiddleware>();
 
 	app.UseAuthentication();
 	app.UseAuthorization();

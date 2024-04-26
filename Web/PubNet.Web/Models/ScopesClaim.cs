@@ -7,7 +7,7 @@ namespace PubNet.Web.Models;
 [Instance("Empty", "")]
 public readonly partial struct ScopesClaim
 {
-	[GeneratedRegex("^[a-z:\\s]*$")]
+	[GeneratedRegex(@"^[a-z:\s\*]*$")]
 	private static partial Regex ValidScopesClaimRegex();
 
 	private static Validation Validate(string input)

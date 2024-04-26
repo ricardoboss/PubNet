@@ -9,7 +9,7 @@ public class DartPendingArchive
 
 	public string ArchivePath { get; init; } = null!;
 
-	public string UnpackedArchivePath => ArchivePath[..^".tar.gz".Length];
+	public string ArchiveHash { get; init; } = null!;
 
 	public Guid UploaderId { get; init; }
 
