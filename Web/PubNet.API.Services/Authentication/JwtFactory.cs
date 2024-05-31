@@ -1,13 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.Database.Entities.Auth;
 using PubNet.Web;
 using PubNet.Web.Models;
 
-namespace PubNet.API.Services;
+namespace PubNet.API.Services.Authentication;
 
 public class JwtFactory : IJwtFactory
 {
