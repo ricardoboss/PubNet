@@ -1,12 +1,14 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+﻿ARG SDK_VERSION=8.0
+
+FROM mcr.microsoft.com/dotnet/runtime:${SDK_VERSION} AS base
 WORKDIR /app
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:${SDK_VERSION} AS build
 WORKDIR /src
-COPY ["PubNet.Worker/PubNet.Worker.csproj", "PubNet.Worker/"]
-RUN dotnet restore "PubNet.Worker/PubNet.Worker.csproj"
-COPY . .
-WORKDIR "/src/PubNet.Worker"
+COPY ["Worker/PubNet.Worker/PubNet.Worker.csproj", "Worker/PubNet.Worker/"]
+RUN dotnet restore "Worker/PubNet.Worker/PubNet.Worker.csproj"
+COPY ../ .
+WORKDIR "/src/Worker/PubNet.Worker"
 RUN dotnet build "PubNet.Worker.csproj" -c Release -o /app/build
 
 FROM build AS publish

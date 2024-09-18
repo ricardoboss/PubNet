@@ -38,7 +38,7 @@ services:
 
   backend:
     build:
-      dockerfile: ./PubNet.API/Dockerfile
+      dockerfile: ./Web/PubNet.API/Dockerfile
       target: final
     restart: unless-stopped
     volumes:
@@ -50,7 +50,7 @@ services:
 
   worker:
     build:
-      dockerfile: ./PubNet.Worker/Dockerfile
+      dockerfile: ./Worker/PubNet.Worker/Dockerfile
       target: final
     restart: unless-stopped
     volumes:
@@ -61,7 +61,7 @@ services:
 
   frontend:
     build:
-      dockerfile: ./PubNet.Frontend/Dockerfile
+      dockerfile: ./Web/PubNet.Frontend/Dockerfile
     restart: unless-stopped
     depends_on:
       - backend
