@@ -1,5 +1,3 @@
-version: '3.9'
-
 volumes:
   postgres_data:
   seq_data:
