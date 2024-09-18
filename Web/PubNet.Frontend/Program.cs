@@ -9,6 +9,7 @@ using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using PubNet.Client.Generated;
 using PubNet.Frontend;
+using PubNet.Frontend.Interfaces;
 using PubNet.Frontend.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -34,26 +35,23 @@ builder.Logging.SetMinimumLevel(LogLevel.None);
 
 // API client services
 builder.Services
-	.AddScoped<AccessTokenProvider>()
-	.AddTransient<IAccessTokenProvider>(sp => sp.GetRequiredService<AccessTokenProvider>())
+	.AddScoped<IAccessTokenStorage, LocalAccessTokenStorage>()
+	.AddTransient<IAccessTokenProvider>(sp => sp.GetRequiredService<IAccessTokenStorage>())
 	.AddScoped<IAuthenticationProvider, BaseBearerTokenAuthenticationProvider>()
-	.AddScoped<HttpClient>(sp =>
+	.AddScoped<HttpClient>(_ => new()
 	{
-		return new HttpClient()
-		{
 #if DEBUG
-			BaseAddress = new Uri("https://localhost:7171/api/", UriKind.Absolute),
+		BaseAddress = new("http://localhost:5000/api/", UriKind.Absolute),
 #else
-			BaseAddress = new Uri(builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/", UriKind.Absolute),
+		BaseAddress = new(builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/", UriKind.Absolute),
 #endif
-		};
 	})
 	.AddScoped<IRequestAdapter, HttpClientRequestAdapter>()
 	.AddScoped<ApiClient>();
 
 // set up Blazorise
 builder.Services
-	.AddBlazorise(options => { options.Immediate = true; })
+	.AddBlazorise(options => options.Immediate = true)
 	.AddBulmaProviders()
 	.AddFontAwesomeIcons();
 

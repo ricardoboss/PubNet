@@ -1,6 +1,7 @@
+@using PubNet.Frontend.Interfaces
 @inject ApiClient ApiClient
 @inject AuthenticationService Auth
-@inject AccessTokenProvider TokenProvider
+@inject IAccessTokenStorage TokenStorage
 @inject NavigationManager Nav
 
 @if (Error is not null)
@@ -71,7 +72,7 @@
         if (response is null)
             return;
 
-        await TokenProvider.StoreTokenAsync(response.Token!);
+        await TokenStorage.StoreTokenAsync(response.Token!);
         await Auth.GetSelfAsync();
 
         Nav.NavigateTo("/?message=welcome-back", true);

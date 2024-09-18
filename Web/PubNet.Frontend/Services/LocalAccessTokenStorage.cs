@@ -1,9 +1,10 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.Kiota.Abstractions.Authentication;
+using PubNet.Frontend.Interfaces;
 
 namespace PubNet.Frontend.Services;
 
-public class AccessTokenProvider(ILocalStorageService localStorage) : IAccessTokenProvider
+public class LocalAccessTokenStorage(ILocalStorageService localStorage) : IAccessTokenStorage
 {
 	private const string TokenStorageName = "authentication.token";
 

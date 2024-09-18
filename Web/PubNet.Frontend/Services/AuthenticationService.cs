@@ -1,12 +1,15 @@
+using System.Net;
 using Blazored.LocalStorage;
+using Microsoft.Kiota.Abstractions;
 using PubNet.Client.Generated;
 using PubNet.Client.Generated.Models;
+using PubNet.Frontend.Interfaces;
 
 namespace PubNet.Frontend.Services;
 
 public class AuthenticationService(
 	ILocalStorageService localStorage,
-	AccessTokenProvider accessTokenProvider,
+	IAccessTokenStorage accessTokenProvider,
 	ApiClient apiClient,
 	FetchLock<AuthenticationService> fetchLock)
 {
@@ -62,6 +65,12 @@ public class AuthenticationService(
 			_fetchedSelf = true;
 
 			return _self;
+		}
+		catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)
+		{
+			await Logout(cancellationToken);
+
+			throw new UnauthenticatedException("Not authenticated");
 		}
 		finally
 		{
