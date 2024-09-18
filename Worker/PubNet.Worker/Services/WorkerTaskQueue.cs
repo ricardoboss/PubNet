@@ -33,8 +33,6 @@ public class WorkerTaskQueue : IDisposable
 			logger.LogTrace("Task queued: {TaskName}", item.Name);
 
 			sleepCancellation.Cancel();
-			if (sleepCancellation.TryReset()) return;
-
 			sleepCancellation.Dispose();
 			sleepCancellation = new();
 		}
