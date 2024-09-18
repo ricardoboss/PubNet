@@ -12,6 +12,7 @@
 	<PropertyGroup>
 		<GeneratedClientNamespace>PubNet.Client.Generated</GeneratedClientNamespace>
 		<GeneratedClientDirectory>../$(GeneratedClientNamespace)</GeneratedClientDirectory>
+		<GeneratedClientLockFile>$(GeneratedClientDirectory)/kiota-lock.json</GeneratedClientLockFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -23,14 +24,18 @@
 	</PropertyGroup>
 
 	<Target Name="CreateSwaggerJson" AfterTargets="Build" Condition="$(Configuration) == 'Debug'">
-		<Exec Command="dotnet swagger tofile --output openapi-spec.json $(OutputPath)$(AssemblyName).dll v1" WorkingDirectory="$(ProjectDir)"/>
+		<Exec
+			Command="dotnet swagger tofile --output openapi-spec.json $(OutputPath)$(AssemblyName).dll v1"
+			WorkingDirectory="$(ProjectDir)"
+			EnvironmentVariables="DOTNET_ENVIRONMENT=Development"
+		/>
 	</Target>
 
-	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientDirectory)')">
+	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
 		<Exec Command="dotnet kiota generate --openapi openapi-spec.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
-	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientDirectory)')">
+	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">
 		<Exec Command="dotnet kiota update --output $(GeneratedClientDirectory)" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
@@ -58,12 +63,6 @@
 			<Link>.gitignore</Link>
 		</Content>
 		<Content Remove="packages\**"/>
-		<Content Update="appsettings.Development.json">
-			<DependentUpon>appsettings.json</DependentUpon>
-		</Content>
-		<Content Update="appsettings.Production.json">
-			<DependentUpon>appsettings.json</DependentUpon>
-		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -91,6 +90,19 @@
 		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj"/>
 		<ProjectReference Include="..\PubNet.Web\PubNet.Web.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="appsettings.json" />
+	  <Resource Include="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Content Remove="appsettings.Development.json" />
+	  <Resource Include="appsettings.Development.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <DependentUpon>appsettings.json</DependentUpon>
+	  </Resource>
+	  <Content Remove="appsettings.Production.json" />
 	</ItemGroup>
 
 </Project>

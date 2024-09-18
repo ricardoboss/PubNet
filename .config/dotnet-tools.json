@@ -8,6 +8,13 @@
         "kiota"
       ],
       "rollForward": false
+    },
+    "swashbuckle.aspnetcore.cli": {
+      "version": "6.7.3",
+      "commands": [
+        "swagger"
+      ],
+      "rollForward": false
     }
   }
 }

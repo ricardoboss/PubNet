@@ -8,3 +8,4 @@ riderModule.iml
 /packages/
 .vs/
 **/.DS_Store
+*.log
