@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		global.json = global.json
 		Architecture.md = Architecture.md
+		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Frontend", "Web\PubNet.Frontend\PubNet.Frontend.csproj", "{9D192AC4-B6B3-45D0-B3D9-502AA2491ACC}"
@@ -27,9 +28,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5499F184-A74F-4D6D-9BA8-4CBC02A109F8}"
-	ProjectSection(SolutionItems) = preProject
-		Web\Makefile = Web\Makefile
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{FBB066E9-FB52-4AA7-8D4C-B796063DC723}"
 EndProject
@@ -68,6 +66,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Web", "Web\PubNet.Web\PubNet.Web.csproj", "{0AB11555-CBE2-47E5-857F-1E0EC64B975F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Generated", "Web\PubNet.Client.Generated\PubNet.Client.Generated.csproj", "{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{FF841DA5-8B71-489C-ABC5-34E7D6049D3C}"
+	ProjectSection(SolutionItems) = preProject
+		.config\dotnet-tools.json = .config\dotnet-tools.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -172,5 +175,6 @@ Global
 		{5925FBF4-71D0-441B-B41B-33DCCE00373C} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
 		{0AB11555-CBE2-47E5-857F-1E0EC64B975F} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
 		{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
+		{FF841DA5-8B71-489C-ABC5-34E7D6049D3C} = {6F717FC7-42F0-42E9-B731-D0443E2099C3}
 	EndGlobalSection
 EndGlobal

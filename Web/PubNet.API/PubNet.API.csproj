@@ -9,6 +9,11 @@
 		<LangVersion>default</LangVersion>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<GeneratedClientNamespace>PubNet.Client.Generated</GeneratedClientNamespace>
+		<GeneratedClientDirectory>../$(GeneratedClientNamespace)</GeneratedClientDirectory>
+	</PropertyGroup>
+
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
 	</PropertyGroup>
@@ -21,8 +26,12 @@
 		<Exec Command="dotnet swagger tofile --output openapi-spec.json $(OutputPath)$(AssemblyName).dll v1" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
-	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug'">
-		<Exec Command="kiota generate --openapi openapi-spec.json --language CSharp --output ../PubNet.Client.Generated --namespace-name PubNet.Client.Generated --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)"/>
+	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientDirectory)')">
+		<Exec Command="dotnet kiota generate --openapi openapi-spec.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)"/>
+	</Target>
+
+	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientDirectory)')">
+		<Exec Command="dotnet kiota update --output $(GeneratedClientDirectory)" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
 	<ItemGroup>

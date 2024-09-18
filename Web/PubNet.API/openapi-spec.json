@@ -1604,6 +1604,7 @@
           },
           "archiveUrl": {
             "type": "string",
+            "format": "uri",
             "nullable": true
           },
           "archiveSha256": {
