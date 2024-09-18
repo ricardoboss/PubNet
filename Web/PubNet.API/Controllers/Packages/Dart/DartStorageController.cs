@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.DTO;
 using PubNet.API.DTO.Packages.Dart.Spec;
@@ -51,6 +50,31 @@ public class DartStorageController(PubNetContext context, IBlobStorage blobStora
 				);
 		}
 
+		var contentType = Request.Headers.ContentType.FirstOrDefault();
+		switch (contentType?.Split(';')[0])
+		{
+			case null:
+				return BadRequest(new GenericErrorDto
+				{
+					Error = new()
+					{
+						Code = "missing-content-type",
+						Message = "Content-Type is missing from the request",
+					},
+				});
+			case "multipart/form-data":
+				break;
+			default:
+				return BadRequest(new GenericErrorDto
+				{
+					Error = new()
+					{
+						Code = "invalid-content-type",
+						Message = $"Request Content-Type must be multipart/form-data but is {contentType}",
+					},
+				});
+		}
+
 		var packageFile = Request.Form.Files.FirstOrDefault(f => f.Name == "file");
 		if (packageFile is null)
 			return BadRequest(new GenericErrorDto
@@ -68,7 +92,7 @@ public class DartStorageController(PubNetContext context, IBlobStorage blobStora
 				Error = new()
 				{
 					Code = "invalid-content-type",
-					Message = "Content-Type must be application/octet-stream",
+					Message = "Package file Content-Type must be application/octet-stream",
 				},
 			});
 
