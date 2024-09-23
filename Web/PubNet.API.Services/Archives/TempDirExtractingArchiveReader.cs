@@ -22,8 +22,6 @@ public class TempDirExtractingArchiveReader : IArchiveReader
 		reader.WriteAllToDirectory(tempDir, new()
 		{
 			ExtractFullPath = true,
-			Overwrite = true,
-			PreserveAttributes = true,
 			PreserveFileTime = true,
 		});
 
