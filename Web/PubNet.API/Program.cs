@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Archives;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.Abstractions.CQRS.Commands.Packages;
@@ -21,6 +22,7 @@ using PubNet.API.Converter;
 using PubNet.API.DTO;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
+using PubNet.API.Services.Archives;
 using PubNet.API.Services.Authentication;
 using PubNet.API.Services.CQRS.Commands;
 using PubNet.API.Services.CQRS.Commands.Packages;
@@ -208,6 +210,9 @@ void ConfigurePackageStorage(IHostApplicationBuilder builder)
 
 	// needed for unauthenticated file uploads
 	builder.Services.AddSignedUrl();
+
+	// needed for extracting archives
+	builder.Services.AddSingleton<IArchiveReader, TempDirExtractingArchiveReader>();
 }
 
 void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)

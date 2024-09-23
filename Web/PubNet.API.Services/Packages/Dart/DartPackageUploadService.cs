@@ -86,11 +86,8 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 		string? pubspecYaml = null;
 		await using (archiveStream)
 		{
-			await foreach (var entry in archiveReader.ReadAsync(archiveStream, cancellationToken))
+			foreach (var entry in archiveReader.EnumerateEntries(archiveStream))
 			{
-				if (cancellationToken.IsCancellationRequested)
-					break;
-
 				if (entry is not { Name: "pubspec.yaml", IsDirectory: false })
 					continue;
 

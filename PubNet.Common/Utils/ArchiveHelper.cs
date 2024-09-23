@@ -2,6 +2,7 @@ using SharpCompress.Readers;
 
 namespace PubNet.Common.Utils;
 
+[Obsolete("Use IArchiveReader instead")]
 public static class ArchiveHelper
 {
 	public static void UnpackInto(Stream archiveStream, string destinationDirectory)
