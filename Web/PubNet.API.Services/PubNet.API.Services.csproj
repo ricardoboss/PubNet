@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj" />
+      <ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Extensions\PubNet.BlobStorage.Extensions.csproj" />
       <ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj" />
     </ItemGroup>
 

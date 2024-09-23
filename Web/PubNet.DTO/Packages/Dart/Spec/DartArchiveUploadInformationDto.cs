@@ -1,6 +1,6 @@
 ﻿namespace PubNet.API.DTO.Packages.Dart.Spec;
 
-public class DartNewVersionDto
+public class DartArchiveUploadInformationDto
 {
 	public required string Url { get; init; }
 

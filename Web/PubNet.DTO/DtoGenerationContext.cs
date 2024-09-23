@@ -30,7 +30,7 @@ namespace PubNet.API.DTO;
 
 #region Dart
 [JsonSerializable(typeof(DartMessageDto))]
-[JsonSerializable(typeof(DartNewVersionDto))]
+[JsonSerializable(typeof(DartArchiveUploadInformationDto))]
 [JsonSerializable(typeof(DartPackageDto))]
 [JsonSerializable(typeof(DartPackageVersionDto))]
 [JsonSerializable(typeof(DartPubSpecDto))]

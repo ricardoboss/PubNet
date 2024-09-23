@@ -12,7 +12,7 @@ public class DartPackageVersionDto : PackageVersionDto
 			ArchiveUrl = archiveUrl,
 			ArchiveSha256 = archiveSha256,
 			Retracted = version.Retracted,
-			Pubspec = new(),
+			Pubspec = new(), // TODO
 			PublishedAt = version.PublishedAt,
 		};
 	}

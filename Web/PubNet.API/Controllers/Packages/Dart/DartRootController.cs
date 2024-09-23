@@ -15,7 +15,7 @@ public class DartRootController(IAuthProvider authProvider, IDartPackageUploadSe
 {
 	[HttpGet("Versions/New")]
 	[Authorize, RequireScope(Scopes.Dart.New)]
-	public async Task<DartNewVersionDto> CreateNewAsync(CancellationToken cancellationToken = default)
+	public async Task<DartArchiveUploadInformationDto> CreateNewAsync(CancellationToken cancellationToken = default)
 	{
 		var token = await authProvider.GetCurrentTokenAsync(cancellationToken);
 

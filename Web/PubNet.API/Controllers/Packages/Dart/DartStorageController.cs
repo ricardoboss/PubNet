@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.DTO;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.BlobStorage.Abstractions;
@@ -12,7 +13,12 @@ namespace PubNet.API.Controllers.Packages.Dart;
 
 [Route("Packages/Dart/Storage")]
 [Tags("Dart")]
-public class DartStorageController(PubNetContext context, IBlobStorage blobStorage, IUrlSigner urlSigner, ILogger<DartStorageController> logger) : DartController
+public class DartStorageController(
+	PubNetContext context,
+	IBlobStorage blobStorage,
+	IUrlSigner urlSigner,
+	IDartPackageUploadService uploadService,
+	ILogger<DartStorageController> logger) : DartController
 {
 	[HttpPost]
 	[ProducesResponseType<string>(201)]
@@ -118,7 +124,8 @@ public class DartStorageController(PubNetContext context, IBlobStorage blobStora
 				},
 			});
 
-		logger.LogInformation("Uploading package file {Package} ({PackageSize} bytes) for author {Author}", packageFile.FileName, packageFile.Length, author.Id);
+		logger.LogInformation("Uploading package file {Package} ({PackageSize} bytes) for author {Author}",
+			packageFile.FileName, packageFile.Length, author.Id);
 
 		var buffer = new byte[packageFile.Length];
 
@@ -218,17 +225,52 @@ public class DartStorageController(PubNetContext context, IBlobStorage blobStora
 
 		logger.LogInformation("Finalizing package file with pending ID {PendingId}", pendingArchive.Id);
 
-		// TODO:
-		// - unpack package
-		// - check package version
-		// - create entities
-
-		return Ok(new DartSuccessDto
+		try
 		{
-			Success = new()
+			var finalizedVersion = await uploadService.FinalizeNewAsync(pendingArchive, cancellationToken);
+
+			return Ok(new DartSuccessDto
 			{
-				Message = "Successfully uploaded package",
-			},
-		});
+				Success = new()
+				{
+					Message = $"Successfully uploaded package version {finalizedVersion.Version}",
+				},
+			});
+		}
+		catch (DartPackageVersionAlreadyExistsException e)
+		{
+			return Conflict(new GenericErrorDto
+			{
+				Error = new()
+				{
+					Code = "package-version-already-exists",
+					Message = e.Message,
+				},
+			});
+		}
+		catch (DartPackageVersionOutdatedException e)
+		{
+			return Conflict(new GenericErrorDto
+			{
+				Error = new()
+				{
+					Code = "package-version-outdated",
+					Message = e.Message,
+				},
+			});
+		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Failed to finalize package");
+
+			return StatusCode(StatusCodes.Status500InternalServerError, new GenericErrorDto
+			{
+				Error = new()
+				{
+					Code = "internal-server-error",
+					Message = "Failed to finalize package",
+				},
+			});
+		}
 	}
 }
