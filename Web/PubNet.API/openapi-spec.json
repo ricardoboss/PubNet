@@ -791,17 +791,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartNewVersionDto"
+                  "$ref": "#/components/schemas/DartArchiveUploadInformationDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartNewVersionDto"
+                  "$ref": "#/components/schemas/DartArchiveUploadInformationDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartNewVersionDto"
+                  "$ref": "#/components/schemas/DartArchiveUploadInformationDto"
                 }
               }
             }
@@ -1477,17 +1477,7 @@
         },
         "additionalProperties": false
       },
-      "DartMessageDto": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DartNewVersionDto": {
+      "DartArchiveUploadInformationDto": {
         "type": "object",
         "properties": {
           "url": {
@@ -1499,6 +1489,16 @@
             "additionalProperties": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DartMessageDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
             "nullable": true
           }
         },
