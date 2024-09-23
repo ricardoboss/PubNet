@@ -58,6 +58,26 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 	/// <inheritdoc />
 	public async Task<DartPackageVersionDto> FinalizeNewAsync(DartPendingArchive pendingArchive, CancellationToken cancellationToken = default)
 	{
+		var pubspecYaml = await ReadPubspecYamlAsync(pendingArchive, cancellationToken);
+
+		var pubspec = await ValidatePubspecAsync(pubspecYaml, cancellationToken);
+
+		// TODO:
+		// check if pending name matches name in pubspec
+		// check if package entity exists, create if not
+
+		var version = await ValidateVersionAsync(pubspec, cancellationToken);
+
+		// TODO:
+		// create package version entity
+		// update latest version in package entity
+		// delete pending archive
+
+		throw new NotImplementedException();
+	}
+
+	private async Task<string> ReadPubspecYamlAsync(DartPendingArchive pendingArchive, CancellationToken cancellationToken)
+	{
 		Stream archiveStream;
 
 		var archiveUri = new Uri(pendingArchive.ArchivePath);
@@ -103,20 +123,7 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 		if (pubspecYaml is null)
 			throw new InvalidDartPackageException("Package does not contain a pubspec.yaml file or it could not be read");
 
-		var pubspec = await ValidatePubspecAsync(pubspecYaml, cancellationToken);
-
-		// TODO:
-		// check if pending name matches name in pubspec
-		// check if package entity exists, create if not
-
-		var version = await ValidateVersionAsync(pubspec, cancellationToken);
-
-		// TODO:
-		// create package version entity
-		// update latest version in package entity
-		// delete pending archive
-
-		throw new NotImplementedException();
+		return pubspecYaml;
 	}
 
 	private async Task<PubSpec> ValidatePubspecAsync(string pubspecYaml, CancellationToken cancellationToken = default)
