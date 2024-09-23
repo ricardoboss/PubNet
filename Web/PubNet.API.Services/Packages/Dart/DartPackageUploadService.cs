@@ -88,7 +88,7 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 				var bucketName = archiveUri.Segments[1];
 				var blobName = archiveUri.Segments[2];
 
-				if (blobStorage.Name != storageName)
+				if (!string.Equals(blobStorage.Name, storageName, StringComparison.OrdinalIgnoreCase))
 					throw new InvalidOperationException($"Blob storage {storageName} is not the expected storage {blobStorage.Name}");
 
 				var blob = await blobStorage
