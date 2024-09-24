@@ -5,33 +5,33 @@ using System.IO;
 using System.Linq;
 using System;
 namespace PubNet.Client.Generated.Models {
-    public class DartNewVersionDto : IParsable 
+    public class PackageListCollectionDto : IParsable 
     {
-        /// <summary>The fields property</summary>
+        /// <summary>The dart property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public DartNewVersionDto_fields? Fields { get; set; }
+        public DartPackageListDto? Dart { get; set; }
 #nullable restore
 #else
-        public DartNewVersionDto_fields Fields { get; set; }
+        public DartPackageListDto Dart { get; set; }
 #endif
-        /// <summary>The url property</summary>
+        /// <summary>The nuget property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Url { get; set; }
+        public NugetPackageListDto? Nuget { get; set; }
 #nullable restore
 #else
-        public string Url { get; set; }
+        public NugetPackageListDto Nuget { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="DartNewVersionDto"/></returns>
+        /// <returns>A <see cref="PackageListCollectionDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static DartNewVersionDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static PackageListCollectionDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new DartNewVersionDto();
+            return new PackageListCollectionDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -41,8 +41,8 @@ namespace PubNet.Client.Generated.Models {
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                {"fields", n => { Fields = n.GetObjectValue<DartNewVersionDto_fields>(DartNewVersionDto_fields.CreateFromDiscriminatorValue); } },
-                {"url", n => { Url = n.GetStringValue(); } },
+                {"dart", n => { Dart = n.GetObjectValue<DartPackageListDto>(DartPackageListDto.CreateFromDiscriminatorValue); } },
+                {"nuget", n => { Nuget = n.GetObjectValue<NugetPackageListDto>(NugetPackageListDto.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -52,8 +52,8 @@ namespace PubNet.Client.Generated.Models {
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<DartNewVersionDto_fields>("fields", Fields);
-            writer.WriteStringValue("url", Url);
+            writer.WriteObjectValue<DartPackageListDto>("dart", Dart);
+            writer.WriteObjectValue<NugetPackageListDto>("nuget", Nuget);
         }
     }
 }

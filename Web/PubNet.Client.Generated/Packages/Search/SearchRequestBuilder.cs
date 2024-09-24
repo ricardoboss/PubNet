@@ -19,7 +19,7 @@ namespace PubNet.Client.Generated.Packages.Search {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SearchRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skip*,take*,type*}", pathParameters)
+        public SearchRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skipDart*,skipNuget*,takeDart*,takeNuget*}", pathParameters)
         {
         }
         /// <summary>
@@ -27,23 +27,23 @@ namespace PubNet.Client.Generated.Packages.Search {
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public SearchRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skip*,take*,type*}", rawUrl)
+        public SearchRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Search{?q*,skipDart*,skipNuget*,takeDart*,takeNuget*}", rawUrl)
         {
         }
-        /// <returns>A <see cref="PackageListDto"/></returns>
+        /// <returns>A <see cref="PackageListCollectionDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<PackageListDto?> GetAsync(Action<RequestConfiguration<SearchRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<PackageListCollectionDto?> GetAsync(Action<RequestConfiguration<SearchRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<PackageListDto> GetAsync(Action<RequestConfiguration<SearchRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<PackageListCollectionDto> GetAsync(Action<RequestConfiguration<SearchRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
-            return await RequestAdapter.SendAsync<PackageListDto>(requestInfo, PackageListDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<PackageListCollectionDto>(requestInfo, PackageListCollectionDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -81,12 +81,14 @@ namespace PubNet.Client.Generated.Packages.Search {
             [QueryParameter("q")]
             public string Q { get; set; }
 #endif
-            [QueryParameter("skip")]
-            public int? Skip { get; set; }
-            [QueryParameter("take")]
-            public int? Take { get; set; }
-            [QueryParameter("type")]
-            public int? Type { get; set; }
+            [QueryParameter("skipDart")]
+            public int? SkipDart { get; set; }
+            [QueryParameter("skipNuget")]
+            public int? SkipNuget { get; set; }
+            [QueryParameter("takeDart")]
+            public int? TakeDart { get; set; }
+            [QueryParameter("takeNuget")]
+            public int? TakeNuget { get; set; }
         }
     }
 }
