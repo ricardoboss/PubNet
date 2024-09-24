@@ -32,7 +32,7 @@
 	</Target>
 
 	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
-		<Exec Command="dotnet kiota generate --openapi openapi-spec.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)"/>
+		<Exec Command="dotnet kiota generate --openapi openapi-spec.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --additional-data=False" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
 	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">

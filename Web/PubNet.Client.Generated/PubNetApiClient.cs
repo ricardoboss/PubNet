@@ -17,7 +17,7 @@ namespace PubNet.Client.Generated {
     /// <summary>
     /// The main entry point of the SDK, exposes the configuration and the fluent API.
     /// </summary>
-    public class ApiClient : BaseRequestBuilder 
+    public class PubNetApiClient : BaseRequestBuilder 
     {
         /// <summary>The Authentication property</summary>
         public AuthenticationRequestBuilder Authentication
@@ -35,10 +35,10 @@ namespace PubNet.Client.Generated {
             get => new PackagesRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new <see cref="ApiClient"/> and sets the default values.
+        /// Instantiates a new <see cref="PubNetApiClient"/> and sets the default values.
         /// </summary>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ApiClient(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>())
+        public PubNetApiClient(IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}", new Dictionary<string, object>())
         {
             ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultSerializer<TextSerializationWriterFactory>();
