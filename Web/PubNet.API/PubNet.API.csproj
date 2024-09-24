@@ -40,17 +40,17 @@
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.1"/>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1"/>
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.1" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0"/>
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1"/>
-		<PackageReference Include="Serilog.Sinks.Seq" Version="6.0.0"/>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.8" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
 		<PackageReference Include="SerilogAnalyzer" Version="0.15.0"/>
 		<PackageReference Include="SignedUrl.Extensions" Version="1.2.0"/>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
