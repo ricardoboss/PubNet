@@ -414,17 +414,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListDto"
+                  "$ref": "#/components/schemas/PackageListCollection"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListDto"
+                  "$ref": "#/components/schemas/PackageListCollection"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListDto"
+                  "$ref": "#/components/schemas/PackageListCollection"
                 }
               }
             }
@@ -1322,7 +1322,7 @@
             }
           },
           {
-            "name": "skip",
+            "name": "skipDart",
             "in": "query",
             "style": "form",
             "schema": {
@@ -1331,7 +1331,7 @@
             }
           },
           {
-            "name": "take",
+            "name": "takeDart",
             "in": "query",
             "style": "form",
             "schema": {
@@ -1340,11 +1340,21 @@
             }
           },
           {
-            "name": "type",
+            "name": "skipNuget",
             "in": "query",
             "style": "form",
             "schema": {
-              "$ref": "#/components/schemas/PackageTypeFilter"
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "takeNuget",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -1354,17 +1364,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListDto"
+                  "$ref": "#/components/schemas/PackageListCollection"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListDto"
+                  "$ref": "#/components/schemas/PackageListCollection"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListDto"
+                  "$ref": "#/components/schemas/PackageListCollection"
                 }
               }
             }
@@ -2193,19 +2203,14 @@
         },
         "additionalProperties": false
       },
-      "PackageListDto": {
+      "PackageListCollection": {
         "type": "object",
         "properties": {
-          "totalHits": {
-            "type": "integer",
-            "format": "int32"
+          "dart": {
+            "$ref": "#/components/schemas/DartPackageListDto"
           },
-          "packages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PackageVersionDtoPackageDto"
-            },
-            "nullable": true
+          "nuget": {
+            "$ref": "#/components/schemas/NugetPackageListDto"
           }
         },
         "additionalProperties": false
@@ -2217,53 +2222,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "PackageTypeFilter": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
-      "PackageVersionDto": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "string",
-            "nullable": true
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "PackageVersionDtoPackageDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "$ref": "#/components/schemas/PackageType"
-          },
-          "latest": {
-            "$ref": "#/components/schemas/PackageVersionDto"
-          },
-          "versions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PackageVersionDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       },
       "TokenCreatedDto": {
         "type": "object",

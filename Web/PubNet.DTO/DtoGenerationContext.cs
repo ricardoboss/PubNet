@@ -24,8 +24,7 @@ namespace PubNet.API.DTO;
 
 #region Packages
 
-[JsonSerializable(typeof(PackageDto))]
-[JsonSerializable(typeof(PackageListDto))]
+[JsonSerializable(typeof(PackageListCollectionDto))]
 [JsonSerializable(typeof(PackageVersionDto))]
 
 #region Dart

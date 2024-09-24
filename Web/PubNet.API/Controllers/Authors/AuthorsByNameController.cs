@@ -4,20 +4,19 @@ using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Attributes;
 using PubNet.API.DTO;
-using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.API.DTO.Packages.Nuget;
-using PubNet.Database.Entities.Dart;
 using PubNet.Web;
 
 namespace PubNet.API.Controllers.Authors;
 
 [Route("Authors/{username}")]
 [Tags("Authors")]
-public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchiveProvider archiveProvider) : AuthorsController
+public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchiveProvider archiveProvider)
+	: AuthorsController
 {
 	[HttpGet]
 	[ProducesResponseType<AuthorDto>(200)]
@@ -54,24 +53,43 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	}
 
 	[HttpGet("Packages")]
-	public async Task<PackageListDto> GetAuthorPackagesAsync(string username,
+	public async Task<PackageListCollectionDto> GetAuthorPackagesAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
 			return new()
 			{
-				TotalHits = 0,
-				Packages = Array.Empty<PackageDto>(),
+				Dart = new()
+				{
+					TotalHits = 0,
+					Packages = Array.Empty<DartPackageDto>(),
+				},
+				Nuget = new()
+				{
+					TotalHits = 0,
+					Packages = Array.Empty<NugetPackageDto>(),
+				},
 			};
+
+		var dartPackageDtos =
+			author.DartPackages.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash));
+
+		var nugetPackageDtos =
+			author.NugetPackages.Select(p => NugetPackageDto.MapFrom(p));
 
 		return new()
 		{
-			TotalHits = author.DartPackages.Count + author.NugetPackages.Count,
-			Packages = author.DartPackages.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash))
-				.Cast<PackageDto>()
-				.Concat(author.NugetPackages.Select(p => NugetPackageDto.MapFrom(p))
-					.Cast<PackageDto>()),
+			Dart = new()
+			{
+				TotalHits = author.DartPackages.Count,
+				Packages = dartPackageDtos,
+			},
+			Nuget = new()
+			{
+				TotalHits = author.NugetPackages.Count,
+				Packages = nugetPackageDtos,
+			},
 		};
 	}
 

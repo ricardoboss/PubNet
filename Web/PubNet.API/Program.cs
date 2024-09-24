@@ -349,5 +349,6 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		c.SwaggerEndpoint("/swagger/v1/swagger.json", "PubNet API v1");
 		c.EnableTryItOutByDefault();
+		c.DisplayOperationId();
 	});
 }

@@ -1,7 +1,5 @@
 ﻿namespace PubNet.API.DTO.Packages;
 
-public abstract class PackageDto : PackageDto<PackageVersionDto>;
-
 public abstract class PackageDto<TVersionDto> where TVersionDto : PackageVersionDto
 {
 	public required string Name { get; init; }
