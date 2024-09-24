@@ -1,0 +1,24 @@
+#blazor-error-ui {
+    /* gets overridden inline in case of an error */
+    display: none;
+
+    position: fixed;
+    bottom: var(--half-spacing-unit);
+    left: var(--half-spacing-unit);
+    right: var(--half-spacing-unit);
+
+    background: var(--danger-background);
+    padding: var(--container-padding);
+    border-radius: var(--corner-radius);
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    color: var(--danger-foreground);
+
+    cursor: pointer;
+
+    position: absolute;
+    top: var(--half-spacing-unit);
+    right: var(--half-spacing-unit);
+}
