@@ -1,6 +1,7 @@
 ﻿using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.Database.Entities.Auth;
 using PubNet.Database.Entities.Dart;
+using Semver;
 
 namespace PubNet.API.Abstractions.Packages.Dart;
 
@@ -23,9 +24,9 @@ public interface IDartPackageUploadService
 	/// </summary>
 	/// <param name="pendingArchive">The pending archive to finalize.</param>
 	/// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-	/// <returns>A <see cref="DartPackageVersionDto"/> representing the finalized package version.</returns>
+	/// <returns>A <see cref="SemVersion"/> representing the version that was finalized.</returns>
 	/// <exception cref="DartPackageVersionAlreadyExistsException">Thrown when the package version already exists.</exception>
 	/// <exception cref="DartPackageVersionOutdatedException">Thrown when the package version is older than the latest version.</exception>
 	/// <exception cref="InvalidDartPackageException">Thrown when the package is invalid.</exception>
-	Task<DartPackageVersionDto> FinalizeNewAsync(DartPendingArchive pendingArchive, CancellationToken cancellationToken = default);
+	Task<SemVersion> FinalizeNewAsync(DartPendingArchive pendingArchive, CancellationToken cancellationToken = default);
 }

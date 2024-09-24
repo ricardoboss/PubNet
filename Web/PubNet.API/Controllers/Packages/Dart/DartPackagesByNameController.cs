@@ -33,7 +33,7 @@ public class DartPackagesByNameController(
 	[ProducesResponseType<GenericErrorDto>(404)]
 	public async Task<IActionResult> GetAsync(string name, CancellationToken cancellationToken = default)
 	{
-		var package = await dartPackageDao.TryGetByNameAsync(name, cancellationToken);
+		var package = await dartPackageDao.GetByNameAsync(name, cancellationToken);
 
 		if (package is null)
 			return NotFound(new GenericErrorDto

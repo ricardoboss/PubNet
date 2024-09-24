@@ -10,7 +10,7 @@ namespace PubNet.API.Services.CQRS.Queries.Packages;
 
 public class DartPackageDao(PubNetContext context, IDartPackageArchiveProvider archiveProvider) : IDartPackageDao
 {
-	public async Task<DartPackage?> TryGetByNameAsync(string name, CancellationToken cancellationToken = default)
+	public async Task<DartPackage?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
 	{
 		return await context.DartPackages.SingleOrDefaultAsync(p => p.Name == name, cancellationToken);
 	}

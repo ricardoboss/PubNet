@@ -9,9 +9,12 @@ namespace PubNet.API.Services.Archives;
 public class TempDirExtractingArchiveReader : IArchiveReader
 {
 	/// <inheritdoc />
-	public IEnumerable<IArchiveEntry> EnumerateEntries(Stream archive)
+	public IEnumerable<IArchiveEntry> EnumerateEntries(Stream archive, bool leaveStreamOpen = false)
 	{
-		using var reader = ReaderFactory.Open(archive);
+		using var reader = ReaderFactory.Open(archive, new()
+		{
+			LeaveStreamOpen = leaveStreamOpen,
+		});
 
 		var tempDir = Path.Combine(Path.GetTempPath(), "PubNet", "ArchiveReader", Guid.NewGuid().ToString());
 		if (Directory.Exists(tempDir))

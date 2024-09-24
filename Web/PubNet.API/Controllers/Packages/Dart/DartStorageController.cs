@@ -233,7 +233,7 @@ public class DartStorageController(
 			{
 				Success = new()
 				{
-					Message = $"Successfully uploaded package version {finalizedVersion.Version}",
+					Message = $"Successfully uploaded package version {finalizedVersion}",
 				},
 			});
 		}

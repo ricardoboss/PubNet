@@ -2,20 +2,34 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using PubNet.API.Abstractions.Archives;
+using PubNet.API.Abstractions.CQRS.Commands.Packages;
+using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.Extensions;
 using PubNet.Database.Entities.Auth;
 using PubNet.Database.Entities.Dart;
+using PubNet.PackageStorage.Abstractions;
+using Semver;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace PubNet.API.Services.Packages.Dart;
 
 /// <inheritdoc />
-public class DartPackageUploadService(IHttpContextAccessor contextAccessor, LinkGenerator linkGenerator, IBlobStorage blobStorage, IArchiveReader archiveReader) : IDartPackageUploadService
+public class DartPackageUploadService(
+	IHttpContextAccessor contextAccessor,
+	LinkGenerator linkGenerator,
+	IBlobStorage blobStorage,
+	IArchiveReader archiveReader,
+	IDartPackageDao packageDao,
+	IDartPackageDmo packageDmo,
+	IArchiveStorage archiveStorage) : IDartPackageUploadService
 {
 	/// <inheritdoc />
-	public Task<DartArchiveUploadInformationDto> CreateNewAsync(Token token, CancellationToken cancellationToken = default)
+	public Task<DartArchiveUploadInformationDto> CreateNewAsync(Token token,
+		CancellationToken cancellationToken = default)
 	{
 		var url = GetUriForUploadEndpoint();
 		var fields = new Dictionary<string, string>
@@ -56,29 +70,86 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 	}
 
 	/// <inheritdoc />
-	public async Task<DartPackageVersionDto> FinalizeNewAsync(DartPendingArchive pendingArchive, CancellationToken cancellationToken = default)
+	public async Task<SemVersion> FinalizeNewAsync(DartPendingArchive pendingArchive,
+		CancellationToken cancellationToken = default)
 	{
-		var pubspecYaml = await ReadPubspecYamlAsync(pendingArchive, cancellationToken);
+		var (archiveMemoryStream, deletePendingArchive) = await ReadArchiveStream(pendingArchive, cancellationToken);
 
-		var pubspec = await ValidatePubspecAsync(pubspecYaml, cancellationToken);
+		PubSpec pubspec;
+		DartPackage? package;
+		SemVersion version;
+		await using (archiveMemoryStream)
+		{
+			pubspec = await ValidatePubspecAsync(archiveMemoryStream, cancellationToken);
 
-		// TODO:
-		// check if pending name matches name in pubspec
-		// check if package entity exists, create if not
+			package = await packageDao.GetByNameAsync(pubspec.Name, cancellationToken);
+			if (package is not null)
+			{
+				if (package.Author.Id != pendingArchive.Uploader.Id)
+					throw new UnauthorizedAccessException(
+						"You are not authorized to upload new versions for this package");
+			}
 
-		var version = await ValidateVersionAsync(pubspec, cancellationToken);
+			version = ValidateVersion(package, pubspec);
 
-		// TODO:
-		// create package version entity
-		// update latest version in package entity
-		// delete pending archive
+			archiveMemoryStream.Position = 0;
+			_ = await archiveStorage.StoreArchiveAsync(pendingArchive.Uploader.UserName, pubspec.Name,
+				version.ToString(),
+				archiveMemoryStream, cancellationToken);
+		}
 
-		throw new NotImplementedException();
+		if (package is not null)
+		{
+			var versionEntity = new DartPackageVersion
+			{
+				Package = package,
+				Version = version.ToString(),
+				PublishedAt = DateTimeOffset.UtcNow,
+				PubSpec = pubspec,
+			};
+
+			await packageDmo.SaveLatestVersionAsync(package, versionEntity, cancellationToken);
+		}
+		else
+			_ = await packageDmo.CreateAsync(pubspec.Name, pendingArchive.Uploader, version, pubspec, cancellationToken);
+
+		await deletePendingArchive();
+
+		return version;
 	}
 
-	private async Task<string> ReadPubspecYamlAsync(DartPendingArchive pendingArchive, CancellationToken cancellationToken)
+	private async Task<string> ReadPubspecYamlAsync(MemoryStream archiveStream,
+		CancellationToken cancellationToken)
+	{
+		archiveStream.Position = 0;
+
+		string? pubspecYaml = null;
+		foreach (var entry in archiveReader.EnumerateEntries(archiveStream, leaveStreamOpen: true))
+		{
+			if (entry is not { Name: "pubspec.yaml", IsDirectory: false })
+				continue;
+
+			await using var pubspecStream = entry.OpenRead();
+
+			var pubspecReader = new StreamReader(pubspecStream);
+			pubspecYaml = await pubspecReader.ReadToEndAsync(cancellationToken);
+
+			break;
+		}
+
+		if (pubspecYaml is null)
+			throw new InvalidDartPackageException(
+				"Package does not contain a pubspec.yaml file or it could not be read");
+
+		return pubspecYaml;
+	}
+
+	private async Task<(MemoryStream archive, Func<Task> deleteAction)> ReadArchiveStream(
+		DartPendingArchive pendingArchive,
+		CancellationToken cancellationToken)
 	{
 		Stream archiveStream;
+		Func<Task> deleteAction;
 
 		var archiveUri = new Uri(pendingArchive.ArchivePath);
 		switch (archiveUri.Scheme)
@@ -89,7 +160,8 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 				var blobName = archiveUri.Segments[2];
 
 				if (!string.Equals(blobStorage.Name, storageName, StringComparison.OrdinalIgnoreCase))
-					throw new InvalidOperationException($"Blob storage {storageName} is not the expected storage {blobStorage.Name}");
+					throw new InvalidOperationException(
+						$"Blob storage {storageName} is not the expected storage {blobStorage.Name}");
 
 				var blob = await blobStorage
 					.GetBlob()
@@ -98,51 +170,63 @@ public class DartPackageUploadService(IHttpContextAccessor contextAccessor, Link
 					.RunAsync(cancellationToken);
 
 				archiveStream = await blob.OpenReadAsync(cancellationToken);
+
+				deleteAction = async () => await blobStorage
+					.DeleteBlob()
+					.WithBucketName(bucketName)
+					.WithBlobName(blobName)
+					.RunAsync(cancellationToken);
 				break;
 			default:
 				throw new NotSupportedException($"Unsupported archive URI scheme: {archiveUri.Scheme}");
 		}
 
-		string? pubspecYaml = null;
-		await using (archiveStream)
+		var archiveMemoryStream = new MemoryStream();
+		await archiveStream.CopyToAsync(archiveMemoryStream, cancellationToken);
+
+		return (archiveMemoryStream, deleteAction);
+	}
+
+	private async Task<PubSpec> ValidatePubspecAsync(MemoryStream archiveMemoryStream,
+		CancellationToken cancellationToken)
+	{
+		var pubspecYaml = await ReadPubspecYamlAsync(archiveMemoryStream, cancellationToken);
+
+		var deserializer = new DeserializerBuilder()
+			.WithNamingConvention(UnderscoredNamingConvention.Instance)
+			.WithCaseInsensitivePropertyMatching()
+			.Build();
+
+		var pubspec = deserializer.Deserialize<PubSpec>(pubspecYaml);
+
+		// TODO: check if required keys are present
+		// TODO: check if certain values make sense (eg non-empty name, max length for fields)
+
+		return pubspec;
+	}
+
+	private SemVersion ValidateVersion(DartPackage? package, PubSpec pubspec)
+	{
+		if (!SemVersion.TryParse(pubspec.Version, SemVersionStyles.Strict, out var version))
+			throw new InvalidDartPackageException($"Pubspec version '{pubspec.Version}' is not a valid SemVer version");
+
+		if (package is null)
+			return version; // no latest version to compare against
+
+		var latestVersionEntity = package.LatestVersion;
+		if (latestVersionEntity is null)
+			return version;
+
+		var latestVersion = SemVersion.Parse(latestVersionEntity.Version, SemVersionStyles.Strict);
+
+		switch (version.CompareSortOrderTo(latestVersion))
 		{
-			foreach (var entry in archiveReader.EnumerateEntries(archiveStream))
-			{
-				if (entry is not { Name: "pubspec.yaml", IsDirectory: false })
-					continue;
-
-				await using var pubspecStream = entry.OpenRead();
-
-				var pubspecReader = new StreamReader(pubspecStream);
-				pubspecYaml = await pubspecReader.ReadToEndAsync(cancellationToken);
-
-				break;
-			}
+			case 0:
+				throw new DartPackageVersionAlreadyExistsException(pubspec.Name, version.ToString());
+			case > 0:
+				throw new DartPackageVersionOutdatedException(pubspec.Name, version.ToString());
 		}
 
-		if (pubspecYaml is null)
-			throw new InvalidDartPackageException("Package does not contain a pubspec.yaml file or it could not be read");
-
-		return pubspecYaml;
-	}
-
-	private async Task<PubSpec> ValidatePubspecAsync(string pubspecYaml, CancellationToken cancellationToken = default)
-	{
-		// TODO:
-		// parse yaml
-		// check if required keys are present
-		// check if certain values make sense (eg non-empty name, max length for fields)
-
-		throw new NotImplementedException();
-	}
-
-	private async Task<string> ValidateVersionAsync(PubSpec pubspec, CancellationToken cancellationToken = default)
-	{
-		// TODO:
-		// parse pubspec version
-		// get latest version for package name
-		// compare versions
-
-		throw new NotImplementedException();
+		return version;
 	}
 }

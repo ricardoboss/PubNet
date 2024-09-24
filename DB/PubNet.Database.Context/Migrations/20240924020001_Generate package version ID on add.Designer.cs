@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.Database.Context;
@@ -12,9 +13,11 @@ using PubNet.Database.Entities.Dart;
 namespace PubNet.Database.Context.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    partial class PubNetContextModelSnapshot : ModelSnapshot
+    [Migration("20240924020001_Generate package version ID on add")]
+    partial class GeneratepackageversionIDonadd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
