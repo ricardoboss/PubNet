@@ -4,6 +4,7 @@ using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.DTO.Authentication;
 using PubNet.Database.Entities.Auth;
+using PubNet.Web;
 using PubNet.Web.Models;
 using PubNet.Web.ServiceInterfaces;
 
@@ -24,9 +25,19 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 
 		const string loginTokenName = "Login";
 		var lifetime = TimeSpan.FromDays(90); // TODO: Make configurable
-		Scope[] scopes = [Scope.Any]; // TODO: determine what scopes are needed for website usage
 
-		var token = await tokenDmo.CreateTokenAsync(identity, loginTokenName, scopes, lifetime, cancellationToken);
+		// TODO: determine what scopes are needed for website usage
+		string[] scopes = [
+			Scopes.PersonalAccessTokens.Create,
+		];
+
+		var token = await tokenDmo.CreateTokenAsync(
+			identity,
+			loginTokenName,
+			scopes.Select(Scope.From),
+			lifetime,
+			cancellationToken
+		);
 
 		return jwtFactory.Create(token);
 	}

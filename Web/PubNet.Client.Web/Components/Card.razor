@@ -1,0 +1,19 @@
+@code {
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public CardVariant Variant { get; set; } = CardVariant.Default;
+
+	private string? ClassName => Variant switch
+	{
+		CardVariant.Danger => "danger",
+		_ => null,
+	};
+
+}
+
+<div class="@ClassName">
+	@ChildContent
+</div>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Attributes;
+using PubNet.API.DTO;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
 using PubNet.API.Exceptions.Authentication;
@@ -16,6 +17,7 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 {
 	[HttpPost("LoginToken")]
 	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
+	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
 	public async Task<TokenCreatedDto> CreateLoginToken(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var jwt = await accessTokenService.CreateLoginTokenAsync(dto, cancellationToken);

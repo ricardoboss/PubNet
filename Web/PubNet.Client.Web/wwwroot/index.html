@@ -7,8 +7,7 @@
     <title>PubNet</title>
     <base href="/" />
     <link rel="stylesheet" href="css/app.css" />
-    <!-- If you add any scoped CSS files, uncomment the following to load them -->
-    <link href="PubNet.Client.Web.styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="PubNet.Client.Web.styles.css" />
 </head>
 
 <body>
@@ -20,9 +19,9 @@
         <div class="loading-progress-text"></div>
     </div>
 
-    <div id="blazor-error-ui">
+    <div id="blazor-error-ui" class="danger">
         An unhandled error has occurred.
-        <a href="">Reload</a>
+        <a href="javascript:location.reload(true)">Reload</a>
         <a class="dismiss">🅧</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>

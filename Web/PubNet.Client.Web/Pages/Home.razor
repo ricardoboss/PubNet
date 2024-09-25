@@ -2,4 +2,18 @@
 
 <PageTitle>PubNet</PageTitle>
 
-<h1>Hello</h1>
+<AuthorizeView>
+	<Authorized>
+		<h1>Hello, @context.User.Identity!.Name!</h1>
+
+		<LogoutForm />
+	</Authorized>
+	<NotAuthorized>
+		<h1>Hello, anonymous!</h1>
+
+		<LoginForm />
+	</NotAuthorized>
+	<Authorizing>
+		<h1>Hello, please wait...</h1>
+	</Authorizing>
+</AuthorizeView>

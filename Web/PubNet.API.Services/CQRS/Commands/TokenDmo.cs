@@ -17,14 +17,14 @@ public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerato
 	)
 	{
 		var tokenValue = tokenGenerator.GenerateSecureToken(ITokenDmo.TokenLength);
-		var scopesArray = scopes.Select(s => s.Value!).ToArray();
+		var scopesList = scopes.Select(s => s.Value).ToList();
 
 		var token = new Token
 		{
 			Identity = owner,
 			Name = name,
 			Value = tokenValue,
-			Scopes = scopesArray,
+			Scopes = scopesList,
 			IpAddress = clientInformationProvider.IpAddress,
 			UserAgent = clientInformationProvider.UserAgent,
 			DeviceType = clientInformationProvider.DeviceType,

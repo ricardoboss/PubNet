@@ -1,4 +1,7 @@
-﻿using Vogen;
+﻿using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using Vogen;
 
 namespace PubNet.Web.Models;
 
@@ -26,5 +29,23 @@ public readonly partial struct JsonWebToken
 			return Validation.Invalid("The given token is not a valid JWT (empty segments).");
 
 		return Validation.Ok;
+	}
+
+	private static string NormalizeInput(string input) => input.Trim();
+
+	public IEnumerable<Claim> EnumerateClaims()
+	{
+		var parts = Value.Split('.', 3, StringSplitOptions.RemoveEmptyEntries);
+		if (parts is not [_, var claimsEncoded, _])
+			throw new FormatException("JWT has invalid format.");
+
+		var claimsPadded = claimsEncoded.PadRight(claimsEncoded.Length + (4 - claimsEncoded.Length % 4) % 4, '=');
+
+		var claimsDecoded = Encoding.UTF8.GetString(Convert.FromBase64String(claimsPadded));
+		var claims = JsonSerializer.Deserialize<Dictionary<string, object>>(claimsDecoded);
+		if (claims is null)
+			throw new FormatException("JWT claims are invalid.");
+
+		return claims.Select(c => new Claim(c.Key, c.Value.ToString() ?? string.Empty));
 	}
 }

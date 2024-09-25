@@ -28,7 +28,7 @@ public class Token
 
 	public string Name { get; set; } = null!;
 
-	public string[] Scopes { get; set; } = null!;
+	public List<string> Scopes { get; set; } = null!;
 
 	public DateTimeOffset CreatedAtUtc { get; set; }
 

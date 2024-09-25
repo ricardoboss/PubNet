@@ -1,3 +1,4 @@
+/*noinspection CssInvalidFunction*/
 :root {
     color-scheme: light dark;
 
@@ -5,41 +6,108 @@
     --white: #ffffff;
     --black: #000000;
     --red: #be2b40;
-    --green: #26b050;
     --blue: #1b6ec2;
-    --yellow: #e3c800;
-    --purple: #6e2c83;
-    --orange: #f2994a;
-    --cyan: #00b7c3;
     --gray: #6e7781;
-    --dark-gray: #24292f;
 
-    /* Theme Tokens */
-    --theme-background: light-dark(var(--white), var(--dark-gray));
-    --theme-foreground: light-dark(var(--black), var(--white));
-    --theme-primary: var(--blue);
-    --theme-on-primary: var(--white);
-    --theme-secondary: var(--orange);
-    --theme-on-secondary: var(--black);
-    --theme-tertiary: var(--purple);
-    --theme-on-tertiary: var(--white);
+    --red-shade-10: #ab273a;
+    --red-shade-20: #982233;
+    --red-shade-30: #851e2d;
+    --red-shade-50: #5f1620;
+    --red-shade-60: #4c111a;
+    --red-tint-10: #c54053;
+    --red-tint-30: #d26b79;
+    --red-tint-50: #df95a0;
+    --red-tint-60: #e5aab3;
+    --red-tint-70: #ecbfc6;
+    --red-tint-80: #f2d5d9;
+    --red-tint-90: #f9eaec;
 
-    --danger-background: var(--red);
-    --danger-foreground: var(--white);
-    --danger-border: var(--red);
+    --blue-shade-10: #1863af;
+    --blue-shade-20: #16589b;
+    --blue-shade-30: #134d88;
+    --blue-shade-40: #104274;
+    --blue-shade-50: #0e3761;
+    --blue-shade-60: #0b2c4e;
+    --blue-tint-10: #1b6ec2;
+    --blue-tint-20: #498bce;
+    --blue-tint-30: #5f9ad4;
+    --blue-tint-50: #8db7e1;
+    --blue-tint-60: #a4c5e7;
+    --blue-tint-70: #bbd4ed;
+    --blue-tint-80: #d1e2f3;
+    --blue-tint-90: #e8f1f9;
 
-    /* Typography */
-    --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    --font-size: 1rem;
-    --font-weight: 400;
+    --gray-shade-20: #585f67;
+    --gray-shade-30: #4d535a;
+    --gray-shade-40: #42474d;
+    --gray-shade-50: #373c41;
+    --gray-shade-60: #2c3034;
+    --gray-shade-70: #212427;
+    --gray-shade-80: #16181a;
+    --gray-tint-10: #7d858e;
+    --gray-tint-30: #9aa0a7;
 
-    --link-color: inherit;
+    /* Theme */
+    --background:           light-dark(var(--white),            var(--gray-shade-80));
+    --foreground:           light-dark(var(--black),            var(--white));
 
-    /* Spacing and Radii */
+    --primary-tinted:       light-dark(var(--blue-tint-20),     var(--blue));
+    --primary:              light-dark(var(--blue-tint-10),     var(--blue-shade-30));
+    --primary-shaded:       light-dark(var(--blue-shade-20),    var(--blue-shade-50));
+    --on-primary:           var(--white);
+    --on-primary-tinted:    var(--blue-tint-80);
+    --primary-border:       light-dark(var(--blue-tint-30),     var(--blue-shade-40));
+
+    --danger-tinted:        light-dark(var(--red-tint-10),      var(--red));
+    --danger:               light-dark(var(--red),              var(--red-shade-20));
+    --danger-shaded:        light-dark(var(--red-shade-20),     var(--red-shade-50));
+    --on-danger:            var(--white);
+    --on-danger-tinted:     var(--red-tint-90);
+    --danger-border:        light-dark(var(--red-tint-30),      var(--red-shade-30));
+    --danger-disabled:      light-dark(var(--red-shade-20),     var(--red-shade-50));
+
+    --passive-tinted:       light-dark(var(--gray-tint-10),     var(--gray));
+    --passive:              light-dark(var(--gray),             var(--gray-shade-20));
+    --passive-shaded:       light-dark(var(--gray-shade-20),    var(--gray-shade-50));
+    --on-passive:           var(--white);
+    --passive-border:       light-dark(var(--gray-tint-30),     var(--gray-shade-30));
+    --passive-disabled:     light-dark(var(--gray-shade-70),    var(--gray-shade-50));
+
+    /* Layout */
     --spacing-unit: 1rem;
     --half-spacing-unit: calc(var(--spacing-unit) / 2);
     --quarter-spacing-unit: calc(var(--spacing-unit) / 4);
 
-    --container-padding: var(--spacing-unit);
-    --corner-radius: var(--quarter-spacing-unit);
+    /* Components */
+    --btn-background: var(--primary);
+    --btn-foreground: var(--on-primary-tinted);
+    --btn-hover-background: light-dark(var(--primary-shaded), var(--primary-tinted));
+    --btn-disabled-background: light-dark(var(--blue-shade-40), var(--blue-shade-50));
+    --btn-outline-color: var(--primary);
+
+    --card-background: var(--primary);
+    --card-foreground: var(--on-primary-tinted);
+    --card-border: var(--primary-border);
+}
+
+/* Variants */
+
+.danger {
+    --btn-background: var(--danger);
+    --btn-foreground: var(--on-danger-tinted);
+    --btn-hover-background: light-dark(var(--danger-shaded), var(--danger-tinted));
+    --btn-disabled-background: var(--danger-disabled);
+    --btn-outline-color: var(--danger-border);
+
+    --card-background: var(--danger);
+    --card-foreground: var(--on-danger-tinted);
+    --card-border: var(--danger-border);
+}
+
+.passive {
+    --btn-background: var(--passive);
+    --btn-foreground: var(--on-passive);
+    --btn-hover-background: light-dark(var(--passive-shaded), var(--passive-tinted));
+    --btn-disabled-background: var(--passive-disabled);
+    --btn-outline-color: var(--passive-border);
 }

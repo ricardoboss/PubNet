@@ -7,16 +7,19 @@
     left: var(--half-spacing-unit);
     right: var(--half-spacing-unit);
 
-    background: var(--danger-background);
-    padding: var(--container-padding);
-    border-radius: var(--corner-radius);
+    padding: var(--spacing-unit);
+    border-radius: var(--quarter-spacing-unit);
     z-index: 1000;
+
+    background: var(--card-background);
+    color: var(--card-foreground);
+    border: solid 1px var(--card-border);
 }
 
 #blazor-error-ui .dismiss {
-    color: var(--danger-foreground);
-
     cursor: pointer;
+
+    line-height: 1;
 
     position: absolute;
     top: var(--half-spacing-unit);

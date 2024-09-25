@@ -1,0 +1,48 @@
+.box-row {
+    --gap: var(--spacing-unit);
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background: var(--background);
+    color: var(--foreground);
+    gap: var(--gap);
+    padding: var(--spacing-unit);
+}
+
+.box-row > * {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.box-row.squares > * {
+    flex: 0 0 auto;
+    width: 100px;
+    height: 100px;
+}
+
+.box-row.thirds > * {
+    flex: 0 0 auto;
+    width: calc(33.3333% - var(--gap));
+}
+
+.primary {
+    background: var(--primary);
+    color: var(--on-primary);
+    border: solid 1px var(--primary-border);
+}
+
+.danger {
+    background: var(--danger);
+    color: var(--on-danger);
+    border: solid 1px var(--danger-border);
+}
+
+.passive {
+    background: var(--passive);
+    color: var(--on-passive);
+    border: solid 1px var(--passive-border);
+}

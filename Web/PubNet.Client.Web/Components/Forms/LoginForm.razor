@@ -1,0 +1,53 @@
+@using PubNet.Client.Generated.Models
+
+@inject ILoginService LoginService
+@inject ILoginTokenStorage LoginTokenStorage
+@inject ILogger<LoginForm> Logger
+
+@code {
+
+	private CreateLoginTokenDto Model { get; } = new();
+
+	private string? Error { get; set; }
+
+	private bool IsSubmitDisabled => string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+
+	private async Task Submit()
+	{
+		try
+		{
+			var result = await LoginService.LoginAsync(Model);
+
+			await LoginTokenStorage.StoreTokenAsync(result.Token);
+		}
+		catch (UnauthorizedAccessException e)
+		{
+			Error = e.Message;
+		}
+	}
+
+}
+
+<EditForm OnValidSubmit="Submit" Model="@Model">
+	@if (Error is { } error)
+	{
+		<Card Variant="CardVariant.Danger">@error</Card>
+	}
+
+	<DataAnnotationsValidator/>
+	<ValidationSummary/>
+
+	<div>
+		<label for="email">Email address</label>
+		<InputText id="email" @bind-Value="Model.Email"/>
+		<ValidationMessage For="@(() => Model.Email)"/>
+	</div>
+
+	<div>
+		<label for="password">Password</label>
+		<InputText id="password" type="password" @bind-Value="Model.Password"/>
+		<ValidationMessage For="@(() => Model.Password)"/>
+	</div>
+
+	<FilledButton Submit Disabled="@IsSubmitDisabled">Submit</FilledButton>
+</EditForm>

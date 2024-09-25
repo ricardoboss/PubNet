@@ -1,0 +1,27 @@
+button {
+    font-size: 0.9em;
+    background-color: var(--btn-background);
+    color: var(--btn-foreground);
+    border: none;
+    border-radius: calc(var(--half-spacing-unit) + 0.9em);
+    padding: var(--half-spacing-unit) var(--spacing-unit);
+    cursor: pointer;
+    outline: transparent solid 1px;
+    transition: background-color 0.1s ease-out, outline-color 0.1s ease-out;
+}
+
+button:not(:disabled):hover,
+button:not(:disabled):focus {
+    outline-color: var(--btn-outline-color);
+    background: var(--btn-hover-background);
+}
+
+button:active {
+    background: var(--btn-background);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    background: var(--btn-disabled-background);
+    opacity: 0.75;
+}

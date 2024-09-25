@@ -52,6 +52,8 @@ public class JwtFactory : IJwtFactory
 		{
 			new(JwtClaims.Token, token.Value),
 			new(JwtClaims.Scope, string.Join(JwtClaims.ScopeSeparator, token.Scopes)),
+			new(JwtClaims.Email, token.Identity.Email),
+			new(JwtClaims.Username, token.Identity.Author.UserName),
 		};
 
 		var jst = new JwtSecurityToken(

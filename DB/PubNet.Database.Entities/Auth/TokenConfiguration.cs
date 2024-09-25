@@ -23,10 +23,6 @@ public class TokenConfiguration : IEntityTypeConfiguration<Token>
 			.HasMaxLength(100);
 
 		builder.Property(t => t.Scopes)
-			.HasConversion(
-				v => string.Join(',', v),
-				v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
-			)
 			.HasMaxLength(2000);
 
 		builder.Property(t => t.Value)

@@ -1,0 +1,12 @@
+@inject ILoginTokenStorage LoginTokenStorage
+
+@code {
+
+	private async Task Logout()
+	{
+		await LoginTokenStorage.DeleteTokenAsync();
+	}
+
+}
+
+<FilledButton Clicked="Logout" Variant="ButtonVariant.Passive">Logout</FilledButton>

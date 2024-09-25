@@ -70,4 +70,6 @@ public readonly partial struct Scope
 
 		return Validation.Ok;
 	}
+
+	private static string NormalizeInput(string input) => input.Trim().ToLowerInvariant();
 }
