@@ -13,7 +13,7 @@ public class HttpAuthProvider(IHttpContextAccessor contextAccessor, PubNetContex
 	private string? TryGetTokenValue()
 	{
 		var httpContext = contextAccessor.HttpContext;
-		var principal = httpContext?.User.FindFirst(c => c.Type == JwtClaims.Token); // TODO: move this somewhere central
+		var principal = httpContext?.User.FindFirst(c => c.Type == JwtClaims.TokenValue); // TODO: move this somewhere central
 		return principal?.Value;
 	}
 

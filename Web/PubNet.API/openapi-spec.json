@@ -124,6 +124,43 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "includeExpired",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCollectionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCollectionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCollectionDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/Authentication/Account": {
@@ -1379,17 +1416,23 @@
         "type": "object",
         "properties": {
           "email": {
+            "minLength": 1,
             "type": "string",
-            "nullable": true
+            "format": "email"
           },
           "userName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "AuthorDto": {
+        "required": [
+          "id",
+          "registeredAtUtc",
+          "userName"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -1397,8 +1440,8 @@
             "format": "uuid"
           },
           "userName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "registeredAtUtc": {
             "type": "string",
@@ -1422,8 +1465,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AuthorDto"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
@@ -1437,16 +1479,18 @@
         "type": "object",
         "properties": {
           "userName": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "email": {
+            "minLength": 1,
             "type": "string",
-            "nullable": true
+            "format": "email"
           },
           "password": {
+            "minLength": 1,
             "type": "string",
-            "nullable": true
+            "format": "password"
           }
         },
         "additionalProperties": false
@@ -1459,12 +1503,14 @@
         "type": "object",
         "properties": {
           "email": {
+            "minLength": 1,
             "type": "string",
-            "nullable": true
+            "format": "email"
           },
           "password": {
+            "minLength": 1,
             "type": "string",
-            "nullable": true
+            "format": "password"
           }
         },
         "additionalProperties": false
@@ -1472,24 +1518,24 @@
       "CreatePersonalAccessTokenDto": {
         "required": [
           "lifetimeInDays",
-          "name"
+          "name",
+          "scopes"
         ],
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "scopes": {
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "nullable": true
+            }
           },
           "lifetimeInDays": {
             "type": "integer",
-            "format": "int32"
+            "format": "duration"
           }
         },
         "additionalProperties": false
@@ -1685,8 +1731,9 @@
         "type": "object",
         "properties": {
           "password": {
+            "minLength": 1,
             "type": "string",
-            "nullable": true
+            "format": "password"
           }
         },
         "additionalProperties": false
@@ -1699,12 +1746,12 @@
         "type": "object",
         "properties": {
           "code": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "message": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "stackTrace": {
             "type": "array",
@@ -2349,6 +2396,21 @@
         "type": "integer",
         "format": "int32"
       },
+      "TokenCollectionDto": {
+        "required": [
+          "tokens"
+        ],
+        "type": "object",
+        "properties": {
+          "tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TokenDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "TokenCreatedDto": {
         "required": [
           "token"
@@ -2356,8 +2418,73 @@
         "type": "object",
         "properties": {
           "token": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenDto": {
+        "required": [
+          "browser",
+          "createdAtUtc",
+          "deviceType",
+          "expiresAtUtc",
+          "id",
+          "ipAddress",
+          "name",
+          "platform",
+          "revokedAtUtc",
+          "scopes",
+          "userAgent"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string",
-            "nullable": true
+            "format": "uuid"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "ipAddress": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "userAgent": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "deviceType": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "browser": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "platform": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokedAtUtc": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

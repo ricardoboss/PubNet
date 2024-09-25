@@ -8,6 +8,8 @@ public static class Scopes
 		private const string Prefix = "pat:";
 
 		public const string Create = Prefix + "create";
+
+		public const string Read = Prefix + "read";
 	}
 
 	public static class Dart

@@ -11,7 +11,7 @@ public class ApiGuardThrowsBuilder(IGuard guard, ClaimsPrincipal user) : IGuardT
 	{
 		get
 		{
-			var scopesClaimValue = user.FindFirstValue(JwtClaims.Scope);
+			var scopesClaimValue = user.FindFirstValue(JwtClaims.Scopes);
 
 			return scopesClaimValue is null ? ScopesClaim.Empty : ScopesClaim.From(scopesClaimValue);
 		}

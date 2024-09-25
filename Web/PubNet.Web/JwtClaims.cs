@@ -4,8 +4,8 @@ public static class JwtClaims
 {
 	public const char ScopeSeparator = ' ';
 
-	public const string Token = "token";
-	public const string Scope = "scope";
-	public const string Email = "email";
-	public const string Username = "username";
+	public const string IdentityId = "sub";
+	public const string TokenValue = "jti";
+	public const string Scopes = "scope";
+	public const string AuthorUsername = "preferred_username";
 }

@@ -14,7 +14,9 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(CreateAccountDto))]
 [JsonSerializable(typeof(CreateLoginTokenDto))]
 [JsonSerializable(typeof(CreatePersonalAccessTokenDto))]
+[JsonSerializable(typeof(TokenCollectionDto))]
 [JsonSerializable(typeof(TokenCreatedDto))]
+[JsonSerializable(typeof(TokenDto))]
 #endregion
 
 #region Authors

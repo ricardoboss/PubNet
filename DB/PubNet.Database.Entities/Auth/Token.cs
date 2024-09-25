@@ -36,5 +36,7 @@ public class Token
 
 	public DateTimeOffset? RevokedAtUtc { get; set; }
 
-	public bool IsExpired => RevokedAtUtc.HasValue || DateTimeOffset.UtcNow > ExpiresAtUtc;
+	public bool IsExpired => IsExpiredAt(DateTimeOffset.UtcNow);
+
+	public bool IsExpiredAt(DateTimeOffset when) => RevokedAtUtc.HasValue || when > ExpiresAtUtc;
 }

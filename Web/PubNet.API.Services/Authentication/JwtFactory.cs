@@ -50,10 +50,10 @@ public class JwtFactory : IJwtFactory
 	{
 		var claims = new List<Claim>
 		{
-			new(JwtClaims.Token, token.Value),
-			new(JwtClaims.Scope, string.Join(JwtClaims.ScopeSeparator, token.Scopes)),
-			new(JwtClaims.Email, token.Identity.Email),
-			new(JwtClaims.Username, token.Identity.Author.UserName),
+			new(JwtClaims.AuthorUsername, token.Identity.Author.UserName),
+			new(JwtClaims.IdentityId, token.Identity.Id.ToString("D")),
+			new(JwtClaims.TokenValue, token.Value),
+			new(JwtClaims.Scopes, string.Join(JwtClaims.ScopeSeparator, token.Scopes)),
 		};
 
 		var jst = new JwtSecurityToken(

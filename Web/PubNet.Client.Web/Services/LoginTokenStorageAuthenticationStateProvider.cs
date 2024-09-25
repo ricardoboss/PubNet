@@ -47,7 +47,7 @@ public class LoginTokenStorageAuthenticationStateProvider : AuthenticationStateP
 
 	private ClaimsIdentity GetIdentityFromToken(JsonWebToken loginToken)
 	{
-		var identity = new ClaimsIdentity("loginToken", JwtClaims.Username, null);
+		var identity = new ClaimsIdentity("loginToken", JwtClaims.AuthorUsername, null);
 
 		try
 		{

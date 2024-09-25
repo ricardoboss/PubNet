@@ -1,4 +1,5 @@
-﻿using PubNet.Database.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using PubNet.Database.Entities;
 using Riok.Mapperly.Abstractions;
 
 namespace PubNet.API.DTO.Authors;
@@ -8,9 +9,12 @@ public partial class AuthorDto
 {
 	public static partial AuthorDto MapFrom(Author author);
 
-	public Guid Id { get; set; }
+	[Required]
+	public required Guid Id { get; init; }
 
-	public string UserName { get; set; } = null!;
+	[Required]
+	public required string UserName { get; init; }
 
-	public DateTimeOffset RegisteredAtUtc { get; set; }
+	[Required]
+	public required DateTimeOffset RegisteredAtUtc { get; init; }
 }

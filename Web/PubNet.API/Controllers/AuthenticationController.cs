@@ -7,6 +7,7 @@ using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
 using PubNet.API.Exceptions.Authentication;
 using PubNet.API.Services.Extensions;
+using PubNet.Database.Entities.Auth;
 using PubNet.Web;
 
 namespace PubNet.API.Controllers;
@@ -37,6 +38,20 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 
 		Response.StatusCode = StatusCodes.Status201Created;
 		return TokenCreatedDto.MapFrom(jwt);
+	}
+
+	[HttpGet("PersonalAccessToken")]
+	[Authorize, RequireAnyScope(Scopes.PersonalAccessTokens.Read, Scopes.PersonalAccessTokens.Create)]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<TokenCollectionDto> GetPersonalAccessToken([FromQuery] bool includeExpired = false, CancellationToken cancellationToken = default)
+	{
+		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
+
+		IEnumerable<Token> tokens = identity.Tokens;
+		if (!includeExpired)
+			tokens = tokens.Where(t => !t.IsExpired);
+
+		return TokenCollectionDto.MapFrom(tokens);
 	}
 
 	[HttpPost("Account")]

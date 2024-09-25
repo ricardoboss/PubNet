@@ -1,4 +1,5 @@
-﻿using PubNet.Web.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using PubNet.Web.Models;
 using Riok.Mapperly.Abstractions;
 
 namespace PubNet.API.DTO.Authentication;
@@ -9,5 +10,6 @@ public partial class TokenCreatedDto
 	[MapProperty(nameof(JsonWebToken.Value), nameof(Token))]
 	public static partial TokenCreatedDto MapFrom(JsonWebToken token);
 
+	[Required]
 	public required string Token { get; set; }
 }

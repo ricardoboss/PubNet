@@ -28,7 +28,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 
 		// TODO: determine what scopes are needed for website usage
 		string[] scopes = [
-			Scopes.PersonalAccessTokens.Create,
+			Scopes.PersonalAccessTokens.Create, // implies reading
 		];
 
 		var token = await tokenDmo.CreateTokenAsync(
