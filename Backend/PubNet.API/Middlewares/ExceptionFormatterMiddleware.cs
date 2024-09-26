@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Security.Authentication;
+using PubNet.API.Abstractions;
 using PubNet.API.DTO;
-using PubNet.API.Exceptions;
 
 namespace PubNet.API.Middlewares;
 
@@ -22,9 +22,10 @@ public class ExceptionFormatterMiddleware : IMiddleware
 
 	private static async Task Handle(HttpContext context, Exception e)
 	{
+		string? code = null;
 		switch (e)
 		{
-			case OperationCanceledException:
+			case OperationCanceledException or TaskCanceledException:
 				context.Connection.RequestClose();
 
 				return;
@@ -39,6 +40,8 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case ApiException apiException:
 				context.Response.StatusCode = apiException.StatusCode;
 
+				code = apiException.Code;
+
 				break;
 			default:
 				context.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -51,7 +54,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			{
 				Error = new()
 				{
-					Code = e.GetType().Name,
+					Code = code ?? e.GetType().Name,
 					Message = e.Message,
 #if DEBUG
 					StackTrace = e.StackTrace?.Split("\r\n")

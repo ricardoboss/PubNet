@@ -19,7 +19,7 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[HttpPost("LoginToken")]
 	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
-	public async Task<TokenCreatedDto> CreateLoginToken(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var jwt = await accessTokenService.CreateLoginTokenAsync(dto, cancellationToken);
 
@@ -30,7 +30,7 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[HttpPost("PersonalAccessToken")]
 	[Authorize, RequireScope(Scopes.PersonalAccessTokens.Create)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	public async Task<TokenCreatedDto> CreatePersonalAccessToken(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
 
@@ -43,7 +43,7 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[HttpGet("PersonalAccessToken")]
 	[Authorize, RequireAnyScope(Scopes.PersonalAccessTokens.Read, Scopes.PersonalAccessTokens.Create)]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<TokenCollectionDto> GetPersonalAccessToken([FromQuery] bool includeExpired = false, CancellationToken cancellationToken = default)
+	public async Task<TokenCollectionDto> GetPersonalAccessTokenAsync([FromQuery] bool includeExpired = false, CancellationToken cancellationToken = default)
 	{
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
 
@@ -55,8 +55,10 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	}
 
 	[HttpPost("Account")]
-	[ProducesResponseType(StatusCodes.Status201Created)]
-	public async Task<AccountCreatedDto> CreateAccount(CreateAccountDto dto, CancellationToken cancellationToken = default)
+	[ProducesResponseType<AccountCreatedDto>(StatusCodes.Status201Created)]
+	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status409Conflict)]
+	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
+	public async Task<AccountCreatedDto> CreateAccountAsync(CreateAccountDto dto, CancellationToken cancellationToken = default)
 	{
 		if (!AreRegistrationsOpen())
 			throw new RegistrationsClosedException();

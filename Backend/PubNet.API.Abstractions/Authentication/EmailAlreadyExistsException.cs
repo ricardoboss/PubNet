@@ -1,3 +1,6 @@
-﻿namespace PubNet.API.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.Http;
 
-public class EmailAlreadyExistsException(string email) : Exception($"E-mail address {email} already exists");
+namespace PubNet.API.Abstractions.Authentication;
+
+public class EmailAlreadyExistsException(string email) : ApiException("email-address-already-taken",
+	$"E-mail address {email} already exists", StatusCodes.Status409Conflict);

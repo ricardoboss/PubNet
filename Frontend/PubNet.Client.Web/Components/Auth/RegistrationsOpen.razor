@@ -1,0 +1,34 @@
+﻿@inject IRegisterService RegisterService
+
+@code {
+
+	[Parameter]
+	public RenderFragment? Open { get; set; }
+
+	[Parameter]
+	public RenderFragment? Closed { get; set; }
+
+	[Parameter]
+	public RenderFragment? Loading { get; set; }
+
+	private bool? IsOpen { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		IsOpen = await RegisterService.AreRegistrationsOpenAsync();
+	}
+
+}
+
+@switch (IsOpen)
+{
+	case null:
+		@Loading
+		break;
+	case true:
+		@Open
+		break;
+	default:
+		@Closed
+		break;
+}

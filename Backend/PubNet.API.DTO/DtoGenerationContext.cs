@@ -69,6 +69,7 @@ namespace PubNet.API.DTO;
 #region Other
 
 [JsonSerializable(typeof(GenericErrorDto))]
+[JsonSerializable(typeof(ValidationErrorsDto))]
 
 #endregion
 

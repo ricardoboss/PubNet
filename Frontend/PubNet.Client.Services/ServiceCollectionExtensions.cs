@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
 		services.TryAddScoped<PubNetApiClient>();
 
 		services.TryAddScoped<ILoginService, ApiLoginService>();
+		services.TryAddScoped<IRegisterService, ApiRegisterService>();
 
 		return services;
 	}

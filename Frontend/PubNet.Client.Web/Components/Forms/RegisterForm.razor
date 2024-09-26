@@ -1,0 +1,56 @@
+﻿@inject IRegisterService RegisterService
+@inject ILogger<RegisterForm> Logger
+
+@code {
+
+	private CreateAccountDto Model { get; } = new();
+
+	private string? Error { get; set; }
+
+	private bool IsSubmitDisabled => string.IsNullOrWhiteSpace(Model.UserName) || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+
+	private async Task Submit()
+	{
+		try
+		{
+			await RegisterService.RegisterAsync(Model);
+		}
+		catch (Exception e)
+		{
+			Logger.LogError(e, "Failed to register");
+
+			Error = e.Message;
+		}
+	}
+
+}
+
+<EditForm Model="@Model" OnValidSubmit="Submit">
+	<DataAnnotationsValidator/>
+	<ValidationSummary/>
+	@if (Error is { } error)
+	{
+		<Card Variant="CardVariant.Danger">@error</Card>
+	}
+
+	<div>
+		<label for="username">Username</label>
+		<InputText id="username" @bind-Value="Model.UserName"/>
+		<ValidationMessage For="@(() => Model.UserName)"/>
+	</div>
+
+	<div>
+		<label for="email">Email address</label>
+		<InputText id="email" @bind-Value="Model.Email"/>
+		<ValidationMessage For="@(() => Model.Email)"/>
+	</div>
+
+	<div>
+		<label for="password">Password</label>
+		<InputText id="password" type="password" @bind-Value="Model.Password"/>
+		<ValidationMessage For="@(() => Model.Password)"/>
+	</div>
+
+	<FilledButton Submit Disabled="@IsSubmitDisabled">Register</FilledButton>
+
+</EditForm>

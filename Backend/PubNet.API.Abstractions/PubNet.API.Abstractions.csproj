@@ -1,15 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" />
-      <PackageReference Include="Semver" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions"/>
+		<PackageReference Include="Semver"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\DB\PubNet.Database.Entities\PubNet.Database.Entities.csproj" />
-      <ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
-      <ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj" />
-      <ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\DB\PubNet.Database.Entities\PubNet.Database.Entities.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
+	</ItemGroup>
 
 </Project>
