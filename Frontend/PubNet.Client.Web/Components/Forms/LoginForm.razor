@@ -36,14 +36,14 @@
 	<ValidationSummary/>
 
 	<div>
-		<label for="email">Email address</label>
-		<InputText id="email" @bind-Value="Model.Email"/>
+		<label for="login-email">Email address</label>
+		<InputText id="login-email" @bind-Value="Model.Email"/>
 		<ValidationMessage For="@(() => Model.Email)"/>
 	</div>
 
 	<div>
-		<label for="password">Password</label>
-		<InputText id="password" type="password" @bind-Value="Model.Password"/>
+		<label for="login-password">Password</label>
+		<PasswordInput id="login-password" @bind-Value="Model.Password" autocomplete="current-password"/>
 		<ValidationMessage For="@(() => Model.Password)"/>
 	</div>
 

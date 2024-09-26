@@ -88,6 +88,10 @@
     --card-background: var(--primary);
     --card-foreground: var(--on-primary-tinted);
     --card-border: var(--primary-border);
+
+    --duo-blazor-icon-primary-color: var(--on-primary-tinted);
+    --duo-blazor-icon-secondary-color: var(--primary);
+    --duo-blazor-icon-secondary-opacity: 0.75;
 }
 
 /* Variants */

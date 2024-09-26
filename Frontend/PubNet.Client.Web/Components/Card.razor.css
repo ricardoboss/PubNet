@@ -5,4 +5,5 @@ div {
     margin: var(--half-spacing-unit);
     padding: var(--spacing-unit);
     border-radius: var(--half-spacing-unit);
+    white-space: pre-wrap;
 }

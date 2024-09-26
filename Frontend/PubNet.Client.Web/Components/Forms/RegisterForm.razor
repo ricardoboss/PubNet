@@ -34,20 +34,20 @@
 	}
 
 	<div>
-		<label for="username">Username</label>
-		<InputText id="username" @bind-Value="Model.UserName"/>
+		<label for="register-username">Username</label>
+		<InputText id="register-username" @bind-Value="Model.UserName"/>
 		<ValidationMessage For="@(() => Model.UserName)"/>
 	</div>
 
 	<div>
-		<label for="email">Email address</label>
-		<InputText id="email" @bind-Value="Model.Email"/>
+		<label for="register-email">Email address</label>
+		<InputText id="register-email" @bind-Value="Model.Email"/>
 		<ValidationMessage For="@(() => Model.Email)"/>
 	</div>
 
 	<div>
-		<label for="password">Password</label>
-		<InputText id="password" type="password" @bind-Value="Model.Password"/>
+		<label for="register-password">Password</label>
+		<PasswordInput id="register-password" @bind-Value="Model.Password" autocomplete="new-password"/>
 		<ValidationMessage For="@(() => Model.Password)"/>
 	</div>
 
