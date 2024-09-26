@@ -6,6 +6,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+		<OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
+
 		<GeneratedClientNamespace>PubNet.Client.Generated</GeneratedClientNamespace>
 		<GeneratedClientDirectory>../../Frontend/$(GeneratedClientNamespace)</GeneratedClientDirectory>
 		<GeneratedClientLockFile>$(GeneratedClientDirectory)/kiota-lock.json</GeneratedClientLockFile>
@@ -19,16 +22,8 @@
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
 	</PropertyGroup>
 
-	<Target Name="CreateSwaggerJson" AfterTargets="Build" Condition="$(Configuration) == 'Debug'">
-		<Exec
-			Command="dotnet swagger tofile --output openapi-spec.json $(OutputPath)$(AssemblyName).dll v1"
-			WorkingDirectory="$(ProjectDir)"
-			EnvironmentVariables="DOTNET_ENVIRONMENT=Development"
-		/>
-	</Target>
-
 	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
-		<Exec Command="dotnet kiota generate --openapi openapi-spec.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --additional-data=False" WorkingDirectory="$(ProjectDir)"/>
+		<Exec Command="dotnet kiota generate --openapi PubNet.API.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --additional-data=False" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
 	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">

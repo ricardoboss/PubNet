@@ -1,6 +1,6 @@
 {
   "descriptionHash": "5ABDEF91FE57302BB7F76EEA38AE9252228D79F7AC7933F94B70B277E54E5710D37BC9AD68DE89D3FCBB9072975C1EA0497896EE4709E69A17DBC5845840877E",
-  "descriptionLocation": "../../Backend/PubNet.API/openapi-spec.json",
+  "descriptionLocation": "../../Backend/PubNet.API/PubNet.API.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.18.0",
   "clientClassName": "PubNetApiClient",
