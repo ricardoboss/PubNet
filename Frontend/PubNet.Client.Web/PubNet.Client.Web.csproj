@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
+	<PropertyGroup>
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
