@@ -1,0 +1,18 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Watch Website" type="RunDotNetWatch" factoryName="RunDotNetWatch">
+    <option name="envs">
+      <map>
+        <entry key="DOTNET_ENVIRONMENT" value="Development" />
+      </map>
+    </option>
+    <option name="exePath" value="$USER_HOME$/.nuget/packages/microsoft.aspnetcore.components.webassembly.devserver/8.0.8/tools/blazor-devserver.dll" />
+    <option name="programParameters" value="" />
+    <option name="projectFilePath" value="$PROJECT_DIR$/Frontend/PubNet.Client.Web/PubNet.Client.Web.csproj" />
+    <option name="projectTfm" value="net8.0" />
+    <option name="restartOnRudeEditEditor" value="true" />
+    <option name="suppressBrowserLaunch" value="true" />
+    <option name="watchParameters" value="" />
+    <option name="workingDirectory" value="$PROJECT_DIR$/Frontend/PubNet.Client.Web" />
+    <method v="2" />
+  </configuration>
+</component>
