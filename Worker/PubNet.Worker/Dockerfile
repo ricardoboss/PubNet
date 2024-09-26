@@ -27,7 +27,12 @@ RUN dotnet publish "PubNet.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 
 FROM base AS final
 
+USER root
+
 RUN apt-get update && apt-get install git curl unzip -y
+
+USER $APP_UID
+
 WORKDIR /flutter
 RUN git clone https://github.com/flutter/flutter.git -b stable flutter
 ENV PATH="/flutter/flutter/bin/:$PATH"
