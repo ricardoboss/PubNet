@@ -29,7 +29,7 @@ jobs:
 
     strategy:
       matrix:
-        project: [ 'Backend/PubNet.API', 'Worker/PubNet.Worker', 'Frontend/PubNet.Client.Web' ]
+        project: [ 'API', 'Worker', 'Frontend' ]
 
     steps:
       - name: Checkout repository
@@ -47,14 +47,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.project }}
 
       - name: Build and push Docker image (${{ matrix.project }})
         id: push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ${{ matrix.project }}/Dockerfile
+          file: ${{ matrix.project == 'API' && 'Backend/PubNet.API' || matrix.project == 'Worker' && 'Worker/PubNet.Worker' || 'Frontend/PubNet.Client.Web' }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
