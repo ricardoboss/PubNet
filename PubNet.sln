@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 		Architecture.md = Architecture.md
 		NuGet.Config = NuGet.Config
+		frontend-appsettings.json = frontend-appsettings.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Worker", "Worker\PubNet.Worker\PubNet.Worker.csproj", "{D36FD9E5-2FA2-404A-B34C-4C5F96E92BC5}"
