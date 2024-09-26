@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart LR
-    nuget[NuGet Client] & dart[Dart Client] & website[PubNet Website] --> caddy["Reverse Proxy<br/>(Caddy)"]
+    nuget[NuGet Client] & dart[Dart Client] & browser[Web Browser] --> caddy["Reverse Proxy<br/>(Caddy)"]
 
     subgraph PubNet
         caddy --> frontend["Frontend<br/>(Blazor WASM)"] & api["API<br/>(ASP.NET)"]
