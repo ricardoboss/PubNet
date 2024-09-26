@@ -1,0 +1,104 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<UserSecretsId>0e9483c9-0c63-4fb0-bcaa-414561d567ba</UserSecretsId>
+		<LangVersion>default</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<GeneratedClientNamespace>PubNet.Client.Generated</GeneratedClientNamespace>
+		<GeneratedClientDirectory>../../Frontend/$(GeneratedClientNamespace)</GeneratedClientDirectory>
+		<GeneratedClientLockFile>$(GeneratedClientDirectory)/kiota-lock.json</GeneratedClientLockFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<DefineConstants>TRACE;EFCORE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DefineConstants>TRACE;EFCORE</DefineConstants>
+	</PropertyGroup>
+
+	<Target Name="CreateSwaggerJson" AfterTargets="Build" Condition="$(Configuration) == 'Debug'">
+		<Exec
+			Command="dotnet swagger tofile --output openapi-spec.json $(OutputPath)$(AssemblyName).dll v1"
+			WorkingDirectory="$(ProjectDir)"
+			EnvironmentVariables="DOTNET_ENVIRONMENT=Development"
+		/>
+	</Target>
+
+	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
+		<Exec Command="dotnet kiota generate --openapi openapi-spec.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --additional-data=False" WorkingDirectory="$(ProjectDir)"/>
+	</Target>
+
+	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">
+		<Exec Command="dotnet kiota update --output $(GeneratedClientDirectory)" WorkingDirectory="$(ProjectDir)"/>
+	</Target>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.8" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
+		<PackageReference Include="SerilogAnalyzer" Version="0.15.0"/>
+		<PackageReference Include="SignedUrl.Extensions" Version="1.2.0"/>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="..\..\.dockerignore">
+			<Link>.dockerignore</Link>
+		</Content>
+		<Content Include="..\..\.gitignore">
+			<Link>.gitignore</Link>
+		</Content>
+		<Content Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
+		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj"/>
+		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="appsettings.json" />
+	  <Resource Include="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Content Remove="appsettings.Development.json" />
+	  <Resource Include="appsettings.Development.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <DependentUpon>appsettings.json</DependentUpon>
+	  </Resource>
+	  <Content Remove="appsettings.Production.json" />
+	</ItemGroup>
+
+</Project>

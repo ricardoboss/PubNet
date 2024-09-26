@@ -1,8 +1,8 @@
-using PubNet.Common.Utils;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Dart;
 using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker.Models;
+using PubNet.Worker.Utils;
 
 namespace PubNet.Worker.Tasks;
 
@@ -49,7 +49,7 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 			logger.LogTrace("Looking for a README file in package {PackageName} version {PackageVersion}", package,
 				version);
 
-			var readmePath = await PathHelper.GetCaseInsensitivePath(workingDir, "readme.md", cancellationToken);
+			var readmePath = GetCaseInsensitivePath(workingDir, "readme.md");
 			if (readmePath is null || !File.Exists(readmePath))
 			{
 				analysis.ReadmeFound = false;
@@ -70,5 +70,17 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 		{
 			Directory.Delete(workingDir, true);
 		}
+	}
+
+	private static string? GetCaseInsensitivePath(string workingDirectory, string searchFilename)
+	{
+		var lowercaseSearchFilename = searchFilename.ToLowerInvariant();
+		return Directory.EnumerateFiles(workingDirectory).FirstOrDefault(
+			filename =>
+			{
+				var lowercaseFilename = Path.GetFileName(filename).ToLowerInvariant();
+
+				return lowercaseFilename.SequenceEqual(lowercaseSearchFilename);
+			});
 	}
 }

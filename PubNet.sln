@@ -1,5 +1,5 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API", "Web\PubNet.API\PubNet.API.csproj", "{A1864A8B-C686-43BF-AD82-DBD5B4560CB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API", "Backend\PubNet.API\PubNet.API.csproj", "{A1864A8B-C686-43BF-AD82-DBD5B4560CB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F717FC7-42F0-42E9-B731-D0443E2099C3}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{5499F184-A74F-4D6D-9BA8-4CBC02A109F8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{5499F184-A74F-4D6D-9BA8-4CBC02A109F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Worker", "Worker", "{FBB066E9-FB52-4AA7-8D4C-B796063DC723}"
 EndProject
@@ -33,9 +33,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Storage", "Storage", "{2206
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{04EF0EA2-B6ED-4111-8589-EE79FA51EF60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Common", "PubNet.Common\PubNet.Common.csproj", "{DFEE05A5-BCBC-477F-ABAF-E981E6FD699F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Auth", "PubNet.Auth\PubNet.Auth.csproj", "{DFEE05A5-BCBC-477F-ABAF-E981E6FD699F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.DTO", "Web\PubNet.DTO\PubNet.DTO.csproj", "{5D4B2105-AB32-464B-86AC-E9037C088FAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.DTO", "Backend\PubNet.DTO\PubNet.DTO.csproj", "{5D4B2105-AB32-464B-86AC-E9037C088FAE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.BlobStorage.Abstractions", "Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj", "{311CF62B-A45D-4847-AC3A-F16E01173BB4}"
 EndProject
@@ -57,24 +57,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Database.Context", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Database.Design", "DB\PubNet.Database.Design\PubNet.Database.Design.csproj", "{6CF4520B-C663-4308-B255-16A56FC6B4A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.Services", "Web\PubNet.API.Services\PubNet.API.Services.csproj", "{BCC74DCA-7A3A-4B20-97B1-2C143245BC4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.Services", "Backend\PubNet.API.Services\PubNet.API.Services.csproj", "{BCC74DCA-7A3A-4B20-97B1-2C143245BC4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.Abstractions", "Web\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj", "{5925FBF4-71D0-441B-B41B-33DCCE00373C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.Abstractions", "Backend\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj", "{5925FBF4-71D0-441B-B41B-33DCCE00373C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Web", "Web\PubNet.Web\PubNet.Web.csproj", "{0AB11555-CBE2-47E5-857F-1E0EC64B975F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Generated", "Web\PubNet.Client.Generated\PubNet.Client.Generated.csproj", "{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Generated", "Frontend\PubNet.Client.Generated\PubNet.Client.Generated.csproj", "{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{FF841DA5-8B71-489C-ABC5-34E7D6049D3C}"
 	ProjectSection(SolutionItems) = preProject
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Web", "Web\PubNet.Client.Web\PubNet.Client.Web.csproj", "{14D281A4-6452-428A-B5F0-32B812428B3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Web", "Frontend\PubNet.Client.Web\PubNet.Client.Web.csproj", "{14D281A4-6452-428A-B5F0-32B812428B3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Abstractions", "Web\PubNet.Client.Abstractions\PubNet.Client.Abstractions.csproj", "{FF140E0F-D3C7-42A0-BDE2-C2147901DC6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Abstractions", "Frontend\PubNet.Client.Abstractions\PubNet.Client.Abstractions.csproj", "{FF140E0F-D3C7-42A0-BDE2-C2147901DC6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Services", "Web\PubNet.Client.Services\PubNet.Client.Services.csproj", "{06A0B671-323B-4969-A31E-BB8AAF479CF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Services", "Frontend\PubNet.Client.Services\PubNet.Client.Services.csproj", "{06A0B671-323B-4969-A31E-BB8AAF479CF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{B47C0E6A-ACA4-4801-B86E-019E8B011491}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -146,10 +146,6 @@ Global
 		{5925FBF4-71D0-441B-B41B-33DCCE00373C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5925FBF4-71D0-441B-B41B-33DCCE00373C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5925FBF4-71D0-441B-B41B-33DCCE00373C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0AB11555-CBE2-47E5-857F-1E0EC64B975F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0AB11555-CBE2-47E5-857F-1E0EC64B975F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0AB11555-CBE2-47E5-857F-1E0EC64B975F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0AB11555-CBE2-47E5-857F-1E0EC64B975F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -184,11 +180,10 @@ Global
 		{6CF4520B-C663-4308-B255-16A56FC6B4A7} = {04EF0EA2-B6ED-4111-8589-EE79FA51EF60}
 		{BCC74DCA-7A3A-4B20-97B1-2C143245BC4D} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
 		{5925FBF4-71D0-441B-B41B-33DCCE00373C} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
-		{0AB11555-CBE2-47E5-857F-1E0EC64B975F} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
-		{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
 		{FF841DA5-8B71-489C-ABC5-34E7D6049D3C} = {6F717FC7-42F0-42E9-B731-D0443E2099C3}
-		{14D281A4-6452-428A-B5F0-32B812428B3D} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
-		{FF140E0F-D3C7-42A0-BDE2-C2147901DC6D} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
-		{06A0B671-323B-4969-A31E-BB8AAF479CF7} = {5499F184-A74F-4D6D-9BA8-4CBC02A109F8}
+		{FF140E0F-D3C7-42A0-BDE2-C2147901DC6D} = {B47C0E6A-ACA4-4801-B86E-019E8B011491}
+		{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0} = {B47C0E6A-ACA4-4801-B86E-019E8B011491}
+		{06A0B671-323B-4969-A31E-BB8AAF479CF7} = {B47C0E6A-ACA4-4801-B86E-019E8B011491}
+		{14D281A4-6452-428A-B5F0-32B812428B3D} = {B47C0E6A-ACA4-4801-B86E-019E8B011491}
 	EndGlobalSection
 EndGlobal
