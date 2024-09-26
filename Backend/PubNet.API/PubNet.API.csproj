@@ -22,12 +22,12 @@
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
 	</PropertyGroup>
 
-	<Target Name="GenerateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
+	<Target Name="GenerateClient" AfterTargets="AfterBuild;CompileDesignTime" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
 		<Exec Command="dotnet kiota generate --openapi PubNet.API.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --additional-data=False" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
-	<Target Name="UpdateClient" AfterTargets="CreateSwaggerJson" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">
-		<Exec Command="dotnet kiota update --output $(GeneratedClientDirectory)" WorkingDirectory="$(ProjectDir)"/>
+	<Target Name="UpdateClient" AfterTargets="AfterBuild;CompileDesignTime" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">
+		<Exec Command="dotnet kiota update --output $(GeneratedClientDirectory) --clean-output" WorkingDirectory="$(ProjectDir)"/>
 	</Target>
 
 	<ItemGroup>
