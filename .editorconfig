@@ -15,7 +15,7 @@ resharper_indent_braces_inside_statement_conditions = false
 resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_field_attribute_on_same_line = false
 
-[{*.cs,*.razor,*.csproj}]
+[{*.cs,*.razor,*.csproj,*.props}]
 indent_style = tab
 indent_size = tab
 
