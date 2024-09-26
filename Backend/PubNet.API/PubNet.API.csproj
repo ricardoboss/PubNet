@@ -36,16 +36,16 @@
 	</Target>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.8" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-		<PackageReference Include="SerilogAnalyzer" Version="0.15.0"/>
-		<PackageReference Include="SignedUrl.Extensions" Version="1.2.0"/>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google"/>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
+		<PackageReference Include="Serilog.AspNetCore"/>
+		<PackageReference Include="Serilog.Sinks.Seq"/>
+		<PackageReference Include="SerilogAnalyzer"/>
+		<PackageReference Include="SignedUrl.Extensions"/>
+		<PackageReference Include="Swashbuckle.AspNetCore"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,12 +72,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
-		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
 		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
 		<ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj"/>
-		<ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj" />
+		<ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
@@ -85,16 +85,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Remove="appsettings.json" />
-	  <Resource Include="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Resource>
-	  <Content Remove="appsettings.Development.json" />
-	  <Resource Include="appsettings.Development.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	    <DependentUpon>appsettings.json</DependentUpon>
-	  </Resource>
-	  <Content Remove="appsettings.Production.json" />
+		<Content Remove="appsettings.json"/>
+		<Resource Include="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Content Remove="appsettings.Development.json"/>
+		<Resource Include="appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<DependentUpon>appsettings.json</DependentUpon>
+		</Resource>
+		<Content Remove="appsettings.Production.json"/>
 	</ItemGroup>
 
 </Project>

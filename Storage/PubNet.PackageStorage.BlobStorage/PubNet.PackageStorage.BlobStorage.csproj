@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-      <ProjectReference Include="..\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj" />
-      <ProjectReference Include="..\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj" />
-      <ProjectReference Include="..\PubNet.BlobStorage.Extensions\PubNet.BlobStorage.Extensions.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.BlobStorage.Extensions\PubNet.BlobStorage.Extensions.csproj"/>
+	</ItemGroup>
 
 </Project>

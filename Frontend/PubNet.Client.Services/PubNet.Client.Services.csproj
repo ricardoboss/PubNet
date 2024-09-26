@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-      <ProjectReference Include="..\PubNet.Client.Abstractions\PubNet.Client.Abstractions.csproj" />
-      <ProjectReference Include="..\PubNet.Client.Generated\PubNet.Client.Generated.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PubNet.Client.Abstractions\PubNet.Client.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.Client.Generated\PubNet.Client.Generated.csproj"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-      <PackageReference Include="Microsoft.Kiota.Abstractions" Version="1.12.4" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
+	</ItemGroup>
 
 </Project>

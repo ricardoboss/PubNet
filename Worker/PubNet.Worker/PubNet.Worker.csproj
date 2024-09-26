@@ -6,15 +6,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CliWrap" Version="3.6.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.8" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-		<PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
+		<PackageReference Include="CliWrap"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+		<PackageReference Include="Serilog.Extensions.Hosting"/>
+		<PackageReference Include="Serilog.Settings.Configuration"/>
+		<PackageReference Include="Serilog.Sinks.Console"/>
+		<PackageReference Include="Serilog.Sinks.Seq"/>
+		<PackageReference Include="SerilogAnalyzer"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,17 +22,17 @@
 			<Link>.dockerignore</Link>
 		</Content>
 		<Content Update="appsettings.Development.json">
-		  <DependentUpon>appsettings.json</DependentUpon>
+			<DependentUpon>appsettings.json</DependentUpon>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj" />
-		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj" />
-		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj" />
+		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj"/>
 	</ItemGroup>
 </Project>

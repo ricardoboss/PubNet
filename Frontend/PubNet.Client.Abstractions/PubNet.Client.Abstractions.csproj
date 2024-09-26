@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
-      <ProjectReference Include="..\PubNet.Client.Generated\PubNet.Client.Generated.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\PubNet.Client.Generated\PubNet.Client.Generated.csproj"/>
+	</ItemGroup>
 
 </Project>
