@@ -1,7 +1,7 @@
 using Microsoft.Kiota.Abstractions;
 using PubNet.Client.Abstractions;
-using PubNet.Client.Generated;
-using PubNet.Client.Generated.Models;
+using PubNet.Client.ApiClient.Generated;
+using PubNet.Client.ApiClient.Generated.Models;
 using PubNet.Auth.Models;
 
 namespace PubNet.Client.Services;

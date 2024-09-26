@@ -1,4 +1,4 @@
-using PubNet.Client.Generated.Models;
+using PubNet.Client.ApiClient.Generated.Models;
 
 namespace PubNet.Client.Abstractions;
 

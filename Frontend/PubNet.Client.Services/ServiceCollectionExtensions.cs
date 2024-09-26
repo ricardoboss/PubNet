@@ -5,7 +5,7 @@ using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using PubNet.Client.Abstractions;
-using PubNet.Client.Generated;
+using PubNet.Client.ApiClient.Generated;
 
 namespace PubNet.Client.Services;
 

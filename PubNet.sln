@@ -64,7 +64,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.Services", "Back
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.Abstractions", "Backend\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj", "{5925FBF4-71D0-441B-B41B-33DCCE00373C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.Generated", "Frontend\PubNet.Client.Generated\PubNet.Client.Generated.csproj", "{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Client.ApiClient", "Frontend\PubNet.Client.ApiClient\PubNet.Client.ApiClient.csproj", "{F5BC85CF-47F2-4328-B1DC-6C146CD52FE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".config", ".config", "{FF841DA5-8B71-489C-ABC5-34E7D6049D3C}"
 	ProjectSection(SolutionItems) = preProject

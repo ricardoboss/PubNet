@@ -2,7 +2,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
-		<ProjectReference Include="..\PubNet.Client.Generated\PubNet.Client.Generated.csproj"/>
+		<ProjectReference Include="..\PubNet.Client.ApiClient\PubNet.Client.ApiClient.csproj"/>
 	</ItemGroup>
 
 </Project>

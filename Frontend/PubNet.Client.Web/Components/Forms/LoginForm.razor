@@ -1,5 +1,3 @@
-@using PubNet.Client.Generated.Models
-
 @inject ILoginService LoginService
 @inject ILoginTokenStorage LoginTokenStorage
 @inject ILogger<LoginForm> Logger
@@ -49,5 +47,5 @@
 		<ValidationMessage For="@(() => Model.Password)"/>
 	</div>
 
-	<FilledButton Submit Disabled="@IsSubmitDisabled">Submit</FilledButton>
+	<FilledButton Submit Disabled="@IsSubmitDisabled">Login</FilledButton>
 </EditForm>

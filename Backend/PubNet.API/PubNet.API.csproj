@@ -9,8 +9,9 @@
 		<OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
 		<OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
 
-		<GeneratedClientNamespace>PubNet.Client.Generated</GeneratedClientNamespace>
-		<GeneratedClientDirectory>../../Frontend/$(GeneratedClientNamespace)</GeneratedClientDirectory>
+		<GeneratedClientProject>PubNet.Client.ApiClient</GeneratedClientProject>
+		<GeneratedClientNamespace>$(GeneratedClientProject).Generated</GeneratedClientNamespace>
+		<GeneratedClientDirectory>../../Frontend/$(GeneratedClientProject)/Generated</GeneratedClientDirectory>
 		<GeneratedClientLockFile>$(GeneratedClientDirectory)/kiota-lock.json</GeneratedClientLockFile>
 	</PropertyGroup>
 
