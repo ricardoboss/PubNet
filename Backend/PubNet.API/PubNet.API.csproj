@@ -1,12 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<UserSecretsId>0e9483c9-0c63-4fb0-bcaa-414561d567ba</UserSecretsId>
-		<LangVersion>default</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -79,9 +75,9 @@
 		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
 		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
 		<ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj"/>
-		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
-		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj"/>
-		<ProjectReference Include="..\..\Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj"/>
+		<ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj" />
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj" />
 		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>

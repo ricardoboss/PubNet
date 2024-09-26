@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Architecture.md = Architecture.md
 		NuGet.Config = NuGet.Config
 		frontend-appsettings.json = frontend-appsettings.json
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Worker", "Worker\PubNet.Worker\PubNet.Worker.csproj", "{D36FD9E5-2FA2-404A-B34C-4C5F96E92BC5}"
@@ -36,7 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{04EF0EA2-B6ED-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.Auth", "PubNet.Auth\PubNet.Auth.csproj", "{DFEE05A5-BCBC-477F-ABAF-E981E6FD699F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.DTO", "Backend\PubNet.DTO\PubNet.DTO.csproj", "{5D4B2105-AB32-464B-86AC-E9037C088FAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.API.DTO", "Backend\PubNet.API.DTO\PubNet.API.DTO.csproj", "{5D4B2105-AB32-464B-86AC-E9037C088FAE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.BlobStorage.Abstractions", "Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj", "{311CF62B-A45D-4847-AC3A-F16E01173BB4}"
 EndProject
@@ -44,11 +45,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.BlobStorage.LocalFil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.BlobStorage.Extensions", "Storage\PubNet.BlobStorage.Extensions\PubNet.BlobStorage.Extensions.csproj", "{ABA3BFA2-E565-4D5C-8D04-02DA7251955D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.ArchiveStorage.Abstractions", "Storage\PubNet.ArchiveStorage.Abstractions\PubNet.ArchiveStorage.Abstractions.csproj", "{6A11E633-9FAB-4BD0-86F5-40D5A2992013}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.PackageStorage.Abstractions", "Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj", "{6A11E633-9FAB-4BD0-86F5-40D5A2992013}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.DocsStorage.Abstractions", "Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj", "{C0E4925C-25CB-40B0-BD92-1991B4C2443F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.ArchiveStorage.BlobStorage", "Storage\PubNet.ArchiveStorage.BlobStorage\PubNet.ArchiveStorage.BlobStorage.csproj", "{78BD340F-AB22-4C80-AD42-853B511CA473}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.PackageStorage.BlobStorage", "Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj", "{78BD340F-AB22-4C80-AD42-853B511CA473}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubNet.DocsStorage.LocalFileDocsStorage", "Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj", "{28D269AB-569B-41CC-BE61-B0EE68060265}"
 EndProject

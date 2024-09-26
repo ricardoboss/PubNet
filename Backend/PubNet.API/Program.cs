@@ -32,7 +32,7 @@ using PubNet.API.Services.CQRS.Queries.Packages;
 using PubNet.API.Services.Guard;
 using PubNet.API.Services.Packages.Dart;
 using PubNet.API.Services.Packages.Nuget;
-using PubNet.ArchiveStorage.BlobStorage;
+using PubNet.PackageStorage.BlobStorage;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
 using PubNet.Database.Context;

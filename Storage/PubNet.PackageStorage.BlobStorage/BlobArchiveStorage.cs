@@ -2,7 +2,7 @@ using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.Extensions;
 using PubNet.PackageStorage.Abstractions;
 
-namespace PubNet.ArchiveStorage.BlobStorage;
+namespace PubNet.PackageStorage.BlobStorage;
 
 public class BlobArchiveStorage(IBlobStorage blobStorage) : IArchiveStorage
 {
