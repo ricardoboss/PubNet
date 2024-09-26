@@ -67,12 +67,14 @@ try
 
 	await app.RunAsync();
 }
-catch (Exception ex)
+catch (Exception e) when (e is HostAbortedException or OperationCanceledException or TaskCanceledException ||
+	e.GetType().Name is "StopTheHostException")
 {
-	if (ex is HostAbortedException)
-		Log.Warning("{Message}", ex.Message);
-	else
-		Log.Fatal(ex, "Application terminated unexpectedly");
+	Log.Information("Application terminated gracefully");
+}
+catch (Exception e)
+{
+	Log.Fatal(e, "Application terminated unexpectedly");
 }
 finally
 {
@@ -206,7 +208,8 @@ void ConfigurePackageStorage(IHostApplicationBuilder builder)
 	builder.Services.AddKeyedSingleton<IBlobStorage, LocalFileBlobStorage>(LocalFileBlobStorage.ServiceKey);
 
 	// default blob storage is local file storage
-	builder.Services.AddTransient<IBlobStorage>(sp => sp.GetRequiredKeyedService<IBlobStorage>(LocalFileBlobStorage.ServiceKey));
+	builder.Services.AddTransient<IBlobStorage>(sp =>
+		sp.GetRequiredKeyedService<IBlobStorage>(LocalFileBlobStorage.ServiceKey));
 
 	// needed for unauthenticated file uploads
 	builder.Services.AddSignedUrl();
