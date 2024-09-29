@@ -1,5 +1,5 @@
 ﻿<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Watch Website" type="RunDotNetWatch" factoryName="RunDotNetWatch">
+  <configuration default="false" name="Watch Website" type="RunDotNetWatch" factoryName="RunDotNetWatch" activateToolWindowBeforeRun="false">
     <option name="envs">
       <map>
         <entry key="DOTNET_ENVIRONMENT" value="Development" />
