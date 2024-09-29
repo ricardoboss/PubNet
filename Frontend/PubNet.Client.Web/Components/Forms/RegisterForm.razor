@@ -47,7 +47,7 @@
 
 	<div>
 		<label for="register-password">Password</label>
-		<PasswordInput id="register-password" @bind-Value="Model.Password" autocomplete="new-password"/>
+		<InputPassword id="register-password" @bind-Value="Model.Password" autocomplete="new-password"/>
 		<ValidationMessage For="@(() => Model.Password)"/>
 	</div>
 

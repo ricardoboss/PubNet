@@ -4,16 +4,46 @@
 
 @code {
 
+	private EditContext? editContext;
+
+	private ValidationMessageStore? validationMessageStore;
+
 	private CreateLoginTokenDto Model { get; } = new();
 
 	private string? Error { get; set; }
 
-	private bool IsSubmitDisabled => string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+	private bool Submitting { get; set; }
+
+	private bool IsSubmitDisabled => Submitting || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+
+	protected override void OnInitialized()
+	{
+		editContext = new(Model);
+		editContext.OnValidationRequested += ValidateModel;
+
+		validationMessageStore = new(editContext);
+	}
+
+	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)
+	{
+		validationMessageStore?.Clear();
+
+		if (Model.Email is null)
+			validationMessageStore?.Add(() => Model.Email!, "The email cannot be empty.");
+
+		if (Model.Email is not null && !Model.Email.Contains("@"))
+			validationMessageStore?.Add(() => Model.Email!, "The email must contain an '@' character.");
+
+		if (Model.Password is null)
+			validationMessageStore?.Add(() => Model.Password!, "The password cannot be empty.");
+	}
 
 	private async Task Submit()
 	{
 		try
 		{
+			Submitting = true;
+
 			var result = await LoginService.LoginAsync(Model);
 
 			await LoginTokenStorage.StoreTokenAsync(result.Token);
@@ -22,30 +52,34 @@
 		{
 			Error = e.Message;
 		}
+		finally
+		{
+			Submitting = false;
+		}
 	}
 
 }
 
 <EditForm OnValidSubmit="Submit" Model="@Model">
-	@if (Error is { } error)
-	{
-		<Card Variant="CardVariant.Danger">@error</Card>
-	}
-
 	<DataAnnotationsValidator/>
 	<ValidationSummary/>
 
 	<div>
 		<label for="login-email">Email address</label>
-		<InputText id="login-email" @bind-Value="Model.Email" />
+		<InputText id="login-email" type="email" @bind-Value="@(Model.Email)" autocomplete="email username"/>
 		<ValidationMessage For="@(() => Model.Email)"/>
 	</div>
 
 	<div>
 		<label for="login-password">Password</label>
-		<PasswordInput id="login-password" @bind-Value="Model.Password" autocomplete="current-password"/>
+		<InputPassword id="login-password" @bind-Value="@(Model.Password)" autocomplete="current-password"/>
 		<ValidationMessage For="@(() => Model.Password)"/>
 	</div>
+
+	@if (Error is { } error)
+	{
+		<Card Variant="CardVariant.Danger" style="white-space: pre-wrap;">@error</Card>
+	}
 
 	<FilledButton Submit Disabled="@IsSubmitDisabled">Login</FilledButton>
 </EditForm>
