@@ -1,4 +1,5 @@
 ﻿@inject IRegisterService RegisterService
+@inject ILogger<RegistrationsOpen> Logger
 
 @code {
 
@@ -11,24 +12,45 @@
 	[Parameter]
 	public RenderFragment? Loading { get; set; }
 
+	[Parameter]
+	public RenderFragment? Error { get; set; }
+
 	private bool? IsOpen { get; set; }
+
+	private bool IsErrored { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
-		IsOpen = await RegisterService.AreRegistrationsOpenAsync();
+		try
+		{
+			IsOpen = await RegisterService.AreRegistrationsOpenAsync();
+		}
+		catch (Exception e)
+		{
+			Logger.LogWarning(e, "Failed to determine if registrations are open");
+
+			IsErrored = true;
+		}
 	}
 
 }
 
-@switch (IsOpen)
+@if (IsErrored)
 {
-	case null:
-		@Loading
-		break;
-	case true:
-		@Open
-		break;
-	default:
-		@Closed
-		break;
+	@Error
+}
+else
+{
+	@switch (IsOpen)
+	{
+		case null:
+			@Loading
+			break;
+		case true:
+			@Open
+			break;
+		default:
+			@Closed
+			break;
+	}
 }
