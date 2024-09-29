@@ -19,10 +19,13 @@
 
 	private bool IsErrored { get; set; }
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync() => await LoadRegistrationsStatus();
+
+	private async Task LoadRegistrationsStatus()
 	{
 		try
 		{
+			IsErrored = false;
 			IsOpen = await RegisterService.AreRegistrationsOpenAsync();
 		}
 		catch (Exception e)
@@ -32,6 +35,8 @@
 			IsErrored = true;
 		}
 	}
+
+	public async Task ReloadRegistrationsStatus() => await LoadRegistrationsStatus();
 
 }
 

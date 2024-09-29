@@ -6,11 +6,27 @@
 	[Parameter]
 	public CardVariant Variant { get; set; } = CardVariant.Default;
 
-	private string? ClassName => Variant switch
+	[Parameter]
+	public bool Inline { get; set; }
+
+	private string? ClassName
 	{
-		CardVariant.Danger => "danger",
-		_ => null,
-	};
+		get
+		{
+			var variantClass = Variant switch
+			{
+				CardVariant.Danger => "danger",
+				_ => null,
+			};
+
+			var inlineClass = Inline ? "inline" : null;
+
+			if (inlineClass is null && variantClass is null)
+				return null;
+
+			return string.Join(" ", inlineClass, variantClass);
+		}
+	}
 
 }
 

@@ -1,5 +1,11 @@
 ﻿@page "/"
 
+@code {
+
+	private RegistrationsOpen? registrationsOpen;
+
+}
+
 <PageTitle>PubNet</PageTitle>
 
 <AuthorizeView>
@@ -13,15 +19,27 @@
 
 		<LoginForm />
 
-		<RegistrationsOpen>
+		<RegistrationsOpen @ref="registrationsOpen">
+			<Loading>
+				<Card Inline>
+					Loading registrations status...
+				</Card>
+			</Loading>
 			<Open>
-				<RegisterForm />
+				<RegisterForm/>
 			</Open>
 			<Closed>
-				<p>Registrations are closed.</p>
+				<Card Inline>
+					Registrations are closed.
+				</Card>
 			</Closed>
 			<Error>
-				<p>Failed to determine if registrations are open.</p>
+				<Card Inline Variant="CardVariant.Danger">
+					Could not determine if registrations are open.
+					@if (registrationsOpen is not null) {
+						<a href="#" @onclick="registrationsOpen.ReloadRegistrationsStatus">Retry</a>
+					}
+				</Card>
 			</Error>
 		</RegistrationsOpen>
 	</NotAuthorized>
