@@ -10,11 +10,11 @@
 
 	private CreateLoginTokenDto Model { get; } = new();
 
-	private string? Error { get; set; }
+	private string? error;
 
-	private bool Submitting { get; set; }
+	private bool isSubmitting;
 
-	private bool IsSubmitDisabled => Submitting || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+	private bool IsSubmitDisabled => isSubmitting || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
 
 	protected override void OnInitialized()
 	{
@@ -42,7 +42,8 @@
 	{
 		try
 		{
-			Submitting = true;
+			isSubmitting = true;
+			error = null;
 
 			var result = await LoginService.LoginAsync(Model);
 
@@ -50,36 +51,58 @@
 		}
 		catch (UnauthorizedAccessException e)
 		{
-			Error = e.Message;
+			error = e.Message;
 		}
 		finally
 		{
-			Submitting = false;
+			isSubmitting = false;
 		}
 	}
 
 }
 
 <EditForm OnValidSubmit="Submit" Model="@Model">
-	<DataAnnotationsValidator/>
-	<ValidationSummary/>
+	<MudCard Class="pa-1">
+		<MudCardContent>
+			<MudText Typo="Typo.h5">Login</MudText>
 
-	<div>
-		<label for="login-email">Email address</label>
-		<InputText id="login-email" type="email" @bind-Value="@(Model.Email)" autocomplete="email username"/>
-		<ValidationMessage For="@(() => Model.Email)"/>
-	</div>
+			<MudTextField
+				T="string"
+				Class="mt-5"
+				Label="E-Mail Address"
+				@bind-Value="Model.Email"
+				Immediate
+				Required
+				For="() => Model.Email!"
+				Variant="Variant.Outlined"
+				InputType="InputType.Email"/>
 
-	<div>
-		<label for="login-password">Password</label>
-		<InputPassword id="login-password" @bind-Value="@(Model.Password)" autocomplete="current-password"/>
-		<ValidationMessage For="@(() => Model.Password)"/>
-	</div>
+			<MudTextField
+				T="string"
+				Class="mt-5"
+				Label="Password"
+				@bind-Value="Model.Password"
+				Immediate
+				Required
+				For="() => Model.Password!"
+				Variant="Variant.Outlined"
+				InputType="InputType.Password"/>
+		</MudCardContent>
+		<MudCardActions>
+			<MudSpacer />
 
-	@if (Error is { } error)
-	{
-		<Card Variant="CardVariant.Danger" style="white-space: pre-wrap;">@error</Card>
-	}
+			@if (error is { } e)
+			{
+				<MudAlert Severity="Severity.Error" Dense Class="mr-3">@e</MudAlert>
+			}
 
-	<FilledButton Submit Disabled="@IsSubmitDisabled">Login</FilledButton>
+			<MudButton
+				ButtonType="ButtonType.Submit"
+				Color="Color.Primary"
+				Variant="Variant.Outlined"
+				Disabled="@IsSubmitDisabled">
+				Login
+			</MudButton>
+		</MudCardActions>
+	</MudCard>
 </EditForm>

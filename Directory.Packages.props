@@ -5,7 +5,6 @@
   <ItemGroup>
     <PackageVersion Include="CliWrap" Version="3.6.6" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageVersion Include="DuoBlazorIcons" Version="1.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.8" />
@@ -29,7 +28,9 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.13.0" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.13.0" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.13.0" />
+    <PackageVersion Include="MudBlazor" Version="7.8.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageVersion Include="PasswordRulesSharp" Version="2.0.0" />
     <PackageVersion Include="Riok.Mapperly" Version="3.6.0" />
     <PackageVersion Include="Semver" Version="2.3.0" />
     <PackageVersion Include="SerilogAnalyzer" Version="0.15.0" />

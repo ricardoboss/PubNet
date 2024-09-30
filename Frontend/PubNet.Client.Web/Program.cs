@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using PubNet.Client.Web;
 using PubNet.Client.Services;
 using PubNet.Client.Web.Services;
@@ -35,6 +36,8 @@ void ConfigureServices(IServiceCollection services)
 
 		c.BaseAddress = new(baseAddress);
 	});
+
+	services.AddMudServices();
 }
 
 void AddAuth(IServiceCollection services)

@@ -6,10 +6,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage"/>
-		<PackageReference Include="DuoBlazorIcons" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
+		<PackageReference Include="MudBlazor" />
+		<PackageReference Include="PasswordRulesSharp" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,9 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="Components\CardVariant.cs">
-			<DependentUpon>Card.razor</DependentUpon>
-		</Compile>
+	  <_ContentIncludedByDefault Remove="Components\Inputs\InputPassword.razor" />
 	</ItemGroup>
 
 </Project>

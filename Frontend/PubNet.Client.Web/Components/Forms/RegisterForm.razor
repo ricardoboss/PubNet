@@ -1,16 +1,74 @@
-﻿@inject IRegisterService RegisterService
+﻿@using PasswordRulesSharp.Builder
+@using PasswordRulesSharp.Rules
+@using PasswordRulesSharp.Validator
+@using PubNet.Client.Web.Extensions
+@inject IRegisterService RegisterService
 @inject ILogger<RegisterForm> Logger
 
 @code {
 
+	private EditContext? editContext;
+
+	private ValidationMessageStore? validationMessageStore;
+
 	private CreateAccountDto Model { get; } = new();
 
-	private string? Error { get; set; }
+	private string? error;
 
-	private bool IsSubmitDisabled => string.IsNullOrWhiteSpace(Model.UserName) || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+	private bool isSubmitting;
+
+	private bool IsSubmitDisabled => isSubmitting || string.IsNullOrWhiteSpace(Model.UserName) || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+
+	private IRule PasswordRule =>
+		new RuleBuilder()
+			.RequireUnicode()
+			.MinLength(8)
+			.Build();
+
+	protected override void OnInitialized()
+	{
+		editContext = new(Model);
+		editContext.OnValidationRequested += ValidateModel;
+
+		validationMessageStore = new(editContext);
+	}
+
+	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)
+	{
+		validationMessageStore?.Clear();
+
+		if (string.IsNullOrWhiteSpace(Model.UserName))
+			validationMessageStore?.Add(() => Model.UserName!, "The username cannot be empty.");
+
+		if (string.IsNullOrWhiteSpace(Model.Email))
+			validationMessageStore?.Add(() => Model.Email!, "The email cannot be empty.");
+
+		if (Model.Email is not null && !Model.Email.Contains("@"))
+			validationMessageStore?.Add(() => Model.Email!, "The email must contain an '@' character.");
+
+		if (string.IsNullOrWhiteSpace(Model.Password))
+			validationMessageStore?.Add(() => Model.Password!, "The password cannot be empty.");
+
+		if (string.IsNullOrWhiteSpace(Model.Password))
+			validationMessageStore?.Add(() => Model.Password!, "The password cannot be empty.");
+
+		var password = Model.Password!;
+		var validator = new Validator(PasswordRule);
+		if (validator.PasswordIsValid(password, out var requirements))
+			return;
+
+		var failures = requirements.Where(t => !t.Success).Select(t => t.Requirement);
+		foreach (var failure in failures)
+		{
+			validationMessageStore?.Add(() => Model.Password!, $"The password must contain {failure}.");
+		}
+	}
 
 	private async Task Submit()
 	{
+		isSubmitting = true;
+		error = null;
+
 		try
 		{
 			await RegisterService.RegisterAsync(Model);
@@ -19,38 +77,74 @@
 		{
 			Logger.LogError(e, "Failed to register");
 
-			Error = e.Message;
+			error = e.Message;
+		}
+		finally
+		{
+			isSubmitting = false;
 		}
 	}
 
 }
 
 <EditForm Model="@Model" OnValidSubmit="Submit">
-	<DataAnnotationsValidator/>
-	<ValidationSummary/>
-	@if (Error is { } error)
-	{
-		<Card Variant="CardVariant.Danger">@error</Card>
-	}
+	<MudCard Class="pa-1">
+		<MudCardContent>
+			<MudText Typo="Typo.h5">Register</MudText>
 
-	<div>
-		<label for="register-username">Username</label>
-		<InputText id="register-username" @bind-Value="Model.UserName"/>
-		<ValidationMessage For="@(() => Model.UserName)"/>
-	</div>
+			<MudTextField
+				T="string"
+				Class="mt-5"
+				Label="Username"
+				@bind-Value="Model.UserName"
+				Immediate
+				Required
+				For="() => Model.UserName!"
+				HelperText="This should match your username on pub.dev/nuget.org in case you want to map packages from there to your account."
+				Variant="Variant.Outlined"
+				InputType="InputType.Text"
+				autofill="name"/>
 
-	<div>
-		<label for="register-email">Email address</label>
-		<InputText id="register-email" @bind-Value="Model.Email"/>
-		<ValidationMessage For="@(() => Model.Email)"/>
-	</div>
+			<MudTextField
+				T="string"
+				Label="E-Mail Address"
+				@bind-Value="Model.Email"
+				Immediate
+				Required
+				For="() => Model.Email!"
+				HelperText="Only used for authentication. Will not be displayed publicly."
+				Variant="Variant.Outlined"
+				InputType="InputType.Email"
+				autofill="username email"/>
 
-	<div>
-		<label for="register-password">Password</label>
-		<InputPassword id="register-password" @bind-Value="Model.Password" autocomplete="new-password"/>
-		<ValidationMessage For="@(() => Model.Password)"/>
-	</div>
+			<MudTextField
+				T="string"
+				Label="Password"
+				@bind-Value="Model.Password"
+				Immediate
+				Required
+				For="() => Model.Password!"
+				HelperText="Minimum 8 characters. Please use a password manager."
+				Variant="Variant.Outlined"
+				InputType="InputType.Password"
+				autofill="new-password"
+				minlength="@PasswordRule.MinLength"
+				passwordrules="@PasswordRule.ToPasswordrulesAttribute()"/>
+		</MudCardContent>
+		<MudCardActions>
+			<MudSpacer/>
+			@if (error is { } e)
+			{
+				<MudAlert Severity="Severity.Error" Dense Class="mr-3">@e</MudAlert>
+			}
 
-	<FilledButton Submit Disabled="@IsSubmitDisabled">Register</FilledButton>
-
+			<MudButton
+				ButtonType="ButtonType.Submit"
+				Color="Color.Primary"
+				Variant="Variant.Outlined"
+				Disabled="@IsSubmitDisabled">
+				Register
+			</MudButton>
+		</MudCardActions>
+	</MudCard>
 </EditForm>

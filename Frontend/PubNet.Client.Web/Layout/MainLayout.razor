@@ -1,3 +1,45 @@
-﻿@inherits LayoutComponentBase
+﻿@using PubNet.Client.Web.Style
+@inherits LayoutComponentBase
 
-@Body
+@code {
+
+	private MudThemeProvider? themeProvider;
+
+	private bool isDarkMode = true;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			isDarkMode = await themeProvider!.GetSystemPreference();
+
+			await themeProvider!.WatchSystemPreference(OnSystemPreferenceChanged);
+
+			StateHasChanged();
+		}
+	}
+
+	private Task OnSystemPreferenceChanged(bool newValue)
+	{
+		isDarkMode = newValue;
+
+		StateHasChanged();
+
+		return Task.CompletedTask;
+	}
+
+}
+
+<MudThemeProvider @ref="themeProvider" IsDarkMode="isDarkMode" Theme="Theme.Default" />
+<MudPopoverProvider />
+
+<MudLayout>
+	<MudAppBar Dense>
+		<MudText Typo="Typo.h5" Class="ml-3">PubNet</MudText>
+	</MudAppBar>
+	<MudMainContent>
+		<MudContainer>
+			@Body
+		</MudContainer>
+	</MudMainContent>
+</MudLayout>
