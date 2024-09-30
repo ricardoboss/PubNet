@@ -1,20 +1,9 @@
 /*
   Josh's Custom CSS Reset
   https://www.joshwcomeau.com/css/custom-css-reset/
+
+  (Only some resets taken as MudBlazor has its own resets)
 */
-
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-* {
-    margin: 0;
-}
-
-body {
-    line-height: calc(1em + 0.5rem);
-    -webkit-font-smoothing: antialiased;
-}
 
 img, picture, video, canvas, svg {
     display: block;
@@ -27,5 +16,4 @@ input, button, textarea, select {
 
 p, h1, h2, h3, h4, h5, h6 {
     overflow-wrap: break-word;
-    line-height: calc(1em + 0.5rem);
 }

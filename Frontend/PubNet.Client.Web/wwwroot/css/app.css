@@ -1,12 +1,6 @@
 @import "_reset.css";
 @import "_blazor_loader.css";
 
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    font-size: 1rem;
-    font-weight: 400;
-}
-
 a {
     color: inherit !important;
     text-decoration: underline !important;

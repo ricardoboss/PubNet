@@ -6,6 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PubNet</title>
     <base href="/" />
+    <style>
+        :root {
+            color-scheme: light dark;
+        }
+
+        body {
+            --default-background: light-dark(white, black);
+            --default-text-primary: light-dark(black, white);
+
+            /* ensure we don't flashbang the user on load */
+            background-color: var(--mud-palette-background, var(--default-background));
+            color: var(--mud-palette-text-primary, var(--default-text-primary));
+
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            font-size: 1rem;
+            font-weight: 400;
+        }
+    </style>
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="PubNet.Client.Web.styles.css" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
