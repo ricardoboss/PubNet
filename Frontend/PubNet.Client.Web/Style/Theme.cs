@@ -26,8 +26,8 @@ public static class Theme
 			Black = Palette.Black,
 			White = Palette.White,
 
-			Background = Palette.Gray.Shade(80),
-			AppbarBackground = Palette.Gray.Shade(70),
+			Background = Palette.Black,
+			AppbarBackground = Palette.Black,
 
 			PrimaryLighten = Palette.Blue,
 			Primary = Palette.Blue.Shade(30),
@@ -39,14 +39,16 @@ public static class Theme
 			ErrorDarken = Palette.Red,
 			ErrorContrastText = Palette.Red.Tint(90),
 
-			DarkLighten = Palette.Gray,
-			Dark = Palette.Gray.Shade(20),
-			DarkDarken = Palette.Gray.Shade(50),
+			DarkLighten = Palette.Gray.Shade(20),
+			Dark = Palette.Gray.Shade(50),
+			DarkDarken = Palette.Gray.Shade(80),
 
-			TextPrimary = Palette.White,
+			TextPrimary = Palette.White.Shade(50),
 			TextSecondary = Palette.Gray.Shade(10),
 
 			LinesInputs = Palette.Gray.Shade(10),
+
+			Surface = Palette.Gray.Shade(70),
 		},
 	};
 }

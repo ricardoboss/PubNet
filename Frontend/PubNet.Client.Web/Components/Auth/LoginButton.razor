@@ -1,0 +1,17 @@
+@inject NavigationManager NavigationManager
+
+@code {
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	private async Task Login()
+	{
+		NavigationManager.NavigateTo("/login");
+	}
+
+}
+
+<MudButton OnClick="@Login" Variant="Variant.Outlined" Size="Size.Small">
+	@ChildContent
+</MudButton>

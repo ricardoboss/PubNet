@@ -1,0 +1,17 @@
+@inject ILoginTokenStorage LoginTokenStorage
+
+@code {
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	private async Task Logout()
+	{
+		await LoginTokenStorage.DeleteTokenAsync();
+	}
+
+}
+
+<MudButton OnClick="@Logout" Variant="Variant.Outlined" Size="Size.Small">
+	@ChildContent
+</MudButton>

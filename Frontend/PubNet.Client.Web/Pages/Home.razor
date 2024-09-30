@@ -1,50 +1,35 @@
-﻿@page "/"
+﻿@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@page "/"
 
-@code {
-
-	private RegistrationsOpen? registrationsOpen;
-
-}
-
-<PageTitle>PubNet</PageTitle>
+<PageTitle>Dashboard | PubNet</PageTitle>
 
 <AuthorizeView>
 	<Authorized>
-		<MudStack>
-			<h1>Hello, @context.User.Identity!.Name!</h1>
-
-			<LogoutForm/>
-		</MudStack>
+		<MudGrid>
+			<MudItem xs="12" sm="4">
+				<MudCard>
+					<MudCardContent>
+						<MudStack>
+							<h1>Hello, @context.User.Identity!.Name!</h1>
+						</MudStack>
+					</MudCardContent>
+				</MudCard>
+			</MudItem>
+			<MudItem xs="12" sm="8">
+				<MudCard>
+					<MudCardContent>
+						Use this to authenticate against PubNet: ...
+					</MudCardContent>
+				</MudCard>
+			</MudItem>
+			<MudItem xs="12">
+				<MudCard>
+					<MudCardContent>
+						Your Packages...
+					</MudCardContent>
+				</MudCard>
+			</MudItem>
+		</MudGrid>
 	</Authorized>
-	<NotAuthorized>
-		<MudStack Spacing="4">
-			<h1>Hello, anonymous!</h1>
-
-			<LoginForm/>
-
-			<RegistrationsOpen @ref="registrationsOpen">
-				<Loading>
-					<MudAlert Severity="Severity.Info">
-						Loading registrations status...
-					</MudAlert>
-				</Loading>
-				<Open>
-					<RegisterForm/>
-				</Open>
-				<Error>
-					<MudAlert Severity="Severity.Error">
-						Could not determine if registrations are open.
-
-						@if (registrationsOpen is not null)
-						{
-							<a href="#" @onclick="registrationsOpen.ReloadRegistrationsStatus">Retry</a>
-						}
-					</MudAlert>
-				</Error>
-			</RegistrationsOpen>
-		</MudStack>
-	</NotAuthorized>
-	<Authorizing>
-		<h1>Hello, please wait...</h1>
-	</Authorizing>
 </AuthorizeView>

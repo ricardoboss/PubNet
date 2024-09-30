@@ -1,0 +1,18 @@
+﻿<AuthorizeView>
+	<Authorized>
+		<MudStack Row AlignItems="AlignItems.Baseline">
+			<MudText>
+				Hi, @(context.User.Identity!.Name)!
+			</MudText>
+
+			<LogoutButton>
+				Logout
+			</LogoutButton>
+		</MudStack>
+	</Authorized>
+	<NotAuthorized>
+		<LoginButton>
+			Login
+		</LoginButton>
+	</NotAuthorized>
+</AuthorizeView>
