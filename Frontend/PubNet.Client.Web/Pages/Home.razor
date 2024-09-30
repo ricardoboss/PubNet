@@ -4,32 +4,22 @@
 
 <PageTitle>Dashboard | PubNet</PageTitle>
 
-<AuthorizeView>
-	<Authorized>
-		<MudGrid>
-			<MudItem xs="12" sm="4">
-				<MudCard>
-					<MudCardContent>
-						<MudStack>
-							<h1>Hello, @context.User.Identity!.Name!</h1>
-						</MudStack>
-					</MudCardContent>
-				</MudCard>
-			</MudItem>
-			<MudItem xs="12" sm="8">
-				<MudCard>
-					<MudCardContent>
-						Use this to authenticate against PubNet: ...
-					</MudCardContent>
-				</MudCard>
-			</MudItem>
-			<MudItem xs="12">
-				<MudCard>
-					<MudCardContent>
-						Your Packages...
-					</MudCardContent>
-				</MudCard>
-			</MudItem>
-		</MudGrid>
-	</Authorized>
-</AuthorizeView>
+<MudGrid>
+	<MudItem xs="12" sm="4">
+		<GreetCard/>
+	</MudItem>
+	<MudItem xs="12" sm="8">
+		<MudCard>
+			<MudCardContent>
+				Use this to authenticate against PubNet: ...
+			</MudCardContent>
+		</MudCard>
+	</MudItem>
+	<MudItem xs="12">
+		<MudCard>
+			<MudCardContent>
+				Your Packages...
+			</MudCardContent>
+		</MudCard>
+	</MudItem>
+</MudGrid>

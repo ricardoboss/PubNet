@@ -1,0 +1,12 @@
+﻿<MudCard>
+	<MudCardContent>
+		<AuthorizeView>
+			<Authorized>
+				<h1>Hello, @context.User.Identity!.Name!</h1>
+			</Authorized>
+			<NotAuthorized>
+				<h1>Hello, anonymous!</h1>
+			</NotAuthorized>
+		</AuthorizeView>
+	</MudCardContent>
+</MudCard>
