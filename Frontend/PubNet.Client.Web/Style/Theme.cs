@@ -28,6 +28,7 @@ public static class Theme
 
 			Background = Palette.Black,
 			AppbarBackground = Palette.Black,
+			AppbarText = Palette.White,
 
 			PrimaryLighten = Palette.Blue,
 			Primary = Palette.Blue.Shade(30),
@@ -49,6 +50,19 @@ public static class Theme
 			LinesInputs = Palette.Gray.Shade(10),
 
 			Surface = Palette.Gray.Shade(70),
+		},
+
+		PaletteLight = new()
+		{
+			Black = Palette.Black,
+			White = Palette.White,
+
+			Background = Palette.White,
+			AppbarBackground = Palette.White,
+			AppbarText = Palette.Black,
+
+			TextPrimary = Palette.Black,
+			TextSecondary = Palette.Gray.Shade(10),
 		},
 	};
 }

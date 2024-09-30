@@ -5,10 +5,7 @@
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
-	private async Task Login()
-	{
-		NavigationManager.NavigateTo("/login");
-	}
+	private void Login() => NavigationManager.NavigateTo("/login");
 
 }
 
