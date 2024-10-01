@@ -6,12 +6,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage"/>
+		<PackageReference Include="GitVersion.MsBuild" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
-		<PackageReference Include="MudBlazor" />
-		<PackageReference Include="PasswordRulesSharp" />
-		<PackageReference Include="Rive.Blazor.Wasm" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="All"/>
+		<PackageReference Include="MudBlazor"/>
+		<PackageReference Include="PasswordRulesSharp"/>
+		<PackageReference Include="Rive.Blazor.Wasm"/>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -4,7 +4,12 @@
 	<MudText Typo="Typo.body2">
 		<MudStack Row Justify="Justify.SpaceBetween">
 			<MudStack>
-				<span>PubNet <a href="/about">v2.0.0</a></span>
+				<span>
+					PubNet <a href="/about">v@(GitVersionInformation.MajorMinorPatch)</a>
+					&ndash;
+					<CommitLink />
+				</span>
+
 				<span>Licensed under <a href="https://github.com/ricardoboss/PubNet/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">AGPL-3.0</a></span>
 			</MudStack>
 
