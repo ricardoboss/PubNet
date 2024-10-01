@@ -1,6 +1,7 @@
 @inject ILoginService LoginService
 @inject ILoginTokenStorage LoginTokenStorage
 @inject ILogger<LoginForm> Logger
+@inject NavigationManager NavigationManager
 
 @code {
 
@@ -48,6 +49,8 @@
 			var result = await LoginService.LoginAsync(Model);
 
 			await LoginTokenStorage.StoreTokenAsync(result.Token);
+
+			NavigationManager.NavigateTo("/");
 		}
 		catch (UnauthorizedAccessException e)
 		{

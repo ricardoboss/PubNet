@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Routing;
 using PubNet.Client.Abstractions;
 using PubNet.Auth;
 using PubNet.Auth.Models;
@@ -11,16 +9,13 @@ namespace PubNet.Client.Web.Services;
 public class LoginTokenStorageAuthenticationStateProvider : AuthenticationStateProvider
 {
 	private readonly ILoginTokenStorage loginTokenStorage;
-	private readonly NavigationManager navigationManager;
 	private readonly ILogger<LoginTokenStorageAuthenticationStateProvider> logger;
 
 	public LoginTokenStorageAuthenticationStateProvider(
 		ILoginTokenStorage loginTokenStorage,
-		NavigationManager navigationManager,
 		ILogger<LoginTokenStorageAuthenticationStateProvider> logger)
 	{
 		this.loginTokenStorage = loginTokenStorage;
-		this.navigationManager = navigationManager;
 		this.logger = logger;
 
 		loginTokenStorage.TokenChanged += OnTokenChanged;
@@ -36,8 +31,6 @@ public class LoginTokenStorageAuthenticationStateProvider : AuthenticationStateP
 		var state = new AuthenticationState(principal);
 
 		NotifyAuthenticationStateChanged(Task.FromResult(state));
-
-		navigationManager.NavigateTo(e.Token is null ? "/login" : "/");
 	}
 
 	public override async Task<AuthenticationState> GetAuthenticationStateAsync()
