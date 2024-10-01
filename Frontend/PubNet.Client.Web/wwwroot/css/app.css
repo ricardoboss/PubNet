@@ -6,6 +6,10 @@ a {
     text-decoration: underline !important;
 }
 
+#blazor-error-ui a.dismiss {
+    text-decoration: none !important;
+}
+
 .mud-main-content {
     min-height: 100dvh;
 }
