@@ -1,0 +1,13 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required IEnumerable<TokenDto> Tokens { get; set; }
+
+}
+
+<MudExpansionPanels MultiExpansion>
+	@foreach (var token in Tokens)
+	{
+		<PersonalAccessTokenPanel @key="token.Id" Token="token" />
+	}
+</MudExpansionPanels>

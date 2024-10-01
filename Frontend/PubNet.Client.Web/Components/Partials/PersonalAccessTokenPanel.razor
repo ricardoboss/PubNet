@@ -1,0 +1,43 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required TokenDto Token { get; set; }
+
+}
+
+<MudExpansionPanel Text="@Token.Name">
+	<dl>
+		<dt>Browser</dt>
+		<dd>@Token.Browser</dd>
+		<dt>Platform</dt>
+		<dd>@Token.Platform</dd>
+		<dt>IP Address</dt>
+		<dd>
+			<code>@Token.IpAddress</code>
+		</dd>
+		<dt>Scopes</dt>
+		<dd>
+			<MudChipSet T="string">
+				@foreach (var scope in Token.Scopes ?? [])
+				{
+					<MudChip Size="Size.Small">
+						<code>@scope</code>
+					</MudChip>
+				}
+			</MudChipSet>
+		</dd>
+		<dt>User Agent</dt>
+		<dd>
+			<code>@Token.UserAgent</code>
+		</dd>
+		<dt>Created At</dt>
+		<dd>@Token.CreatedAtUtc</dd>
+		<dt>Expires At</dt>
+		<dd>@Token.ExpiresAtUtc</dd>
+		@if (Token.RevokedAtUtc is { } revokedAtUtc)
+		{
+			<dt>Revoked At</dt>
+			<dd>@revokedAtUtc</dd>
+		}
+	</dl>
+</MudExpansionPanel>

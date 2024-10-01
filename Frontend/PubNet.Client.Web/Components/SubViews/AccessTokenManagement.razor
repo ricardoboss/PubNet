@@ -1,0 +1,86 @@
+﻿@using PubNet.Client.Web.Components.Partials
+@inject IPersonalAccessTokenService PersonalAccessTokenService
+
+@code {
+
+	private List<TokenDto>? tokens;
+
+	private bool isLoading = true;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+			await LoadTokens();
+	}
+
+	private async Task LoadTokens()
+	{
+		isLoading = true;
+
+		try
+		{
+			var result = await PersonalAccessTokenService.GetAsync();
+
+			await Task.Delay(1000);
+
+			tokens = result.ToList();
+		}
+		finally
+		{
+			isLoading = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private async Task AddToken()
+	{
+		await Task.CompletedTask;
+	}
+
+}
+
+<MudStack>
+	<MudStack Row AlignItems="AlignItems.End">
+		<MudText Typo="Typo.h5">Personal Access Tokens</MudText>
+
+		<MudSpacer />
+
+		@if (isLoading)
+		{
+			<MudProgressCircular
+				Indeterminate
+				Size="Size.Small"
+				Color="Color.Primary"
+			/>
+		}
+		else
+		{
+			<MudIconButton
+				Icon="@Icons.Material.TwoTone.Refresh"
+				Color="Color.Primary"
+				Size="Size.Small"
+				OnClick="@LoadTokens"
+			/>
+		}
+
+		<MudIconButton
+			Icon="@Icons.Material.TwoTone.Add"
+			Color="Color.Primary"
+			Size="Size.Small"
+			OnClick="@AddToken"
+		/>
+	</MudStack>
+
+	@switch (tokens)
+	{
+		case { Count: 0 }:
+			<MudText>No personal access tokens found</MudText>
+			break;
+		case { Count: > 0 }:
+			<PersonalAccessTokenPanels Tokens="tokens"/>
+			break;
+	}
+</MudStack>
