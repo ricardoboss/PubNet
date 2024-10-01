@@ -8,11 +8,6 @@
 	<PropertyGroup>
 		<OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
 		<OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
-
-		<GeneratedClientProject>PubNet.Client.ApiClient</GeneratedClientProject>
-		<GeneratedClientNamespace>$(GeneratedClientProject).Generated</GeneratedClientNamespace>
-		<GeneratedClientDirectory>../../Frontend/$(GeneratedClientProject)/Generated</GeneratedClientDirectory>
-		<GeneratedClientLockFile>$(GeneratedClientDirectory)/kiota-lock.json</GeneratedClientLockFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -22,14 +17,6 @@
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
 	</PropertyGroup>
-
-	<Target Name="GenerateClient" AfterTargets="AfterBuild;CompileDesignTime" Condition="$(Configuration) == 'Debug' And !Exists('$(GeneratedClientLockFile)')">
-		<Exec Command="dotnet kiota generate --openapi PubNet.API.json --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)"/>
-	</Target>
-
-	<Target Name="UpdateClient" AfterTargets="AfterBuild;CompileDesignTime" Condition="$(Configuration) == 'Debug' And Exists('$(GeneratedClientLockFile)')">
-		<Exec Command="dotnet kiota update --output $(GeneratedClientDirectory) --clean-output" WorkingDirectory="$(ProjectDir)"/>
-	</Target>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google"/>

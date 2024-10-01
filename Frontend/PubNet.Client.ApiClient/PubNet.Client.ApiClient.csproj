@@ -2,7 +2,49 @@
 
 	<PropertyGroup>
 		<MSBuildWarningsAsMessages>CS0618</MSBuildWarningsAsMessages>
+
+		<GeneratedClientSpecFile>$(MSBuildThisFileDirectory)../../Backend/PubNet.API/PubNet.API.json</GeneratedClientSpecFile>
+		<GeneratedClientDirectory>$(MSBuildThisFileDirectory)Generated/</GeneratedClientDirectory>
+		<GeneratedClientNamespace>$(RootNamespace).Generated</GeneratedClientNamespace>
+		<GeneratedClientLockFile>$(GeneratedClientDirectory)kiota-lock.json</GeneratedClientLockFile>
 	</PropertyGroup>
+
+	<Target Name="EnsureClientUpdated" AfterTargets="AfterBuild;CompileDesignTime">
+		<CallTarget Targets="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')" />
+		<CallTarget Targets="UpdateClient" Condition="Exists('$(GeneratedClientLockFile)')" />
+	</Target>
+
+	<Target Name="GenerateClient">
+		<Exec
+			Command="dotnet kiota generate --openapi $(GeneratedClientSpecFile) --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible"
+			WorkingDirectory="$(MSBuildThisFileDirectory)"
+			EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true;KIOTA_TUTORIAL_ENABLED=false"
+		/>
+
+		<ItemGroup>
+			<Compile Include="$(GeneratedClientDirectory)**/*.cs" KeepDuplicates="false" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="UpdateClient">
+		<Exec
+			Command="dotnet kiota update --output $(GeneratedClientDirectory) --clean-output"
+			WorkingDirectory="$(MSBuildThisFileDirectory)"
+			EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true;KIOTA_TUTORIAL_ENABLED=false"
+		/>
+
+		<ItemGroup>
+			<Compile Include="$(GeneratedClientDirectory)**/*.cs" KeepDuplicates="false" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="CleanClient" AfterTargets="Clean">
+		<RemoveDir Directories="$(GeneratedClientDirectory)" />
+
+		<ItemGroup>
+			<Compile Remove="$(GeneratedClientDirectory)**/*.cs" />
+		</ItemGroup>
+	</Target>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
