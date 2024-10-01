@@ -34,7 +34,7 @@
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageVersion Include="PasswordRulesSharp" Version="2.0.0" />
     <PackageVersion Include="Riok.Mapperly" Version="3.6.0" />
-    <PackageVersion Include="Rive.Blazor.Wasm" Version="1.0.0" />
+    <PackageVersion Include="Rive.Blazor.Wasm" Version="1.0.1" />
     <PackageVersion Include="Semver" Version="2.3.0" />
     <PackageVersion Include="SerilogAnalyzer" Version="0.15.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="8.0.2" />
