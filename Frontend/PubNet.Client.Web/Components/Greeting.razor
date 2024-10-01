@@ -1,0 +1,7 @@
+﻿<MudText Typo="Typo.h4">
+	Hello,
+	<AuthorizeView>
+		<Authorized>@context.User.Identity!.Name!</Authorized>
+		<NotAuthorized>anonymous!</NotAuthorized>
+	</AuthorizeView>
+</MudText>
