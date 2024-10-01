@@ -1,0 +1,58 @@
+﻿@using Rive.Blazor.Wasm
+
+@code {
+
+	[Parameter]
+	public bool Animated { get; set; }
+
+	[Parameter]
+	public bool Inline { get; set; }
+
+	[Parameter, EditorRequired]
+	public required int Size { get; set; }
+
+	[Parameter(CaptureUnmatchedValues = true)]
+	public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+	private string? Style => Inline ? "display: inline-block;" : null;
+
+	private Dictionary<string, object> InternalAdditionalAttributes
+	{
+		get
+		{
+			var attributes = new Dictionary<string, object>();
+			if (Style is { } style)
+				attributes.Add("style", style);
+
+			if (AdditionalAttributes is not { } additionalAttributes)
+				return attributes;
+
+			foreach (var (key, value) in additionalAttributes)
+				attributes.Add(key, value);
+
+			return attributes;
+		}
+	}
+}
+
+@if (Animated)
+{
+	<RivePlayer
+		File="assets/logo.riv"
+		Width="@Size"
+		Height="@Size"
+		Autoplay
+		StateMachines="State Machine"
+		@attributes="@InternalAdditionalAttributes"
+	/>
+}
+else
+{
+	<MudImage
+		Src="assets/logo.png"
+		Alt="PubNet Logo; A gray box with purple layers floating inside"
+		Width="@Size"
+		Height="@Size"
+		@attributes="@InternalAdditionalAttributes"
+	/>
+}

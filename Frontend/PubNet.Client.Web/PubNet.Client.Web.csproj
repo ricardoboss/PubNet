@@ -11,6 +11,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
 		<PackageReference Include="MudBlazor" />
 		<PackageReference Include="PasswordRulesSharp" />
+		<PackageReference Include="Rive.Blazor.Wasm" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,5 @@
 ﻿@using PubNet.Client.Web.Style
+@using Rive.Blazor.Wasm
 @inherits LayoutComponentBase
 
 @code {
@@ -35,15 +36,17 @@
 
 <MudLayout>
 	<MudAppBar Dense Elevation="0">
-		<MudText Typo="Typo.h5" Class="ml-3">
+		<PubNetLogo Size="40" class="mr-1" style="display: inline-block;" />
+		<MudText Typo="Typo.h5">
 			<a href="/" style="text-decoration: none !important">PubNet</a>
 		</MudText>
 		<MudSpacer/>
 		<AccountButton/>
 	</MudAppBar>
 	<MudMainContent>
-		<MudContainer>
+		<MudContainer Class="py-4">
 			@Body
 		</MudContainer>
 	</MudMainContent>
+	<PubNetFooter />
 </MudLayout>

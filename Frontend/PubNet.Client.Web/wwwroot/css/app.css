@@ -5,3 +5,7 @@ a {
     color: inherit !important;
     text-decoration: underline !important;
 }
+
+.mud-main-content {
+    min-height: 100dvh;
+}
