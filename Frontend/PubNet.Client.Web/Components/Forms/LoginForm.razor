@@ -78,7 +78,9 @@
 				Required
 				For="() => Model.Email!"
 				Variant="Variant.Outlined"
-				InputType="InputType.Email"/>
+				InputType="InputType.Email"
+				autocomplete="email username"
+			/>
 
 			<MudTextField
 				T="string"
@@ -89,7 +91,9 @@
 				Required
 				For="() => Model.Password!"
 				Variant="Variant.Outlined"
-				InputType="InputType.Password"/>
+				InputType="InputType.Password"
+				autocomplete="current-password"
+			/>
 		</MudCardContent>
 		<MudCardActions>
 			<MudSpacer />

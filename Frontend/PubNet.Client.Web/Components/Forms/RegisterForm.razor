@@ -103,7 +103,8 @@
 				HelperText="This should match your username on pub.dev/nuget.org in case you want to map packages from there to your account."
 				Variant="Variant.Outlined"
 				InputType="InputType.Text"
-				autofill="name"/>
+				autocomplete="name nickname"
+			/>
 
 			<MudTextField
 				T="string"
@@ -115,7 +116,8 @@
 				HelperText="Only used for authentication. Will not be displayed publicly."
 				Variant="Variant.Outlined"
 				InputType="InputType.Email"
-				autofill="username email"/>
+				autocomplete="username email"
+			/>
 
 			<MudTextField
 				T="string"
@@ -127,9 +129,10 @@
 				HelperText="Minimum 8 characters. Please use a password manager."
 				Variant="Variant.Outlined"
 				InputType="InputType.Password"
-				autofill="new-password"
+				autocomplete="new-password"
 				minlength="@PasswordRule.MinLength"
-				passwordrules="@PasswordRule.ToPasswordrulesAttribute()"/>
+				passwordrules="@PasswordRule.ToPasswordrulesAttribute()"
+			/>
 		</MudCardContent>
 		<MudCardActions>
 			<MudSpacer/>
