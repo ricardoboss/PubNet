@@ -1,4 +1,5 @@
-﻿using PubNet.Database.Entities.Dart;
+﻿using DartLang.PubSpec;
+using PubNet.Database.Entities.Dart;
 
 namespace PubNet.API.DTO.Packages.Dart.Spec;
 
@@ -12,7 +13,7 @@ public class DartPackageVersionDto : PackageVersionDto
 			ArchiveUrl = archiveUrl,
 			ArchiveSha256 = archiveSha256,
 			Retracted = version.Retracted,
-			Pubspec = DartPubSpecDto.MapFrom(version.PubSpec),
+			Pubspec = version.PubSpec,
 			PublishedAt = version.PublishedAt,
 		};
 	}
@@ -39,5 +40,5 @@ public class DartPackageVersionDto : PackageVersionDto
 	/// </summary>
 	public required string ArchiveSha256 { get; init; }
 
-	public required DartPubSpecDto Pubspec { get; init; }
+	public required PubSpec Pubspec { get; init; }
 }

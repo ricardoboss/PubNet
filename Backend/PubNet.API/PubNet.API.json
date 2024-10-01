@@ -1743,13 +1743,9 @@
             "nullable": true
           },
           "pubspec": {
-            "$ref": "#/components/schemas/DartPubSpecDto"
+            "$ref": "#/components/schemas/PubSpec"
           }
         },
-        "additionalProperties": false
-      },
-      "DartPubSpecDto": {
-        "type": "object",
         "additionalProperties": false
       },
       "DartSuccessDto": {
@@ -1774,6 +1770,30 @@
             "minLength": 1,
             "type": "string",
             "format": "password"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Dependency": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Environment": {
+        "type": "object",
+        "properties": {
+          "sdk": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
+            },
+            "nullable": true
+          },
+          "flutter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1811,6 +1831,16 @@
         "properties": {
           "error": {
             "$ref": "#/components/schemas/GenericErrorContentDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataIdentifier": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2436,6 +2466,231 @@
         "type": "integer",
         "format": "int32"
       },
+      "Platforms": {
+        "type": "object",
+        "properties": {
+          "android": {
+            "type": "boolean"
+          },
+          "iOS": {
+            "type": "boolean"
+          },
+          "linux": {
+            "type": "boolean"
+          },
+          "macOS": {
+            "type": "boolean"
+          },
+          "windows": {
+            "type": "boolean"
+          },
+          "web": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrereleaseIdentifier": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "numericValue": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PubSpec": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "version": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "homepage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "repository": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "issueTracker": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "documentation": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Dependency"
+            },
+            "nullable": true
+          },
+          "devDependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Dependency"
+            },
+            "nullable": true
+          },
+          "executables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "platforms": {
+            "$ref": "#/components/schemas/Platforms"
+          },
+          "publishTo": {
+            "type": "string",
+            "nullable": true
+          },
+          "funding": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "nullable": true
+          },
+          "falseSecrets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "screenshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Screenshot"
+            },
+            "nullable": true
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "ignoredAdvisories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Screenshot": {
+        "required": [
+          "description",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "path": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SemVersion": {
+        "type": "object",
+        "properties": {
+          "major": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minor": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "patch": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "prerelease": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "prereleaseIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrereleaseIdentifier"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "isPrerelease": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isRelease": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "build": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true,
+            "deprecated": true
+          },
+          "metadata": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "metadataIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataIdentifier"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TokenCollectionDto": {
         "required": [
           "tokens"
@@ -2525,6 +2780,30 @@
           "revokedAtUtc": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnbrokenSemVersionRange": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "startInclusive": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "end": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "endInclusive": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "includeAllPrerelease": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false

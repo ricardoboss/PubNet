@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using DartLang.PubSpec;
 using Microsoft.EntityFrameworkCore.Migrations;
-using PubNet.Database.Entities.Dart;
 
 #nullable disable
 
@@ -72,6 +73,7 @@ namespace PubNet.Database.Context.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ArchivePath = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    ArchiveHash = table.Column<string>(type: "text", nullable: false),
                     UploaderId = table.Column<Guid>(type: "uuid", nullable: false),
                     UploadedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
@@ -176,11 +178,11 @@ namespace PubNet.Database.Context.Migrations
                     Value = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     IpAddress = table.Column<string>(type: "character varying(45)", maxLength: 45, nullable: false),
                     UserAgent = table.Column<string>(type: "text", nullable: false),
-                    DeviceType = table.Column<string>(type: "text", nullable: false),
-                    Browser = table.Column<string>(type: "text", nullable: false),
-                    Platform = table.Column<string>(type: "text", nullable: false),
+                    DeviceType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Browser = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Platform = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Scopes = table.Column<string[]>(type: "text[]", maxLength: 2000, nullable: false),
+                    Scopes = table.Column<List<string>>(type: "text[]", maxLength: 2000, nullable: false),
                     CreatedAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ExpiresAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     RevokedAtUtc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
@@ -327,10 +329,9 @@ namespace PubNet.Database.Context.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tokens_IdentityId_Name",
+                name: "IX_Tokens_IdentityId",
                 table: "Tokens",
-                columns: new[] { "IdentityId", "Name" },
-                unique: true);
+                column: "IdentityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tokens_Value",

@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageVersion Include="CliWrap" Version="3.6.6" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageVersion Include="DartLang.PubSpec" Version="1.0.0" />
     <PackageVersion Include="GitVersion.MsBuild" Version="5.12.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
@@ -17,6 +18,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.8" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="8.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0" />
@@ -31,7 +33,7 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.13.0" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.13.0" />
     <PackageVersion Include="MudBlazor" Version="7.8.0" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
     <PackageVersion Include="PasswordRulesSharp" Version="2.0.0" />
     <PackageVersion Include="Riok.Mapperly" Version="3.6.0" />
     <PackageVersion Include="Rive.Blazor.Wasm" Version="1.0.1" />
@@ -44,8 +46,9 @@
     <PackageVersion Include="Serilog.Sinks.Seq" Version="8.0.0" />
     <PackageVersion Include="SharpCompress" Version="0.38.0" />
     <PackageVersion Include="SignedUrl.Extensions" Version="1.2.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.8.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.0" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.4" />
     <PackageVersion Include="Vogen" Version="5.0.3" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.14.0" />
     <PackageVersion Include="YamlDotNet" Version="16.1.3" />

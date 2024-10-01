@@ -13,6 +13,7 @@
 		<PackageReference Include="MudBlazor"/>
 		<PackageReference Include="PasswordRulesSharp"/>
 		<PackageReference Include="Rive.Blazor.Wasm"/>
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
 
 	<ItemGroup>

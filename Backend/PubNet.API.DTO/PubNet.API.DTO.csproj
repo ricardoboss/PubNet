@@ -6,6 +6,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="DartLang.PubSpec" />
 		<PackageReference Include="Riok.Mapperly"/>
 	</ItemGroup>
 

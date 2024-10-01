@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DartLang.PubSpec;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using PubNet.API.Abstractions.Archives;
@@ -12,8 +13,6 @@ using PubNet.Database.Entities.Auth;
 using PubNet.Database.Entities.Dart;
 using PubNet.PackageStorage.Abstractions;
 using Semver;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace PubNet.API.Services.Packages.Dart;
 
@@ -118,12 +117,11 @@ public class DartPackageUploadService(
 		return version;
 	}
 
-	private async Task<string> ReadPubspecYamlAsync(MemoryStream archiveStream,
+	private async Task<PubSpec> ReadPubspecYamlAsync(MemoryStream archiveStream,
 		CancellationToken cancellationToken)
 	{
 		archiveStream.Position = 0;
 
-		string? pubspecYaml = null;
 		foreach (var entry in archiveReader.EnumerateEntries(archiveStream, leaveStreamOpen: true))
 		{
 			if (entry is not { Name: "pubspec.yaml", IsDirectory: false })
@@ -132,16 +130,12 @@ public class DartPackageUploadService(
 			await using var pubspecStream = entry.OpenRead();
 
 			var pubspecReader = new StreamReader(pubspecStream);
-			pubspecYaml = await pubspecReader.ReadToEndAsync(cancellationToken);
+			var pubspecYaml = await pubspecReader.ReadToEndAsync(cancellationToken);
 
-			break;
+			return PubSpec.Deserialize(pubspecYaml);
 		}
 
-		if (pubspecYaml is null)
-			throw new InvalidDartPackageException(
-				"Package does not contain a pubspec.yaml file or it could not be read");
-
-		return pubspecYaml;
+		throw new InvalidDartPackageException("Package does not contain a pubspec.yaml file or it could not be read");
 	}
 
 	private async Task<(MemoryStream archive, Func<Task> deleteAction)> ReadArchiveStream(
@@ -190,14 +184,7 @@ public class DartPackageUploadService(
 	private async Task<PubSpec> ValidatePubspecAsync(MemoryStream archiveMemoryStream,
 		CancellationToken cancellationToken)
 	{
-		var pubspecYaml = await ReadPubspecYamlAsync(archiveMemoryStream, cancellationToken);
-
-		var deserializer = new DeserializerBuilder()
-			.WithNamingConvention(UnderscoredNamingConvention.Instance)
-			.WithCaseInsensitivePropertyMatching()
-			.Build();
-
-		var pubspec = deserializer.Deserialize<PubSpec>(pubspecYaml);
+		var pubspec = await ReadPubspecYamlAsync(archiveMemoryStream, cancellationToken);
 
 		// TODO: check if required keys are present
 		// TODO: check if certain values make sense (eg non-empty name, max length for fields)
@@ -205,10 +192,10 @@ public class DartPackageUploadService(
 		return pubspec;
 	}
 
-	private SemVersion ValidateVersion(DartPackage? package, PubSpec pubspec)
+	private static SemVersion ValidateVersion(DartPackage? package, PubSpec pubspec)
 	{
-		if (!SemVersion.TryParse(pubspec.Version, SemVersionStyles.Strict, out var version))
-			throw new InvalidDartPackageException($"Pubspec version '{pubspec.Version}' is not a valid SemVer version");
+		if (pubspec.Version is not { } version)
+			throw new InvalidDartPackageException("pubspec.yaml does not contain a valid SemVer version");
 
 		if (package is null)
 			return version; // no latest version to compare against
