@@ -43,6 +43,5 @@ void ConfigureServices(IServiceCollection services)
 void AddAuth(IServiceCollection services)
 {
 	services.AddSingleton<AuthenticationStateProvider, LoginTokenStorageAuthenticationStateProvider>();
-	services.AddCascadingAuthenticationState();
 	services.AddAuthorizationCore();
 }
