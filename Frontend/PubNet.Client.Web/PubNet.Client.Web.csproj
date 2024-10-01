@@ -24,8 +24,4 @@
 		</Content>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="Components\Inputs\InputPassword.razor" />
-	</ItemGroup>
-
 </Project>
