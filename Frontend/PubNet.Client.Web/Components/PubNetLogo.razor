@@ -14,14 +14,14 @@
 	[Parameter(CaptureUnmatchedValues = true)]
 	public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-	private string? Style => Inline ? "display: inline-block;" : null;
+	private string? ImpliedStyle => Inline ? "display: inline-block;" : null;
 
 	private Dictionary<string, object> InternalAdditionalAttributes
 	{
 		get
 		{
 			var attributes = new Dictionary<string, object>();
-			if (Style is { } style)
+			if (ImpliedStyle is { } style)
 				attributes.Add("style", style);
 
 			if (AdditionalAttributes is not { } additionalAttributes)
@@ -33,6 +33,27 @@
 			return attributes;
 		}
 	}
+
+	private string? imageSrc;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		imageSrc = FindBestImageSrc(Size);
+	}
+
+	private static int[] availableSizes = [500, 256, 196, 128, 80, 40];
+
+	private static string FindBestImageSrc(int desiredSize)
+	{
+		var closestAvailableSize = availableSizes
+			.Order()
+			.FirstOrDefault(s => s >= desiredSize, availableSizes.Max());
+
+		return $"/assets/logo.{closestAvailableSize}x{closestAvailableSize}.png";
+	}
+
 }
 
 @if (Animated)
@@ -43,16 +64,14 @@
 		Height="@Size"
 		Autoplay
 		StateMachines="State Machine"
-		@attributes="@InternalAdditionalAttributes"
-	/>
+		@attributes="@InternalAdditionalAttributes"/>
 }
 else
 {
 	<MudImage
-		Src="assets/logo.png"
+		Src="@imageSrc"
 		Alt="PubNet Logo; A gray box with purple layers floating inside"
 		Width="@Size"
 		Height="@Size"
-		@attributes="@InternalAdditionalAttributes"
-	/>
+		@attributes="@InternalAdditionalAttributes"/>
 }
