@@ -15,9 +15,13 @@
 
 	private string? error;
 
+	private string? success;
+
 	private bool isSubmitting;
 
-	private bool IsSubmitDisabled => isSubmitting || string.IsNullOrWhiteSpace(Model.UserName) || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+	private bool IsSubmitDisabled => AreInputsDisabled || string.IsNullOrWhiteSpace(Model.UserName) || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+
+	private bool AreInputsDisabled => isSubmitting || success is not null;
 
 	private IRule PasswordRule =>
 		new RuleBuilder()
@@ -72,11 +76,11 @@
 		try
 		{
 			await RegisterService.RegisterAsync(Model);
+
+			success = "Successfully registered. You can now log in using the same credentials.";
 		}
 		catch (Exception e)
 		{
-			Logger.LogError(e, "Failed to register");
-
 			error = e.Message;
 		}
 		finally
@@ -93,52 +97,65 @@
 			<MudText Typo="Typo.h5">Register</MudText>
 
 			<MudTextField
-				T="string"
+				T="string?"
 				Class="mt-5"
 				Label="Username"
 				@bind-Value="Model.UserName"
 				Immediate
 				Required
-				For="() => Model.UserName!"
+				Disabled="@AreInputsDisabled"
+				For="() => Model.UserName"
 				HelperText="This should match your username on pub.dev/nuget.org in case you want to map packages from there to your account."
 				Variant="Variant.Outlined"
 				InputType="InputType.Text"
-				autocomplete="name nickname"
-			/>
+				autocomplete="name nickname"/>
 
 			<MudTextField
-				T="string"
+				T="string?"
 				Label="E-Mail Address"
 				@bind-Value="Model.Email"
 				Immediate
 				Required
-				For="() => Model.Email!"
+				Disabled="@AreInputsDisabled"
+				For="() => Model.Email"
 				HelperText="Only used for authentication. Will not be displayed publicly."
 				Variant="Variant.Outlined"
 				InputType="InputType.Email"
-				autocomplete="username email"
-			/>
+				autocomplete="username email"/>
 
 			<MudTextField
-				T="string"
+				T="string?"
 				Label="Password"
 				@bind-Value="Model.Password"
 				Immediate
 				Required
-				For="() => Model.Password!"
+				Disabled="@AreInputsDisabled"
+				For="() => Model.Password"
 				HelperText="Minimum 8 characters. Please use a password manager."
 				Variant="Variant.Outlined"
 				InputType="InputType.Password"
 				autocomplete="new-password"
 				minlength="@PasswordRule.MinLength"
-				passwordrules="@PasswordRule.ToPasswordrulesAttribute()"
-			/>
+				passwordrules="@PasswordRule.ToPasswordrulesAttribute()"/>
 		</MudCardContent>
 		<MudCardActions>
 			<MudSpacer/>
 			@if (error is { } e)
 			{
 				<MudAlert Severity="Severity.Error" Dense Class="mr-3">@e</MudAlert>
+			}
+
+			@if (success is { } s)
+			{
+				<MudAlert Severity="Severity.Success" Dense Class="mr-3">@s</MudAlert>
+			}
+
+			@if (isSubmitting)
+			{
+				<MudProgressCircular
+					Class="mr-3"
+					Indeterminate
+					Color="Color.Primary"/>
 			}
 
 			<MudButton
