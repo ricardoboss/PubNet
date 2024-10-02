@@ -12,6 +12,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class TokenCollectionDto : IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>The currentTokenId property</summary>
+        public Guid? CurrentTokenId { get; set; }
         /// <summary>The tokens property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -38,6 +40,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "currentTokenId", n => { CurrentTokenId = n.GetGuidValue(); } },
                 { "tokens", n => { Tokens = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.TokenDto>(global::PubNet.Client.ApiClient.Generated.Models.TokenDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
@@ -48,6 +51,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteGuidValue("currentTokenId", CurrentTokenId);
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.TokenDto>("tokens", Tokens);
         }
     }

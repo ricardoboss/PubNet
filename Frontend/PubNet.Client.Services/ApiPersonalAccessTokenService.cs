@@ -20,6 +20,10 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 			if (result is not { Tokens: { } tokens })
 				throw new InvalidResponseException("No response could be deserialized");
 
+			// filter out current token
+			if (result.CurrentTokenId is { } currentTokenId)
+				return tokens.Where(t => t.Id != currentTokenId);
+
 			return tokens;
 		}
 		catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)

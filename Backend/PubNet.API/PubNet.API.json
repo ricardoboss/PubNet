@@ -2839,6 +2839,11 @@
             "items": {
               "$ref": "#/components/schemas/TokenDto"
             }
+          },
+          "currentTokenId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false

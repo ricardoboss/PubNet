@@ -65,13 +65,13 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<TokenCollectionDto> GetPersonalAccessTokenAsync([FromQuery] bool includeExpired = false, CancellationToken cancellationToken = default)
 	{
-		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
+		var currentToken = await authProvider.GetCurrentTokenAsync(cancellationToken);
 
-		IEnumerable<Token> tokens = identity.Tokens;
+		IEnumerable<Token> tokens = currentToken.Identity.Tokens;
 		if (!includeExpired)
 			tokens = tokens.Where(t => !t.IsExpired);
 
-		return TokenCollectionDto.MapFrom(tokens);
+		return TokenCollectionDto.MapFrom(tokens, currentToken.Id);
 	}
 
 	[HttpDelete("PersonalAccessToken")]
