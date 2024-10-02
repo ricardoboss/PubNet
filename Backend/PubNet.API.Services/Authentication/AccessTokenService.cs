@@ -10,11 +10,11 @@ using PubNet.Auth.Models;
 
 namespace PubNet.API.Services.Authentication;
 
-public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo tokenDmo, IIdentityDao identityDao, IJwtFactory jwtFactory) : IAccessTokenService
+public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo tokenDmo, IIdentityDao identityDao) : IAccessTokenService
 {
 	private static InvalidCredentialException InvalidCredentials => new("The given credentials are incorrect.");
 
-	public async Task<JsonWebToken> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<Token> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var identity = await identityDao.TryFindByEmailAsync(dto.Email, cancellationToken);
 		if (identity is null)
@@ -39,15 +39,24 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 			cancellationToken
 		);
 
-		return jwtFactory.Create(token);
+		return token;
 	}
 
-	public async Task<JsonWebToken> CreatePersonalAccessTokenAsync(Identity owner, CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<Token> CreatePersonalAccessTokenAsync(Identity owner, CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var lifetime = TimeSpan.FromDays(dto.LifetimeInDays);
+		if (lifetime <= TimeSpan.Zero)
+			throw new ArgumentOutOfRangeException(nameof(dto.LifetimeInDays), lifetime, "Lifetime must be greater than zero");
 
-		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, dto.Scopes.Select(Scope.From), lifetime, cancellationToken);
+		if (lifetime.TotalDays > 365)
+			throw new ArgumentOutOfRangeException(nameof(dto.LifetimeInDays), lifetime, "Lifetime must be less than or equal to 365 days");
 
-		return jwtFactory.Create(token);
+		var scopes = dto.Scopes.Select(Scope.From).ToList();
+		if (scopes.Count == 0)
+			throw new ArgumentOutOfRangeException(nameof(dto.Scopes), dto.Scopes, "At least one scope must be selected");
+
+		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, scopes, lifetime, cancellationToken);
+
+		return token;
 	}
 }

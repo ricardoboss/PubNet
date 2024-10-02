@@ -1,0 +1,127 @@
+﻿@using PubNet.Auth
+
+@inject IPersonalAccessTokenService PersonalAccessTokenService
+@inject ILogger<AddPersonalAccessTokenDialog> Logger
+
+@code {
+
+	[CascadingParameter]
+	public required MudDialogInstance Dialog { get; set; }
+
+	private bool loading;
+
+	private readonly CreatePersonalAccessTokenDto model = new();
+
+	private IReadOnlyCollection<string> selectedScopes = [];
+
+	private bool IsSubmitDisabled => loading || expiresAt is null || selectedScopes.Count == 0;
+
+	private DateTime? expiresAt = DateTime.Now.AddDays(90);
+
+	private async Task Submit()
+	{
+		try
+		{
+			loading = true;
+
+			model.LifetimeInDays = (int)Math.Ceiling((expiresAt!.Value - DateTime.Now).TotalDays);
+			model.Scopes = selectedScopes.ToList();
+
+			var result = await PersonalAccessTokenService.CreateAsync(model);
+
+			Dialog.Close(DialogResult.Ok(result));
+		}
+		catch (Exception e)
+		{
+			Logger.LogError(e, "Failed to create personal access token");
+		}
+		finally
+		{
+			loading = false;
+		}
+	}
+
+	private void Cancel() => Dialog.Cancel();
+
+}
+
+<EditForm Model="@model" OnValidSubmit="Submit">
+	<MudDialog>
+		<TitleContent>
+			Add Personal Access Token
+		</TitleContent>
+		<DialogContent>
+			<MudGrid>
+				<MudItem xs="12" sm="6">
+					<MudText Typo="Typo.subtitle1">Details</MudText>
+
+					<MudTextField
+						T="string?"
+						Class="mt-3"
+						Label="Name"
+						Immediate
+						Required
+						@bind-Value="model.Name"
+						For="() => model.Name"
+						Variant="Variant.Outlined"
+						InputType="InputType.Text"
+					/>
+
+					<MudDatePicker
+						Class="mt-5"
+						@bind-Date="expiresAt"
+						MaxDate="DateTime.Now.AddDays(365)"
+						MinDate="DateTime.Now"
+						Immediate
+						Required
+						Label="Expires At"
+						Variant="Variant.Outlined"
+					/>
+				</MudItem>
+				<MudItem xs="12" sm="6">
+					<MudText Typo="Typo.subtitle1">Scopes</MudText>
+
+					<MudTreeView
+						T="string"
+						Class="mt-3"
+						Hover
+						TriState
+						AutoSelectParent
+						@bind-SelectedValues="selectedScopes"
+						SelectionMode="SelectionMode.MultiSelection">
+						<MudTreeViewItem Text="pat" Value="Scopes.PersonalAccessTokens.Any">
+							<MudTreeViewItem Text="create" Value="Scopes.PersonalAccessTokens.Create"/>
+							<MudTreeViewItem Text="read" Value="Scopes.PersonalAccessTokens.Read"/>
+						</MudTreeViewItem>
+						<MudTreeViewItem Text="dart" Value="Scopes.Dart.Any">
+							<MudTreeViewItem Text="new" Value="Scopes.Dart.New"/>
+							<MudTreeViewItem Text="discontinue" Value="Scopes.Dart.Discontinue"/>
+							<MudTreeViewItem Text="retract" Value="Scopes.Dart.Retract"/>
+						</MudTreeViewItem>
+						<MudTreeViewItem Text="nuget" Value="Scopes.Nuget.Any">
+							<MudTreeViewItem Text="new" Value="Scopes.Nuget.New"/>
+							<MudTreeViewItem Text="delete" Value="Scopes.Nuget.Delete"/>
+						</MudTreeViewItem>
+					</MudTreeView>
+
+					@if (selectedScopes.Count == 0)
+					{
+						<MudText Color="Color.Error">Select at least one scope.</MudText>
+					}
+				</MudItem>
+			</MudGrid>
+		</DialogContent>
+		<DialogActions>
+			<MudButton OnClick="@Cancel">Cancel</MudButton>
+			@if (loading)
+			{
+				<MudProgressCircular
+					Indeterminate
+					Size="Size.Small"
+					Color="Color.Primary"
+					Class="mx-2"/>
+			}
+			<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="IsSubmitDisabled">Submit</MudButton>
+		</DialogActions>
+	</MudDialog>
+</EditForm>

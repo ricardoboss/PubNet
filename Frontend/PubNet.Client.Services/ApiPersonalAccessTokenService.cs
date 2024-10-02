@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.Text;
 using Microsoft.Kiota.Abstractions;
+using Microsoft.Kiota.Abstractions.Serialization;
 using PubNet.Client.Abstractions;
 using PubNet.Client.ApiClient.Generated;
 using PubNet.Client.ApiClient.Generated.Models;
@@ -32,6 +34,44 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 
 	public async Task<TokenDto> CreateAsync(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		try
+		{
+			var result =
+				await apiClient.Authentication.PersonalAccessToken.PostAsync(dto, cancellationToken: cancellationToken);
+
+			if (result is null)
+				throw new InvalidResponseException("No response could be deserialized");
+
+			if (result.Token is not { } token)
+				throw new InvalidResponseException("The response did not contain a token");
+
+			return token;
+		}
+		catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)
+		{
+			throw new UnauthorizedAccessException("Authentication is required for this request", e);
+		}
+		catch (ValidationErrorsDto e)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine(e.Title!);
+
+			foreach (var (field, errorsObj) in e.Errors!.AdditionalData)
+			{
+				var errors = (errorsObj as UntypedArray)?.GetValue()
+					.Select(node => (node as UntypedString)?.GetValue())
+					.OfType<string>();
+
+				sb.AppendLine($"{field}:");
+				foreach (var error in errors ?? ["Unknown error"])
+					sb.AppendLine($"{error}");
+			}
+
+			throw new RegisterException(sb.ToString());
+		}
+		catch (ApiException e)
+		{
+			throw new InvalidResponseException("API returned an unexpected status code", e);
+		}
 	}
 }

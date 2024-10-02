@@ -10,6 +10,8 @@ public static class Scopes
 		public const string Create = Prefix + "create";
 
 		public const string Read = Prefix + "read";
+
+		public const string Any = Prefix + "*";
 	}
 
 	public static class Dart
@@ -21,13 +23,19 @@ public static class Scopes
 		public const string Discontinue = Prefix + "discontinue";
 
 		public const string Retract = Prefix + "retract";
+
+		public const string Any = Prefix + "*";
 	}
 
 	public static class Nuget
 	{
 		private const string Prefix = "nuget:";
 
+		public const string New = Prefix + "new";
+
 		public const string Delete = Prefix + "delete";
+
+		public const string Any = Prefix + "*";
 	}
 
 	public static class Authors

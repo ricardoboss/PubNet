@@ -13,6 +13,7 @@ builder.Logging
 	.AddFilter("Microsoft.AspNetCore.Components.*", LogLevel.Information)
 	.AddFilter("Microsoft.AspNetCore.Routing.*", LogLevel.Information)
 	.AddFilter("Microsoft.AspNetCore.Authorization.*", LogLevel.Information)
+	.AddFilter("Microsoft.Extensions.Localization.*", LogLevel.Information)
 	;
 
 builder.RootComponents.Add<App>("#app");

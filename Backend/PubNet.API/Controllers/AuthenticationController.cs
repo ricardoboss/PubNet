@@ -14,17 +14,22 @@ namespace PubNet.API.Controllers;
 
 [Route("[controller]")]
 [Tags("Authentication")]
-public class AuthenticationController(IAccessTokenService accessTokenService, IAccountService accountService, IAuthProvider authProvider, IConfiguration configuration) : ControllerBase
+public class AuthenticationController(IAccessTokenService accessTokenService, IAccountService accountService, IAuthProvider authProvider, IJwtFactory jwtFactory, IConfiguration configuration) : ControllerBase
 {
 	[HttpPost("LoginToken")]
 	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
 	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
 	{
-		var jwt = await accessTokenService.CreateLoginTokenAsync(dto, cancellationToken);
+		var token = await accessTokenService.CreateLoginTokenAsync(dto, cancellationToken);
+		var jwt = jwtFactory.Create(token);
 
 		Response.StatusCode = StatusCodes.Status201Created;
-		return TokenCreatedDto.MapFrom(jwt);
+		return new()
+		{
+			Value = jwt.Value,
+			Token = TokenDto.MapFrom(token),
+		};
 	}
 
 	[HttpPost("PersonalAccessToken")]
@@ -34,10 +39,15 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	{
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
 
-		var jwt = await accessTokenService.CreatePersonalAccessTokenAsync(identity, dto, cancellationToken);
+		var token = await accessTokenService.CreatePersonalAccessTokenAsync(identity, dto, cancellationToken);
+		var jwt = jwtFactory.Create(token);
 
 		Response.StatusCode = StatusCodes.Status201Created;
-		return TokenCreatedDto.MapFrom(jwt);
+		return new()
+		{
+			Value = jwt.Value,
+			Token = TokenDto.MapFrom(token),
+		};
 	}
 
 	[HttpGet("PersonalAccessToken")]

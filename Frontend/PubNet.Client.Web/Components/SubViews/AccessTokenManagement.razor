@@ -1,5 +1,7 @@
-﻿@using PubNet.Client.Web.Components.Partials
+﻿@using PubNet.Client.Web.Components.Dialogs
+@using PubNet.Client.Web.Components.Partials
 @inject IPersonalAccessTokenService PersonalAccessTokenService
+@inject IDialogService DialogService
 
 @code {
 
@@ -37,7 +39,19 @@
 
 	private async Task AddToken()
 	{
-		await Task.CompletedTask;
+		var options = new DialogOptions
+		{
+			CloseOnEscapeKey = true,
+			Position = DialogPosition.TopRight,
+		};
+
+		var dialog = await DialogService.ShowAsync<AddPersonalAccessTokenDialog>("Add Personal Access Token", options);
+
+		var result = await dialog.Result;
+		if (result is null or { Canceled: true })
+			return;
+
+		await LoadTokens();
 	}
 
 }

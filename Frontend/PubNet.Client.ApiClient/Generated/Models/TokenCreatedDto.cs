@@ -15,10 +15,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The token property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Token { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.TokenDto? Token { get; set; }
 #nullable restore
 #else
-        public string Token { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.TokenDto Token { get; set; }
+#endif
+        /// <summary>The value property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Value { get; set; }
+#nullable restore
+#else
+        public string Value { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -38,7 +46,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "token", n => { Token = n.GetStringValue(); } },
+                { "token", n => { Token = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.TokenDto>(global::PubNet.Client.ApiClient.Generated.Models.TokenDto.CreateFromDiscriminatorValue); } },
+                { "value", n => { Value = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -48,7 +57,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("token", Token);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.TokenDto>("token", Token);
+            writer.WriteStringValue("value", Value);
         }
     }
 }

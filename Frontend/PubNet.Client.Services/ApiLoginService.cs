@@ -16,10 +16,10 @@ public class ApiLoginService(PubNetApiClient apiClient) : ILoginService
 			if (result is null)
 				throw new InvalidResponseException("No response could be deserialized");
 
-			if (result.Token is null)
+			if (result.Value is not { } tokenValue)
 				throw new InvalidResponseException("The response did not contain a token");
 
-			var jwt = JsonWebToken.From(result.Token);
+			var jwt = JsonWebToken.From(tokenValue);
 
 			return new(jwt);
 		}
