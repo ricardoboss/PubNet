@@ -36,7 +36,7 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 		}
 	}
 
-	public async Task<TokenDto> CreateAsync(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<(TokenDto token, string jwt)> CreateAsync(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -46,10 +46,10 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 			if (result is null)
 				throw new InvalidResponseException("No response could be deserialized");
 
-			if (result.Token is not { } token)
+			if (result is not { Token: { } token, Value: { } jwt })
 				throw new InvalidResponseException("The response did not contain a token");
 
-			return token;
+			return (token, jwt);
 		}
 		catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)
 		{

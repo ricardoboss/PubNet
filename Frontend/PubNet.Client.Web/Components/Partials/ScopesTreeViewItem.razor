@@ -8,6 +8,9 @@
 	[Parameter, EditorRequired]
 	public required string Prefix { get; set; }
 
+	[Parameter]
+	public bool Disabled { get; set; }
+
 	private string LayerName => Prefix.Split(Scopes.ScopeLayerSeparator).Last();
 
 	private string NodeLabel =>
@@ -41,18 +44,21 @@
 	<MudTreeViewItem
 		T="string"
 		Text="@NodeLabel"
-		Value="@Prefix"/>
+		Value="@Prefix"
+		Disabled="Disabled"/>
 
 	return;
 }
 
 <MudTreeViewItem
 	T="string"
-	Text="@NodeLabel">
+	Text="@NodeLabel"
+	Disabled="Disabled">
 	@foreach (var childScope in DirectChildScopes)
 	{
 		<ScopesTreeViewItem
 			AvailableScopes="AvailableScopes"
-			Prefix="@childScope"/>
+			Prefix="@childScope"
+			Disabled="Disabled"/>
 	}
 </MudTreeViewItem>

@@ -16,8 +16,12 @@
 
 	private IReadOnlyCollection<string> selectedScopes = [];
 
+	private TokenDto? createdToken;
+	private string? createdJwt;
 
 	private bool IsSubmitDisabled => isSubmitting || expiresAt is null || !selectedScopes.Any();
+
+	private bool FormDisabled => isSubmitting || createdToken is not null;
 
 	private DateTime? expiresAt = DateTime.Now.AddDays(90);
 
@@ -54,9 +58,7 @@
 			model.LifetimeInDays = (int)Math.Ceiling((expiresAt!.Value - DateTime.Now).TotalDays);
 			model.Scopes = selectedScopes.ToList();
 
-			var result = await PersonalAccessTokenService.CreateAsync(model);
-
-			Dialog.Close(DialogResult.Ok(result));
+			(createdToken, createdJwt) = await PersonalAccessTokenService.CreateAsync(model);
 		}
 		catch (Exception e)
 		{
@@ -65,17 +67,29 @@
 		finally
 		{
 			isSubmitting = false;
+
+			StateHasChanged();
 		}
 	}
 
 	private void Cancel() => Dialog.Cancel();
 
+	private void Dismiss() => Dialog.Close(DialogResult.Ok(createdToken));
+
+	private void OnBackdropClick()
+	{
+		if (createdToken is null)
+			Cancel();
+		else
+			Dismiss();
+	}
+
 }
 
 <EditForm Model="@model" OnValidSubmit="Submit">
-	<MudDialog>
+	<MudDialog OnBackdropClick="@OnBackdropClick">
 		<TitleContent>
-			Add Personal Access Token
+			<MudText Typo="Typo.h6">Add Personal Access Token</MudText>
 		</TitleContent>
 		<DialogContent>
 			<MudGrid>
@@ -91,7 +105,8 @@
 						@bind-Value="model.Name"
 						For="() => model.Name"
 						Variant="Variant.Outlined"
-						InputType="InputType.Text"/>
+						InputType="InputType.Text"
+						Disabled="@FormDisabled"/>
 
 					<MudDatePicker
 						Class="mt-5"
@@ -100,7 +115,8 @@
 						MinDate="DateTime.Now"
 						Required
 						Label="Expires At"
-						Variant="Variant.Outlined"/>
+						Variant="Variant.Outlined"
+						Disabled="@FormDisabled"/>
 				</MudItem>
 				<MudItem xs="12" sm="6">
 					<MudText Typo="Typo.subtitle1">Scopes</MudText>
@@ -119,7 +135,8 @@
 						<ScopesTreeView
 							Class="mt-3"
 							AvailableScopes="availableScopes"
-							@bind-SelectedScopes="selectedScopes"/>
+							@bind-SelectedScopes="selectedScopes"
+							Disabled="@FormDisabled"/>
 					}
 
 					@if (selectedScopes.Count == 0)
@@ -127,19 +144,39 @@
 						<MudText Typo="Typo.subtitle2" Color="Color.Error">Select at least one scope.</MudText>
 					}
 				</MudItem>
+
+				@if (createdJwt is not null)
+				{
+					<MudItem xs="12">
+						<MudAlert Severity="Severity.Success">
+							<MudText Typo="Typo.h6">Success!</MudText>
+							<MudText>Your personal access token has been created:</MudText>
+							<br/>
+							<pre>@createdJwt</pre>
+						</MudAlert>
+					</MudItem>
+				}
 			</MudGrid>
 		</DialogContent>
 		<DialogActions>
-			<MudButton OnClick="@Cancel">Cancel</MudButton>
-			@if (isSubmitting)
+			@if (createdToken is null)
 			{
-				<MudProgressCircular
-					Indeterminate
-					Size="Size.Small"
-					Color="Color.Primary"
-					Class="mx-2"/>
+				<MudButton OnClick="@Cancel">Cancel</MudButton>
+				@if (isSubmitting)
+				{
+					<MudProgressCircular
+						Indeterminate
+						Size="Size.Small"
+						Color="Color.Primary"
+						Class="mx-2"/>
+				}
+
+				<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="IsSubmitDisabled">Submit</MudButton>
 			}
-			<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="IsSubmitDisabled">Submit</MudButton>
+			else
+			{
+				<MudButton Color="Color.Primary" OnClick="@Dismiss">Dismiss</MudButton>
+			}
 		</DialogActions>
 	</MudDialog>
 </EditForm>
