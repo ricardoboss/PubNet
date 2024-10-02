@@ -1,5 +1,7 @@
-﻿@inject IPersonalAccessTokenService PersonalAccessTokenService
+﻿@using TextCopy
+@inject IPersonalAccessTokenService PersonalAccessTokenService
 @inject ILogger<AddPersonalAccessTokenDialog> Logger
+@inject IClipboard Clipboard
 
 @code {
 
@@ -74,14 +76,20 @@
 
 	private void Cancel() => Dialog.Cancel();
 
-	private void Dismiss() => Dialog.Close(DialogResult.Ok(createdToken));
+	private async Task CopyAndClose()
+	{
+		if (createdJwt is not null)
+			await Clipboard.SetTextAsync(createdJwt);
 
-	private void OnBackdropClick()
+		Dialog.Close(DialogResult.Ok(createdToken));
+	}
+
+	private async Task OnBackdropClick()
 	{
 		if (createdToken is null)
 			Cancel();
 		else
-			Dismiss();
+			await CopyAndClose();
 	}
 
 }
@@ -152,7 +160,9 @@
 							<MudText Typo="Typo.h6">Success!</MudText>
 							<MudText>Your personal access token has been created:</MudText>
 							<br/>
-							<pre>@createdJwt</pre>
+							<pre style="overflow-x: auto; white-space: pre-wrap; word-break: break-all;">@createdJwt</pre>
+							<br/>
+							<ClickToCopyButton Data="@createdJwt" Color="Color.Success" />
 						</MudAlert>
 					</MudItem>
 				}
@@ -175,7 +185,7 @@
 			}
 			else
 			{
-				<MudButton Color="Color.Primary" OnClick="@Dismiss">Dismiss</MudButton>
+				<MudButton Color="Color.Primary" OnClick="@CopyAndClose">Copy and Close</MudButton>
 			}
 		</DialogActions>
 	</MudDialog>

@@ -6,6 +6,7 @@ using MudBlazor.Services;
 using PubNet.Client.Web;
 using PubNet.Client.Services;
 using PubNet.Client.Web.Services;
+using TextCopy;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -30,6 +31,7 @@ void ConfigureServices(IServiceCollection services)
 {
 	AddAuth(services);
 
+	services.InjectClipboard();
 	services.AddBrowserLoginTokenStorage();
 	services.AddPubNetApiClient(c =>
 	{

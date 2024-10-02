@@ -49,6 +49,7 @@
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.1.0" />
     <PackageVersion Include="System.Text.Json" Version="8.0.4" />
+    <PackageVersion Include="TextCopy" Version="6.2.1" />
     <PackageVersion Include="Vogen" Version="5.0.3" />
     <PackageVersion Include="Wangkanai.Detection" Version="8.14.0" />
     <PackageVersion Include="YamlDotNet" Version="16.1.3" />

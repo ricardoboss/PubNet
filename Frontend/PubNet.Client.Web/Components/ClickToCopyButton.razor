@@ -1,0 +1,19 @@
+@using TextCopy
+@inject IClipboard Clipboard
+
+@code {
+
+	[Parameter]
+	public string Data { get; set; } = null!;
+
+	[Parameter]
+	public bool Disabled { get; set; }
+
+	[Parameter]
+	public Color Color { get; set; } = Color.Default;
+
+	private async Task Copy() => await Clipboard.SetTextAsync(Data);
+
+}
+
+<MudIconButton Icon="@Icons.Material.Filled.ContentCopy" OnClick="@Copy" Color="@Color" Size="Size.Small" Disabled="@Disabled"/>
