@@ -28,9 +28,11 @@
 		{
 			var result = await PersonalAccessTokenService.GetAsync();
 
-			await Task.Delay(1000);
-
 			tokens = result.ToList();
+
+			StateHasChanged();
+
+			await Task.Delay(1000);
 		}
 		finally
 		{
