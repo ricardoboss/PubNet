@@ -8,6 +8,11 @@ namespace PubNet.API.Services.CQRS.Queries;
 
 public class IdentityDao(PubNetContext context) : IIdentityDao
 {
+	public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)
+	{
+		return await context.Identities.AnyAsync(cancellationToken);
+	}
+
 	public async Task<Identity> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		var identity = await context.Identities.FindAsync([id], cancellationToken);

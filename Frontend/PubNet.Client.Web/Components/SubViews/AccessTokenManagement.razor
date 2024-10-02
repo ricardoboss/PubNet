@@ -91,7 +91,7 @@
 	@switch (tokens)
 	{
 		case { Count: 0 }:
-			<MudText>No personal access tokens found</MudText>
+			<MudText Align="Align.Center">No personal access tokens found</MudText>
 			break;
 		case { Count: > 0 }:
 			<PersonalAccessTokenPanels Tokens="tokens"/>

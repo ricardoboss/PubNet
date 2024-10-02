@@ -1,0 +1,59 @@
+﻿@using PubNet.Auth
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required IReadOnlyCollection<string> AvailableScopes { get; set; }
+
+	[Parameter, EditorRequired]
+	public required string Prefix { get; set; }
+
+	private string LayerName => Prefix.Split(Scopes.ScopeLayerSeparator).Last();
+
+	private string NodeLabel =>
+		LayerName switch
+		{
+			"*" => "Any (wildcard)",
+			_ => LayerName,
+		};
+
+	private IReadOnlyCollection<string> DirectChildScopes =>
+		AvailableScopes
+			.Where(s => s.StartsWith(Prefix + Scopes.ScopeLayerSeparator))
+			.Select(s =>
+			{
+				var remaining = s.Substring(Prefix.Length + 1);
+				if (remaining.Contains(Scopes.ScopeLayerSeparator))
+				{
+					var childLayer = remaining[..remaining.IndexOf(Scopes.ScopeLayerSeparator)];
+
+					return Prefix + Scopes.ScopeLayerSeparator + childLayer;
+				}
+
+				return Prefix + Scopes.ScopeLayerSeparator + remaining;
+			})
+			.ToList();
+
+}
+
+@if (DirectChildScopes.Count == 0)
+{
+	<MudTreeViewItem
+		T="string"
+		Text="@NodeLabel"
+		Value="@Prefix"/>
+
+	return;
+}
+
+<MudTreeViewItem
+	T="string"
+	Text="@NodeLabel"
+	ReadOnly>
+	@foreach (var childScope in DirectChildScopes)
+	{
+		<ScopesTreeViewItem
+			AvailableScopes="AvailableScopes"
+			Prefix="@childScope"/>
+	}
+</MudTreeViewItem>

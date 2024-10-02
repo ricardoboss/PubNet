@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PubNet.Auth.Models;
 
 namespace PubNet.Database.Entities.Auth;
 
@@ -17,6 +18,8 @@ public class Identity
 	public string Email { get; set; } = null!;
 
 	public string PasswordHash { get; set; } = null!;
+
+	public Role Role { get; set; } = Role.Unspecified;
 
 	public virtual ICollection<Token> Tokens { get; set; } = [];
 }

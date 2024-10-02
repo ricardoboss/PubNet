@@ -3,6 +3,7 @@
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
+using PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.AllowedScopes;
 using PubNet.Client.ApiClient.Generated.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -17,12 +18,17 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class PersonalAccessTokenRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The AllowedScopes property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.AllowedScopes.AllowedScopesRequestBuilder AllowedScopes
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.AllowedScopes.AllowedScopesRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PersonalAccessTokenRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authentication/PersonalAccessToken{?includeExpired*}", pathParameters)
+        public PersonalAccessTokenRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authentication/PersonalAccessToken{?includeExpired*,tokenId*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,8 +36,22 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public PersonalAccessTokenRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authentication/PersonalAccessToken{?includeExpired*}", rawUrl)
+        public PersonalAccessTokenRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authentication/PersonalAccessToken{?includeExpired*,tokenId*}", rawUrl)
         {
+        }
+        /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
+        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public async Task DeleteAsync(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder.PersonalAccessTokenRequestBuilderDeleteQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        {
+#nullable restore
+#else
+        public async Task DeleteAsync(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder.PersonalAccessTokenRequestBuilderDeleteQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        {
+#endif
+            var requestInfo = ToDeleteRequestInformation(requestConfiguration);
+            await RequestAdapter.SendNoContentAsync(requestInfo, default, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.TokenCollectionDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
@@ -52,6 +72,8 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.ValidationErrorsDto">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.GenericErrorDto">When receiving a 401 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto?> PostAsync(global::PubNet.Client.ApiClient.Generated.Models.CreatePersonalAccessTokenDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -63,7 +85,27 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
 #endif
             _ = body ?? throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
-            return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
+            {
+                { "400", global::PubNet.Client.ApiClient.Generated.Models.ValidationErrorsDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.Client.ApiClient.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+            };
+            return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+        }
+        /// <returns>A <see cref="RequestInformation"/></returns>
+        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public RequestInformation ToDeleteRequestInformation(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder.PersonalAccessTokenRequestBuilderDeleteQueryParameters>>? requestConfiguration = default)
+        {
+#nullable restore
+#else
+        public RequestInformation ToDeleteRequestInformation(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder.PersonalAccessTokenRequestBuilderDeleteQueryParameters>> requestConfiguration = default)
+        {
+#endif
+            var requestInfo = new RequestInformation(Method.DELETE, UrlTemplate, PathParameters);
+            requestInfo.Configure(requestConfiguration);
+            return requestInfo;
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -108,6 +150,21 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
         public global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder WithUrl(string rawUrl)
         {
             return new global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder(rawUrl, RequestAdapter);
+        }
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+        #pragma warning disable CS1591
+        public partial class PersonalAccessTokenRequestBuilderDeleteQueryParameters 
+        #pragma warning restore CS1591
+        {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("tokenId")]
+            public string? TokenId { get; set; }
+#nullable restore
+#else
+            [QueryParameter("tokenId")]
+            public string TokenId { get; set; }
+#endif
         }
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
         #pragma warning disable CS1591

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DartLang.PubSpec;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.Database.Context;
@@ -13,9 +14,11 @@ using PubNet.Database.Context;
 namespace PubNet.Database.Context.Migrations
 {
     [DbContext(typeof(PubNetContext))]
-    partial class PubNetContextModelSnapshot : ModelSnapshot
+    [Migration("20241002040512_Added Role to Identities")]
+    partial class AddedRoletoIdentities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

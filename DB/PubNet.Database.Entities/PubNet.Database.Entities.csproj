@@ -6,4 +6,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj" />
+	</ItemGroup>
+
 </Project>

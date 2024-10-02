@@ -74,4 +74,21 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 			throw new InvalidResponseException("API returned an unexpected status code", e);
 		}
 	}
+
+	public async Task<IReadOnlyCollection<string>> GetAllowedScopesAsync(CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			var result = await apiClient.Authentication.PersonalAccessToken.AllowedScopes.GetAsync(cancellationToken: cancellationToken);
+
+			if (result is null)
+				throw new InvalidResponseException("No response could be deserialized");
+
+			return result;
+		}
+		catch (ApiException e)
+		{
+			throw new InvalidResponseException("API returned an unexpected status code", e);
+		}
+	}
 }

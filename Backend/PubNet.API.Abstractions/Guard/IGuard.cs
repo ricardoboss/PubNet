@@ -11,4 +11,12 @@ public interface IGuard
 	/// <param name="targetScope">The scope to check.</param>
 	/// <returns>True if the claim allows the scope or a wildcard prefix, false otherwise.</returns>
 	bool Allows(ScopesClaim claim, Scope targetScope);
+
+	/// <summary>
+	/// Checks if the claimed role is allowed to perform the given action for the target role.
+	/// </summary>
+	/// <param name="claimedRole">The role that is claimed by the user.</param>
+	/// <param name="toActAs">The role that is targeted by the action.</param>
+	/// <returns>True if the claimed role is allowed to perform the action for the target role, false otherwise.</returns>
+	bool Allows(Role claimedRole, Role toActAs);
 }

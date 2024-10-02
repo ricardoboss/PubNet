@@ -1,6 +1,4 @@
-﻿@using PubNet.Auth
-
-@inject IPersonalAccessTokenService PersonalAccessTokenService
+﻿@inject IPersonalAccessTokenService PersonalAccessTokenService
 @inject ILogger<AddPersonalAccessTokenDialog> Logger
 
 @code {
@@ -12,11 +10,28 @@
 
 	private readonly CreatePersonalAccessTokenDto model = new();
 
+	private IReadOnlyCollection<string> availableScopes = [];
+
 	private IReadOnlyCollection<string> selectedScopes = [];
 
 	private bool IsSubmitDisabled => loading || expiresAt is null || selectedScopes.Count == 0;
 
 	private DateTime? expiresAt = DateTime.Now.AddDays(90);
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+			await LoadAvailableScopes();
+	}
+
+	private async Task LoadAvailableScopes()
+	{
+		availableScopes = await PersonalAccessTokenService.GetAllowedScopesAsync();
+
+		StateHasChanged();
+	}
 
 	private async Task Submit()
 	{
@@ -72,7 +87,6 @@
 						@bind-Date="expiresAt"
 						MaxDate="DateTime.Now.AddDays(365)"
 						MinDate="DateTime.Now"
-						Immediate
 						Required
 						Label="Expires At"
 						Variant="Variant.Outlined"
@@ -81,32 +95,15 @@
 				<MudItem xs="12" sm="6">
 					<MudText Typo="Typo.subtitle1">Scopes</MudText>
 
-					<MudTreeView
-						T="string"
+					<ScopesTreeView
 						Class="mt-3"
-						Hover
-						TriState
-						AutoSelectParent
-						@bind-SelectedValues="selectedScopes"
-						SelectionMode="SelectionMode.MultiSelection">
-						<MudTreeViewItem Text="pat" Value="Scopes.PersonalAccessTokens.Any">
-							<MudTreeViewItem Text="create" Value="Scopes.PersonalAccessTokens.Create"/>
-							<MudTreeViewItem Text="read" Value="Scopes.PersonalAccessTokens.Read"/>
-						</MudTreeViewItem>
-						<MudTreeViewItem Text="dart" Value="Scopes.Dart.Any">
-							<MudTreeViewItem Text="new" Value="Scopes.Dart.New"/>
-							<MudTreeViewItem Text="discontinue" Value="Scopes.Dart.Discontinue"/>
-							<MudTreeViewItem Text="retract" Value="Scopes.Dart.Retract"/>
-						</MudTreeViewItem>
-						<MudTreeViewItem Text="nuget" Value="Scopes.Nuget.Any">
-							<MudTreeViewItem Text="new" Value="Scopes.Nuget.New"/>
-							<MudTreeViewItem Text="delete" Value="Scopes.Nuget.Delete"/>
-						</MudTreeViewItem>
-					</MudTreeView>
+						AvailableScopes="availableScopes"
+						@bind-SelectedScopes="selectedScopes"
+					/>
 
 					@if (selectedScopes.Count == 0)
 					{
-						<MudText Color="Color.Error">Select at least one scope.</MudText>
+						<MudText Typo="Typo.subtitle2" Color="Color.Error">Select at least one scope.</MudText>
 					}
 				</MudItem>
 			</MudGrid>

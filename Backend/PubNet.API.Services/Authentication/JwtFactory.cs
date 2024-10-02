@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PubNet.API.Abstractions.Authentication;
+using PubNet.API.Services.Extensions;
 using PubNet.Database.Entities.Auth;
 using PubNet.Auth;
 using PubNet.Auth.Models;
@@ -48,13 +49,16 @@ public class JwtFactory : IJwtFactory
 
 	public JsonWebToken Create(Token token)
 	{
-		var claims = new List<Claim>
-		{
+		List<Claim> claims = [
 			new(JwtClaims.AuthorUsername, token.Identity.Author.UserName),
 			new(JwtClaims.IdentityId, token.Identity.Id.ToString("D")),
 			new(JwtClaims.TokenValue, token.Value),
 			new(JwtClaims.Scopes, string.Join(JwtClaims.ScopeSeparator, token.Scopes)),
-		};
+		];
+
+		var roleClaim = token.Identity.Role.ToClaimValue();
+		if (roleClaim != null)
+			claims.Add(new(JwtClaims.Roles, roleClaim));
 
 		var jst = new JwtSecurityToken(
 			jwtHeader,

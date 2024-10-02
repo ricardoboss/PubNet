@@ -262,6 +262,7 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 	builder.Services.AddSingleton<ISecureTokenGenerator, SecureTokenGenerator>();
 	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 	builder.Services.AddSingleton<IGuard, Guard>();
+	builder.Services.AddScoped<IRegistrationsService, SeedingAndConfiguredRegistrationsService>();
 
 	builder.Services.AddSingleton<ScopeGuardMiddleware>();
 }
@@ -272,6 +273,7 @@ void ConfigureDataServices(IHostApplicationBuilder builder)
 	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
 	builder.Services.AddScoped<INugetPackageDao, NugetPackageDao>();
 	builder.Services.AddScoped<IDartPackageDao, DartPackageDao>();
+	builder.Services.AddScoped<ITokenDao, TokenDao>();
 
 	builder.Services.AddScoped<ITokenDmo, TokenDmo>();
 	builder.Services.AddScoped<IAuthorDmo, AuthorDmo>();

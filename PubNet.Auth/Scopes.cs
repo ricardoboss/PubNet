@@ -3,6 +3,8 @@
 // ReSharper disable MemberHidesStaticFromOuterClass
 public static class Scopes
 {
+	public const char ScopeLayerSeparator = ':';
+
 	public static class PersonalAccessTokens
 	{
 		private const string Prefix = "pat:";
@@ -10,6 +12,8 @@ public static class Scopes
 		public const string Create = Prefix + "create";
 
 		public const string Read = Prefix + "read";
+
+		public const string Delete = Prefix + "delete";
 
 		public const string Any = Prefix + "*";
 	}

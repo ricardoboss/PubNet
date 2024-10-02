@@ -1,5 +1,6 @@
 ﻿using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.CQRS.Commands;
+using PubNet.API.Abstractions.CQRS.Exceptions;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
 using PubNet.Auth.Models;
@@ -41,5 +42,12 @@ public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerato
 		await context.Entry(token).ReloadAsync(cancellationToken);
 
 		return token;
+	}
+
+	public async Task DeleteTokenAsync(Token token, CancellationToken cancellationToken = default)
+	{
+		context.Tokens.Remove(token);
+
+		await context.SaveChangesAsync(cancellationToken);
 	}
 }

@@ -13,4 +13,9 @@ public class Guard : IGuard
 			.Select(Scope.From)
 			.Any(s => s.EqualsOrIsParentOf(targetScope));
 	}
+
+	public bool Allows(Role claimedRole, Role toActAs)
+	{
+		return claimedRole >= toActAs;
+	}
 }

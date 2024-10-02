@@ -1,0 +1,57 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required IReadOnlyCollection<string> AvailableScopes { get; set; }
+
+	[Parameter]
+	public IReadOnlyCollection<string>? SelectedScopes { get; set; }
+
+	[Parameter]
+	public EventCallback<IReadOnlyCollection<string>?> SelectedScopesChanged { get; set; }
+
+	[Parameter]
+	public string? Class { get; set; }
+
+	private IReadOnlyCollection<string> RootScopes
+	{
+		get
+		{
+			var rootScopes = new List<string>();
+
+			foreach (var scope in AvailableScopes)
+			{
+				var parts = scope.Split(PubNet.Auth.Scopes.ScopeLayerSeparator);
+				if (parts.Length == 1)
+					rootScopes.Add(scope);
+				else
+				{
+					var root = parts[0];
+					if (!rootScopes.Contains(root))
+						rootScopes.Add(root);
+				}
+			}
+
+			return rootScopes;
+		}
+	}
+
+}
+
+<MudTreeView
+	T="string"
+	Class="@Class"
+	SelectedValues="SelectedScopes"
+	SelectedValuesChanged="SelectedScopesChanged"
+	Hover
+	TriState
+	AutoSelectParent
+	Dense
+	SelectionMode="SelectionMode.MultiSelection">
+	@foreach (var rootScope in RootScopes)
+	{
+		<ScopesTreeViewItem
+			AvailableScopes="AvailableScopes"
+			Prefix="@rootScope"
+		/>
+	}
+</MudTreeView>

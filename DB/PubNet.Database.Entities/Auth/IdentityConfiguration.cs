@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PubNet.Auth.Models;
 
 namespace PubNet.Database.Entities.Auth;
 
@@ -27,5 +28,8 @@ public class IdentityConfiguration : IEntityTypeConfiguration<Identity>
 
 		builder.Property(i => i.PasswordHash)
 			.HasMaxLength(300);
+
+		builder.Property(i => i.Role)
+			.HasDefaultValue(Role.Default);
 	}
 }
