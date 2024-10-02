@@ -91,4 +91,23 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 			throw new InvalidResponseException("API returned an unexpected status code", e);
 		}
 	}
+
+	public async Task DeleteTokenAsync(Guid tokenId, CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			await apiClient.Authentication.PersonalAccessToken.DeleteAsync(r =>
+			{
+				r.QueryParameters.TokenId = tokenId.ToString("D");
+			}, cancellationToken);
+		}
+		catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.NotFound)
+		{
+			throw new TokenNotFoundException(e.Message);
+		}
+		catch (ApiException e)
+		{
+			throw new InvalidResponseException("API returned an unexpected status code", e);
+		}
+	}
 }

@@ -4,6 +4,9 @@
 	public required IReadOnlyCollection<TokenDto> Tokens { get; set; }
 
 	[Parameter]
+	public EventCallback<Guid> OnDeleteToken { get; set; }
+
+	[Parameter]
 	public List<Guid> ExpandedTokens { get; set; } = [];
 
 	private void OnTokenExpandedChanged(Guid tokenId)
@@ -22,6 +25,7 @@
 
 		StateHasChanged();
 	}
+
 }
 
 <MudExpansionPanels MultiExpansion>
@@ -32,6 +36,6 @@
 			Token="token"
 			Expanded="@ExpandedTokens.Any(t => t == token.Id)"
 			ExpandedChanged="() => OnTokenExpandedChanged(token.Id!.Value)"
-		/>
+			OnDelete="OnDeleteToken"/>
 	}
 </MudExpansionPanels>

@@ -13,4 +13,8 @@ public interface IPersonalAccessTokenService
 
 	/// <exception cref="InvalidResponseException">Thrown when an unexpected response is received.</exception>
 	Task<IReadOnlyCollection<string>> GetAllowedScopesAsync(CancellationToken cancellationToken = default);
+
+	/// <exception cref="TokenNotFoundException">Thrown when the token could not be found.</exception>
+	/// <exception cref="InvalidResponseException">Thrown when an unexpected response is received.</exception>
+	Task DeleteTokenAsync(Guid tokenId, CancellationToken cancellationToken = default);
 }

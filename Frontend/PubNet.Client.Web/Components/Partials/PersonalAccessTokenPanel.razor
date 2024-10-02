@@ -9,9 +9,16 @@
 	[Parameter]
 	public EventCallback<bool> ExpandedChanged { get; set; }
 
+	[Parameter]
+	public EventCallback<Guid> OnDelete { get; set; }
+
+	private async Task OnDeleteClicked() => await OnDelete.InvokeAsync(Token.Id!.Value);
 }
 
-<MudExpansionPanel Text="@Token.Name" Expanded="Expanded" ExpandedChanged="ExpandedChanged">
+<MudExpansionPanel
+	Text="@Token.Name"
+	Expanded="Expanded"
+	ExpandedChanged="ExpandedChanged">
 	<dl>
 		<dt>Scopes</dt>
 		<dd>
@@ -42,4 +49,13 @@
 			<dd>@revokedAtUtc</dd>
 		}
 	</dl>
+
+	<MudStack Row Justify="Justify.FlexEnd">
+		<MudIconButton
+			Icon="@Icons.Material.TwoTone.Delete"
+			Color="Color.Error"
+			Size="Size.Small"
+			OnClick="OnDeleteClicked"
+		/>
+	</MudStack>
 </MudExpansionPanel>

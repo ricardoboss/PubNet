@@ -2,6 +2,7 @@
 @using PubNet.Client.Web.Components.Partials
 @inject IPersonalAccessTokenService PersonalAccessTokenService
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 @code {
 
@@ -55,6 +56,28 @@
 			tokens.Add(token);
 
 			personalAccessTokenPanels?.Expand(token.Id!.Value);
+
+			StateHasChanged();
+
+			Snackbar.Add("Token created", Severity.Success);
+		}
+	}
+
+	private async Task OnDeleteToken(Guid tokenId)
+	{
+		try
+		{
+			await PersonalAccessTokenService.DeleteTokenAsync(tokenId);
+
+			tokens?.RemoveAll(t => t.Id!.Value == tokenId);
+
+			StateHasChanged();
+
+			Snackbar.Add("Token deleted", Severity.Success);
+		}
+		catch
+		{
+			Snackbar.Add("Failed to delete token", Severity.Error);
 		}
 	}
 
@@ -64,15 +87,14 @@
 	<MudStack Row AlignItems="AlignItems.End">
 		<MudText Typo="Typo.h5">Personal Access Tokens</MudText>
 
-		<MudSpacer />
+		<MudSpacer/>
 
 		@if (isLoading)
 		{
 			<MudProgressCircular
 				Indeterminate
 				Size="Size.Small"
-				Color="Color.Primary"
-			/>
+				Color="Color.Primary"/>
 		}
 		else
 		{
@@ -80,16 +102,14 @@
 				Icon="@Icons.Material.TwoTone.Refresh"
 				Color="Color.Primary"
 				Size="Size.Small"
-				OnClick="@LoadTokens"
-			/>
+				OnClick="@LoadTokens"/>
 		}
 
 		<MudIconButton
 			Icon="@Icons.Material.TwoTone.Add"
 			Color="Color.Primary"
 			Size="Size.Small"
-			OnClick="@AddToken"
-		/>
+			OnClick="@AddToken"/>
 	</MudStack>
 
 	@switch (tokens)
@@ -98,7 +118,10 @@
 			<MudText Align="Align.Center">No personal access tokens found</MudText>
 			break;
 		case { Count: > 0 }:
-			<PersonalAccessTokenPanels @ref="personalAccessTokenPanels" Tokens="tokens"/>
+			<PersonalAccessTokenPanels
+				@ref="personalAccessTokenPanels"
+				Tokens="tokens"
+				OnDeleteToken="OnDeleteToken"/>
 			break;
 	}
 </MudStack>
