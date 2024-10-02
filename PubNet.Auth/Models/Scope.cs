@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Vogen;
+﻿using Vogen;
 
 namespace PubNet.Auth.Models;
 
@@ -29,7 +28,7 @@ public readonly partial struct Scope
 		var minSegments = Math.Min(segments.Length, otherSegments.Length);
 		for (var i = 0; i < minSegments; i++)
 			if (!string.Equals(segments[i], otherSegments[i], StringComparison.Ordinal))
-				return segments[i] == Any || otherSegments[i] == Any;
+				return segments[i] == Any && otherSegments[i] != Any;
 
 		return false;
 	}

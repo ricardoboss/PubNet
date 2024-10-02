@@ -6,7 +6,9 @@
 	[CascadingParameter]
 	public required MudDialogInstance Dialog { get; set; }
 
-	private bool loading;
+	private bool isSubmitting;
+
+	private bool isLoadingAvailableScopes = true;
 
 	private readonly CreatePersonalAccessTokenDto model = new();
 
@@ -14,7 +16,8 @@
 
 	private IReadOnlyCollection<string> selectedScopes = [];
 
-	private bool IsSubmitDisabled => loading || expiresAt is null || selectedScopes.Count == 0;
+
+	private bool IsSubmitDisabled => isSubmitting || expiresAt is null || !selectedScopes.Any();
 
 	private DateTime? expiresAt = DateTime.Now.AddDays(90);
 
@@ -28,16 +31,25 @@
 
 	private async Task LoadAvailableScopes()
 	{
-		availableScopes = await PersonalAccessTokenService.GetAllowedScopesAsync();
+		isLoadingAvailableScopes = true;
 
-		StateHasChanged();
+		try
+		{
+			availableScopes = await PersonalAccessTokenService.GetAllowedScopesAsync();
+		}
+		finally
+		{
+			isLoadingAvailableScopes = false;
+
+			StateHasChanged();
+		}
 	}
 
 	private async Task Submit()
 	{
 		try
 		{
-			loading = true;
+			isSubmitting = true;
 
 			model.LifetimeInDays = (int)Math.Ceiling((expiresAt!.Value - DateTime.Now).TotalDays);
 			model.Scopes = selectedScopes.ToList();
@@ -52,7 +64,7 @@
 		}
 		finally
 		{
-			loading = false;
+			isSubmitting = false;
 		}
 	}
 
@@ -79,8 +91,7 @@
 						@bind-Value="model.Name"
 						For="() => model.Name"
 						Variant="Variant.Outlined"
-						InputType="InputType.Text"
-					/>
+						InputType="InputType.Text"/>
 
 					<MudDatePicker
 						Class="mt-5"
@@ -89,17 +100,27 @@
 						MinDate="DateTime.Now"
 						Required
 						Label="Expires At"
-						Variant="Variant.Outlined"
-					/>
+						Variant="Variant.Outlined"/>
 				</MudItem>
 				<MudItem xs="12" sm="6">
 					<MudText Typo="Typo.subtitle1">Scopes</MudText>
 
-					<ScopesTreeView
-						Class="mt-3"
-						AvailableScopes="availableScopes"
-						@bind-SelectedScopes="selectedScopes"
-					/>
+					@if (isLoadingAvailableScopes)
+					{
+						<MudStack Row Justify="Justify.Center">
+							<MudProgressCircular
+								Indeterminate
+								Size="Size.Small"
+								Color="Color.Primary"/>
+						</MudStack>
+					}
+					else
+					{
+						<ScopesTreeView
+							Class="mt-3"
+							AvailableScopes="availableScopes"
+							@bind-SelectedScopes="selectedScopes"/>
+					}
 
 					@if (selectedScopes.Count == 0)
 					{
@@ -110,7 +131,7 @@
 		</DialogContent>
 		<DialogActions>
 			<MudButton OnClick="@Cancel">Cancel</MudButton>
-			@if (loading)
+			@if (isSubmitting)
 			{
 				<MudProgressCircular
 					Indeterminate

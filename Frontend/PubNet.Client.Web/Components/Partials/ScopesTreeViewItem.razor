@@ -22,7 +22,7 @@
 			.Where(s => s.StartsWith(Prefix + Scopes.ScopeLayerSeparator))
 			.Select(s =>
 			{
-				var remaining = s.Substring(Prefix.Length + 1);
+				var remaining = s[(Prefix.Length + 1)..];
 				if (remaining.Contains(Scopes.ScopeLayerSeparator))
 				{
 					var childLayer = remaining[..remaining.IndexOf(Scopes.ScopeLayerSeparator)];
@@ -48,8 +48,7 @@
 
 <MudTreeViewItem
 	T="string"
-	Text="@NodeLabel"
-	ReadOnly>
+	Text="@NodeLabel">
 	@foreach (var childScope in DirectChildScopes)
 	{
 		<ScopesTreeViewItem

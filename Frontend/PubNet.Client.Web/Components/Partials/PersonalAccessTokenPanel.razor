@@ -3,9 +3,15 @@
 	[Parameter, EditorRequired]
 	public required TokenDto Token { get; set; }
 
+	[Parameter]
+	public bool Expanded { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> ExpandedChanged { get; set; }
+
 }
 
-<MudExpansionPanel Text="@Token.Name">
+<MudExpansionPanel Text="@Token.Name" Expanded="Expanded" ExpandedChanged="ExpandedChanged">
 	<dl>
 		<dt>Scopes</dt>
 		<dd>
@@ -23,7 +29,9 @@
 		<dt>Platform</dt>
 		<dd>@Token.Platform</dd>
 		<dt>IP Address</dt>
-		<dd><code>@Token.IpAddress</code></dd>
+		<dd>
+			<code>@Token.IpAddress</code>
+		</dd>
 		<dt>Created At</dt>
 		<dd>@Token.CreatedAtUtc</dd>
 		<dt>Expires At</dt>

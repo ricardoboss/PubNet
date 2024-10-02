@@ -54,17 +54,26 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 		if (lifetime.TotalDays > 365)
 			throw new ArgumentOutOfRangeException(nameof(dto.LifetimeInDays), lifetime, "Lifetime must be less than or equal to 365 days");
 
-		var unsanitizedScopes = dto.Scopes.ToList();
-		if (unsanitizedScopes.Count == 0)
-			throw new ArgumentOutOfRangeException(nameof(dto.Scopes), dto.Scopes, "At least one scope must be selected");
+		var sanitizedScopes = dto.Scopes.Where(AllowedScopes.Contains).Select(Scope.From).ToList();
+		if (sanitizedScopes.Count == 0)
+			throw new ArgumentOutOfRangeException(nameof(dto.Scopes), dto.Scopes, "At least one valid scope must be selected");
 
-		var sanitizedScopes = unsanitizedScopes.Where(AllowedScopes.Contains).ToList();
-		if (sanitizedScopes.Count != unsanitizedScopes.Count)
-			throw new UnauthorizedAccessException("At least one of the selected scopes is not allowed");
+		var canonicalizedScopes = new List<Scope>();
+		foreach (var scope in sanitizedScopes)
+		{
+			if (canonicalizedScopes.Any(s => s.IsParentOf(scope)))
+				continue;
 
-		var scopes = sanitizedScopes.Select(Scope.From).ToList();
+			// remove all scopes that are children of the current scope
+			canonicalizedScopes
+				.Where(s => scope.IsParentOf(s))
+				.ToList()
+				.ForEach(s => canonicalizedScopes.Remove(s));
 
-		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, scopes, lifetime, cancellationToken);
+			canonicalizedScopes.Add(scope);
+		}
+
+		var token = await tokenDmo.CreateTokenAsync(owner, dto.Name, canonicalizedScopes, lifetime, cancellationToken);
 
 		return token;
 	}

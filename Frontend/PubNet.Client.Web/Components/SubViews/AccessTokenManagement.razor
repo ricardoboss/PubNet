@@ -9,6 +9,8 @@
 
 	private bool isLoading = true;
 
+	private PersonalAccessTokenPanels? personalAccessTokenPanels;
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
@@ -48,10 +50,12 @@
 		var dialog = await DialogService.ShowAsync<AddPersonalAccessTokenDialog>("Add Personal Access Token", options);
 
 		var result = await dialog.Result;
-		if (result is null or { Canceled: true })
-			return;
+		if (result is { Canceled: false, Data: TokenDto token } && tokens is not null)
+		{
+			tokens.Add(token);
 
-		await LoadTokens();
+			personalAccessTokenPanels?.Expand(token.Id!.Value);
+		}
 	}
 
 }
@@ -94,7 +98,7 @@
 			<MudText Align="Align.Center">No personal access tokens found</MudText>
 			break;
 		case { Count: > 0 }:
-			<PersonalAccessTokenPanels Tokens="tokens"/>
+			<PersonalAccessTokenPanels @ref="personalAccessTokenPanels" Tokens="tokens"/>
 			break;
 	}
 </MudStack>

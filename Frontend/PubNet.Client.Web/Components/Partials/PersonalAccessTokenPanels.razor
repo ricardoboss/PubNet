@@ -1,13 +1,37 @@
 ﻿@code {
 
 	[Parameter, EditorRequired]
-	public required IEnumerable<TokenDto> Tokens { get; set; }
+	public required IReadOnlyCollection<TokenDto> Tokens { get; set; }
 
+	[Parameter]
+	public List<Guid> ExpandedTokens { get; set; } = [];
+
+	private void OnTokenExpandedChanged(Guid tokenId)
+	{
+		if (ExpandedTokens.Contains(tokenId))
+			ExpandedTokens.Add(tokenId);
+		else
+			ExpandedTokens.Remove(tokenId);
+
+		StateHasChanged();
+	}
+
+	public void Expand(Guid tokenId)
+	{
+		ExpandedTokens.Add(tokenId);
+
+		StateHasChanged();
+	}
 }
 
 <MudExpansionPanels MultiExpansion>
 	@foreach (var token in Tokens)
 	{
-		<PersonalAccessTokenPanel @key="token.Id" Token="token" />
+		<PersonalAccessTokenPanel
+			@key="token.Id"
+			Token="token"
+			Expanded="@ExpandedTokens.Any(t => t == token.Id)"
+			ExpandedChanged="() => OnTokenExpandedChanged(token.Id!.Value)"
+		/>
 	}
 </MudExpansionPanels>
