@@ -35,6 +35,8 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[HttpPost("PersonalAccessToken")]
 	[Authorize, RequireScope(Scopes.PersonalAccessTokens.Create)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
+	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
 	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
 	{
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
