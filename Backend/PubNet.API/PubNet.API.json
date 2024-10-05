@@ -1311,7 +1311,7 @@
         }
       }
     },
-    "/Packages/Nuget/Package/{id}/index.json": {
+    "/Packages/Nuget/{id}/index.json": {
       "get": {
         "tags": [
           "Nuget"

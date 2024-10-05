@@ -3,7 +3,7 @@ using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.Controllers.Packages.Nuget;
 
-[Route("Packages/Nuget/Package/{id}")]
+[Route("Packages/Nuget/{id}")]
 [Tags("Nuget")]
 public class NugetPackageByIdController : NugetController
 {
