@@ -39,17 +39,49 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	}
 
 	[HttpGet("Packages/Dart")]
-	public Task<DartPackageListDto> GetAuthorDartPackagesAsync(string username,
+	public async Task<DartPackageListDto> GetAuthorDartPackagesAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
+		if (author is null)
+			return new()
+			{
+				TotalHits = 0,
+				Packages = Array.Empty<DartPackageDto>(),
+			};
+
+		var dartPackageDtos = author.DartPackages
+			.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash))
+			.ToList();
+
+		return new()
+		{
+			TotalHits = author.DartPackages.Count,
+			Packages = dartPackageDtos,
+		};
 	}
 
 	[HttpGet("Packages/Nuget")]
-	public Task<NugetPackageListDto> GetAuthorNugetPackagesAsync(string username,
+	public async Task<NugetPackageListDto> GetAuthorNugetPackagesAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
+		if (author is null)
+			return new()
+			{
+				TotalHits = 0,
+				Packages = Array.Empty<NugetPackageDto>(),
+			};
+
+		var nugetPackageDtos = author.NugetPackages
+			.Select(p => NugetPackageDto.MapFrom(p))
+			.ToList();
+
+		return new()
+		{
+			TotalHits = author.NugetPackages.Count,
+			Packages = nugetPackageDtos,
+		};
 	}
 
 	[HttpGet("Packages")]
