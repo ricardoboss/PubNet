@@ -28,7 +28,7 @@ public class NugetPackagesByIdAndVersionController : NugetController
 	// }
 
 	[HttpDelete]
-	[Authorize, RequireScope(Scopes.Nuget.Delete)]
+	[Authorize, RequireScope(Scopes.Packages.Nuget.Delete)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	public Task<IActionResult> DeleteAsync(string id, string version, CancellationToken cancellationToken = default)
 	{

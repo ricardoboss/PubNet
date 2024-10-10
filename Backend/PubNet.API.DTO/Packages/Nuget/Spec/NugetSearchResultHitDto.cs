@@ -12,6 +12,17 @@ namespace PubNet.API.DTO.Packages.Nuget.Spec;
 /// </summary>
 public class NugetSearchResultHitDto
 {
+	public static NugetSearchResultHitDto MapFrom(NugetPackageDto package)
+	{
+		return new()
+		{
+			Id = package.Name,
+			Version = package.Latest?.Version ?? "",
+			Versions = package.Versions?.Select(v => NugetSearchResultHitVersionInfoDto.MapFrom(package, v)) ?? [],
+			PackageTypes = [],
+		};
+	}
+
 	/// <summary>
 	/// The ID of the matched package.
 	/// </summary>

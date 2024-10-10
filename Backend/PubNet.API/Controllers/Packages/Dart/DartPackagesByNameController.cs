@@ -19,7 +19,7 @@ public class DartPackagesByNameController(
 ) : DartController
 {
 	[HttpPatch("Discontinue")]
-	[Authorize, RequireScope(Scopes.Dart.Discontinue)]
+	[Authorize, RequireScope(Scopes.Packages.Dart.Discontinue)]
 	public async Task<DartSuccessDto> Discontinue(string name, CancellationToken cancellationToken = default)
 	{
 		await dartPackageDmo.DiscontinueAsync(name, cancellationToken);

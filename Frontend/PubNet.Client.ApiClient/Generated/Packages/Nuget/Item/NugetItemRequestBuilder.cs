@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
+using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class NugetItemRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The indexJson property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder IndexJson
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>Gets an item from the PubNet.Client.ApiClient.Generated.Packages.Nuget.item.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.WithVersionItemRequestBuilder"/></returns>

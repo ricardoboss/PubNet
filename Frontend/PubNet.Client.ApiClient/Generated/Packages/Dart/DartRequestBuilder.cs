@@ -3,6 +3,7 @@
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Packages.Dart.Item;
+using PubNet.Client.ApiClient.Generated.Packages.Dart.Search;
 using PubNet.Client.ApiClient.Generated.Packages.Dart.Storage;
 using PubNet.Client.ApiClient.Generated.Packages.Dart.Versions;
 using System.Collections.Generic;
@@ -17,6 +18,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class DartRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The Search property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Search.SearchRequestBuilder Search
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Search.SearchRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The Storage property</summary>
         public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Storage.StorageRequestBuilder Storage
         {

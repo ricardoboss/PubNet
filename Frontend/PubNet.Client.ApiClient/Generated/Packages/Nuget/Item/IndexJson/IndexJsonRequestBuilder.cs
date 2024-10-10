@@ -9,28 +9,28 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJson
+namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson
 {
     /// <summary>
-    /// Builds and executes requests for operations under \Packages\Nuget\Package\{id}\index.json
+    /// Builds and executes requests for operations under \Packages\Nuget\{id}\index.json
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class IndexJsonRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJson.IndexJsonRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public IndexJsonRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Package/{id}/index.json", pathParameters)
+        public IndexJsonRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/{id}/index.json", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJson.IndexJsonRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public IndexJsonRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/Package/{id}/index.json", rawUrl)
+        public IndexJsonRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/{id}/index.json", rawUrl)
         {
         }
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageIndexDto"/></returns>
@@ -67,11 +67,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJso
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJson.IndexJsonRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJson.IndexJsonRequestBuilder WithUrl(string rawUrl)
+        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.Item.IndexJson.IndexJsonRequestBuilder(rawUrl, RequestAdapter);
+            return new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }

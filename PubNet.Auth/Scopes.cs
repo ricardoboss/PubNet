@@ -18,28 +18,39 @@ public static class Scopes
 		public const string Any = Prefix + "*";
 	}
 
-	public static class Dart
+	public static class Packages
 	{
-		private const string Prefix = "dart:";
+		private const string Prefix = "packages:";
 
-		public const string New = Prefix + "new";
+		public const string Search = Prefix + "search";
 
-		public const string Discontinue = Prefix + "discontinue";
+		public static class Dart
+		{
+			private const string Prefix = Packages.Prefix + "dart:";
 
-		public const string Retract = Prefix + "retract";
+			public const string New = Prefix + "new";
 
-		public const string Any = Prefix + "*";
-	}
+			public const string Discontinue = Prefix + "discontinue";
 
-	public static class Nuget
-	{
-		private const string Prefix = "nuget:";
+			public const string Retract = Prefix + "retract";
 
-		public const string New = Prefix + "new";
+			public const string Search = Prefix + "search";
 
-		public const string Delete = Prefix + "delete";
+			public const string Any = Prefix + "*";
+		}
 
-		public const string Any = Prefix + "*";
+		public static class Nuget
+		{
+			private const string Prefix = Packages.Prefix + "nuget:";
+
+			public const string New = Prefix + "new";
+
+			public const string Delete = Prefix + "delete";
+
+			public const string Search = Prefix + "search";
+
+			public const string Any = Prefix + "*";
+		}
 	}
 
 	public static class Authors

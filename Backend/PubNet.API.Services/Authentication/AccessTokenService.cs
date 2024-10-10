@@ -32,6 +32,8 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 			Scopes.PersonalAccessTokens.Create,
 			Scopes.PersonalAccessTokens.Read,
 			Scopes.PersonalAccessTokens.Delete,
+			Scopes.Packages.Dart.Search,
+			Scopes.Packages.Nuget.Search,
 		];
 
 		var token = await tokenDmo.CreateTokenAsync(
@@ -83,13 +85,16 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 		Scopes.PersonalAccessTokens.Read,
 		Scopes.PersonalAccessTokens.Delete,
 		Scopes.PersonalAccessTokens.Any,
-		Scopes.Dart.New,
-		Scopes.Dart.Discontinue,
-		Scopes.Dart.Retract,
-		Scopes.Dart.Any,
-		Scopes.Nuget.New,
-		Scopes.Nuget.Delete,
-		Scopes.Nuget.Any,
+		Scopes.Packages.Search,
+		Scopes.Packages.Dart.New,
+		Scopes.Packages.Dart.Discontinue,
+		Scopes.Packages.Dart.Retract,
+		Scopes.Packages.Dart.Search,
+		Scopes.Packages.Dart.Any,
+		Scopes.Packages.Nuget.New,
+		Scopes.Packages.Nuget.Delete,
+		Scopes.Packages.Nuget.Search,
+		Scopes.Packages.Nuget.Any,
 		Scopes.Authors.Delete.Self,
 	];
 

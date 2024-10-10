@@ -5,7 +5,6 @@ using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.AutocompleteJson;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.IndexJson;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item;
-using PubNet.Client.ApiClient.Generated.Packages.Nuget.Package;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Publish;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Registrations;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.SearchJson;
@@ -31,11 +30,6 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget
         public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.IndexJson.IndexJsonRequestBuilder IndexJson
         {
             get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.IndexJson.IndexJsonRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The Package property</summary>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.PackageRequestBuilder Package
-        {
-            get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Package.PackageRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Publish property</summary>
         public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Publish.PublishRequestBuilder Publish

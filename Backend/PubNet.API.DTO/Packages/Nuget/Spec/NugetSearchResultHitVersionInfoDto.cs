@@ -4,6 +4,16 @@ namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 public class NugetSearchResultHitVersionInfoDto
 {
+	public static NugetSearchResultHitVersionInfoDto MapFrom(NugetPackageDto package, NugetPackageVersionDto version)
+	{
+		return new()
+		{
+			Id = package.Name,
+			Version = version.Version,
+			Downloads = 0, // TODO: implement
+		};
+	}
+
 	/// <summary>
 	/// The absolute URL to the associated registration
 	/// <a href="https://learn.microsoft.com/en-us/nuget/api/registration-base-url-resource#registration-leaf">leaf</a>.

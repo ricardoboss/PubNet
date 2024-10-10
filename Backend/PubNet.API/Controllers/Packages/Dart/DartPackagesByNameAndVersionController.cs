@@ -62,7 +62,7 @@ public class DartPackagesByNameAndVersionController(
 	}
 
 	[HttpPatch("Retract")]
-	[Authorize, RequireScope(Scopes.Dart.Retract)]
+	[Authorize, RequireScope(Scopes.Packages.Dart.Retract)]
 	[ProducesResponseType<DartSuccessDto>(StatusCodes.Status200OK)]
 	public async Task<DartSuccessDto> RetractAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
