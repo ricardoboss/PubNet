@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\PubNet.Client.Extensions\PubNet.Client.Extensions.csproj" />
 		<ProjectReference Include="..\PubNet.Client.Services\PubNet.Client.Services.csproj"/>
 	</ItemGroup>
 

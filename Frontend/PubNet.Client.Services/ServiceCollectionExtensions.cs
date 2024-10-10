@@ -30,6 +30,7 @@ public static class ServiceCollectionExtensions
 		services.TryAddScoped<ILoginService, ApiLoginService>();
 		services.TryAddScoped<IRegisterService, ApiRegisterService>();
 		services.TryAddScoped<IPersonalAccessTokenService, ApiPersonalAccessTokenService>();
+		services.TryAddScoped<IDartPackagesService, ApiDartPackagesService>();
 
 		return services;
 	}

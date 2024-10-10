@@ -1,1 +1,35 @@
-﻿Dart Packages Table
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required DartPackageListDto PackageList { get; set; }
+
+}
+
+@if (PackageList is { Packages: { } packages, TotalHits: { } total and > 0 })
+{
+	<MudTable Items="packages" FixedHeader FixedFooter Height="50dvh" TotalItems="total">
+		<HeaderContent>
+			<MudTh>Name</MudTh>
+			<MudTh>Latest Version</MudTh>
+			<MudTh>Published</MudTh>
+			<MudTh></MudTh>
+		</HeaderContent>
+		<RowTemplate>
+			<MudTh scope="row">@context.Name</MudTh>
+			<MudTd>@context.Latest?.Version</MudTd>
+			<MudTd>@context.Latest?.PublishedAt</MudTd>
+			<MudTd>
+				<MudButtonGroup>
+					<MudIconButton Icon="@Icons.Material.Rounded.Edit"/>
+				</MudButtonGroup>
+			</MudTd>
+		</RowTemplate>
+		<PagerContent>
+			<MudTablePager/>
+		</PagerContent>
+	</MudTable>
+}
+else
+{
+	<MudText Align="Align.Center">No packages found</MudText>
+}

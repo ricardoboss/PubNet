@@ -1,8 +1,67 @@
-﻿<MudText Typo="Typo.h5">My Packages</MudText>
+﻿@inject IDartPackagesService DartPackagesService
+
+@code {
+
+	private bool isLoadingDart = true;
+	private bool isLoadingNuget = true;
+
+	private bool IsLoading => isLoadingDart || isLoadingNuget;
+
+	private DartPackageListDto? dartPackages;
+	private NugetPackageListDto? nugetPackages;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await LoadPackages(default);
+	}
+
+	private async Task LoadPackages(CancellationToken cancellationToken)
+	{
+		await Task.WhenAll(
+			LoadDartPackages(cancellationToken),
+			LoadNugetPackages(cancellationToken)
+		);
+	}
+
+	private async Task LoadDartPackages(CancellationToken cancellationToken)
+	{
+		isLoadingDart = true;
+
+		try
+		{
+			dartPackages = await DartPackagesService
+				.GetPackages()
+				.RunAsync(cancellationToken);
+		}
+		finally
+		{
+			isLoadingDart = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private async Task LoadNugetPackages(CancellationToken cancellationToken)
+	{
+
+	}
+
+}
+
+<MudText Typo="Typo.h5">My Packages</MudText>
 
 <MudTabs Outlined Rounded Border ApplyEffectsToContainer PanelClass="pa-5" Class="mt-5">
 	<MudTabPanel Text="Dart">
-		<DartPackagesTable />
+		@if (dartPackages is null)
+		{
+			<MudProgressCircular Indeterminate />
+		}
+		else
+		{
+			<DartPackagesTable PackageList="dartPackages"/>
+		}
 	</MudTabPanel>
 	<MudTabPanel Text="NuGet">
 		<NuGetPackagesTable />
