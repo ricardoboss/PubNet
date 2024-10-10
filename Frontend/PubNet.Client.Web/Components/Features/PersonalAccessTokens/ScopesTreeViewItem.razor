@@ -35,6 +35,7 @@
 
 				return Prefix + Scopes.ScopeLayerSeparator + remaining;
 			})
+			.Distinct()
 			.ToList();
 
 }
