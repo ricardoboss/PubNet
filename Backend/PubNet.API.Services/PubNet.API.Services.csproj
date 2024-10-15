@@ -10,12 +10,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="DartLang.PubSpec.Serialization.Yaml" />
 		<PackageReference Include="Microsoft.Extensions.Identity.Core"/>
 		<PackageReference Include="Semver"/>
-		<PackageReference Include="SharpCompress"/>
+		<PackageReference Include="SharpCompress" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
 		<PackageReference Include="Wangkanai.Detection"/>
-		<PackageReference Include="YamlDotNet"/>
 	</ItemGroup>
 
 	<ItemGroup>

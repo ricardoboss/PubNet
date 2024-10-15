@@ -56,12 +56,14 @@
 	<MudTabPanel Text="Dart">
 		@if (dartPackages is null)
 		{
-			<MudProgressCircular Indeterminate />
+			<MudProgressCircular Indeterminate/>
 		}
 		else
 		{
 			<DartPackagesTable PackageList="dartPackages"/>
 		}
+
+		<DartPublishHelper Class="mt-5"/>
 	</MudTabPanel>
 	<MudTabPanel Text="NuGet">
 		<NuGetPackagesTable />

@@ -24,10 +24,6 @@ public class DartPackageDmo(PubNetContext context, ILogger<DartPackageDmo> logge
 
 		await context.DartPackageVersions.AddAsync(version, cancellationToken);
 
-		// await context.SaveChangesAsync(cancellationToken);
-
-		// await context.Entry(version).ReloadAsync(cancellationToken);
-
 		var package = new DartPackage
 		{
 			Name = name,

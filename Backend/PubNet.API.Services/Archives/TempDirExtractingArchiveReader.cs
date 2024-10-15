@@ -1,5 +1,6 @@
 using PubNet.API.Abstractions.Archives;
 using SharpCompress.Readers;
+using SharpCompress.Readers.Tar;
 
 namespace PubNet.API.Services.Archives;
 
@@ -9,28 +10,36 @@ namespace PubNet.API.Services.Archives;
 public class TempDirExtractingArchiveReader : IArchiveReader
 {
 	/// <inheritdoc />
-	public IEnumerable<IArchiveEntry> EnumerateEntries(Stream archive, bool leaveStreamOpen = false)
+	public IEnumerable<IArchiveEntry> EnumerateEntries(Stream archive, bool leaveStreamOpen = true)
 	{
-		using var reader = ReaderFactory.Open(archive, new()
-		{
-			LeaveStreamOpen = leaveStreamOpen,
-		});
-
 		var tempDir = Path.Combine(Path.GetTempPath(), "PubNet", "ArchiveReader", Guid.NewGuid().ToString());
 		if (Directory.Exists(tempDir))
 			Directory.Delete(tempDir, true);
 
 		Directory.CreateDirectory(tempDir);
 
-		reader.WriteAllToDirectory(tempDir, new()
+		if (!archive.CanSeek)
+			throw new InvalidOperationException("Stream must be seekable");
+
+		archive.Seek(0, SeekOrigin.Begin);
+
+		using (var reader = TarReader.Open(archive, new()
 		{
-			ExtractFullPath = true,
-			PreserveFileTime = true,
-		});
+			LeaveStreamOpen = leaveStreamOpen,
+		}))
+		{
+			while (reader.MoveToNextEntry())
+				if (!reader.Entry.IsDirectory)
+					reader.WriteEntryToDirectory(tempDir, new()
+					{
+						ExtractFullPath = true,
+						Overwrite = true,
+					});
+		}
 
 		foreach (var entry in Directory.EnumerateFileSystemEntries(tempDir))
 		{
-			yield return new SharpCompressArchiveEntry(entry)
+			yield return new FileArchiveEntry(entry)
 			{
 				Name = Path.GetFileName(entry),
 				IsDirectory = Directory.Exists(entry),
@@ -41,7 +50,7 @@ public class TempDirExtractingArchiveReader : IArchiveReader
 	}
 }
 
-file class SharpCompressArchiveEntry(string filePath) : IArchiveEntry
+file class FileArchiveEntry(string filePath) : IArchiveEntry
 {
 	public required string Name { get; init; }
 

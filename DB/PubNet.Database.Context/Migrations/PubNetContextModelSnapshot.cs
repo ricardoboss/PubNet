@@ -56,7 +56,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Identities");
+                    b.ToTable("Identities", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Auth.Token", b =>
@@ -123,7 +123,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("Value")
                         .IsUnique();
 
-                    b.ToTable("Tokens");
+                    b.ToTable("Tokens", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Author", b =>
@@ -145,7 +145,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackage", b =>
@@ -178,7 +178,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("AuthorId", "Name")
                         .IsUnique();
 
-                    b.ToTable("DartPackages");
+                    b.ToTable("DartPackages", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersion", b =>
@@ -222,7 +222,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("PackageId", "Version")
                         .IsUnique();
 
-                    b.ToTable("DartPackageVersions");
+                    b.ToTable("DartPackageVersions", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPackageVersionAnalysis", b =>
@@ -252,7 +252,7 @@ namespace PubNet.Database.Context.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DartPackageVersionAnalyses");
+                    b.ToTable("DartPackageVersionAnalyses", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Dart.DartPendingArchive", b =>
@@ -280,7 +280,7 @@ namespace PubNet.Database.Context.Migrations
 
                     b.HasIndex("UploaderId");
 
-                    b.ToTable("DartPendingArchives");
+                    b.ToTable("DartPendingArchives", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackage", b =>
@@ -306,7 +306,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("AuthorId", "Name")
                         .IsUnique();
 
-                    b.ToTable("NugetPackages");
+                    b.ToTable("NugetPackages", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Nuget.NugetPackageVersion", b =>
@@ -332,7 +332,7 @@ namespace PubNet.Database.Context.Migrations
                     b.HasIndex("PackageId", "Version")
                         .IsUnique();
 
-                    b.ToTable("NugetPackageVersions");
+                    b.ToTable("NugetPackageVersions", (string)null);
                 });
 
             modelBuilder.Entity("PubNet.Database.Entities.Packages.PackageArchive", b =>

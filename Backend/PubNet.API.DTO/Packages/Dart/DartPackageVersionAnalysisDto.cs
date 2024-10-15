@@ -6,8 +6,8 @@ namespace PubNet.API.DTO.Packages.Dart;
 [Mapper]
 public partial class DartPackageVersionAnalysisDto
 {
-	[MapProperty([nameof(DartPackageVersionAnalysis.PackageVersion), nameof(DartPackageVersionAnalysis.PackageVersion.Version)], [nameof(PackageVersion)])]
-	[MapProperty([nameof(DartPackageVersionAnalysis.PackageVersion), nameof(DartPackageVersionAnalysis.PackageVersion.Package), nameof(DartPackageVersionAnalysis.PackageVersion.Package.Name)], [nameof(PackageName)])]
+	[MapProperty([nameof(DartPackageVersionAnalysis.PackageVersion), nameof(DartPackageVersionAnalysis.PackageVersion.Version)], nameof(PackageVersion))]
+	[MapProperty([nameof(DartPackageVersionAnalysis.PackageVersion), nameof(DartPackageVersionAnalysis.PackageVersion.Package), nameof(DartPackageVersionAnalysis.PackageVersion.Package.Name)], nameof(PackageName))]
 	public static partial DartPackageVersionAnalysisDto MapFrom(DartPackageVersionAnalysis analysis);
 
 	public required string PackageName { get; init; }

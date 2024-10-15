@@ -25,9 +25,7 @@
 			<MudChipSet T="string">
 				@foreach (var scope in Token.Scopes ?? [])
 				{
-					<MudChip Size="Size.Small">
-						<code>@scope</code>
-					</MudChip>
+					<ScopeChip Scope="@scope"/>
 				}
 			</MudChipSet>
 		</dd>

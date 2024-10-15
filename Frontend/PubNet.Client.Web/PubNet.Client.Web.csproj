@@ -6,6 +6,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage"/>
+		<PackageReference Include="Blism.Language.Bash" />
+		<PackageReference Include="Blism.Language.Yaml" />
 		<PackageReference Include="GitVersion.MsBuild" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
@@ -13,7 +15,6 @@
 		<PackageReference Include="MudBlazor"/>
 		<PackageReference Include="PasswordRulesSharp"/>
 		<PackageReference Include="Rive.Blazor.Wasm"/>
-		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="TextCopy" />
 	</ItemGroup>
 

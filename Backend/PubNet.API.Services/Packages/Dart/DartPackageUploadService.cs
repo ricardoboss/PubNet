@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using DartLang.PubSpec;
+using DartLang.PubSpec.Serialization.Yaml;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using PubNet.API.Abstractions.Archives;
@@ -91,7 +92,10 @@ public class DartPackageUploadService(
 
 			version = ValidateVersion(package, pubspec);
 
-			archiveMemoryStream.Position = 0;
+			Debug.Assert(archiveMemoryStream.CanSeek);
+
+			archiveMemoryStream.Seek(0, SeekOrigin.Begin);
+
 			_ = await archiveStorage.StoreArchiveAsync(pendingArchive.Uploader.UserName, pubspec.Name,
 				version.ToString(),
 				archiveMemoryStream, cancellationToken);
@@ -117,11 +121,9 @@ public class DartPackageUploadService(
 		return version;
 	}
 
-	private async Task<PubSpec> ReadPubspecYamlAsync(MemoryStream archiveStream,
+	private async Task<PubSpec> ReadPubspecYamlAsync(Stream archiveStream,
 		CancellationToken cancellationToken)
 	{
-		archiveStream.Position = 0;
-
 		foreach (var entry in archiveReader.EnumerateEntries(archiveStream, leaveStreamOpen: true))
 		{
 			if (entry is not { Name: "pubspec.yaml", IsDirectory: false })
@@ -132,13 +134,13 @@ public class DartPackageUploadService(
 			var pubspecReader = new StreamReader(pubspecStream);
 			var pubspecYaml = await pubspecReader.ReadToEndAsync(cancellationToken);
 
-			return PubSpec.Deserialize(pubspecYaml);
+			return PubSpecYamlSerializer.Deserialize(pubspecYaml);
 		}
 
 		throw new InvalidDartPackageException("Package does not contain a pubspec.yaml file or it could not be read");
 	}
 
-	private async Task<(MemoryStream archive, Func<Task> deleteAction)> ReadArchiveStream(
+	private async Task<(Stream archive, Func<Task> deleteAction)> ReadArchiveStream(
 		DartPendingArchive pendingArchive,
 		CancellationToken cancellationToken)
 	{
@@ -175,19 +177,20 @@ public class DartPackageUploadService(
 				throw new NotSupportedException($"Unsupported archive URI scheme: {archiveUri.Scheme}");
 		}
 
-		var archiveMemoryStream = new MemoryStream();
-		await archiveStream.CopyToAsync(archiveMemoryStream, cancellationToken);
+		// var archiveMemoryStream = new MemoryStream();
+		// await archiveStream.CopyToAsync(archiveMemoryStream, cancellationToken);
 
-		return (archiveMemoryStream, deleteAction);
+		return (archiveStream, deleteAction);
 	}
 
-	private async Task<PubSpec> ValidatePubspecAsync(MemoryStream archiveMemoryStream,
+	private async Task<PubSpec> ValidatePubspecAsync(Stream archiveMemoryStream,
 		CancellationToken cancellationToken)
 	{
 		var pubspec = await ReadPubspecYamlAsync(archiveMemoryStream, cancellationToken);
 
 		// TODO: check if required keys are present
 		// TODO: check if certain values make sense (eg non-empty name, max length for fields)
+		// TODO: check if publish_to matches this host
 
 		return pubspec;
 	}

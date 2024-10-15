@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="DartLang.PubSpec" />
+		<PackageReference Include="DartLang.PubSpec.Serialization.Json" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore"/>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
 	</ItemGroup>
