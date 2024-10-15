@@ -1,0 +1,53 @@
+﻿@using PubNet.Client.Web.Style
+@inherits LayoutComponentBase
+
+@code {
+
+	private MudThemeProvider? themeProvider;
+
+	private bool isDarkMode = true;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			isDarkMode = await themeProvider!.GetSystemPreference();
+
+			await themeProvider!.WatchSystemPreference(OnSystemPreferenceChanged);
+
+			StateHasChanged();
+		}
+	}
+
+	private Task OnSystemPreferenceChanged(bool newValue)
+	{
+		isDarkMode = newValue;
+
+		StateHasChanged();
+
+		return Task.CompletedTask;
+	}
+
+}
+
+<MudThemeProvider @ref="themeProvider" IsDarkMode="isDarkMode" Theme="Theme.Default"/>
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+	<MudAppBar Dense Elevation="0">
+		<PubNetLogo Size="40" class="mr-1" style="display: inline-block;" />
+		<MudText Typo="Typo.h5">
+			<a href="/" style="text-decoration: none !important">PubNet</a>
+		</MudText>
+		<MudSpacer/>
+		<AccountButton/>
+	</MudAppBar>
+	<MudMainContent>
+		<MudContainer Class="py-4">
+			@Body
+		</MudContainer>
+	</MudMainContent>
+	<PubNetFooter />
+</MudLayout>

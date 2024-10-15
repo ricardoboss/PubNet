@@ -1,0 +1,59 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required TokenDto Token { get; set; }
+
+	[Parameter]
+	public bool Expanded { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> ExpandedChanged { get; set; }
+
+	[Parameter]
+	public EventCallback<Guid> OnDelete { get; set; }
+
+	private async Task OnDeleteClicked() => await OnDelete.InvokeAsync(Token.Id!.Value);
+}
+
+<MudExpansionPanel
+	Text="@Token.Name"
+	Expanded="Expanded"
+	ExpandedChanged="ExpandedChanged">
+	<dl>
+		<dt>Scopes</dt>
+		<dd>
+			<MudChipSet T="string">
+				@foreach (var scope in Token.Scopes ?? [])
+				{
+					<ScopeChip Scope="@scope"/>
+				}
+			</MudChipSet>
+		</dd>
+		<dt>Browser</dt>
+		<dd>@Token.Browser</dd>
+		<dt>Platform</dt>
+		<dd>@Token.Platform</dd>
+		<dt>IP Address</dt>
+		<dd>
+			<code>@Token.IpAddress</code>
+		</dd>
+		<dt>Created At</dt>
+		<dd>@Token.CreatedAtUtc</dd>
+		<dt>Expires At</dt>
+		<dd>@Token.ExpiresAtUtc</dd>
+		@if (Token.RevokedAtUtc is { } revokedAtUtc)
+		{
+			<dt>Revoked At</dt>
+			<dd>@revokedAtUtc</dd>
+		}
+	</dl>
+
+	<MudStack Row Justify="Justify.FlexEnd">
+		<MudIconButton
+			Icon="@Icons.Material.TwoTone.Delete"
+			Color="Color.Error"
+			Size="Size.Small"
+			OnClick="OnDeleteClicked"
+		/>
+	</MudStack>
+</MudExpansionPanel>

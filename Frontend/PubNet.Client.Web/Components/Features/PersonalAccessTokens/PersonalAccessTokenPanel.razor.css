@@ -1,0 +1,10 @@
+﻿dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    align-items: baseline;
+}
+
+dt {
+    text-align: right;
+}

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Extensions\PubNet.BlobStorage.Extensions.csproj"/>
+		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DartLang.PubSpec.Serialization.Yaml" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core"/>
+		<PackageReference Include="Semver"/>
+		<PackageReference Include="SharpCompress" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
+		<PackageReference Include="Wangkanai.Detection"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\PubNet.Client.Abstractions\PubNet.Client.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.Client.ApiClient\PubNet.Client.ApiClient.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
+	</ItemGroup>
+
+</Project>

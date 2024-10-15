@@ -1,0 +1,16 @@
+﻿@attribute [Authorize]
+@page "/"
+
+<PageTitle>Dashboard | PubNet</PageTitle>
+
+<MudGrid>
+	<MudItem xs="12" sm="4">
+		<Greeting />
+	</MudItem>
+	<MudItem xs="12" sm="8">
+		<AccessTokenManagement />
+	</MudItem>
+	<MudItem xs="12">
+		<MyPackagesManagement />
+	</MudItem>
+</MudGrid>

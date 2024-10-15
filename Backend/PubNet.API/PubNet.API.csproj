@@ -1,0 +1,84 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<UserSecretsId>0e9483c9-0c63-4fb0-bcaa-414561d567ba</UserSecretsId>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
+		<OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<DefineConstants>TRACE;EFCORE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DefineConstants>TRACE;EFCORE</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google"/>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Serilog.AspNetCore"/>
+		<PackageReference Include="Serilog.Sinks.Seq"/>
+		<PackageReference Include="SerilogAnalyzer"/>
+		<PackageReference Include="SignedUrl.Extensions"/>
+		<PackageReference Include="Swashbuckle.AspNetCore"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="..\..\.gitignore">
+			<Link>.gitignore</Link>
+		</Content>
+		<Content Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="packages\**"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
+		<ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj"/>
+		<ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.Abstractions\PubNet.BlobStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="appsettings.json"/>
+		<Resource Include="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Content Remove="appsettings.Development.json"/>
+		<Resource Include="appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<DependentUpon>appsettings.json</DependentUpon>
+		</Resource>
+		<Content Remove="appsettings.Production.json"/>
+	</ItemGroup>
+
+</Project>

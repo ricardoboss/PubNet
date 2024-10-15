@@ -1,0 +1,127 @@
+﻿@inject IPersonalAccessTokenService PersonalAccessTokenService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@code {
+
+	private List<TokenDto>? tokens;
+
+	private bool isLoading = true;
+
+	private PersonalAccessTokenPanels? personalAccessTokenPanels;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+			await LoadTokens();
+	}
+
+	private async Task LoadTokens()
+	{
+		isLoading = true;
+
+		try
+		{
+			var result = await PersonalAccessTokenService.GetAsync();
+
+			tokens = result.ToList();
+
+			StateHasChanged();
+
+			await Task.Delay(1000);
+		}
+		finally
+		{
+			isLoading = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private async Task AddToken()
+	{
+		var options = new DialogOptions
+		{
+			CloseOnEscapeKey = true,
+			Position = DialogPosition.TopRight,
+		};
+
+		var dialog = await DialogService.ShowAsync<AddPersonalAccessTokenDialog>("Add Personal Access Token", options);
+
+		var result = await dialog.Result;
+		if (result is { Canceled: false, Data: TokenDto token } && tokens is not null)
+		{
+			tokens.Add(token);
+
+			personalAccessTokenPanels?.Expand(token.Id!.Value);
+
+			StateHasChanged();
+
+			Snackbar.Add("Token created", Severity.Success);
+		}
+	}
+
+	private async Task OnDeleteToken(Guid tokenId)
+	{
+		try
+		{
+			await PersonalAccessTokenService.DeleteTokenAsync(tokenId);
+
+			tokens?.RemoveAll(t => t.Id!.Value == tokenId);
+
+			StateHasChanged();
+
+			Snackbar.Add("Token deleted", Severity.Success);
+		}
+		catch
+		{
+			Snackbar.Add("Failed to delete token", Severity.Error);
+		}
+	}
+
+}
+
+<MudStack>
+	<MudStack Row AlignItems="AlignItems.End">
+		<MudText Typo="Typo.h5">Personal Access Tokens</MudText>
+
+		<MudSpacer/>
+
+		@if (isLoading)
+		{
+			<MudProgressCircular
+				Indeterminate
+				Size="Size.Small"
+				Color="Color.Primary"/>
+		}
+		else
+		{
+			<MudIconButton
+				Icon="@Icons.Material.TwoTone.Refresh"
+				Color="Color.Primary"
+				Size="Size.Small"
+				OnClick="@LoadTokens"/>
+		}
+
+		<MudIconButton
+			Icon="@Icons.Material.TwoTone.Add"
+			Color="Color.Primary"
+			Size="Size.Small"
+			OnClick="@AddToken"/>
+	</MudStack>
+
+	@switch (tokens)
+	{
+		case { Count: 0 }:
+			<MudText Align="Align.Center">No personal access tokens found</MudText>
+			break;
+		case { Count: > 0 }:
+			<PersonalAccessTokenPanels
+				@ref="personalAccessTokenPanels"
+				Tokens="tokens"
+				OnDeleteToken="OnDeleteToken"/>
+			break;
+	}
+</MudStack>

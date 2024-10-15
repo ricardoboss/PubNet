@@ -1,0 +1,10 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required string Scope { get; set; }
+
+}
+
+<MudChip T="string" Size="Size.Small">
+	<code>@Scope</code>
+</MudChip>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\DB\PubNet.Database.Entities\PubNet.Database.Entities.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DartLang.PubSpec" />
+		<PackageReference Include="Riok.Mapperly"/>
+	</ItemGroup>
+
+</Project>

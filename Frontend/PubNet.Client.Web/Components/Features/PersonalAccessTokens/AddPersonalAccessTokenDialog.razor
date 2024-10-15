@@ -1,0 +1,192 @@
+﻿@using TextCopy
+@inject IPersonalAccessTokenService PersonalAccessTokenService
+@inject ILogger<AddPersonalAccessTokenDialog> Logger
+@inject IClipboard Clipboard
+
+@code {
+
+	[CascadingParameter]
+	public required MudDialogInstance Dialog { get; set; }
+
+	private bool isSubmitting;
+
+	private bool isLoadingAvailableScopes = true;
+
+	private readonly CreatePersonalAccessTokenDto model = new();
+
+	private IReadOnlyCollection<string> availableScopes = [];
+
+	private IReadOnlyCollection<string> selectedScopes = [];
+
+	private TokenDto? createdToken;
+	private string? createdJwt;
+
+	private bool IsSubmitDisabled => isSubmitting || expiresAt is null || !selectedScopes.Any();
+
+	private bool FormDisabled => isSubmitting || createdToken is not null;
+
+	private DateTime? expiresAt = DateTime.Now.AddDays(90);
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+			await LoadAvailableScopes();
+	}
+
+	private async Task LoadAvailableScopes()
+	{
+		isLoadingAvailableScopes = true;
+
+		try
+		{
+			availableScopes = await PersonalAccessTokenService.GetAllowedScopesAsync();
+		}
+		finally
+		{
+			isLoadingAvailableScopes = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private async Task Submit()
+	{
+		try
+		{
+			isSubmitting = true;
+
+			model.LifetimeInDays = (int)Math.Ceiling((expiresAt!.Value - DateTime.Now).TotalDays);
+			model.Scopes = selectedScopes.ToList();
+
+			(createdToken, createdJwt) = await PersonalAccessTokenService.CreateAsync(model);
+		}
+		catch (Exception e)
+		{
+			Logger.LogError(e, "Failed to create personal access token");
+		}
+		finally
+		{
+			isSubmitting = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private void Cancel() => Dialog.Cancel();
+
+	private async Task CopyAndClose()
+	{
+		if (createdJwt is not null)
+			await Clipboard.SetTextAsync(createdJwt);
+
+		Dialog.Close(DialogResult.Ok(createdToken));
+	}
+
+	private async Task OnBackdropClick()
+	{
+		if (createdToken is null)
+			Cancel();
+		else
+			await CopyAndClose();
+	}
+
+}
+
+<EditForm Model="@model" OnValidSubmit="Submit">
+	<MudDialog OnBackdropClick="@OnBackdropClick">
+		<TitleContent>
+			<MudText Typo="Typo.h6">Add Personal Access Token</MudText>
+		</TitleContent>
+		<DialogContent>
+			<MudGrid>
+				<MudItem xs="12" sm="6">
+					<MudText Typo="Typo.subtitle1">Details</MudText>
+
+					<MudTextField
+						T="string?"
+						Class="mt-3"
+						Label="Name"
+						Immediate
+						Required
+						@bind-Value="model.Name"
+						For="() => model.Name"
+						Variant="Variant.Outlined"
+						InputType="InputType.Text"
+						Disabled="@FormDisabled"/>
+
+					<MudDatePicker
+						Class="mt-5"
+						@bind-Date="expiresAt"
+						MaxDate="DateTime.Now.AddDays(365)"
+						MinDate="DateTime.Now"
+						Required
+						Label="Expires At"
+						Variant="Variant.Outlined"
+						Disabled="@FormDisabled"/>
+				</MudItem>
+				<MudItem xs="12" sm="6">
+					<MudText Typo="Typo.subtitle1">Scopes</MudText>
+
+					@if (isLoadingAvailableScopes)
+					{
+						<MudStack Row Justify="Justify.Center">
+							<MudProgressCircular
+								Indeterminate
+								Size="Size.Small"
+								Color="Color.Primary"/>
+						</MudStack>
+					}
+					else
+					{
+						<ScopesTreeView
+							Class="mt-3"
+							AvailableScopes="availableScopes"
+							@bind-SelectedScopes="selectedScopes"
+							Disabled="@FormDisabled"/>
+					}
+
+					@if (selectedScopes.Count == 0)
+					{
+						<MudText Typo="Typo.subtitle2" Color="Color.Error">Select at least one scope.</MudText>
+					}
+				</MudItem>
+
+				@if (createdJwt is not null)
+				{
+					<MudItem xs="12">
+						<MudAlert Severity="Severity.Success">
+							<MudText Typo="Typo.h6">Success!</MudText>
+							<MudText>Your personal access token has been created:</MudText>
+							<br/>
+							<pre style="overflow-x: auto; white-space: pre-wrap; word-break: break-all;">@createdJwt</pre>
+							<br/>
+							<ClickToCopyButton Data="@createdJwt" Color="Color.Success" />
+						</MudAlert>
+					</MudItem>
+				}
+			</MudGrid>
+		</DialogContent>
+		<DialogActions>
+			@if (createdToken is null)
+			{
+				<MudButton OnClick="@Cancel">Cancel</MudButton>
+				@if (isSubmitting)
+				{
+					<MudProgressCircular
+						Indeterminate
+						Size="Size.Small"
+						Color="Color.Primary"
+						Class="mx-2"/>
+				}
+
+				<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="IsSubmitDisabled">Submit</MudButton>
+			}
+			else
+			{
+				<MudButton Color="Color.Primary" OnClick="@CopyAndClose">Copy and Close</MudButton>
+			}
+		</DialogActions>
+	</MudDialog>
+</EditForm>

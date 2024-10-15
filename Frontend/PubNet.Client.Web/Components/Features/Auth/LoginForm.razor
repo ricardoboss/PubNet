@@ -1,0 +1,115 @@
+@inject ILoginService LoginService
+@inject ILoginTokenStorage LoginTokenStorage
+@inject ILogger<LoginForm> Logger
+@inject NavigationManager NavigationManager
+
+@code {
+
+	private EditContext? editContext;
+
+	private ValidationMessageStore? validationMessageStore;
+
+	private CreateLoginTokenDto Model { get; } = new();
+
+	private string? error;
+
+	private bool isSubmitting;
+
+	private bool IsSubmitDisabled => isSubmitting || string.IsNullOrWhiteSpace(Model.Email) || string.IsNullOrWhiteSpace(Model.Password);
+
+	protected override void OnInitialized()
+	{
+		editContext = new(Model);
+		editContext.OnValidationRequested += ValidateModel;
+
+		validationMessageStore = new(editContext);
+	}
+
+	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)
+	{
+		validationMessageStore?.Clear();
+
+		if (Model.Email is null)
+			validationMessageStore?.Add(() => Model.Email!, "The email cannot be empty.");
+
+		if (Model.Email is not null && !Model.Email.Contains("@"))
+			validationMessageStore?.Add(() => Model.Email!, "The email must contain an '@' character.");
+
+		if (Model.Password is null)
+			validationMessageStore?.Add(() => Model.Password!, "The password cannot be empty.");
+	}
+
+	private async Task Submit()
+	{
+		try
+		{
+			isSubmitting = true;
+			error = null;
+
+			var result = await LoginService.LoginAsync(Model);
+
+			await LoginTokenStorage.StoreTokenAsync(result.Token);
+
+			NavigationManager.NavigateTo("/");
+		}
+		catch (UnauthorizedAccessException e)
+		{
+			error = e.Message;
+		}
+		finally
+		{
+			isSubmitting = false;
+		}
+	}
+
+}
+
+<EditForm OnValidSubmit="Submit" Model="@Model">
+	<MudCard Class="pa-1">
+		<MudCardContent>
+			<MudText Typo="Typo.h5">Login</MudText>
+
+			<MudTextField
+				T="string"
+				Class="mt-5"
+				Label="E-Mail Address"
+				@bind-Value="Model.Email"
+				Immediate
+				Required
+				For="() => Model.Email!"
+				Variant="Variant.Outlined"
+				InputType="InputType.Email"
+				autocomplete="email username"
+			/>
+
+			<MudTextField
+				T="string"
+				Class="mt-5"
+				Label="Password"
+				@bind-Value="Model.Password"
+				Immediate
+				Required
+				For="() => Model.Password!"
+				Variant="Variant.Outlined"
+				InputType="InputType.Password"
+				autocomplete="current-password"
+			/>
+		</MudCardContent>
+		<MudCardActions>
+			<MudSpacer />
+
+			@if (error is { } e)
+			{
+				<MudAlert Severity="Severity.Error" Dense Class="mr-3">@e</MudAlert>
+			}
+
+			<MudButton
+				ButtonType="ButtonType.Submit"
+				Color="Color.Primary"
+				Variant="Variant.Outlined"
+				Disabled="@IsSubmitDisabled">
+				Login
+			</MudButton>
+		</MudCardActions>
+	</MudCard>
+</EditForm>

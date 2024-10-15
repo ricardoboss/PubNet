@@ -1,0 +1,58 @@
+﻿@using Blism
+@using Blism.Language.Bash
+@using Blism.Language.Yaml
+@using PubNet.Auth
+@code {
+
+	private const string Host = "http://localhost:5000";
+
+	private const string PubspecYaml = $"publish_to: '{Host}'";
+
+	private const string AddEnvVar = "export PUBNET_TOKEN=<your-token>";
+
+	private const string RegisterEnvVar = $"dart pub token add {Host} --env-var PUBNET_TOKEN";
+
+	private class YamlHighlighter : YamlDarkHighlighter
+	{
+		public new static readonly YamlHighlighter Instance = new();
+
+		public override string GetDefaultCss() => $"padding: 1ch; {base.GetDefaultCss()}";
+	}
+
+	private class BashHighlighter : BashDarkHighlighter
+	{
+		public new static readonly BashHighlighter Instance = new();
+
+		public override string GetDefaultCss() => $"padding: 1ch; {base.GetDefaultCss()}";
+	}
+
+	[Parameter]
+	public string? Class { get; set; }
+
+}
+
+<MudAlert Severity="Severity.Info" Class="@Class">
+	To publish a Dart package here:
+
+	<ol class="ml-6">
+		<li>
+			Create a personal access token with the <ScopeChip Scope="@Scopes.Packages.Dart.New"/> scope
+		</li>
+		<li>
+			Add the token to your environment variables:
+			<SyntaxHighlighter Code="@AddEnvVar" Tokenizer="BashTokenizer.Instance" Highlighter="BashHighlighter.Instance"/>
+		</li>
+		<li>
+			Run: <SyntaxHighlighter Code="@RegisterEnvVar" Tokenizer="BashTokenizer.Instance" Highlighter="BashHighlighter.Instance"/>
+		</li>
+		<li>
+			Add the following to your <code>pubspec.yaml</code>:
+
+			<SyntaxHighlighter Code="@PubspecYaml" Tokenizer="YamlTokenizer.Instance" Highlighter="YamlHighlighter.Instance"/>
+		</li>
+		<li>
+			From your package root, run:
+			<SyntaxHighlighter Code="dart pub publish" Tokenizer="BashTokenizer.Instance" Highlighter="BashHighlighter.Instance"/>
+		</li>
+	</ol>
+</MudAlert>

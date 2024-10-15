@@ -7,3 +7,5 @@ riderModule.iml
 **/*.user
 /packages/
 .vs/
+**/.DS_Store
+*.log

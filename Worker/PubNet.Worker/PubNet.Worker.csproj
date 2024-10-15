@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<UserSecretsId>dotnet-PubNet.Worker-71A7D29D-AEF8-48AB-8F49-416D4C8255C1</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CliWrap"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+		<PackageReference Include="Serilog.Extensions.Hosting"/>
+		<PackageReference Include="Serilog.Settings.Configuration"/>
+		<PackageReference Include="Serilog.Sinks.Console"/>
+		<PackageReference Include="Serilog.Sinks.Seq"/>
+		<PackageReference Include="SerilogAnalyzer"/>
+		<PackageReference Include="SharpCompress"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<DependentUpon>appsettings.json</DependentUpon>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.Abstractions\PubNet.DocsStorage.Abstractions.csproj"/>
+		<ProjectReference Include="..\..\Storage\PubNet.DocsStorage.LocalFileDocsStorage\PubNet.DocsStorage.LocalFileDocsStorage.csproj"/>
+	</ItemGroup>
+</Project>
