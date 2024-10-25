@@ -30,6 +30,7 @@ jobs:
       id-token: write
 
     strategy:
+      fail-fast: false
       matrix:
         project: [ 'API', 'Worker', 'Frontend' ]
 
