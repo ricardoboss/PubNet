@@ -34,7 +34,12 @@ jobs:
         project: [ 'API', 'Worker', 'Frontend' ]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Checkout target branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
