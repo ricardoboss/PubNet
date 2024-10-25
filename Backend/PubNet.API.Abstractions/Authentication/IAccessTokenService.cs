@@ -1,5 +1,4 @@
 using System.Security.Authentication;
-using PubNet.API.Abstractions.CQRS.Exceptions;
 using PubNet.API.DTO.Authentication;
 using PubNet.Database.Entities.Auth;
 

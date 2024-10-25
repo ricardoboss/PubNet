@@ -44,12 +44,12 @@ public class DartPackageDmo(PubNetContext context, ILogger<DartPackageDmo> logge
 		return version;
 	}
 
-	public async Task RetractAsync(string name, string version, CancellationToken cancellationToken = default)
+	public Task RetractAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
 
-	public async Task DiscontinueAsync(string name, CancellationToken cancellationToken = default)
+	public Task DiscontinueAsync(string name, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

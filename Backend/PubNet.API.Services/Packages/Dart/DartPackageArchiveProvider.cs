@@ -6,7 +6,7 @@ namespace PubNet.API.Services.Packages.Dart;
 
 public class DartPackageArchiveProvider(IHttpContextAccessor contextAccessor, LinkGenerator linkGenerator) : IDartPackageArchiveProvider
 {
-	public async Task<Stream?> GetArchiveContentAsync(string name, string version, CancellationToken cancellationToken = default)
+	public Task<Stream?> GetArchiveContentAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}

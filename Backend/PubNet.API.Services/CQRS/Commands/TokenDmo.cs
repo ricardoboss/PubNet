@@ -1,9 +1,8 @@
 ﻿using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.CQRS.Commands;
-using PubNet.API.Abstractions.CQRS.Exceptions;
+using PubNet.Auth.Models;
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Auth;
-using PubNet.Auth.Models;
 
 namespace PubNet.API.Services.CQRS.Commands;
 

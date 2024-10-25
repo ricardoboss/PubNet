@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using PubNet.Auth.Models;
-using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services.Extensions;
 
