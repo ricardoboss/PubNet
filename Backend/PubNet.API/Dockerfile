@@ -29,7 +29,7 @@ RUN rm -rf /src/.git && rm -rf /src/.gitignore
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "PubNet.API.csproj" --no-build --no-restore -c $BUILD_CONFIGURATION -o /app/publish
+RUN dotnet publish "PubNet.API.csproj" --no-build --nologo -c $BUILD_CONFIGURATION -o /app/publish
 
 FROM base AS final
 WORKDIR /app
