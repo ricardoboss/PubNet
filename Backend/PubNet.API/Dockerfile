@@ -27,11 +27,9 @@ RUN dotnet build "PubNet.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 # git is only required for building
 RUN rm -rf /src/.git && rm -rf /src/.gitignore
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "PubNet.API.csproj" --no-build --nologo -c $BUILD_CONFIGURATION -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "PubNet.API.dll"]

@@ -25,8 +25,6 @@ RUN dotnet build "PubNet.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/build
 # git is only required for building
 RUN rm -rf /src/.git && rm -rf /src/.gitignore
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "PubNet.Worker.csproj" --no-build --nologo -c $BUILD_CONFIGURATION -o /app/publish
 
 FROM base AS final
@@ -42,5 +40,5 @@ RUN git clone https://github.com/flutter/flutter.git -b stable flutter
 ENV PATH="/flutter/flutter/bin/:$PATH"
 
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "PubNet.Worker.dll"]
