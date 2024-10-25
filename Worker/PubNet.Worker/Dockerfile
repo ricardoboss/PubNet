@@ -9,23 +9,12 @@ ARG BUILD_CONFIGURATION=Release
 
 WORKDIR /src
 
-COPY ["Directory.Build.props", "/"]
-COPY ["Directory.Packages.props", "/"]
-COPY ["Worker/PubNet.Worker/PubNet.Worker.csproj", "Worker/PubNet.Worker/"]
-
-RUN dotnet restore "Worker/PubNet.Worker/PubNet.Worker.csproj"
-
 COPY ../ .
 
 WORKDIR "/src/Worker/PubNet.Worker"
 
 RUN dotnet tool restore
-RUN dotnet build "PubNet.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-# git is only required for building
-RUN rm -rf /src/.git && rm -rf /src/.gitignore
-
-RUN dotnet publish "PubNet.Worker.csproj" --no-build --nologo -c $BUILD_CONFIGURATION -o /app/publish
+RUN dotnet publish "PubNet.Worker.csproj" --nologo -c $BUILD_CONFIGURATION -o /app/publish
 
 FROM base AS final
 
