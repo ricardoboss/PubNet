@@ -13,6 +13,7 @@
     <PackageVersion Include="Blism.Language.Yaml" Version="1.1.0" />
     <PackageVersion Include="CliWrap" Version="3.6.6" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageVersion Include="DartLang.PubSpec" Version="2.0.0" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="2.0.0" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="2.0.0" />
     <PackageVersion Include="GitVersion.MsBuild" Version="[5.12.0,6.0.0)" />
