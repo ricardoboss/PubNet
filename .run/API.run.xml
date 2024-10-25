@@ -1,11 +1,12 @@
 ﻿<component name="ProjectRunConfigurationManager">
   <configuration default="false" name="API" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/Backend/PubNet.API/bin/Debug/net8.0/PubNet.API.exe" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/Backend/PubNet.API/bin/Debug/net8.0/PubNet.API" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend/PubNet.API" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <envs>
       <env name="DOTNET_ENVIRONMENT" value="Development" />
+      <env name="ASPNETCORE_URLS" value="http://localhost:5207/" />
     </envs>
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
