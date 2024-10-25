@@ -22,11 +22,14 @@ COPY ../ .
 WORKDIR "/src/Frontend/PubNet.Client.Web"
 
 RUN dotnet tool restore
-RUN dotnet build "PubNet.Client.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "PubNet.Client.Web.csproj"  --no-restore -c $BUILD_CONFIGURATION -o /app/build
+
+# git is only required for building
+RUN rm -rf /src/.git && rm -rf /src/.gitignore
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "PubNet.Client.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "PubNet.Client.Web.csproj" --no-build --no-restore -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
