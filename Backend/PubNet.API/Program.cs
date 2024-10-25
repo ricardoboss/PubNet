@@ -95,7 +95,10 @@ void HandleApiDescriptionToolInvocation()
 {
 	var builder = WebApplication.CreateBuilder(args);
 
+	ConfigureAuthentication(builder);
+
 	ConfigureControllers(builder);
+
 	ConfigureSwagger(builder);
 
 	_ = builder.Build();
