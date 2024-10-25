@@ -3111,13 +3111,6 @@
         },
         "additionalProperties": false
       }
-    },
-    "securitySchemes": {
-      "Bearer": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "Json Web Token"
-      }
     }
   },
   "security": [

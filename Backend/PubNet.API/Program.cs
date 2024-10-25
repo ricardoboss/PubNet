@@ -21,6 +21,7 @@ using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
+using PubNet.API.Helpers;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
 using PubNet.API.Services.Archives;
@@ -42,6 +43,13 @@ using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
 using Serilog;
 using SignedUrl.Extensions;
+
+if (ApiDescriptionToolDetector.IsToolInvocation())
+{
+	HandleApiDescriptionToolInvocation();
+
+	return;
+}
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
@@ -82,6 +90,16 @@ finally
 }
 
 return;
+
+void HandleApiDescriptionToolInvocation()
+{
+	var builder = WebApplication.CreateBuilder(args);
+
+	ConfigureControllers(builder);
+	ConfigureSwagger(builder);
+
+	_ = builder.Build();
+}
 
 void ConfigureServices(WebApplicationBuilder builder)
 {
