@@ -34,15 +34,13 @@ jobs:
         project: [ 'API', 'Worker', 'Frontend' ]
 
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Fetch main branch
+        run: git fetch origin main:main
 
       - name: Log in to the Container registry
         if: github.event_name != 'pull_request'
