@@ -19,6 +19,7 @@ COPY ../ .
 
 WORKDIR "/src/Worker/PubNet.Worker"
 
+RUN dotnet tool restore
 RUN dotnet build "PubNet.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

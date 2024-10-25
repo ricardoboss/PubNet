@@ -21,6 +21,7 @@ COPY ../ .
 
 WORKDIR "/src/Backend/PubNet.API"
 
+RUN dotnet tool restore
 RUN dotnet build "PubNet.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

@@ -21,6 +21,7 @@ COPY ../ .
 
 WORKDIR "/src/Frontend/PubNet.Client.Web"
 
+RUN dotnet tool restore
 RUN dotnet build "PubNet.Client.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
