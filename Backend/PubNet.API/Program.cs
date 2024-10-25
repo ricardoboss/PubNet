@@ -33,7 +33,7 @@ using PubNet.API.Services.CQRS.Queries.Packages;
 using PubNet.API.Services.Guard;
 using PubNet.API.Services.Packages.Dart;
 using PubNet.API.Services.Packages.Nuget;
-using PubNet.PackageStorage.BlobStorage;
+using PubNet.API.Swagger;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
 using PubNet.Database.Context;
@@ -41,6 +41,7 @@ using PubNet.Database.Entities.Auth;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
+using PubNet.PackageStorage.BlobStorage;
 using Serilog;
 using SignedUrl.Extensions;
 
@@ -166,11 +167,13 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen(o =>
 	{
-		o.SwaggerDoc("v1", new()
+		var versionName = $"v{GitVersionInformation.Major}";
+
+		o.SwaggerDoc(versionName, new()
 		{
 			Title = "PubNet API",
 			Description = "An API for Dart and NuGet package hosting",
-			Version = "v1",
+			Version = versionName,
 			License = new()
 			{
 				Name = "AGPL-3.0",
@@ -178,22 +181,19 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 			},
 		});
 
-		o.InferSecuritySchemes();
-
-		o.AddSecurityRequirement(new()
+		var bearerTokenScheme = new OpenApiSecurityScheme
 		{
-			{
-				new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.SecurityScheme,
-						Id = "Bearer",
-					},
-				},
-				Array.Empty<string>()
-			},
-		});
+			Name = JwtBearerDefaults.AuthenticationScheme,
+			Description = "The bearer token used to authenticate requests.",
+			Scheme = JwtBearerDefaults.AuthenticationScheme,
+			Type = SecuritySchemeType.Http,
+			In = ParameterLocation.Header,
+		};
+
+		o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, bearerTokenScheme);
+
+		o.OperationFilter<CommonErrorsOperationFilter>();
+		o.OperationFilter<SecurityRequirementsOperationFilter>();
 	});
 }
 
@@ -256,6 +256,8 @@ void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)
 
 void ConfigureAuthentication(WebApplicationBuilder builder)
 {
+	builder.Services.AddSingleton<BearerEventsHandler>();
+
 	builder.Services
 		.AddAuthentication(o =>
 		{
@@ -265,8 +267,6 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 		})
 		.AddJwtBearer(o =>
 		{
-			o.SaveToken = true;
-
 			o.TokenValidationParameters = new()
 			{
 				ValidIssuer = JwtFactory.GetIssuer(builder.Configuration),
@@ -277,6 +277,8 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 				ValidateLifetime = true,
 				ValidateIssuerSigningKey = true,
 			};
+
+			o.EventsType = typeof(BearerEventsHandler);
 		});
 
 	builder.Services.AddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
@@ -373,8 +375,8 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseSwagger();
 	app.UseSwaggerUI(c =>
 	{
-		c.SwaggerEndpoint("/swagger/v1/swagger.json", "PubNet API v1");
 		c.EnableTryItOutByDefault();
 		c.DisplayOperationId();
+		c.EnablePersistAuthorization();
 	});
 }

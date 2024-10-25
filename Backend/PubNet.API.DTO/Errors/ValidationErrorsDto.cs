@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PubNet.API.DTO;
+namespace PubNet.API.DTO.Errors;
 
 public class ValidationErrorsDto
 {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Attributes;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.Auth;
 

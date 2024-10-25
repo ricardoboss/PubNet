@@ -33,7 +33,7 @@ public class ClaimsPrincipalGuardThrowsBuilder(IGuard guard, ClaimsPrincipal use
 		if (guard.Allows(UserScopesClaim, scope))
 			return;
 
-		throw new UnauthorizedAccessException(message ?? $"Missing claim for: {scope}");
+		throw new MissingScopeException(UserScopesClaim.ToScopes().ToList(), missingScope: scope, message);
 	}
 
 	public void CannotAny(IEnumerable<Scope> scopes, string? message = null)
@@ -42,22 +42,14 @@ public class ClaimsPrincipalGuardThrowsBuilder(IGuard guard, ClaimsPrincipal use
 		if (scopesArray.Any(scope => guard.Allows(UserScopesClaim, scope)))
 			return;
 
-		throw new UnauthorizedAccessException(message ?? $"Missing claim for any of: {string.Join(", ", scopesArray)}");
+		throw new MissingScopeException(UserScopesClaim.ToScopes().ToList(), missingScopes: scopesArray, message);
 	}
 
-	public void HasRole(Role role, string? message = null)
-	{
-		if (guard.Allows(UserRoleClaim, toActAs: role))
-			return;
-
-		throw new UnauthorizedAccessException(message ?? $"Role {UserRoleClaim} is not allowed to perform this action");
-	}
-
-	public void HasntRole(Role role, string? message = null)
+	public void DoesntHaveRole(Role role, string? message = null)
 	{
 		if (!guard.Allows(UserRoleClaim, toActAs: role))
 			return;
 
-		throw new UnauthorizedAccessException(message ?? $"Role {UserRoleClaim} is not allowed to perform this action");
+		throw new InvalidRoleException(UserRoleClaim, role, message);
 	}
 }

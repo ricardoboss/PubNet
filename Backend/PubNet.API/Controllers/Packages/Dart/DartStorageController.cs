@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.Packages.Dart;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.Extensions;

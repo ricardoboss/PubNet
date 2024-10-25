@@ -34,6 +34,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 			Scopes.PersonalAccessTokens.Delete,
 			Scopes.Packages.Dart.Search,
 			Scopes.Packages.Nuget.Search,
+			Scopes.Authors.Delete.Self,
 		];
 
 		var token = await tokenDmo.CreateTokenAsync(
@@ -95,6 +96,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 		Scopes.Packages.Nuget.Delete,
 		Scopes.Packages.Nuget.Search,
 		Scopes.Packages.Nuget.Any,
+		Scopes.Authors.Search,
 		Scopes.Authors.Delete.Self,
 	];
 

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DartLang.PubSpec;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
+using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
@@ -67,9 +68,13 @@ namespace PubNet.API.DTO;
 
 #endregion
 
-#region Other
+#region Errors
 
+[JsonSerializable(typeof(AuthErrorDto))]
 [JsonSerializable(typeof(GenericErrorDto))]
+[JsonSerializable(typeof(InternalServerErrorDto))]
+[JsonSerializable(typeof(InvalidRoleErrorDto))]
+[JsonSerializable(typeof(MissingScopeErrorDto))]
 [JsonSerializable(typeof(ValidationErrorsDto))]
 
 #endregion

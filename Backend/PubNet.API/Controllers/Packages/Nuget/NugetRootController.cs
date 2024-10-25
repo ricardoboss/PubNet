@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Attributes;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 using PubNet.Auth;
 

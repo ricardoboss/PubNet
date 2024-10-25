@@ -4,7 +4,7 @@ using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Attributes;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
 using PubNet.API.Services.Extensions;

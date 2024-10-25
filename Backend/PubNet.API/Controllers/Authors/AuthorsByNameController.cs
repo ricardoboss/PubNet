@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Attributes;
-using PubNet.API.DTO;
 using PubNet.API.DTO.Authors;
+using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
@@ -14,6 +14,7 @@ using PubNet.Auth;
 namespace PubNet.API.Controllers.Authors;
 
 [Route("Authors/{username}")]
+[Authorize]
 [Tags("Authors")]
 public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchiveProvider archiveProvider)
 	: AuthorsController
@@ -39,6 +40,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	}
 
 	[HttpGet("Packages/Dart")]
+	[RequireAnyScope(Scopes.Packages.Dart.Search, Scopes.Packages.Search)]
 	public async Task<DartPackageListDto> GetAuthorDartPackagesAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
@@ -62,6 +64,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	}
 
 	[HttpGet("Packages/Nuget")]
+	[RequireAnyScope(Scopes.Packages.Nuget.Search, Scopes.Packages.Search)]
 	public async Task<NugetPackageListDto> GetAuthorNugetPackagesAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
@@ -85,6 +88,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	}
 
 	[HttpGet("Packages")]
+	[RequireAnyScope(Scopes.Packages.Search)]
 	public async Task<PackageListCollectionDto> GetAuthorPackagesAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
@@ -126,7 +130,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	}
 
 	[HttpDelete]
-	[Authorize, RequireAnyScope(Scopes.Authors.Delete.Self, Scopes.Authors.Delete.Any)]
+	[RequireAnyScope(Scopes.Authors.Delete.Self, Scopes.Authors.Delete.Any)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	public Task<IActionResult> DeleteAuthorAsync(string username, DeleteAuthorDto dto,
 		CancellationToken cancellationToken = default)

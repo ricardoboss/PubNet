@@ -57,6 +57,8 @@ public static class Scopes
 	{
 		private const string Prefix = "author:";
 
+		public const string Search = Prefix + "search";
+
 		public static class Delete
 		{
 			private const string Prefix = Authors.Prefix + "delete:";
