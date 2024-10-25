@@ -18,19 +18,28 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup .NET ${{ matrix.dotnet }}
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet }}
+
       - name: Restore tooling
         run: dotnet tool restore
+
       - name: Restore dependencies
         run: dotnet restore
+
       - name: Check code style
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: dotnet format style --no-restore --verify-no-changes --verbosity normal
+
       - name: Build
         run: dotnet build --no-restore
+
       - name: Test
         run: dotnet test --no-build --verbosity normal
