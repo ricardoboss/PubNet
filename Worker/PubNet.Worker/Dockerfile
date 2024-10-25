@@ -20,7 +20,7 @@ COPY ../ .
 WORKDIR "/src/Worker/PubNet.Worker"
 
 RUN dotnet tool restore
-RUN dotnet build "PubNet.Worker.csproj" --no-restore -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "PubNet.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # git is only required for building
 RUN rm -rf /src/.git && rm -rf /src/.gitignore

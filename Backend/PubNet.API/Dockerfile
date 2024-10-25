@@ -22,7 +22,7 @@ COPY ../ .
 WORKDIR "/src/Backend/PubNet.API"
 
 RUN dotnet tool restore
-RUN dotnet build "PubNet.API.csproj" --no-restore -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "PubNet.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # git is only required for building
 RUN rm -rf /src/.git && rm -rf /src/.gitignore
