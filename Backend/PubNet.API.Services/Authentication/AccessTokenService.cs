@@ -32,8 +32,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 			Scopes.PersonalAccessTokens.Create,
 			Scopes.PersonalAccessTokens.Read,
 			Scopes.PersonalAccessTokens.Delete,
-			Scopes.Packages.Dart.Search,
-			Scopes.Packages.Nuget.Search,
+			Scopes.Packages.Search,
 			Scopes.Authors.Delete.Self,
 		];
 
