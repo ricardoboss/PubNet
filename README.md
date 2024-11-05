@@ -5,6 +5,10 @@
 
 Self-hosted pub.dev alternative.
 
+> [!NOTE]
+> I am currently in the process of rewriting the entire app so it can support Dart _and_ NuGet (C#) packages.
+> If you want to test it, check out the [`multi-package` branch](https://github.com/ricardoboss/PubNet/tree/multi-package).
+
 ## Contents
 
 - [Development](#development)
