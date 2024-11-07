@@ -14,7 +14,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.Ar
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\{id}\Versions\{version}\archive.nupkg
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class ArchiveNupkgRequestBuilder : BaseRequestBuilder
     {
         /// <summary>

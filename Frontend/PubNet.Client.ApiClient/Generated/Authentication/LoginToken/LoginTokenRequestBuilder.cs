@@ -14,7 +14,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.LoginToken
     /// <summary>
     /// Builds and executes requests for operations under \Authentication\LoginToken
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class LoginTokenRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
@@ -74,7 +74,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.LoginToken
             _ = body ?? throw new ArgumentNullException(nameof(body));
             var requestInfo = new RequestInformation(Method.POST, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             requestInfo.SetContentFromParsable(RequestAdapter, "application/json", body);
             return requestInfo;
         }

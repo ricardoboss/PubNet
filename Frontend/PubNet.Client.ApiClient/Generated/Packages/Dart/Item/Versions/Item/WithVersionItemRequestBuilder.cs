@@ -18,7 +18,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\{name}\Versions\{version}
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WithVersionItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The analysisJson property</summary>
@@ -90,7 +90,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <summary>

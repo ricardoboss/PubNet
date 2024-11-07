@@ -21,11 +21,11 @@ public class ApiLoginService(PubNetApiClient apiClient) : ILoginService
 
 			var jwt = JsonWebToken.From(tokenValue);
 
-			return new(jwt);
+			return new LoginSuccessResult(jwt);
 		}
-		catch (GenericErrorDto e) when (e.ResponseStatusCode == 401)
+		catch (AuthErrorDto e)
 		{
-			throw new UnauthorizedAccessException(e.Error?.Message ?? "The given credentials are incorrect");
+			throw new UnauthorizedAccessException(e.Message);
 		}
 		catch (ApiException e)
 		{

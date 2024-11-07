@@ -51,14 +51,14 @@ internal sealed class CommonErrorsOperationFilter : IOperationFilter
 
 		var internalServerErrorResponse = new OpenApiResponse
 		{
-		    Description = "Internal Server Error",
-		    Content = new Dictionary<string, OpenApiMediaType>
-		    {
-		        ["application/json"] = new()
+			Description = "Internal Server Error",
+			Content = new Dictionary<string, OpenApiMediaType>
+			{
+				["application/json"] = new()
 				{
-		            Schema = context.GetOrAddDtoSchema<InternalServerErrorDto>(),
-		        },
-		    },
+					Schema = context.GetOrAddDtoSchema<InternalServerErrorDto>(),
+				},
+			},
 		};
 
 		// _ = operation.Responses.TryAdd("429", tooManyRequestsResponse);

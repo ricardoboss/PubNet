@@ -14,7 +14,7 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart
     /// <summary>
     /// Builds and executes requests for operations under \Authors\{username}\Packages\Dart
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class DartRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
@@ -72,7 +72,7 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <summary>
@@ -84,7 +84,7 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart
         {
             return new global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart.DartRequestBuilder(rawUrl, RequestAdapter);
         }
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         #pragma warning disable CS1591
         public partial class DartRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591

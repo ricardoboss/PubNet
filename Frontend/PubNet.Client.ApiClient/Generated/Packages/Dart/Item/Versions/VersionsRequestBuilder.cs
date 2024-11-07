@@ -12,7 +12,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\{name}\Versions
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class VersionsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the PubNet.Client.ApiClient.Generated.Packages.Dart.item.Versions.item collection</summary>

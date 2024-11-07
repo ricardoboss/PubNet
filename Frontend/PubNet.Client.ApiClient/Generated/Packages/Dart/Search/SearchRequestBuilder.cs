@@ -14,7 +14,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Search
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\Search
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class SearchRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
@@ -70,7 +70,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Search
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <summary>
@@ -82,7 +82,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Search
         {
             return new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Search.SearchRequestBuilder(rawUrl, RequestAdapter);
         }
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         #pragma warning disable CS1591
         public partial class SearchRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591

@@ -16,7 +16,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication
     /// <summary>
     /// Builds and executes requests for operations under \Authentication
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AuthenticationRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The Account property</summary>

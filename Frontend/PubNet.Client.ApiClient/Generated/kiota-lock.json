@@ -1,9 +1,10 @@
 {
-  "descriptionHash": "0C8C8142693509652DD9E01395B60283C2426732798966691C3DD336A49D55ECFE952289C5539C9A2D9239A47B311E255C1511F5D9F1A2357EC17DAC9BDD1756",
+  "descriptionHash": "E33EA8E5F157A77E472F8EFBA4F3ED7526148642F632FA848F640FC5A95CC4F887109D9F52EF1B06982E621410072DBA982877B4A9A1919530097F03B6C8D843",
   "descriptionLocation": "../../../Backend/PubNet.API/PubNet.API.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.18.0",
+  "kiotaVersion": "1.19.1",
   "clientClassName": "PubNetApiClient",
+  "typeAccessModifier": "Public",
   "clientNamespaceName": "PubNet.Client.ApiClient.Generated",
   "language": "CSharp",
   "usesBackingStore": false,
@@ -11,21 +12,13 @@
   "includeAdditionalData": true,
   "disableSSLValidation": false,
   "serializers": [
-    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
-    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
-    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
-    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory"
   ],
   "deserializers": [
-    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
-    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
-    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory"
   ],
   "structuredMimeTypes": [
-    "application/json",
-    "text/plain;q=0.9",
-    "application/x-www-form-urlencoded;q=0.2",
-    "multipart/form-data;q=0.1"
+    "application/json"
   ],
   "includePatterns": [],
   "excludePatterns": [],

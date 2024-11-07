@@ -1347,6 +1347,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -1407,6 +1427,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -1454,6 +1494,26 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error",
@@ -3293,6 +3353,10 @@
         },
         "additionalProperties": false
       },
+      "NotFoundErrorDto": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "NugetAlternatePackageDto": {
         "required": [
           "id"
@@ -3950,6 +4014,33 @@
           }
         },
         "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
       },
       "PubSpec": {
         "required": [

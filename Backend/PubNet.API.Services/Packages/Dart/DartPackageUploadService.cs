@@ -87,7 +87,7 @@ public class DartPackageUploadService(
 			{
 				if (package.Author.Id != pendingArchive.Uploader.Id)
 					throw new UnauthorizedAccessException(
-						"You are not authorized to upload new versions for this package");
+						"You are not authorized to upload new versions for this package as you are not the original author");
 			}
 
 			version = ValidateVersion(package, pubspec);
@@ -114,7 +114,8 @@ public class DartPackageUploadService(
 			await packageDmo.SaveLatestVersionAsync(package, versionEntity, cancellationToken);
 		}
 		else
-			_ = await packageDmo.CreateAsync(pubspec.Name, pendingArchive.Uploader, version, pubspec, cancellationToken);
+			_ = await packageDmo.CreateAsync(pubspec.Name, pendingArchive.Uploader, version, pubspec,
+				cancellationToken);
 
 		await deletePendingArchive();
 
@@ -207,8 +208,8 @@ public class DartPackageUploadService(
 		{
 			case 0:
 				throw new DartPackageVersionAlreadyExistsException(pubspec.Name, version.ToString());
-			case > 0:
-				throw new DartPackageVersionOutdatedException(pubspec.Name, version.ToString());
+			case < 0:
+				throw new DartPackageVersionOutdatedException(pubspec.Name, version.ToString(), latestVersion.ToString());
 		}
 
 		return version;

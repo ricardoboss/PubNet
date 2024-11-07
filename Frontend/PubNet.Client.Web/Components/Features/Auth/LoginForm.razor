@@ -19,10 +19,10 @@
 
 	protected override void OnInitialized()
 	{
-		editContext = new(Model);
+		editContext = new EditContext(Model);
 		editContext.OnValidationRequested += ValidateModel;
 
-		validationMessageStore = new(editContext);
+		validationMessageStore = new ValidationMessageStore(editContext);
 	}
 
 	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)

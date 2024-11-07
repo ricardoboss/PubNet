@@ -120,9 +120,9 @@ public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesSe
 
 			return result;
 		}
-		catch (ApiException e) when (e.ResponseStatusCode == (int)HttpStatusCode.Unauthorized)
+		catch (NotFoundErrorDto)
 		{
-			throw new UnauthorizedAccessException("Authentication is required for this request", e);
+			return null;
 		}
 		catch (ApiException e)
 		{

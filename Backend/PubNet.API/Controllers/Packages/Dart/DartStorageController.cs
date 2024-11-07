@@ -259,6 +259,19 @@ public class DartStorageController(
 				},
 			});
 		}
+		catch (UnauthorizedAccessException e)
+		{
+			logger.LogWarning(e, "Caught author trying to upload a package when it wasn't allowed");
+
+			return Conflict(new GenericErrorDto
+			{
+				Error = new()
+				{
+					Code = "unauthorized-access",
+					Message = e.Message,
+				},
+			});
+		}
 		catch (Exception e)
 		{
 			logger.LogError(e, "Failed to finalize package");
@@ -268,7 +281,7 @@ public class DartStorageController(
 				Error = new()
 				{
 					Code = "internal-server-error",
-					Message = "Failed to finalize package",
+					Message = $"Failed to finalize package: {e.Message}",
 				},
 			});
 		}

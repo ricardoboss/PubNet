@@ -14,7 +14,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Ana
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\{name}\Versions\{version}\analysis.json
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AnalysisJsonRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
@@ -36,6 +36,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Ana
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionAnalysisDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.NotFoundErrorDto">When receiving a 404 status code</exception>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -49,6 +50,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Ana
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
+                { "404", global::PubNet.Client.ApiClient.Generated.Models.NotFoundErrorDto.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionAnalysisDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionAnalysisDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
@@ -66,7 +68,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Ana
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <summary>

@@ -12,7 +12,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Registrations
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\Registrations
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class RegistrationsRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the PubNet.Client.ApiClient.Generated.Packages.Nuget.Registrations.item collection</summary>

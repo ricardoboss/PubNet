@@ -15,7 +15,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class DartRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The Search property</summary>

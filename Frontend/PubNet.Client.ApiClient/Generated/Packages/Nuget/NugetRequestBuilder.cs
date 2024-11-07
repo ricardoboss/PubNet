@@ -18,7 +18,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class NugetRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The autocompleteJson property</summary>

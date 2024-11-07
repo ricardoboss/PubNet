@@ -16,7 +16,7 @@
 
 	<Target Name="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')">
 		<Exec
-			Command="dotnet kiota generate --openapi $(GeneratedClientSpecFile) --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible"
+			Command="dotnet kiota generate --openapi $(GeneratedClientSpecFile) --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --serializer Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory --deserializer Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory --structured-mime-types application/json"
 			WorkingDirectory="$(MSBuildThisFileDirectory)"
 			EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true;KIOTA_TUTORIAL_ENABLED=false"
 		/>

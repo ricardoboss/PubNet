@@ -14,7 +14,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Storage.Item
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\Storage\{pendingId}
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class WithPendingItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
@@ -70,7 +70,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Storage.Item
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <summary>

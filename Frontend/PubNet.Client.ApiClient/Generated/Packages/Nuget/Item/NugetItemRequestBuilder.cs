@@ -13,7 +13,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Nuget\{id}
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class NugetItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The indexJson property</summary>

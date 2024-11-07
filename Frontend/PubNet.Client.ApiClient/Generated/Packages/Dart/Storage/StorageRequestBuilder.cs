@@ -15,7 +15,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Storage
     /// <summary>
     /// Builds and executes requests for operations under \Packages\Dart\Storage
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class StorageRequestBuilder : BaseRequestBuilder
     {
         /// <summary>Gets an item from the PubNet.Client.ApiClient.Generated.Packages.Dart.Storage.item collection</summary>
@@ -87,7 +87,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Storage
 #endif
             var requestInfo = new RequestInformation(Method.POST, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <summary>

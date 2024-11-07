@@ -142,7 +142,6 @@ void ConfigureHttpServices(IHostApplicationBuilder builder)
 	builder.Services.AddResponseCaching();
 
 	builder.Services.AddSingleton<ExceptionFormatterMiddleware>();
-	// builder.Services.AddSingleton<PubClientRewriterMiddleware>();
 }
 
 void ConfigureCors(WebApplicationBuilder builder)
@@ -202,7 +201,8 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 
 void ConfigureControllers(IHostApplicationBuilder builder)
 {
-	builder.Services.AddControllers()
+	builder.Services
+		.AddControllers()
 		.AddJsonOptions(options =>
 		{
 			options.JsonSerializerOptions.AddDtoSourceGenerators();

@@ -10,7 +10,7 @@ public class DartPackageVersionOutdatedException : InvalidDartPackageException
 	{
 	}
 
-	public DartPackageVersionOutdatedException(string packageName, string packageVersion) : base($"Package {packageName} version {packageVersion} is older than the latest version")
+	public DartPackageVersionOutdatedException(string packageName, string packageVersion, string latestVersion) : base($"Package {packageName} version {packageVersion} is older than the latest version ({latestVersion})")
 	{
 	}
 }

@@ -15,7 +15,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
     /// <summary>
     /// Builds and executes requests for operations under \Authentication\PersonalAccessToken
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PersonalAccessTokenRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The AllowedScopes property</summary>
@@ -149,7 +149,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
@@ -167,7 +167,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
             _ = body ?? throw new ArgumentNullException(nameof(body));
             var requestInfo = new RequestInformation(Method.POST, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
-            requestInfo.Headers.TryAdd("Accept", "application/json, text/plain;q=0.9");
+            requestInfo.Headers.TryAdd("Accept", "application/json");
             requestInfo.SetContentFromParsable(RequestAdapter, "application/json", body);
             return requestInfo;
         }
@@ -180,7 +180,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
         {
             return new global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder(rawUrl, RequestAdapter);
         }
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         #pragma warning disable CS1591
         public partial class PersonalAccessTokenRequestBuilderDeleteQueryParameters 
         #pragma warning restore CS1591
@@ -195,7 +195,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken
             public string TokenId { get; set; }
 #endif
         }
-        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         #pragma warning disable CS1591
         public partial class PersonalAccessTokenRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
