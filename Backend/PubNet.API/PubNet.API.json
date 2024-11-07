@@ -2882,6 +2882,33 @@
         },
         "additionalProperties": false
       },
+      "BigInteger": {
+        "type": "object",
+        "properties": {
+          "isPowerOfTwo": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isZero": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isOne": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isEven": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "sign": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateAccountDto": {
         "required": [
           "email",
@@ -3919,10 +3946,7 @@
             "nullable": true
           },
           "numericValue": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true,
-            "readOnly": true
+            "$ref": "#/components/schemas/BigInteger"
           }
         },
         "additionalProperties": false
@@ -4056,18 +4080,13 @@
         "type": "object",
         "properties": {
           "major": {
-            "type": "integer",
-            "format": "int32"
+            "$ref": "#/components/schemas/BigInteger"
           },
           "minor": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
+            "$ref": "#/components/schemas/BigInteger"
           },
           "patch": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
+            "$ref": "#/components/schemas/BigInteger"
           },
           "prerelease": {
             "type": "string",
@@ -4089,12 +4108,6 @@
           "isRelease": {
             "type": "boolean",
             "readOnly": true
-          },
-          "build": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true,
-            "deprecated": true
           },
           "metadata": {
             "type": "string",

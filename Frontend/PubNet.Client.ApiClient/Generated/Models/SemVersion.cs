@@ -12,21 +12,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class SemVersion : IParsable
     #pragma warning restore CS1591
     {
-        /// <summary>The build property</summary>
-        [Obsolete("")]
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Build { get; private set; }
-#nullable restore
-#else
-        public string Build { get; private set; }
-#endif
         /// <summary>The isPrerelease property</summary>
         public bool? IsPrerelease { get; private set; }
         /// <summary>The isRelease property</summary>
         public bool? IsRelease { get; private set; }
         /// <summary>The major property</summary>
-        public int? Major { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger? Major { get; set; }
+#nullable restore
+#else
+        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger Major { get; set; }
+#endif
         /// <summary>The metadata property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -44,9 +41,21 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public List<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier> MetadataIdentifiers { get; private set; }
 #endif
         /// <summary>The minor property</summary>
-        public int? Minor { get; private set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger? Minor { get; set; }
+#nullable restore
+#else
+        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger Minor { get; set; }
+#endif
         /// <summary>The patch property</summary>
-        public int? Patch { get; private set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger? Patch { get; set; }
+#nullable restore
+#else
+        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger Patch { get; set; }
+#endif
         /// <summary>The prerelease property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -81,14 +90,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "build", n => { Build = n.GetStringValue(); } },
                 { "isPrerelease", n => { IsPrerelease = n.GetBoolValue(); } },
                 { "isRelease", n => { IsRelease = n.GetBoolValue(); } },
-                { "major", n => { Major = n.GetIntValue(); } },
+                { "major", n => { Major = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>(global::PubNet.Client.ApiClient.Generated.Models.BigInteger.CreateFromDiscriminatorValue); } },
                 { "metadata", n => { Metadata = n.GetStringValue(); } },
                 { "metadataIdentifiers", n => { MetadataIdentifiers = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier>(global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier.CreateFromDiscriminatorValue)?.AsList(); } },
-                { "minor", n => { Minor = n.GetIntValue(); } },
-                { "patch", n => { Patch = n.GetIntValue(); } },
+                { "minor", n => { Minor = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>(global::PubNet.Client.ApiClient.Generated.Models.BigInteger.CreateFromDiscriminatorValue); } },
+                { "patch", n => { Patch = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>(global::PubNet.Client.ApiClient.Generated.Models.BigInteger.CreateFromDiscriminatorValue); } },
                 { "prerelease", n => { Prerelease = n.GetStringValue(); } },
                 { "prereleaseIdentifiers", n => { PrereleaseIdentifiers = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier>(global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier.CreateFromDiscriminatorValue)?.AsList(); } },
             };
@@ -100,7 +108,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteIntValue("major", Major);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("major", Major);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("minor", Minor);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("patch", Patch);
         }
     }
 }

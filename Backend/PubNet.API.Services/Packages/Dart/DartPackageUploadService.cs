@@ -131,7 +131,7 @@ public class DartPackageUploadService(
 
 			await using var pubspecStream = entry.OpenRead();
 
-			return await PubSpecYamlConverter.DeserializeAsync(pubspecStream, cancellationToken);
+			return await PubSpecYamlConverter.DeserializeAsync(pubspecStream, leaveOpen: false, cancellationToken);
 		}
 
 		throw new InvalidDartPackageException("Package does not contain a pubspec.yaml file or it could not be read");

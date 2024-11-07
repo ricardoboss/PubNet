@@ -9,34 +9,28 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     #pragma warning disable CS1591
-    public partial class PrereleaseIdentifier : IParsable
+    public partial class BigInteger : IParsable
     #pragma warning restore CS1591
     {
-        /// <summary>The numericValue property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger? NumericValue { get; set; }
-#nullable restore
-#else
-        public global::PubNet.Client.ApiClient.Generated.Models.BigInteger NumericValue { get; set; }
-#endif
-        /// <summary>The value property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Value { get; set; }
-#nullable restore
-#else
-        public string Value { get; set; }
-#endif
+        /// <summary>The isEven property</summary>
+        public bool? IsEven { get; private set; }
+        /// <summary>The isOne property</summary>
+        public bool? IsOne { get; private set; }
+        /// <summary>The isPowerOfTwo property</summary>
+        public bool? IsPowerOfTwo { get; private set; }
+        /// <summary>The isZero property</summary>
+        public bool? IsZero { get; private set; }
+        /// <summary>The sign property</summary>
+        public int? Sign { get; private set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.BigInteger"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::PubNet.Client.ApiClient.Generated.Models.BigInteger CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier();
+            return new global::PubNet.Client.ApiClient.Generated.Models.BigInteger();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -46,8 +40,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "numericValue", n => { NumericValue = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>(global::PubNet.Client.ApiClient.Generated.Models.BigInteger.CreateFromDiscriminatorValue); } },
-                { "value", n => { Value = n.GetStringValue(); } },
+                { "isEven", n => { IsEven = n.GetBoolValue(); } },
+                { "isOne", n => { IsOne = n.GetBoolValue(); } },
+                { "isPowerOfTwo", n => { IsPowerOfTwo = n.GetBoolValue(); } },
+                { "isZero", n => { IsZero = n.GetBoolValue(); } },
+                { "sign", n => { Sign = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -57,8 +54,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("numericValue", NumericValue);
-            writer.WriteStringValue("value", Value);
         }
     }
 }
