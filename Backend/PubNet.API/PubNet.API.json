@@ -3075,6 +3075,7 @@
       },
       "DartPackageDto": {
         "required": [
+          "author",
           "latest",
           "name",
           "type",
@@ -3083,6 +3084,10 @@
         "type": "object",
         "properties": {
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "author": {
             "type": "string",
             "nullable": true
           },
@@ -3560,6 +3565,7 @@
       },
       "NugetPackageDto": {
         "required": [
+          "author",
           "latest",
           "name",
           "type",
@@ -3568,6 +3574,10 @@
         "type": "object",
         "properties": {
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "author": {
             "type": "string",
             "nullable": true
           },

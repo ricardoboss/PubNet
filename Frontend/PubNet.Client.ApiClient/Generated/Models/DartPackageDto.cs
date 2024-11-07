@@ -12,6 +12,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class DartPackageDto : IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>The author property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Author { get; set; }
+#nullable restore
+#else
+        public string Author { get; set; }
+#endif
         /// <summary>The isDiscontinued property</summary>
         public bool? IsDiscontinued { get; set; }
         /// <summary>The latest property</summary>
@@ -66,6 +74,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "author", n => { Author = n.GetStringValue(); } },
                 { "isDiscontinued", n => { IsDiscontinued = n.GetBoolValue(); } },
                 { "latest", n => { Latest = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto.CreateFromDiscriminatorValue); } },
                 { "name", n => { Name = n.GetStringValue(); } },
@@ -81,6 +90,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("author", Author);
             writer.WriteBoolValue("isDiscontinued", IsDiscontinued);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>("latest", Latest);
             writer.WriteStringValue("name", Name);

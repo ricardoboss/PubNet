@@ -4,6 +4,8 @@ public abstract class PackageDto<TVersionDto> where TVersionDto : PackageVersion
 {
 	public required string Name { get; init; }
 
+	public required string Author { get; init; }
+
 	public required PackageType Type { get; init; }
 
 	public required TVersionDto? Latest { get; init; }

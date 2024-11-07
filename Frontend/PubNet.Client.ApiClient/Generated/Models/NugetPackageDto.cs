@@ -12,6 +12,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class NugetPackageDto : IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>The author property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Author { get; set; }
+#nullable restore
+#else
+        public string Author { get; set; }
+#endif
         /// <summary>The latest property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -56,6 +64,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "author", n => { Author = n.GetStringValue(); } },
                 { "latest", n => { Latest = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto.CreateFromDiscriminatorValue); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
@@ -69,6 +78,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("author", Author);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>("latest", Latest);
             writer.WriteStringValue("name", Name);
             writer.WriteIntValue("type", Type);

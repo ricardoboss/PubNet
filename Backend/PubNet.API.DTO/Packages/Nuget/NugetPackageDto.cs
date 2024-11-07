@@ -14,9 +14,10 @@ public class NugetPackageDto : PackageDto<NugetPackageVersionDto>
 			? package.Versions.Select(NugetPackageVersionDto.MapFrom).ToList()
 			: null;
 
-		return new()
+		return new NugetPackageDto
 		{
 			Name = package.Name,
+			Author = package.Author.UserName,
 			Latest = latestVersion,
 			Versions = versions,
 			Type = PackageType.Nuget,

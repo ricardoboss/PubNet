@@ -11,6 +11,7 @@
 	[Parameter]
 	public string? Version { get; set; }
 
+	private DartPackageDto? package;
 	private DartPackageVersionDto? packageVersion;
 	private DartPackageVersionAnalysisDto? analysis;
 
@@ -25,7 +26,10 @@
 	{
 		try
 		{
-			packageVersion = await DartPackagesService.GetPackageVersionAsync(Name, Version, cancellationToken);
+			package = await DartPackagesService.GetPackageAsync(Name, cancellationToken);
+
+			if (package is not null)
+				packageVersion = await DartPackagesService.GetPackageVersionAsync(Name, Version, cancellationToken);
 		}
 		finally
 		{
@@ -47,36 +51,60 @@
 
 }
 
-@if (packageVersion is null)
+@if (package is null || packageVersion is null)
 {
 	<MudProgressCircular Indeterminate/>
 }
 else
 {
-	<MudText Typo="Typo.h3">@packageVersion.Pubspec!.Name @packageVersion.Version</MudText>
+	<MudText Typo="Typo.h3">@package.Name @packageVersion.Version</MudText>
 
-	<MudStack Row>
-		<MudStack>
+	<MudText Typo="Typo.subtitle1">
+		created by <MudLink Href="@($"/author/{package.Author}")">@package.Author</MudLink>
+		at <em>@packageVersion.PublishedAt</em>
+	</MudText>
+
+	<MudStack Row Spacing="5" Class="mt-3">
+		<MudStack Spacing="5" Class="flex-grow-1">
 			<!-- Badges -->
-			<!-- Actions -->
-			@if (analysis?.ReadmeText is not null)
-			{
-				<Markdown Content="@analysis.ReadmeText"/>
-			}
-			else if (analysis is not null)
-			{
-				<MudText Typo="Typo.body1">No README found</MudText>
-			}
-			else
-			{
-				<MudText Typo="Typo.body1">Analysis not completed yet.</MudText>
-			}
+
+			<MudTabs Rounded HideSlider PanelClass="mt-5 rounded overflow-x-auto">
+				<MudTabPanel Text="README">
+					@if (analysis?.ReadmeText is not null)
+					{
+						<Markdown Content="@analysis.ReadmeText"/>
+					}
+					else if (analysis is not null)
+					{
+						<MudText Typo="Typo.body1">No README found</MudText>
+					}
+					else
+					{
+						<MudText Typo="Typo.body1">Analysis not completed yet.</MudText>
+					}
+				</MudTabPanel>
+			</MudTabs>
 		</MudStack>
-		<MudStack>
-			<!-- Points -->
-			<!-- Metadata -->
-			<!-- Dependencies -->
-			<!-- Dev Dependencies -->
+
+		<MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.None">
+			<MudText Typo="Typo.h5">Points</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.h5">Description</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.h5">Dependencies</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.h5">License</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.h5">Dependents</MudText>
+
 		</MudStack>
 	</MudStack>
 }
