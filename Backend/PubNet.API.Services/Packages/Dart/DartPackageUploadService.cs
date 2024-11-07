@@ -131,10 +131,7 @@ public class DartPackageUploadService(
 
 			await using var pubspecStream = entry.OpenRead();
 
-			var pubspecReader = new StreamReader(pubspecStream);
-			var pubspecYaml = await pubspecReader.ReadToEndAsync(cancellationToken);
-
-			return PubSpecYamlSerializer.Deserialize(pubspecYaml);
+			return await PubSpecYamlConverter.DeserializeAsync(pubspecStream, cancellationToken);
 		}
 
 		throw new InvalidDartPackageException("Package does not contain a pubspec.yaml file or it could not be read");
@@ -176,9 +173,6 @@ public class DartPackageUploadService(
 			default:
 				throw new NotSupportedException($"Unsupported archive URI scheme: {archiveUri.Scheme}");
 		}
-
-		// var archiveMemoryStream = new MemoryStream();
-		// await archiveStream.CopyToAsync(archiveMemoryStream, cancellationToken);
 
 		return (archiveStream, deleteAction);
 	}

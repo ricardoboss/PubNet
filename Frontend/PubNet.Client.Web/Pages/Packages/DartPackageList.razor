@@ -1,0 +1,40 @@
+@page "/Packages/Dart"
+
+@inject IDartPackagesService DartPackagesService
+
+@code {
+
+	private DartPackageListDto? dartPackages;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await LoadPackages(default);
+	}
+
+	private async Task LoadPackages(CancellationToken cancellationToken)
+	{
+		try
+		{
+			dartPackages = await DartPackagesService
+				.GetPackages()
+				.RunAsync(cancellationToken);
+		}
+		finally
+		{
+			StateHasChanged();
+		}
+	}
+}
+
+<PageTitle>Dart Packages | PubNet</PageTitle>
+
+@if (dartPackages is null)
+{
+	<MudProgressCircular Indeterminate/>
+}
+else
+{
+	<DartPackagesTable PackageList="dartPackages"/>
+}

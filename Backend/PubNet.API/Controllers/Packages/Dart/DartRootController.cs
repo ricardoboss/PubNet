@@ -17,7 +17,7 @@ namespace PubNet.API.Controllers.Packages.Dart;
 public class DartRootController(IAuthProvider authProvider, IDartPackageUploadService uploadService, IDartPackageDao packageDao) : DartController
 {
 	[HttpGet("Search")]
-	[Authorize, RequireAnyScope(Scopes.Packages.Dart.Search, Scopes.Packages.Search)]
+	[RequireAnyScope(Scopes.Packages.Dart.Search, Scopes.Packages.Search)]
 	[ProducesResponseType<DartPackageListDto>(StatusCodes.Status200OK)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
 	public async Task<DartPackageListDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
@@ -26,7 +26,7 @@ public class DartRootController(IAuthProvider authProvider, IDartPackageUploadSe
 	}
 
 	[HttpGet("Versions/New")]
-	[Authorize, RequireScope(Scopes.Packages.Dart.New)]
+	[RequireScope(Scopes.Packages.Dart.New)]
 	[ProducesResponseType<DartArchiveUploadInformationDto>(StatusCodes.Status200OK)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
 	public async Task<DartArchiveUploadInformationDto> CreateNewAsync(CancellationToken cancellationToken = default)

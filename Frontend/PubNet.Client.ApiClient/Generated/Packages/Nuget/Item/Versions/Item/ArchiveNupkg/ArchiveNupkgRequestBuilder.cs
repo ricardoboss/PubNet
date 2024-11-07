@@ -9,33 +9,34 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupkg
+namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.ArchiveNupkg
 {
     /// <summary>
-    /// Builds and executes requests for operations under \Packages\Nuget\{id}\{version}\archive.nupkg
+    /// Builds and executes requests for operations under \Packages\Nuget\{id}\Versions\{version}\archive.nupkg
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class ArchiveNupkgRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ArchiveNupkgRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/{id}/{version}/archive.nupkg", pathParameters)
+        public ArchiveNupkgRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/{id}/Versions/{version}/archive.nupkg", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ArchiveNupkgRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/{id}/{version}/archive.nupkg", rawUrl)
+        public ArchiveNupkgRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Nuget/{id}/Versions/{version}/archive.nupkg", rawUrl)
         {
         }
         /// <returns>A <see cref="Stream"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto">When receiving a 460 status code</exception>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -49,6 +50,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupk
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
+                { "460", global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendPrimitiveAsync<Stream>(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
@@ -72,11 +74,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupk
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder WithUrl(string rawUrl)
+        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder(rawUrl, RequestAdapter);
+            return new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.Item.ArchiveNupkg.ArchiveNupkgRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }

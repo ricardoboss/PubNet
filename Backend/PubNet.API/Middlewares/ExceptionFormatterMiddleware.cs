@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Security.Authentication;
 using PubNet.API.Abstractions;
 using PubNet.API.DTO;
@@ -11,7 +10,6 @@ namespace PubNet.API.Middlewares;
 
 public class ExceptionFormatterMiddleware : IMiddleware
 {
-	[DebuggerStepThrough]
 	public async Task InvokeAsync(HttpContext context, RequestDelegate next)
 	{
 		try

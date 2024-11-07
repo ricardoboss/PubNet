@@ -198,6 +198,9 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "pat:create"
         ]
       },
       "get": {
@@ -280,6 +283,11 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "pat:read"
+          ]
         ]
       },
       "delete": {
@@ -344,6 +352,9 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "pat:delete"
         ]
       }
     },
@@ -427,6 +438,9 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "pat:create"
         ]
       }
     },
@@ -806,6 +820,12 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "author:delete:self",
+            "author:delete:*"
+          ]
         ]
       }
     },
@@ -822,6 +842,29 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -890,6 +933,12 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:dart:search",
+            "packages:search"
+          ]
         ]
       }
     },
@@ -906,6 +955,29 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -974,6 +1046,12 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
         ]
       }
     },
@@ -1058,6 +1136,11 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:search"
+          ]
         ]
       }
     },
@@ -1157,10 +1240,70 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "author:search"
         ]
       }
     },
-    "/Packages/Dart/{name}/{version}/analysis.json": {
+    "/Packages/Dart/{name}/Versions/{version}": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageVersionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageVersionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageVersionDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Versions/{version}/analysis.json": {
       "get": {
         "tags": [
           "Dart"
@@ -1217,7 +1360,7 @@
         }
       }
     },
-    "/Packages/Dart/{name}/{version}/archive.tar.gz": {
+    "/Packages/Dart/{name}/Versions/{version}/archive.tar.gz": {
       "get": {
         "tags": [
           "Dart"
@@ -1277,7 +1420,7 @@
         }
       }
     },
-    "/Packages/Dart/{name}/{version}/Docs/{path}": {
+    "/Packages/Dart/{name}/Versions/{version}/Docs/{path}": {
       "get": {
         "tags": [
           "Dart"
@@ -1325,7 +1468,7 @@
         }
       }
     },
-    "/Packages/Dart/{name}/{version}/Retract": {
+    "/Packages/Dart/{name}/Versions/{version}/Retract": {
       "patch": {
         "tags": [
           "Dart"
@@ -1414,6 +1557,9 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "packages:dart:retract"
         ]
       }
     },
@@ -1463,26 +1609,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          },
           "460": {
             "description": "Missing required scope",
             "content": {
@@ -1494,10 +1620,8 @@
             }
           }
         },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
+        "x-required-scopes": [
+          "packages:dart:discontinue"
         ]
       }
     },
@@ -1651,16 +1775,6 @@
               }
             }
           },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          },
           "460": {
             "description": "Missing required scope",
             "content": {
@@ -1672,10 +1786,11 @@
             }
           }
         },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
+        "x-any-of-required-scopes": [
+          [
+            "packages:dart:search",
+            "packages:search"
+          ]
         ]
       }
     },
@@ -1735,16 +1850,6 @@
               }
             }
           },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          },
           "460": {
             "description": "Missing required scope",
             "content": {
@@ -1756,10 +1861,8 @@
             }
           }
         },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
+        "x-required-scopes": [
+          "packages:dart:new"
         ]
       }
     },
@@ -2020,7 +2123,7 @@
         }
       }
     },
-    "/Packages/Nuget/{id}/{version}/archive.nupkg": {
+    "/Packages/Nuget/{id}/Versions/{version}": {
       "get": {
         "tags": [
           "Nuget"
@@ -2045,7 +2148,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageVersionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageVersionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageVersionDto"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error",
@@ -2056,11 +2176,25 @@
                 }
               }
             }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
-      }
-    },
-    "/Packages/Nuget/{id}/{version}": {
+        },
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
+      },
       "delete": {
         "tags": [
           "Nuget"
@@ -2132,6 +2266,71 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "packages:nuget:delete"
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
+      }
+    },
+    "/Packages/Nuget/{id}/Versions/{version}/archive.nupkg": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
         ]
       }
     },
@@ -2416,6 +2615,12 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
         ]
       }
     },
@@ -2588,6 +2793,9 @@
           {
             "Bearer": [ ]
           }
+        ],
+        "x-required-scopes": [
+          "packages:search"
         ]
       }
     }
@@ -2837,29 +3045,13 @@
         "additionalProperties": false
       },
       "DartPackageVersionAnalysisDto": {
-        "required": [
-          "packageName",
-          "packageVersion"
-        ],
         "type": "object",
         "properties": {
-          "packageName": {
-            "type": "string",
-            "nullable": true
-          },
-          "packageVersion": {
-            "type": "string",
-            "nullable": true
-          },
           "formatted": {
             "type": "boolean",
             "nullable": true
           },
           "documentationGenerated": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "readmeFound": {
             "type": "boolean",
             "nullable": true
           },

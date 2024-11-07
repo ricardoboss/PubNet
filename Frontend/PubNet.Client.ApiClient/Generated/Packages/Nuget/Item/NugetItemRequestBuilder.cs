@@ -3,7 +3,7 @@
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson;
-using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item;
+using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,17 +21,10 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Item
         {
             get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.IndexJson.IndexJsonRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>Gets an item from the PubNet.Client.ApiClient.Generated.Packages.Nuget.item.item collection</summary>
-        /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.WithVersionItemRequestBuilder"/></returns>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.WithVersionItemRequestBuilder this[string position]
+        /// <summary>The Versions property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.VersionsRequestBuilder Versions
         {
-            get
-            {
-                var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("version", position);
-                return new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Item.WithVersionItemRequestBuilder(urlTplParams, RequestAdapter);
-            }
+            get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.Versions.VersionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Item.NugetItemRequestBuilder"/> and sets the default values.

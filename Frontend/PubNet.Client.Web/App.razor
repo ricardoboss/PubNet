@@ -4,7 +4,7 @@
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 				<NotAuthorized>
-					<RedirectToLogin/>
+					<RedirectToPage Page="/Login"/>
 				</NotAuthorized>
 			</AuthorizeRouteView>
 		</Found>

@@ -9,28 +9,28 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson
+namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.AnalysisJson
 {
     /// <summary>
-    /// Builds and executes requests for operations under \Packages\Dart\{name}\{version}\analysis.json
+    /// Builds and executes requests for operations under \Packages\Dart\{name}\Versions\{version}\analysis.json
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class AnalysisJsonRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson.AnalysisJsonRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.AnalysisJson.AnalysisJsonRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AnalysisJsonRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/analysis.json", pathParameters)
+        public AnalysisJsonRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/Versions/{version}/analysis.json", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson.AnalysisJsonRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.AnalysisJson.AnalysisJsonRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AnalysisJsonRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/analysis.json", rawUrl)
+        public AnalysisJsonRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/Versions/{version}/analysis.json", rawUrl)
         {
         }
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionAnalysisDto"/></returns>
@@ -72,11 +72,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson.AnalysisJsonRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.AnalysisJson.AnalysisJsonRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson.AnalysisJsonRequestBuilder WithUrl(string rawUrl)
+        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.AnalysisJson.AnalysisJsonRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.AnalysisJson.AnalysisJsonRequestBuilder(rawUrl, RequestAdapter);
+            return new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.AnalysisJson.AnalysisJsonRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }

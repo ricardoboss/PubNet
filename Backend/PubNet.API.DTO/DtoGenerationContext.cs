@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DartLang.PubSpec;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
 using PubNet.API.DTO.Errors;
@@ -36,7 +35,6 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(DartArchiveUploadInformationDto))]
 [JsonSerializable(typeof(DartPackageDto))]
 [JsonSerializable(typeof(DartPackageVersionDto))]
-[JsonSerializable(typeof(PubSpec))]
 [JsonSerializable(typeof(DartSuccessDto))]
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
 [JsonSerializable(typeof(DartPackageListDto))]

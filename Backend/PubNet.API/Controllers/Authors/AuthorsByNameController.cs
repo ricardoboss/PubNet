@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Attributes;
@@ -41,8 +42,8 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 
 	[HttpGet("Packages/Dart")]
 	[RequireAnyScope(Scopes.Packages.Dart.Search, Scopes.Packages.Search)]
-	public async Task<DartPackageListDto> GetAuthorDartPackagesAsync(string username,
-		CancellationToken cancellationToken = default)
+	public async Task<DartPackageListDto> GetAuthorDartPackagesAsync(string username, string? q = null,
+		int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
@@ -52,21 +53,33 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 				Packages = Array.Empty<DartPackageDto>(),
 			};
 
-		var dartPackageDtos = author.DartPackages
-			.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash))
-			.ToList();
+		var packages = author.DartPackages.AsQueryable();
+
+		if (q is not null)
+			packages = packages.Where(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase));
+
+		var filteredCount = packages.Count();
+
+		if (skip is not null)
+			packages = packages.Skip(skip.Value);
+
+		if (take is not null)
+			packages = packages.Take(take.Value);
+
+		var searchResults = packages.ToList();
+		var packageDtos = searchResults.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash));
 
 		return new()
 		{
-			TotalHits = author.DartPackages.Count,
-			Packages = dartPackageDtos,
+			TotalHits = filteredCount,
+			Packages = packageDtos,
 		};
 	}
 
 	[HttpGet("Packages/Nuget")]
 	[RequireAnyScope(Scopes.Packages.Nuget.Search, Scopes.Packages.Search)]
-	public async Task<NugetPackageListDto> GetAuthorNugetPackagesAsync(string username,
-		CancellationToken cancellationToken = default)
+	public async Task<NugetPackageListDto> GetAuthorNugetPackagesAsync(string username, string? q = null,
+		int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
@@ -76,14 +89,26 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 				Packages = Array.Empty<NugetPackageDto>(),
 			};
 
-		var nugetPackageDtos = author.NugetPackages
-			.Select(p => NugetPackageDto.MapFrom(p))
-			.ToList();
+		var packages = author.NugetPackages.AsQueryable();
+
+		if (q is not null)
+			packages = packages.Where(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase));
+
+		var filteredCount = await packages.CountAsync(cancellationToken);
+
+		if (skip is not null)
+			packages = packages.Skip(skip.Value);
+
+		if (take is not null)
+			packages = packages.Take(take.Value);
+
+		var searchResults = await packages.ToListAsync(cancellationToken);
+		var packageDtos = searchResults.Select(p => NugetPackageDto.MapFrom(p));
 
 		return new()
 		{
-			TotalHits = author.NugetPackages.Count,
-			Packages = nugetPackageDtos,
+			TotalHits = filteredCount,
+			Packages = packageDtos,
 		};
 	}
 

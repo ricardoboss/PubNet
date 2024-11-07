@@ -1,0 +1,22 @@
+@code {
+
+	[Parameter, EditorRequired]
+	public required string Content { get; set; }
+
+	private MarkupString? renderedContent;
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		renderedContent = new MarkupString(Markdig.Markdown.ToHtml(Content));
+	}
+
+}
+
+<div class="markdown">
+	@if (renderedContent is not null)
+	{
+		@renderedContent
+	}
+</div>

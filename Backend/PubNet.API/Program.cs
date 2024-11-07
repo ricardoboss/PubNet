@@ -18,6 +18,7 @@ using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Abstractions.Packages.Dart;
+using PubNet.API.Abstractions.Packages.Dart.Docs;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
@@ -123,6 +124,8 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 	ConfigureDartServices(builder);
 
+	ConfigureCommonServices(builder);
+
 	ConfigureControllers(builder);
 
 	ConfigureSwagger(builder);
@@ -218,6 +221,13 @@ void ConfigureDartServices(IHostApplicationBuilder builder)
 {
 	builder.Services.AddScoped<IDartPackageUploadService, DartPackageUploadService>();
 	builder.Services.AddScoped<IDartPackageArchiveProvider, DartPackageArchiveProvider>();
+	builder.Services.AddScoped<IDartPackageVersionAnalysisProvider, DartPackageVersionAnalysisProvider>();
+	builder.Services.AddScoped<IDartPackageVersionDocsProviderFactory, DartPackageVersionDocsProviderFactory>();
+}
+
+void ConfigureCommonServices(IHostApplicationBuilder builder)
+{
+	builder.Services.AddScoped<IMimeTypeProvider, AspNetMimeTypeProvider>();
 }
 
 void ConfigurePackageStorage(IHostApplicationBuilder builder)

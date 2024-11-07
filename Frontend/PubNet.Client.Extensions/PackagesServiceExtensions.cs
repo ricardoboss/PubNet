@@ -4,8 +4,9 @@ namespace PubNet.Client.Extensions;
 
 public static class PackagesServiceExtensions
 {
-	public static IPackagesQueryBuilder<TPackage, TPackageList> GetPackages<TPackage, TPackageList>(this IPackagesService<TPackage, TPackageList> service)
+	public static IPackagesQueryBuilder<TPackage, TPackageVersion, TPackageList> GetPackages<TPackage, TPackageVersion, TPackageList>(
+		this IPackagesService<TPackage, TPackageVersion, TPackageList> service)
 	{
-		return new DefaultPackagesQueryBuilder<TPackage, TPackageList>(service);
+		return new DefaultPackagesQueryBuilder<TPackage, TPackageVersion, TPackageList>(service);
 	}
 }

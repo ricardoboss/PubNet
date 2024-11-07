@@ -18,24 +18,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public bool? DocumentationGenerated { get; set; }
         /// <summary>The formatted property</summary>
         public bool? Formatted { get; set; }
-        /// <summary>The packageName property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? PackageName { get; set; }
-#nullable restore
-#else
-        public string PackageName { get; set; }
-#endif
-        /// <summary>The packageVersion property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? PackageVersion { get; set; }
-#nullable restore
-#else
-        public string PackageVersion { get; set; }
-#endif
-        /// <summary>The readmeFound property</summary>
-        public bool? ReadmeFound { get; set; }
         /// <summary>The readmeText property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -65,9 +47,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "completedAt", n => { CompletedAt = n.GetDateTimeOffsetValue(); } },
                 { "documentationGenerated", n => { DocumentationGenerated = n.GetBoolValue(); } },
                 { "formatted", n => { Formatted = n.GetBoolValue(); } },
-                { "packageName", n => { PackageName = n.GetStringValue(); } },
-                { "packageVersion", n => { PackageVersion = n.GetStringValue(); } },
-                { "readmeFound", n => { ReadmeFound = n.GetBoolValue(); } },
                 { "readmeText", n => { ReadmeText = n.GetStringValue(); } },
             };
         }
@@ -81,9 +60,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteDateTimeOffsetValue("completedAt", CompletedAt);
             writer.WriteBoolValue("documentationGenerated", DocumentationGenerated);
             writer.WriteBoolValue("formatted", Formatted);
-            writer.WriteStringValue("packageName", PackageName);
-            writer.WriteStringValue("packageVersion", PackageVersion);
-            writer.WriteBoolValue("readmeFound", ReadmeFound);
             writer.WriteStringValue("readmeText", ReadmeText);
         }
     }

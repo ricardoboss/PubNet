@@ -15,8 +15,12 @@
 			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
-			<MudTh scope="row">@context.Name</MudTh>
-			<MudTd>@context.Latest?.Version</MudTd>
+			<MudTh scope="row">
+				<MudLink Href="@($"/dart/{context.Name}")">@context.Name</MudLink>
+			</MudTh>
+			<MudTd>
+				<MudLink Href="@($"/dart/{context.Name}/version/{context.Latest?.Version}")">@context.Latest?.Version</MudLink>
+			</MudTd>
 			<MudTd>@context.Latest?.PublishedAt</MudTd>
 			<MudTd>
 				<MudButtonGroup>

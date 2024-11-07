@@ -22,7 +22,7 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public NugetRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages/Nuget", pathParameters)
+        public NugetRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages/Nuget{?q*,skip*,take*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public NugetRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages/Nuget", rawUrl)
+        public NugetRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Authors/{username}/Packages/Nuget{?q*,skip*,take*}", rawUrl)
         {
         }
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto"/></returns>
@@ -42,11 +42,11 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto?> GetAsync(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder.NugetRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto> GetAsync(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder.NugetRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
@@ -63,11 +63,11 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder.NugetRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder.NugetRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -83,6 +83,25 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget
         public global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder WithUrl(string rawUrl)
         {
             return new global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder(rawUrl, RequestAdapter);
+        }
+        [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
+        #pragma warning disable CS1591
+        public partial class NugetRequestBuilderGetQueryParameters 
+        #pragma warning restore CS1591
+        {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("q")]
+            public string? Q { get; set; }
+#nullable restore
+#else
+            [QueryParameter("q")]
+            public string Q { get; set; }
+#endif
+            [QueryParameter("skip")]
+            public int? Skip { get; set; }
+            [QueryParameter("take")]
+            public int? Take { get; set; }
         }
     }
 }

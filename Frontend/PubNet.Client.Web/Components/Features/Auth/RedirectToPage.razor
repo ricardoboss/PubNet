@@ -2,11 +2,14 @@
 
 @code {
 
+	[Parameter, EditorRequired]
+	public required string Page { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-		NavigationManager.NavigateTo("/login");
+		NavigationManager.NavigateTo(Page);
 	}
 
 }

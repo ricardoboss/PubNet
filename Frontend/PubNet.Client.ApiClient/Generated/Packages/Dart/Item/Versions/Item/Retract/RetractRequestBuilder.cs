@@ -9,28 +9,28 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract
+namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Retract
 {
     /// <summary>
-    /// Builds and executes requests for operations under \Packages\Dart\{name}\{version}\Retract
+    /// Builds and executes requests for operations under \Packages\Dart\{name}\Versions\{version}\Retract
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.18.0")]
     public partial class RetractRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract.RetractRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Retract.RetractRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public RetractRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/Retract", pathParameters)
+        public RetractRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/Versions/{version}/Retract", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract.RetractRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Retract.RetractRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public RetractRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/{version}/Retract", rawUrl)
+        public RetractRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/Versions/{version}/Retract", rawUrl)
         {
         }
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartSuccessDto"/></returns>
@@ -78,11 +78,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract.RetractRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Retract.RetractRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract.RetractRequestBuilder WithUrl(string rawUrl)
+        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Retract.RetractRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.Retract.RetractRequestBuilder(rawUrl, RequestAdapter);
+            return new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item.Retract.RetractRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }

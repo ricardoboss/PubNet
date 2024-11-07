@@ -1,0 +1,82 @@
+@page "/dart/{Name}"
+@page "/dart/{Name}/version/{Version}"
+
+@inject IDartPackagesService DartPackagesService
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required string Name { get; set; }
+
+	[Parameter]
+	public string? Version { get; set; }
+
+	private DartPackageVersionDto? packageVersion;
+	private DartPackageVersionAnalysisDto? analysis;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await LoadPackage(default);
+	}
+
+	private async Task LoadPackage(CancellationToken cancellationToken)
+	{
+		try
+		{
+			packageVersion = await DartPackagesService.GetPackageVersionAsync(Name, Version, cancellationToken);
+		}
+		finally
+		{
+			StateHasChanged();
+		}
+
+		if (packageVersion is null)
+			return;
+
+		try
+		{
+			analysis = await DartPackagesService.GetPackageVersionAnalysisAsync(Name, packageVersion.Version!, cancellationToken);
+		}
+		finally
+		{
+			StateHasChanged();
+		}
+	}
+
+}
+
+@if (packageVersion is null)
+{
+	<MudProgressCircular Indeterminate/>
+}
+else
+{
+	<MudText Typo="Typo.h3">@packageVersion.Pubspec!.Name @packageVersion.Version</MudText>
+
+	<MudStack Row>
+		<MudStack>
+			<!-- Badges -->
+			<!-- Actions -->
+			@if (analysis?.ReadmeText is not null)
+			{
+				<Markdown Content="@analysis.ReadmeText"/>
+			}
+			else if (analysis is not null)
+			{
+				<MudText Typo="Typo.body1">No README found</MudText>
+			}
+			else
+			{
+				<MudText Typo="Typo.body1">Analysis not completed yet.</MudText>
+			}
+		</MudStack>
+		<MudStack>
+			<!-- Points -->
+			<!-- Metadata -->
+			<!-- Dependencies -->
+			<!-- Dev Dependencies -->
+		</MudStack>
+	</MudStack>
+}

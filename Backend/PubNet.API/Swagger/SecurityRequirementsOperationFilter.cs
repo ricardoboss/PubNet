@@ -1,9 +1,11 @@
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Errors;
 using PubNet.Auth;
@@ -74,21 +76,33 @@ internal sealed class SecurityRequirementsOperationFilter : IOperationFilter
 
 	private static void HandleScopeRequirementAndResponse(OpenApiOperation operation, OperationFilterContext context)
 	{
-		var scopes =
-			GetOrderedAttributes(context.MethodInfo, typeof(RequireScopeAttribute), typeof(RequireAnyScopeAttribute))
-				.SelectMany(a =>
-					a switch
-					{
-						RequireScopeAttribute s => [s.Scope],
-						RequireAnyScopeAttribute m => m.Scopes,
-						_ => [],
-					})
-				.ToImmutableList();
+		var requiredScopes = GetOrderedAttributes(context.MethodInfo, typeof(RequireScopeAttribute))
+			.Select(a => ((RequireScopeAttribute) a).Scope)
+			.Select(s => s.Value)
+			.ToArray();
+		var anyOfRequiredScopes = GetOrderedAttributes(context.MethodInfo, typeof(RequireAnyScopeAttribute))
+			.Select(a => ((RequireAnyScopeAttribute) a).Scopes)
+			.Select(s => s.Select(ss => ss.Value).ToArray())
+			.ToArray();
 
-		if (scopes.Count == 0)
+		if (requiredScopes.Length == 0 && anyOfRequiredScopes.Length == 0)
 			return;
 
 		AddMissingRequiredScopeResponse(operation, context);
+
+		if (requiredScopes.Length > 0)
+		{
+			var requiredScopesExtension = new RequiredScopesExtension(requiredScopes);
+
+			operation.Extensions.Add("x-required-scopes", requiredScopesExtension);
+		}
+
+		if (anyOfRequiredScopes.Length > 0)
+		{
+			var anyOfRequiredScopesExtension = new AnyOfRequiredScopesExtension(anyOfRequiredScopes);
+
+			operation.Extensions.Add("x-any-of-required-scopes", anyOfRequiredScopesExtension);
+		}
 	}
 
 	private static void AddMissingRequiredScopeResponse(OpenApiOperation operation, OperationFilterContext context)
@@ -132,5 +146,42 @@ internal sealed class SecurityRequirementsOperationFilter : IOperationFilter
 			.Cast<Attribute>()
 			.Concat(methodInfo.DeclaringType?.GetCustomAttributes(true).Cast<Attribute>() ?? [])
 			.Where(a => attributeTypes.Any(t => t.IsAssignableFrom(a.GetType())));
+	}
+}
+
+file class RequiredScopesExtension(string[] scopes) : IOpenApiExtension
+{
+	public void Write(IOpenApiWriter writer, OpenApiSpecVersion specVersion)
+	{
+		writer.WriteStartArray();
+
+		foreach (var scope in scopes)
+		{
+			writer.WriteValue(scope);
+		}
+
+		writer.WriteEndArray();
+	}
+}
+
+file class AnyOfRequiredScopesExtension(string[][] scopes) : IOpenApiExtension
+{
+	public void Write(IOpenApiWriter writer, OpenApiSpecVersion specVersion)
+	{
+		writer.WriteStartArray();
+
+		foreach (var group in scopes)
+		{
+			writer.WriteStartArray();
+
+			foreach (var scope in group)
+			{
+				writer.WriteValue(scope);
+			}
+
+			writer.WriteEndArray();
+		}
+
+		writer.WriteEndArray();
 	}
 }

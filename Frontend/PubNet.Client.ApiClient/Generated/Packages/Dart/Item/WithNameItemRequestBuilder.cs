@@ -5,7 +5,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Models;
 using PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Discontinue;
-using PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item;
+using PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,17 +24,10 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item
         {
             get => new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Discontinue.DiscontinueRequestBuilder(PathParameters, RequestAdapter);
         }
-        /// <summary>Gets an item from the PubNet.Client.ApiClient.Generated.Packages.Dart.item.item collection</summary>
-        /// <param name="position">Unique identifier of the item</param>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.WithVersionItemRequestBuilder"/></returns>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.WithVersionItemRequestBuilder this[string position]
+        /// <summary>The Versions property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.VersionsRequestBuilder Versions
         {
-            get
-            {
-                var urlTplParams = new Dictionary<string, object>(PathParameters);
-                urlTplParams.Add("version", position);
-                return new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Item.WithVersionItemRequestBuilder(urlTplParams, RequestAdapter);
-            }
+            get => new global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.VersionsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Packages.Dart.Item.WithNameItemRequestBuilder"/> and sets the default values.

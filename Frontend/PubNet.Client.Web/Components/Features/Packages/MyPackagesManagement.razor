@@ -1,4 +1,7 @@
-﻿@inject IDartPackagesService DartPackagesService
+﻿@using System.Security.Authentication
+@using PubNet.Auth
+@inject IDartPackagesService DartPackagesService
+@inject AuthenticationStateProvider AuthStateProvider
 
 @code {
 
@@ -19,13 +22,18 @@
 
 	private async Task LoadPackages(CancellationToken cancellationToken)
 	{
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+		var maybeAuthorName = authState.User.FindFirst(JwtClaims.AuthorUsername)?.Value;
+		if (maybeAuthorName is not { } authorName)
+			throw new AuthenticationException("Missing author username claim");
+
 		await Task.WhenAll(
-			LoadDartPackages(cancellationToken)
-			// , LoadNugetPackages(cancellationToken)
+			LoadDartPackages(authorName, cancellationToken)
+			// , LoadNugetPackages(authorName, cancellationToken)
 		);
 	}
 
-	private async Task LoadDartPackages(CancellationToken cancellationToken)
+	private async Task LoadDartPackages(string author, CancellationToken cancellationToken)
 	{
 		isLoadingDart = true;
 
@@ -33,6 +41,7 @@
 		{
 			dartPackages = await DartPackagesService
 				.GetPackages()
+				.ByAuthor(author)
 				.RunAsync(cancellationToken);
 		}
 		finally
