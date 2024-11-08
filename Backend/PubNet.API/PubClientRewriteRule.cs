@@ -7,28 +7,6 @@ public class PubClientRewriteRule : IRule
 {
 	private const string PubContentType = "application/vnd.pub.v2+json";
 
-	// public async Task InvokeAsync(HttpContext context, RequestDelegate next)
-	// {
-	// 	if (!MatchesPubClientRequest(context, out var path))
-	// 	{
-	// 		await next(context);
-	//
-	// 		return;
-	// 	}
-	//
-	// 	// rewrite request from /api/packages/ to /Packages/Dart/
-	// 	context.Request.Path = path.Replace("/api/packages/", "/Packages/Dart/", StringComparison.OrdinalIgnoreCase);
-	//
-	// 	// logger.LogTrace("Rewrote request path from {OldPath} to {NewPath}", path, context.Request.Path.Value);
-	//
-	// 	await next(context);
-	//
-	// 	if (context.Response.HasStarted)
-	// 		return;
-	//
-	// 	context.Response.Headers.ContentType = PubContentType;
-	// }
-
 	private static bool MatchesPubClientRequest(HttpContext context, [NotNullWhen(true)] out string? path)
 	{
 		path = context.Request.Path.Value;
