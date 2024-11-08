@@ -3,7 +3,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace PubNet.API.Swagger;
 
-internal static class OperationFilterHelper
+internal static class OperationFilterContextExtensions
 {
     public static OpenApiSchema GetOrAddDtoSchema<TDto>(this OperationFilterContext context)
     {

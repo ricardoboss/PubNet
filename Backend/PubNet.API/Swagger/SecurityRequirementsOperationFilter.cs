@@ -18,9 +18,26 @@ internal sealed class SecurityRequirementsOperationFilter : IOperationFilter
 {
 	public void Apply(OpenApiOperation operation, OperationFilterContext context)
 	{
+		RemoveContentTypesOtherThanJson(operation);
+
 		HandleAuthRequirementAndResponse(operation, context);
 
 		HandleScopeRequirementAndResponse(operation, context);
+	}
+
+	private static void RemoveContentTypesOtherThanJson(OpenApiOperation operation)
+	{
+		if (operation.RequestBody?.Content?.ContainsKey("text/json") ?? false)
+			operation.RequestBody.Content.Remove("text/json");
+
+		if (operation.RequestBody?.Content?.ContainsKey("application/*+json") ?? false)
+			operation.RequestBody.Content.Remove("application/*+json");
+
+		foreach (var response in operation.Responses.Values)
+		{
+			response.Content.Remove("text/plain");
+			response.Content.Remove("text/json");
+		}
 	}
 
 	private static void HandleAuthRequirementAndResponse(OpenApiOperation operation, OperationFilterContext context)
@@ -40,12 +57,12 @@ internal sealed class SecurityRequirementsOperationFilter : IOperationFilter
 		var requiredScheme = authorizeAttribute.AuthenticationSchemes ?? JwtBearerDefaults.AuthenticationScheme;
 
 		operation.Security.Add(
-			new()
+			new OpenApiSecurityRequirement
 			{
 				{
-					new()
+					new OpenApiSecurityScheme
 					{
-						Reference = new()
+						Reference = new OpenApiReference
 						{
 							Type = ReferenceType.SecurityScheme,
 							Id = requiredScheme,
