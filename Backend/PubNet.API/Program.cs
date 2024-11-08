@@ -46,6 +46,8 @@ using PubNet.PackageStorage.BlobStorage;
 using Serilog;
 using SignedUrl.Extensions;
 
+const string openApiDocumentName = "openapi";
+
 if (ApiDescriptionToolDetector.IsToolInvocation())
 {
 	HandleApiDescriptionToolInvocation();
@@ -166,17 +168,20 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen(o =>
 	{
-		var versionName = $"v{GitVersionInformation.Major}";
-
-		o.SwaggerDoc(versionName, new()
+		o.SwaggerDoc(openApiDocumentName, new OpenApiInfo
 		{
 			Title = "PubNet API",
 			Description = "An API for Dart and NuGet package hosting",
-			Version = versionName,
-			License = new()
+			Version = GitVersionInformation.MajorMinorPatch,
+			Contact = new OpenApiContact
+			{
+				Name = "GitHub",
+				Url = new Uri("https://github.com/ricardoboss/PubNet/issues"),
+			},
+			License = new OpenApiLicense
 			{
 				Name = "AGPL-3.0",
-				Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
+				Url = new Uri("https://www.gnu.org/licenses/agpl-3.0.en.html"),
 			},
 		});
 
@@ -374,14 +379,15 @@ void ConfigureHttpPipeline(WebApplication app)
 
 	app.MapControllers();
 
+	app.MapSwagger("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
+
 	if (!app.Environment.IsDevelopment())
 		return;
 
-	app.UseSwagger();
 	app.UseSwaggerUI(c =>
 	{
 		c.EnableTryItOutByDefault();
-		c.DisplayOperationId();
 		c.EnablePersistAuthorization();
+		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {GitVersionInformation.MajorMinorPatch}");
 	});
 }
