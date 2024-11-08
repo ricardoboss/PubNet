@@ -11,7 +11,11 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        dotnet: ['8.0.x']
+        dotnet: ['8.x']
+        quality: ['ga']
+        include:
+          - dotnet: '9.x'
+            quality: 'preview'
 
     name: Build & Test using ${{ matrix.dotnet }} on ${{ matrix.os }}
 
@@ -27,12 +31,14 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet }}
+          dotnet-quality: ${{ matrix.quality }}
+          cache: true
 
       - name: Restore tooling
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore --locked-mode
 
       - name: Check code style
         if: ${{ matrix.os == 'ubuntu-latest' }}
