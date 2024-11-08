@@ -67,9 +67,10 @@ try
 
 	var app = builder.Build();
 
-	ConfigureHttpPipeline(app);
-
 	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+	app.Logger.LogInformation("Version: {Version}", GitVersionInformation.InformationalVersion);
+
+	ConfigureHttpPipeline(app);
 
 	await PubNetContext.RunMigrations(app.Services);
 
@@ -363,8 +364,6 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseCors();
 
 	app.UseDetection();
-
-	// app.UseMiddleware<PubClientRewriterMiddleware>();
 
 	app.UseAuthentication();
 	app.UseAuthorization();
