@@ -42,7 +42,7 @@ jobs:
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore --locked-mode
+        run: dotnet restore ${{ matrix.quality == 'ga' && '--locked-mode' || '' }}
 
       - name: Check code style
         if: ${{ matrix.os == 'ubuntu-latest' }}
