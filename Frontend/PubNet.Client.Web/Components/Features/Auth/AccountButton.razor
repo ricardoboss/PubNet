@@ -1,8 +1,10 @@
 ﻿<AuthorizeView>
 	<Authorized>
+		<LinkToAuthor Name="@context.User.Identity?.Name" IsNavLink/>
+
 		<LogoutButton>
 			Logout
 		</LogoutButton>
 	</Authorized>
-	<NotAuthorized />
+	<NotAuthorized/>
 </AuthorizeView>

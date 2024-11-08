@@ -6,15 +6,35 @@
 	[Parameter]
 	public RenderFragment? ChildContent { get; set; }
 
+	[Parameter]
+	public bool IsNavLink { get; set; }
+
+	private string Href => $"/author/{Name}";
 }
 
-<MudLink Href="@($"/author/{Name}")">
-	@if (ChildContent is not null)
-	{
-		@ChildContent
-	}
-	else
-	{
-		@Name
-	}
-</MudLink>
+@if (IsNavLink)
+{
+	<MudNavLink Href="@Href">
+		@if (ChildContent is not null)
+		{
+			@ChildContent
+		}
+		else
+		{
+			@Name
+		}
+	</MudNavLink>
+}
+else
+{
+	<MudLink Href="@Href">
+		@if (ChildContent is not null)
+		{
+			@ChildContent
+		}
+		else
+		{
+			@Name
+		}
+	</MudLink>
+}
