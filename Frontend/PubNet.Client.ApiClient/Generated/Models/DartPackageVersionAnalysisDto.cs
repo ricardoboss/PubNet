@@ -26,6 +26,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public string ReadmeText { get; set; }
 #endif
+        /// <summary>The spdxLicenseIdentifier property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? SpdxLicenseIdentifier { get; set; }
+#nullable restore
+#else
+        public string SpdxLicenseIdentifier { get; set; }
+#endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -48,6 +56,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "documentationGenerated", n => { DocumentationGenerated = n.GetBoolValue(); } },
                 { "formatted", n => { Formatted = n.GetBoolValue(); } },
                 { "readmeText", n => { ReadmeText = n.GetStringValue(); } },
+                { "spdxLicenseIdentifier", n => { SpdxLicenseIdentifier = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -61,6 +70,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteBoolValue("documentationGenerated", DocumentationGenerated);
             writer.WriteBoolValue("formatted", Formatted);
             writer.WriteStringValue("readmeText", ReadmeText);
+            writer.WriteStringValue("spdxLicenseIdentifier", SpdxLicenseIdentifier);
         }
     }
 }

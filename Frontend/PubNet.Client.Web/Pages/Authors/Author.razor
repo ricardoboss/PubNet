@@ -1,0 +1,56 @@
+﻿@page "/author/{Username}"
+
+@inject IAuthorsService AuthorsService
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required string Username { get; set; }
+
+	private bool isLoading;
+	private AuthorDto? author;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		await LoadAuthor(default);
+	}
+
+	private async Task LoadAuthor(CancellationToken cancellationToken)
+	{
+		try
+		{
+			isLoading = true;
+
+			author = await AuthorsService.GetAuthorAsync(Username, cancellationToken);
+		}
+		finally
+		{
+			isLoading = false;
+		}
+	}
+
+}
+
+<MudText Typo="Typo.h3">@Username</MudText>
+
+@if (isLoading)
+{
+	<MudProgressCircular Indeterminate Class="mt-3" />
+}
+else
+{
+	if (author is null)
+	{
+		<MudAlert Severity="Severity.Error" Class="mt-3">Author not found</MudAlert>
+	}
+	else
+	{
+		<MudText Typo="Typo.subtitle1">Registered at <em>@author.RegisteredAtUtc</em></MudText>
+
+		<MudText Typo="Typo.h4" Class="mt-5">Packages</MudText>
+
+		<PackageBrowser Author="@author.UserName" Class="mt-3"/>
+	}
+}

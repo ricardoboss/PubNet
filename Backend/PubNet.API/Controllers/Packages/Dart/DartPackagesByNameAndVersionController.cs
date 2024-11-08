@@ -26,23 +26,24 @@ public class DartPackagesByNameAndVersionController(
 {
 	[HttpGet]
 	[ProducesResponseType<DartPackageVersionDto>(StatusCodes.Status200OK)]
-	public async Task<DartPackageVersionDto?> GetAsync(string name, string version,
+	[ProducesResponseType<NotFoundErrorDto>(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> GetAsync(string name, string version,
 		CancellationToken cancellationToken = default)
 	{
 		var package = await dartPackageDao.GetByNameAsync(name, cancellationToken);
 		if (package is null)
-			return null;
+			return NotFoundDto("package-not-found", $"Package '{name}' not found");
 
 		var matchingVersion = string.Equals(version, "latest", StringComparison.OrdinalIgnoreCase)
 			? package.LatestVersion
 			: package.Versions.FirstOrDefault(v => v.Version == version);
 
 		if (matchingVersion is null)
-			return null;
+			return NotFoundDto("package-version-not-found", $"Package '{name}' version '{version}' not found");
 
 		var (uri, hash) = archiveProvider.GetArchiveUriAndHash(name, version);
 
-		return DartPackageVersionDto.MapFrom(matchingVersion, uri, hash);
+		return Ok(DartPackageVersionDto.MapFrom(matchingVersion, uri, hash));
 	}
 
 	[HttpGet("analysis.json")]
@@ -53,7 +54,7 @@ public class DartPackagesByNameAndVersionController(
 	{
 		var analysis = await analysisProvider.GetAnalysisAsync(name, version, cancellationToken);
 		return analysis is null
-			? NotFoundDto()
+			? NotFoundDto("analysis-not-found", "Package not found or analysis not completed yet")
 			: Ok(DartPackageVersionAnalysisDto.MapFrom(analysis));
 	}
 
@@ -65,7 +66,7 @@ public class DartPackagesByNameAndVersionController(
 	{
 		var stream = await archiveProvider.GetArchiveContentAsync(name, version, cancellationToken);
 		if (stream is null)
-			return NotFoundDto();
+			return NotFoundDto("archive-not-found", $"Package '{name}' version '{version}' or archive not found");
 
 		return File(stream, "application/gzip", $"{name}-{version}.tar.gz");
 	}
@@ -105,6 +106,4 @@ public class DartPackagesByNameAndVersionController(
 
 		return DartSuccessDto.WithMessage($"Package '{name}' version '{version}' has been retracted");
 	}
-
-	private NotFoundObjectResult NotFoundDto() => NotFound(new NotFoundErrorDto());
 }

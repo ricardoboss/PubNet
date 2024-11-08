@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.Guard;
@@ -17,13 +18,20 @@ namespace PubNet.API.Controllers;
 [Route("[controller]")]
 [Tags("Authentication")]
 [Authorize]
-public class AuthenticationController(IAccessTokenService accessTokenService, IAccountService accountService, IAuthProvider authProvider, IJwtFactory jwtFactory, IRegistrationsService registrationsService, IGuard guard) : ControllerBase
+public class AuthenticationController(
+	IAccessTokenService accessTokenService,
+	IAccountService accountService,
+	IAuthProvider authProvider,
+	IJwtFactory jwtFactory,
+	IRegistrationsService registrationsService,
+	IGuard guard) : PubNetControllerBase
 {
 	[HttpPost("LoginToken")]
 	[AllowAnonymous]
 	[ProducesResponseType<TokenCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<AuthErrorDto>(StatusCodes.Status401Unauthorized)]
-	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<TokenCreatedDto> CreateLoginTokenAsync(CreateLoginTokenDto dto,
+		CancellationToken cancellationToken = default)
 	{
 		var token = await accessTokenService.CreateLoginTokenAsync(dto, cancellationToken);
 		var jwt = jwtFactory.Create(token);
@@ -40,7 +48,8 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[RequireScope(Scopes.PersonalAccessTokens.Create)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
 	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
-	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(CreatePersonalAccessTokenDto dto, CancellationToken cancellationToken = default)
+	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(CreatePersonalAccessTokenDto dto,
+		CancellationToken cancellationToken = default)
 	{
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
 
@@ -63,7 +72,8 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[HttpGet("PersonalAccessToken")]
 	[RequireAnyScope(Scopes.PersonalAccessTokens.Read)]
 	[ProducesResponseType(StatusCodes.Status200OK)]
-	public async Task<TokenCollectionDto> GetPersonalAccessTokenAsync([FromQuery] bool includeExpired = false, CancellationToken cancellationToken = default)
+	public async Task<TokenCollectionDto> GetPersonalAccessTokenAsync([FromQuery] bool includeExpired = false,
+		CancellationToken cancellationToken = default)
 	{
 		var currentToken = await authProvider.GetCurrentTokenAsync(cancellationToken);
 
@@ -77,30 +87,24 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[HttpDelete("PersonalAccessToken")]
 	[RequireScope(Scopes.PersonalAccessTokens.Delete)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	public async Task DeletePersonalAccessTokenAsync([FromQuery] string tokenId, CancellationToken cancellationToken = default)
+	[ProducesResponseType<NotFoundErrorDto>(StatusCodes.Status404NotFound)]
+	public async Task<IActionResult> DeletePersonalAccessTokenAsync([FromQuery] string tokenId,
+		CancellationToken cancellationToken = default)
 	{
 		var tokenUuid = Guid.Parse(tokenId);
 		var token = await accessTokenService.GetTokenAsync(tokenUuid, cancellationToken);
 		if (token is null)
-		{
-			Response.StatusCode = StatusCodes.Status404NotFound;
-
-			return;
-		}
+			return NotFoundDto("token-not-found", "Token id not found");
 
 		var identity = await authProvider.GetCurrentIdentityAsync(cancellationToken);
 		if (token.Identity.Id != identity.Id)
-		{
 			guard.ThrowIf(User).DoesntHaveRole(Role.Admin);
 
-			Response.StatusCode = StatusCodes.Status403Forbidden;
-
-			return;
-		}
+		Debug.Assert(token.Identity.Id == identity.Id || User.IsInRole(Role.Admin.ToClaimValue()));
 
 		await accessTokenService.DeleteTokenAsync(token, cancellationToken);
 
-		Response.StatusCode = StatusCodes.Status204NoContent;
+		return NoContent();
 	}
 
 	[HttpPost("Account")]
@@ -108,7 +112,8 @@ public class AuthenticationController(IAccessTokenService accessTokenService, IA
 	[ProducesResponseType<AccountCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status409Conflict)]
 	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
-	public async Task<AccountCreatedDto> CreateAccountAsync(CreateAccountDto dto, CancellationToken cancellationToken = default)
+	public async Task<AccountCreatedDto> CreateAccountAsync(CreateAccountDto dto,
+		CancellationToken cancellationToken = default)
 	{
 		if (!await AreRegistrationsOpen())
 			throw new RegistrationsClosedException();

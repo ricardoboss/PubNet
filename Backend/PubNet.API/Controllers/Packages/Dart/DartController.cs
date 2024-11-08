@@ -1,5 +1,3 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace PubNet.API.Controllers.Packages.Dart;
 
-namespace PubNet.API.Controllers.Packages.Dart;
-
-public abstract class DartController : ControllerBase;
+public abstract class DartController : PubNetControllerBase;

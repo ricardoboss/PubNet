@@ -1,0 +1,18 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Watch API" type="RunDotNetWatch" factoryName="RunDotNetWatch">
+    <option name="envs">
+      <map>
+        <entry key="DOTNET_ENVIRONMENT" value="Development" />
+      </map>
+    </option>
+    <option name="exePath" value="$PROJECT_DIR$/Backend/PubNet.API/bin/Debug/net8.0/PubNet.API.exe" />
+    <option name="programParameters" value="" />
+    <option name="projectFilePath" value="$PROJECT_DIR$/Backend/PubNet.API/PubNet.API.csproj" />
+    <option name="projectTfm" value="net8.0" />
+    <option name="restartOnRudeEditEditor" value="true" />
+    <option name="suppressBrowserLaunch" value="true" />
+    <option name="watchParameters" value="" />
+    <option name="workingDirectory" value="$PROJECT_DIR$/Backend/PubNet.API" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -9,6 +9,10 @@
 		<GeneratedClientLockFile>$(GeneratedClientDirectory)kiota-lock.json</GeneratedClientLockFile>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<Watch Include="$(GeneratedClientSpecFile)" />
+	</ItemGroup>
+
 	<Target Name="EnsureClientUpdated" AfterTargets="AfterBuild;CompileDesignTime">
 		<CallTarget Targets="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')" />
 		<CallTarget Targets="UpdateClient" Condition="Exists('$(GeneratedClientLockFile)')" />

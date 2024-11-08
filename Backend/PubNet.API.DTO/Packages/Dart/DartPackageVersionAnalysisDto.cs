@@ -14,5 +14,7 @@ public partial class DartPackageVersionAnalysisDto
 
 	public string? ReadmeText { get; init; }
 
+	public string? SpdxLicenseIdentifier { get; init; }
+
 	public DateTimeOffset? CompletedAt { get; init; }
 }

@@ -32,7 +32,7 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class ApiPersonalAccessTokenService(PubNetApiClient apiClient) : IPersona
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 }

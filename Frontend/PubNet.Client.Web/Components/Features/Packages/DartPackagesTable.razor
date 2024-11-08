@@ -3,16 +3,31 @@
 	[Parameter, EditorRequired]
 	public required DartPackageListDto PackageList { get; set; }
 
+	[Parameter]
+	public bool Editable { get; set; }
+
+	[Parameter]
+	public bool ShowAuthorColumn { get; set; } = true;
+
 }
 
 @if (PackageList is { Packages: { } packages, TotalHits: { } total and > 0 })
 {
-	<MudTable Items="packages" FixedHeader FixedFooter Height="50dvh" TotalItems="total">
+	<MudTable Items="packages" FixedHeader FixedFooter TotalItems="total">
 		<HeaderContent>
 			<MudTh>Name</MudTh>
 			<MudTh>Latest Version</MudTh>
 			<MudTh>Published</MudTh>
-			<MudTh></MudTh>
+
+			@if (ShowAuthorColumn)
+			{
+				<MudTh>Author</MudTh>
+			}
+
+			@if (Editable)
+			{
+				<MudTh></MudTh>
+			}
 		</HeaderContent>
 		<RowTemplate>
 			<MudTh scope="row">
@@ -22,11 +37,22 @@
 				<MudLink Href="@($"/dart/{context.Name}/version/{context.Latest?.Version}")">@context.Latest?.Version</MudLink>
 			</MudTd>
 			<MudTd>@context.Latest?.PublishedAt</MudTd>
-			<MudTd>
-				<MudButtonGroup>
-					<MudIconButton Icon="@Icons.Material.Rounded.Edit"/>
-				</MudButtonGroup>
-			</MudTd>
+
+			@if (ShowAuthorColumn)
+			{
+				<MudTd>
+					<MudLink Href="@($"/author/{context.Author}")">@context.Author</MudLink>
+				</MudTd>
+			}
+
+			@if (Editable)
+			{
+				<MudTd>
+					<MudButtonGroup>
+						<MudIconButton Icon="@Icons.Material.Rounded.Edit"/>
+					</MudButtonGroup>
+				</MudTd>
+			}
 		</RowTemplate>
 		<PagerContent>
 			<MudTablePager/>

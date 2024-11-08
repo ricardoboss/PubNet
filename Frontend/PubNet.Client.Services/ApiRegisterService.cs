@@ -22,7 +22,7 @@ public class ApiRegisterService(PubNetApiClient apiClient) : IRegisterService
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -59,7 +59,7 @@ public class ApiRegisterService(PubNetApiClient apiClient) : IRegisterService
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 }

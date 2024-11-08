@@ -29,20 +29,13 @@ public class DartPackagesByNameController(
 
 	[HttpGet]
 	[ProducesResponseType<DartPackageDto>(200)]
-	[ProducesResponseType<GenericErrorDto>(404)]
+	[ProducesResponseType<NotFoundErrorDto>(404)]
 	public async Task<IActionResult> GetAsync(string name, CancellationToken cancellationToken = default)
 	{
 		var package = await dartPackageDao.GetByNameAsync(name, cancellationToken);
 
 		if (package is null)
-			return NotFound(new GenericErrorDto
-			{
-				Error = new()
-				{
-					Code = "package-not-found",
-					Message = $"Package '{name}' not found",
-				},
-			});
+			return NotFoundDto("package-not-found", $"Package '{name}' not found");
 
 		return Ok(DartPackageDto.MapFrom(package, archiveProvider.GetArchiveUriAndHash));
 	}

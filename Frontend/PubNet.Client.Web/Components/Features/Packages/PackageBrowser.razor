@@ -1,0 +1,82 @@
+﻿@inject IDartPackagesService DartPackagesService
+
+@code {
+
+	[Parameter]
+	public string? Author { get; set; }
+
+	[Parameter]
+	public bool Editable { get; set; }
+
+	[Parameter]
+	public RenderFragment? AfterDartPackages { get; set; }
+
+	[Parameter]
+	public string? Class { get; set; }
+
+	private bool isLoadingDart = true;
+	private bool isLoadingNuget = true;
+
+	private bool IsLoading => isLoadingDart || isLoadingNuget;
+
+	private DartPackageListDto? dartPackages;
+	private NugetPackageListDto? nugetPackages;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await LoadPackages(default);
+	}
+
+	private async Task LoadPackages(CancellationToken cancellationToken)
+	{
+		await Task.WhenAll(
+			LoadDartPackages(cancellationToken)
+			// , LoadNugetPackages(cancellationToken)
+		);
+	}
+
+	private async Task LoadDartPackages(CancellationToken cancellationToken)
+	{
+		isLoadingDart = true;
+
+		try
+		{
+			var query = DartPackagesService.GetPackages();
+
+			if (Author is not null)
+				query = query.ByAuthor(Author);
+
+			dartPackages = await query.RunAsync(cancellationToken);
+		}
+		finally
+		{
+			isLoadingDart = false;
+		}
+	}
+
+	private Task LoadNugetPackages(CancellationToken cancellationToken)
+	{
+		throw new NotImplementedException();
+	}
+
+}
+
+<MudTabs Rounded HideSlider PanelClass="mt-5" Class="@Class">
+	<MudTabPanel Text="Dart">
+		@if (dartPackages is null)
+		{
+			<MudProgressCircular Indeterminate/>
+		}
+		else
+		{
+			<DartPackagesTable PackageList="dartPackages" ShowAuthorColumn="@(Author is null)" Editable="@Editable"/>
+		}
+
+		@AfterDartPackages
+	</MudTabPanel>
+	<MudTabPanel Text="NuGet">
+		<NuGetPackagesTable/>
+	</MudTabPanel>
+</MudTabs>

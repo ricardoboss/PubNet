@@ -1,3 +1,10 @@
+@using Markdig.Extensions.AutoLinks
+@using Markdig.Parsers
+@using Markdig.Syntax
+@using Markdig.Syntax.Inlines
+@using Markdig.Renderers.Html
+@using Markdig
+
 @code {
 
 	[Parameter, EditorRequired]
@@ -9,8 +16,40 @@
 	{
 		base.OnParametersSet();
 
-		renderedContent = new MarkupString(Markdig.Markdown.ToHtml(Content));
+		RenderContent();
 	}
+
+	private void RenderContent()
+	{
+		var document = MarkdownParser.Parse(Content, Pipeline);
+
+		MakeAllLinksOpenInNewTab(document);
+
+		var html = document.ToHtml(Pipeline);
+
+		renderedContent = new MarkupString(html);
+	}
+
+	private void MakeAllLinksOpenInNewTab(MarkdownDocument document)
+	{
+		foreach (var link in document.Descendants<LinkInline>())
+		{
+			link.GetAttributes().AddPropertyIfNotExist("target", "_blank");
+		}
+	}
+
+	private static readonly Lazy<MarkdownPipeline> LazyPipeline = new(() => new MarkdownPipelineBuilder()
+		.UseAdvancedExtensions()
+		.UseAutoLinks(new AutoLinkOptions
+		{
+			OpenInNewWindow = true,
+			UseHttpsForWWWLinks = true,
+		})
+		.UseEmojiAndSmiley()
+		.Build()
+	);
+
+	private static MarkdownPipeline Pipeline => LazyPipeline.Value;
 
 }
 

@@ -1,3 +1,3 @@
 ﻿namespace PubNet.API.DTO.Errors;
 
-public class NotFoundErrorDto;
+public class NotFoundErrorDto : GenericErrorDto;

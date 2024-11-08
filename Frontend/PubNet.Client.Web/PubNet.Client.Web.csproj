@@ -34,4 +34,8 @@
 	  <None Include="wwwroot\css\markdown.css" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Pages\Authors\" />
+	</ItemGroup>
+
 </Project>

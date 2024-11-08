@@ -20,8 +20,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="GitVersion.MsBuild">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google"/>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
@@ -29,8 +29,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore"/>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies"/>
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Serilog.AspNetCore"/>
 		<PackageReference Include="Serilog.Sinks.Seq"/>

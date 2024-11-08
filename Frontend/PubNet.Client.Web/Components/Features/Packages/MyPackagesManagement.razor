@@ -1,80 +1,29 @@
-﻿@using System.Security.Authentication
-@using PubNet.Auth
-@inject IDartPackagesService DartPackagesService
-@inject AuthenticationStateProvider AuthStateProvider
+﻿@inject AuthenticationStateProvider AuthStateProvider
 
 @code {
 
-	private bool isLoadingDart = true;
-	private bool isLoadingNuget = true;
-
-	private bool IsLoading => isLoadingDart || isLoadingNuget;
-
-	private DartPackageListDto? dartPackages;
-	private NugetPackageListDto? nugetPackages;
+	private string? author;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-		await LoadPackages(default);
+		await LoadAuthor(default);
 	}
 
-	private async Task LoadPackages(CancellationToken cancellationToken)
+	private async Task LoadAuthor(CancellationToken cancellationToken)
 	{
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-		var maybeAuthorName = authState.User.FindFirst(JwtClaims.AuthorUsername)?.Value;
-		if (maybeAuthorName is not { } authorName)
-			throw new AuthenticationException("Missing author username claim");
 
-		await Task.WhenAll(
-			LoadDartPackages(authorName, cancellationToken)
-			// , LoadNugetPackages(authorName, cancellationToken)
-		);
-	}
-
-	private async Task LoadDartPackages(string author, CancellationToken cancellationToken)
-	{
-		isLoadingDart = true;
-
-		try
-		{
-			dartPackages = await DartPackagesService
-				.GetPackages()
-				.ByAuthor(author)
-				.RunAsync(cancellationToken);
-		}
-		finally
-		{
-			isLoadingDart = false;
-
-			StateHasChanged();
-		}
-	}
-
-	private Task LoadNugetPackages(CancellationToken cancellationToken)
-	{
-		throw new NotImplementedException();
+		author = authState.User.Identity?.Name;
 	}
 
 }
 
 <MudText Typo="Typo.h5">My Packages</MudText>
 
-<MudTabs Outlined Rounded Border ApplyEffectsToContainer PanelClass="pa-5" Class="mt-5">
-	<MudTabPanel Text="Dart">
-		@if (dartPackages is null)
-		{
-			<MudProgressCircular Indeterminate/>
-		}
-		else
-		{
-			<DartPackagesTable PackageList="dartPackages"/>
-		}
-
+<PackageBrowser Author="@author" Editable="true" Class="mt-3">
+	<AfterDartPackages>
 		<DartPublishHelper Class="mt-5"/>
-	</MudTabPanel>
-	<MudTabPanel Text="NuGet">
-		<NuGetPackagesTable />
-	</MudTabPanel>
-</MudTabs>
+	</AfterDartPackages>
+</PackageBrowser>

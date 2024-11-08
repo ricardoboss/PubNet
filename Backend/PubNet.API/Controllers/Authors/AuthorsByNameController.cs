@@ -22,20 +22,13 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 {
 	[HttpGet]
 	[ProducesResponseType<AuthorDto>(200)]
-	[ProducesResponseType<GenericErrorDto>(404)]
+	[ProducesResponseType<NotFoundErrorDto>(404)]
 	public async Task<IActionResult> GetAuthorByUserNameAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
-			return NotFound(new GenericErrorDto
-			{
-				Error = new()
-				{
-					Code = "author-not-found",
-					Message = "Author not found",
-				},
-			});
+			return NotFoundDto("author-not-found", "Author not found");
 
 		return Ok(AuthorDto.MapFrom(author));
 	}

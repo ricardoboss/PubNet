@@ -8,7 +8,7 @@ namespace PubNet.Client.Services;
 
 public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesService
 {
-	public async Task<DartPackageDto> GetPackageAsync(string name, CancellationToken cancellationToken = default)
+	public async Task<DartPackageDto?> GetPackageAsync(string name, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -23,13 +23,17 @@ public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesSe
 		{
 			throw new UnauthorizedAccessException("Authentication is required for this request", e);
 		}
+		catch (NotFoundErrorDto)
+		{
+			return null;
+		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
-	public async Task<DartPackageVersionDto> GetPackageVersionAsync(string name, string? version,
+	public async Task<DartPackageVersionDto?> GetPackageVersionAsync(string name, string? version,
 		CancellationToken cancellationToken = default)
 	{
 		try
@@ -46,9 +50,13 @@ public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesSe
 		{
 			throw new UnauthorizedAccessException("Authentication is required for this request", e);
 		}
+		catch (NotFoundErrorDto)
+		{
+			return null;
+		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -75,7 +83,7 @@ public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesSe
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -103,7 +111,7 @@ public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesSe
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 
@@ -126,7 +134,7 @@ public class ApiDartPackagesService(PubNetApiClient apiClient) : IDartPackagesSe
 		}
 		catch (ApiException e)
 		{
-			throw new InvalidResponseException("API returned an unexpected status code", e);
+			throw InvalidResponseException.UnexpectedResponse(e);
 		}
 	}
 }

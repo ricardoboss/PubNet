@@ -15,29 +15,43 @@
 	private DartPackageVersionDto? packageVersion;
 	private DartPackageVersionAnalysisDto? analysis;
 
-	protected override async Task OnInitializedAsync()
+	private bool isLoadingPackage;
+	private bool isLoadingAnalysis;
+
+	private bool IsLoading => isLoadingPackage || isLoadingAnalysis;
+
+	protected override async Task OnParametersSetAsync()
 	{
-		await base.OnInitializedAsync();
+		await base.OnParametersSetAsync();
 
 		await LoadPackage(default);
 	}
 
 	private async Task LoadPackage(CancellationToken cancellationToken)
 	{
+		isLoadingPackage = true;
+		isLoadingAnalysis = true;
+
 		try
 		{
 			package = await DartPackagesService.GetPackageAsync(Name, cancellationToken);
 
 			if (package is not null)
-				packageVersion = await DartPackagesService.GetPackageVersionAsync(Name, Version, cancellationToken);
+				packageVersion = Version is null
+					? package.Latest
+					: package.Versions?.FirstOrDefault(v => v.Version == Version);
 		}
 		finally
 		{
-			StateHasChanged();
+			isLoadingPackage = false;
 		}
 
 		if (packageVersion is null)
+		{
+			isLoadingAnalysis = false;
+
 			return;
+		}
 
 		try
 		{
@@ -45,17 +59,43 @@
 		}
 		finally
 		{
-			StateHasChanged();
+			isLoadingAnalysis = false;
 		}
 	}
 
 }
 
-@if (package is null || packageVersion is null)
+@if (IsLoading)
 {
+	<MudText Typo="Typo.h3" GutterBottom>@Name</MudText>
+
 	<MudProgressCircular Indeterminate/>
 }
-else
+else if (package is null)
+{
+	<MudText Typo="Typo.h3" GutterBottom>@Name</MudText>
+
+	<MudAlert Severity="Severity.Error">
+		Package not found.<br/>
+		<br/>
+		<MudLink Href="@($"https://pub.dev/packages/{Name}")" Target="_blank">
+			Check on pub.dev
+		</MudLink>
+	</MudAlert>
+}
+else if (packageVersion is null)
+{
+	<MudText Typo="Typo.h3" GutterBottom>@Name @Version</MudText>
+
+	<MudAlert Severity="Severity.Error">
+		Package version not found.<br/>
+		<br/>
+		<MudLink Href="@($"/dart/{Name}")">
+			Show latest version
+		</MudLink>
+	</MudAlert>
+}
+else if (package is not null && packageVersion is not null)
 {
 	<MudText Typo="Typo.h3">@package.Name @packageVersion.Version</MudText>
 
@@ -64,9 +104,9 @@ else
 		at <em>@packageVersion.PublishedAt</em>
 	</MudText>
 
-	<MudStack Row Spacing="5" Class="mt-3">
+	<MudStack Row Spacing="5" Class="mt-5">
 		<MudStack Spacing="5" Class="flex-grow-1">
-			<!-- Badges -->
+			<!-- TODO: Badges -->
 
 			<MudTabs Rounded HideSlider PanelClass="mt-5 rounded overflow-x-auto">
 				<MudTabPanel Text="README">
@@ -87,23 +127,43 @@ else
 		</MudStack>
 
 		<MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.None">
-			<MudText Typo="Typo.h5">Points</MudText>
+			<MudText Typo="Typo.subtitle1">Points</MudText>
 
 			<MudDivider Class="flex-grow-0"/>
 
-			<MudText Typo="Typo.h5">Description</MudText>
+			<MudText Typo="Typo.subtitle1">Description</MudText>
+
+			<MudText Typo="Typo.body2">@packageVersion.Pubspec?.Description</MudText>
 
 			<MudDivider Class="flex-grow-0"/>
 
-			<MudText Typo="Typo.h5">Dependencies</MudText>
+			<MudText Typo="Typo.subtitle1">Dependencies</MudText>
+
+			@if (packageVersion.Pubspec?.Dependencies?.AdditionalData is { } dependencies)
+			{
+				<MudText>
+					<ul>
+						@foreach (var dependency in dependencies.Keys)
+						{
+							<li>
+								<MudLink Href="@($"/dart/{dependency}")">@dependency</MudLink>
+							</li>
+						}
+					</ul>
+				</MudText>
+			}
+			else
+			{
+				<MudText>This package has no dependencies</MudText>
+			}
 
 			<MudDivider Class="flex-grow-0"/>
 
-			<MudText Typo="Typo.h5">License</MudText>
+			<MudText Typo="Typo.subtitle1">License</MudText>
 
 			<MudDivider Class="flex-grow-0"/>
 
-			<MudText Typo="Typo.h5">Dependents</MudText>
+			<MudText Typo="Typo.subtitle1">Dependents</MudText>
 
 		</MudStack>
 	</MudStack>
