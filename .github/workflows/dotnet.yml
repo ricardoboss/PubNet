@@ -11,11 +11,13 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        dotnet: ['8.x']
-        quality: ['ga']
-        include:
-          - dotnet: '9.x'
+        dotnet: ['8.x', '9.x']
+        quality: ['ga', 'preview']
+        exclude:
+          - dotnet: '8.x'
             quality: 'preview'
+          - dotnet: '9.x'
+            quality: 'ga'
 
     name: Build & Test using ${{ matrix.dotnet }} on ${{ matrix.os }}
 
