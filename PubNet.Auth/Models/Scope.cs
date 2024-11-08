@@ -40,9 +40,6 @@ public readonly partial struct Scope
 		if (input.Length == 0)
 			return Validation.Invalid("Scope cannot be empty.");
 
-		if (input.Trim() != input)
-			return Validation.Invalid("Scope cannot have leading or trailing whitespace.");
-
 		var firstInvalid = input.FirstOrDefault(c => !char.IsAsciiLetterLower(c) && c != SeparatorChar && c != AnyChar);
 		if (firstInvalid != default)
 			return Validation.Invalid("Scope can only contain lowercase letters and the separator character, but found: " + firstInvalid + " (" + (int)firstInvalid + ")");
@@ -62,5 +59,5 @@ public readonly partial struct Scope
 		return Validation.Ok;
 	}
 
-	private static string NormalizeInput(string input) => input;
+	private static string NormalizeInput(string input) => input.Trim();
 }

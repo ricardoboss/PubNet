@@ -7,8 +7,8 @@ public interface IPackagesService<TPackage, TPackageVersion, TPackageList>
 	Task<TPackageVersion?> GetPackageVersionAsync(string name, string? version, CancellationToken cancellationToken = default);
 
 	Task<TPackageList> GetPackagesAsync(string? query = null, int? page = null, int? perPage = null,
-		CancellationToken? cancellationToken = default);
+		CancellationToken cancellationToken = default);
 
 	Task<TPackageList> ByAuthorAsync(string author, string? query = null, int? page = null, int? perPage = null,
-		CancellationToken? cancellationToken = default);
+		CancellationToken cancellationToken = default);
 }

@@ -19,5 +19,8 @@ public readonly partial struct ScopesClaim
 
 	private static string NormalizeInput(string input) => input.Trim().ToLowerInvariant();
 
-	public IEnumerable<Scope> ToScopes() => Value.Split(JwtClaims.ScopeSeparator).Select(Scope.From);
+	public IEnumerable<Scope> ToScopes() => Value
+		.Split(JwtClaims.ScopeSeparator)
+		.Where(s => !string.IsNullOrWhiteSpace(s))
+		.Select(Scope.From);
 }

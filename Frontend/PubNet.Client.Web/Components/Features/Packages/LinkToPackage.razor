@@ -1,0 +1,23 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required string Name { get; set; }
+
+	[Parameter]
+	public string? Version { get; set; }
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+}
+
+<MudLink Href="@($"/dart/{Name}{(Version is null ? string.Empty : $"/v/{Version}")}")">
+	@if (ChildContent is not null)
+	{
+		@ChildContent
+	}
+	else
+	{
+		@(Version ?? Name)
+	}
+</MudLink>

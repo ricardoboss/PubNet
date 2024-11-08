@@ -1875,6 +1875,16 @@
               }
             }
           },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
           "460": {
             "description": "Missing required scope",
             "content": {
@@ -1886,6 +1896,11 @@
             }
           }
         },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ],
         "x-any-of-required-scopes": [
           [
             "packages:dart:search",
@@ -1950,6 +1965,16 @@
               }
             }
           },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
           "460": {
             "description": "Missing required scope",
             "content": {
@@ -1961,6 +1986,11 @@
             }
           }
         },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ],
         "x-required-scopes": [
           "packages:dart:new"
         ]
@@ -2017,17 +2047,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
                 }
               }
             }

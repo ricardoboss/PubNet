@@ -23,7 +23,7 @@ public class DartStorageController(
 	[HttpPost]
 	[ProducesResponseType<string>(201)]
 	[ProducesResponseType<GenericErrorDto>(400)]
-	[ProducesResponseType<GenericErrorDto>(404)]
+	[ProducesResponseType<NotFoundErrorDto>(404)]
 	[ProducesResponseType<GenericErrorDto>(411)]
 	[ProducesResponseType<GenericErrorDto>(413)]
 	public async Task<IActionResult> UploadAsync(CancellationToken cancellationToken = default)
@@ -115,14 +115,7 @@ public class DartStorageController(
 		var authorId = Request.Form["author-id"].ToString();
 		var author = await context.Authors.FindAsync([Guid.Parse(authorId)], cancellationToken);
 		if (author is null)
-			return NotFound(new GenericErrorDto
-			{
-				Error = new()
-				{
-					Code = "author-not-found",
-					Message = "Author not found",
-				},
-			});
+			return NotFoundDto("author-not-found", "Author not found");
 
 		logger.LogInformation("Uploading package file {Package} ({PackageSize} bytes) for author {Author}",
 			packageFile.FileName, packageFile.Length, author.Id);

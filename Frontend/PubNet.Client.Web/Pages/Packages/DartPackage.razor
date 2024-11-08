@@ -1,5 +1,5 @@
 @page "/dart/{Name}"
-@page "/dart/{Name}/version/{Version}"
+@page "/dart/{Name}/v/{Version}"
 
 @inject IDartPackagesService DartPackagesService
 
@@ -90,9 +90,9 @@ else if (packageVersion is null)
 	<MudAlert Severity="Severity.Error">
 		Package version not found.<br/>
 		<br/>
-		<MudLink Href="@($"/dart/{Name}")">
+		<LinkToPackage Name="@Name">
 			Show latest version
-		</MudLink>
+		</LinkToPackage>
 	</MudAlert>
 }
 else if (package is not null && packageVersion is not null)
@@ -100,7 +100,7 @@ else if (package is not null && packageVersion is not null)
 	<MudText Typo="Typo.h3">@package.Name @packageVersion.Version</MudText>
 
 	<MudText Typo="Typo.subtitle1">
-		created by <MudLink Href="@($"/author/{package.Author}")">@package.Author</MudLink>
+		created by <LinkToAuthor Name="@package.Author"/>
 		at <em>@packageVersion.PublishedAt</em>
 	</MudText>
 
@@ -123,6 +123,9 @@ else if (package is not null && packageVersion is not null)
 						<MudText Typo="Typo.body1">Analysis not completed yet.</MudText>
 					}
 				</MudTabPanel>
+				<MudTabPanel Text="Versions">
+					<DartPackageVersionsTable Versions="package.Versions"/>
+				</MudTabPanel>
 			</MudTabs>
 		</MudStack>
 
@@ -143,10 +146,10 @@ else if (package is not null && packageVersion is not null)
 			{
 				<MudText>
 					<ul>
-						@foreach (var dependency in dependencies.Keys)
+						@foreach (var (dependency, constraint) in dependencies.OrderBy(d => d.Key))
 						{
 							<li>
-								<MudLink Href="@($"/dart/{dependency}")">@dependency</MudLink>
+								<LinkToPackage Name="@(dependency!)"/> @constraint
 							</li>
 						}
 					</ul>

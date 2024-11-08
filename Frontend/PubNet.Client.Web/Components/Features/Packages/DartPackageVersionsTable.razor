@@ -1,0 +1,28 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required List<DartPackageVersionDto> Versions { get; set; }
+
+}
+
+<MudTable Items="Versions" FixedHeader FixedFooter TotalItems="Versions.Count">
+	<HeaderContent>
+		<MudTh>Version</MudTh>
+		<MudTh>Published</MudTh>
+		<MudTh>Badges</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd>
+			<LinkToPackage Name="@context.Pubspec!.Name" Version="@context.Version"/>
+		</MudTd>
+		<MudTd>
+			@context.PublishedAt
+		</MudTd>
+		<MudTd>
+			<!-- TODO: Badges -->
+		</MudTd>
+	</RowTemplate>
+	<PagerContent>
+		<MudTablePager/>
+	</PagerContent>
+</MudTable>

@@ -14,6 +14,7 @@ namespace PubNet.API.Controllers.Packages.Dart;
 
 [Route("Packages/Dart")]
 [Tags("Dart")]
+[Authorize]
 public class DartRootController(IAuthProvider authProvider, IDartPackageUploadService uploadService, IDartPackageDao packageDao) : DartController
 {
 	[HttpGet("Search")]

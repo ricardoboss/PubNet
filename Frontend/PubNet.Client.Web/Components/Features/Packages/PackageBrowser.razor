@@ -17,8 +17,6 @@
 	private bool isLoadingDart = true;
 	private bool isLoadingNuget = true;
 
-	private bool IsLoading => isLoadingDart || isLoadingNuget;
-
 	private DartPackageListDto? dartPackages;
 	private NugetPackageListDto? nugetPackages;
 
@@ -65,7 +63,7 @@
 
 <MudTabs Rounded HideSlider PanelClass="mt-5" Class="@Class">
 	<MudTabPanel Text="Dart">
-		@if (dartPackages is null)
+		@if (isLoadingDart)
 		{
 			<MudProgressCircular Indeterminate/>
 		}

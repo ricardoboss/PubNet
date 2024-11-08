@@ -12,3 +12,15 @@ a {
 .mud-main-content {
     min-height: 100dvh;
 }
+
+.mud-nav-item {
+    width: auto !important;
+}
+
+.mud-nav-link {
+    text-decoration: none !important;
+}
+
+.mud-nav-link-text {
+    margin-left: 0 !important;
+}

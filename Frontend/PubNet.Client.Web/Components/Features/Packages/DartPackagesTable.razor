@@ -31,17 +31,17 @@
 		</HeaderContent>
 		<RowTemplate>
 			<MudTh scope="row">
-				<MudLink Href="@($"/dart/{context.Name}")">@context.Name</MudLink>
+				<LinkToPackage Name="@context.Name"/>
 			</MudTh>
 			<MudTd>
-				<MudLink Href="@($"/dart/{context.Name}/version/{context.Latest?.Version}")">@context.Latest?.Version</MudLink>
+				<LinkToPackage Name="@context.Name" Version="@context.Latest!.Version"/>
 			</MudTd>
 			<MudTd>@context.Latest?.PublishedAt</MudTd>
 
 			@if (ShowAuthorColumn)
 			{
 				<MudTd>
-					<MudLink Href="@($"/author/{context.Author}")">@context.Author</MudLink>
+					<LinkToAuthor Name="@context.Author"/>
 				</MudTd>
 			}
 

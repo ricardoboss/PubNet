@@ -10,6 +10,7 @@ public class Guard : IGuard
 	{
 		return claim.Value
 			.Split(JwtClaims.ScopeSeparator)
+			.Where(s => !string.IsNullOrWhiteSpace(s))
 			.Select(Scope.From)
 			.Any(s => s.EqualsOrIsParentOf(targetScope));
 	}

@@ -31,16 +31,22 @@
 }
 
 <MudThemeProvider @ref="themeProvider" IsDarkMode="isDarkMode" Theme="Theme.Default"/>
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudLayout>
 	<MudAppBar Dense Elevation="0">
-		<PubNetLogo Size="40" class="mr-1" style="display: inline-block;" />
-		<MudText Typo="Typo.h5">
-			<a href="/" style="text-decoration: none !important">PubNet</a>
-		</MudText>
+		<PubNetLogo Size="40" class="mr-1" style="display: inline-block;"/>
+		<MudNavLink Href="/">
+			<MudText Typo="Typo.h5">PubNet</MudText>
+		</MudNavLink>
+		<AuthorizeView>
+			<Authorized>
+				<MudNavLink Href="/dart">Dart</MudNavLink>
+			</Authorized>
+			<NotAuthorized />
+		</AuthorizeView>
 		<MudSpacer/>
 		<AccountButton/>
 	</MudAppBar>
@@ -49,5 +55,5 @@
 			@Body
 		</MudContainer>
 	</MudMainContent>
-	<PubNetFooter />
+	<PubNetFooter/>
 </MudLayout>

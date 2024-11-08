@@ -10,5 +10,5 @@ public interface IPackagesQueryBuilder<TPackage, TPackageVersion, TPackageList>
 
 	public IPackagesQueryBuilder<TPackage, TPackageVersion, TPackageList> WithPerPage(int? perPage);
 
-	public Task<TPackageList> RunAsync(CancellationToken? cancellationToken = default);
+	public Task<TPackageList> RunAsync(CancellationToken cancellationToken = default);
 }
