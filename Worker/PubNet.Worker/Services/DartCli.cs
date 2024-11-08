@@ -65,6 +65,7 @@ public class DartCli
 		return await InvokeDart("doc", workingDir, cancellationToken);
 	}
 
+	[Obsolete("Rewrite usage of this class to use CliWrap instead (https://github.com/ricardoboss/PubNet/issues/6)")]
 	public async Task<int> InvokeDart(string command, string workingDirectory,
 		CancellationToken cancellationToken = default)
 	{
