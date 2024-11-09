@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API;
@@ -20,6 +21,7 @@ using PubNet.API.Abstractions.Guard;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
 using PubNet.API.Abstractions.Packages.Nuget;
+using PubNet.API.Authentication;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
 using PubNet.API.Helpers;
@@ -279,7 +281,7 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 		})
 		.AddJwtBearer(o =>
 		{
-			o.TokenValidationParameters = new()
+			o.TokenValidationParameters = new TokenValidationParameters
 			{
 				ValidIssuer = JwtFactory.GetIssuer(builder.Configuration),
 				ValidAudience = JwtFactory.GetAudience(builder.Configuration),
@@ -388,6 +390,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		c.EnableTryItOutByDefault();
 		c.EnablePersistAuthorization();
-		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {GitVersionInformation.MajorMinorPatch}");
+		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json",
+			$"PubNet API {GitVersionInformation.MajorMinorPatch}");
 	});
 }
