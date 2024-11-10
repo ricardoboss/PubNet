@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="openapi.json">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="openapi.json" />
+              <option name="relativePathToSchema" value="https://spec.openapis.org/oas/3.1/schema/2022-10-07" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="Backend/PubNet.API/PubNet.API_openapi.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>

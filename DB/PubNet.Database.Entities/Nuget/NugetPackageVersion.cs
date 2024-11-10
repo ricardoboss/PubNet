@@ -27,11 +27,11 @@ public class NugetPackageVersion : BasePackageVersion<NugetPackage>
 
 	public string? Tags { get; init; }
 
-	public RepositoryMetadata? RepositoryMetadata { get; init; }
-
 	public string? ReadmeFile { get; init; }
 
 	public string? IconFile { get; init; }
+
+	public RepositoryMetadata? RepositoryMetadata { get; init; }
 
 	public PackageDependencyGroup[]? DependencyGroups { get; init; }
 }

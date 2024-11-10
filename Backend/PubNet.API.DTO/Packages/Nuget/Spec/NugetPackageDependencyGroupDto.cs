@@ -1,3 +1,6 @@
+using NuGet.Packaging;
+using Riok.Mapperly.Abstractions;
+
 namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 /// <summary>
@@ -11,8 +14,11 @@ namespace PubNet.API.DTO.Packages.Nuget.Spec;
 /// package.
 /// </para>
 /// </summary>
-public class NugetPackageDependencyGroupDto
+[Mapper]
+public partial class NugetPackageDependencyGroupDto
 {
+	public static partial NugetPackageDependencyGroupDto MapFrom(PackageDependencyGroup group);
+
 	/// <summary>
 	/// The target framework that these dependencies are applicable to.
 	/// </summary>
