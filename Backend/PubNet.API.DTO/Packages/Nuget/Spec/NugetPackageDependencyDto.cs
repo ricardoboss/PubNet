@@ -1,3 +1,6 @@
+using NuGet.Packaging.Core;
+using Riok.Mapperly.Abstractions;
+
 namespace PubNet.API.DTO.Packages.Nuget.Spec;
 
 /// <summary>
@@ -5,8 +8,11 @@ namespace PubNet.API.DTO.Packages.Nuget.Spec;
 /// <c>(, )</c>. That is, any version of the dependency is allowed. The value of <c>*</c> is not allowed for the
 /// <c>range</c> property.
 /// </summary>
-public class NugetPackageDependencyDto
+[Mapper]
+public partial class NugetPackageDependencyDto
 {
+	public static partial NugetPackageDependencyDto MapFrom(PackageDependency dependency);
+
 	/// <summary>
 	/// The ID of the package dependency.
 	/// </summary>

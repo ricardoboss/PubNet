@@ -13,28 +13,23 @@ public class PackageDependencyGroupConverter : JsonConverter<PackageDependencyGr
 		if (typeToConvert != typeof(PackageDependencyGroup))
 			throw new NotSupportedException("Only PackageDependencyGroup can be deserialized");
 
-		switch (reader.TokenType)
+		return reader.TokenType switch
 		{
-			case JsonTokenType.Null:
-				return null;
-			case JsonTokenType.StartObject:
-				return ReadDependencyGroup(ref reader);
-			default:
-				throw new JsonException("Expected start object or null");
-		}
+			JsonTokenType.Null => null,
+			JsonTokenType.StartObject => ReadDependencyGroup(ref reader, options),
+			_ => throw new JsonException("Expected start object or null"),
+		};
 	}
 
-	private static PackageDependencyGroup ReadDependencyGroup(ref Utf8JsonReader reader)
+	private static PackageDependencyGroup ReadDependencyGroup(ref Utf8JsonReader reader, JsonSerializerOptions options)
 	{
-		var targetFramework = reader.GetString();
-		if (targetFramework is null)
-			throw new JsonException("Missing target framework");
+		if (reader.TokenType != JsonTokenType.StartObject)
+			throw new JsonException("Expected start object");
 
-		var nugetFramework = NuGetFramework.Parse(targetFramework);
+		NuGetFramework? targetFramework = null;
 		var dependencies = new List<PackageDependency>();
 
-		reader.Read();
-		while (reader.TokenType != JsonTokenType.EndObject)
+		while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
 		{
 			if (reader.TokenType != JsonTokenType.PropertyName)
 				throw new JsonException("Expected property name");
@@ -43,32 +38,45 @@ public class PackageDependencyGroupConverter : JsonConverter<PackageDependencyGr
 			if (propertyName is null)
 				throw new JsonException("Missing property name");
 
-			reader.Read();
 			switch (propertyName)
 			{
-				case "dependencies":
-					if (reader.TokenType != JsonTokenType.StartArray)
-						throw new JsonException("Expected start array");
+				case "targetFramework":
+					if (!reader.Read() || reader.TokenType != JsonTokenType.String)
+						throw new JsonException("Expected string");
 
-					reader.Read();
-					while (reader.TokenType != JsonTokenType.EndArray)
-					{
-						var dependency = JsonSerializer.Deserialize<PackageDependency>(ref reader, options: null);
-						if (dependency is null)
-							throw new JsonException("Failed to deserialize dependency");
+					var targetFrameworkString = reader.GetString();
+					if (targetFrameworkString is null)
+						throw new JsonException("Missing target framework");
 
-						dependencies.Add(dependency);
-					}
+					targetFramework = NuGetFramework.Parse(targetFrameworkString);
 
 					break;
-				default:
-					throw new JsonException($"Unknown property name: {propertyName}");
-			}
+				case "dependencies":
+					if (!reader.Read() || reader.TokenType != JsonTokenType.StartArray)
+						throw new JsonException("Expected start array");
 
-			reader.Read();
+					ReadDependencies(ref reader, dependencies, options);
+
+					break;
+			}
 		}
 
-		return new PackageDependencyGroup(nugetFramework, dependencies);
+		if (targetFramework is null)
+			throw new JsonException("Missing target framework");
+
+		return new PackageDependencyGroup(targetFramework, dependencies);
+	}
+
+	private static void ReadDependencies(ref Utf8JsonReader reader, List<PackageDependency> dependencies, JsonSerializerOptions options)
+	{
+		while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+		{
+			var dependency = JsonSerializer.Deserialize<PackageDependency>(ref reader, options);
+			if (dependency is null)
+				throw new JsonException("Failed to deserialize dependency");
+
+			dependencies.Add(dependency);
+		}
 	}
 
 	public override void Write(Utf8JsonWriter writer, PackageDependencyGroup value, JsonSerializerOptions options)

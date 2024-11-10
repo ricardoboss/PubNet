@@ -1,10 +1,10 @@
-@page "/dart"
+@page "/nuget"
 
-@inject IDartPackagesService PackagesService
+@inject INugetPackagesService PackagesService
 
 @code {
 
-	private DartPackageListDto? packages;
+	private NugetPackageListDto? packages;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -28,7 +28,7 @@
 	}
 }
 
-<PageTitle>Dart Packages | PubNet</PageTitle>
+<PageTitle>NuGet Packages | PubNet</PageTitle>
 
 @if (packages is null)
 {
@@ -36,5 +36,5 @@
 }
 else
 {
-	<DartPackagesTable PackageList="packages"/>
+	<NugetPackagesTable PackageList="packages"/>
 }

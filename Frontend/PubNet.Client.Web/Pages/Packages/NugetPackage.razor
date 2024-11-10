@@ -1,24 +1,20 @@
-@page "/dart/{Name}"
-@page "/dart/{Name}/v/{Version}"
+@page "/nuget/{PackageId}"
+@page "/nuget/{PackageId}/v/{Version}"
 
-@inject IDartPackagesService DartPackagesService
+@inject INugetPackagesService NugetPackagesService
 
 @code {
 
 	[Parameter, EditorRequired]
-	public required string Name { get; set; }
+	public required string PackageId { get; set; }
 
 	[Parameter]
 	public string? Version { get; set; }
 
-	private DartPackageDto? package;
-	private DartPackageVersionDto? packageVersion;
-	private DartPackageVersionAnalysisDto? analysis;
+	private NugetPackageDto? package;
+	private NugetPackageVersionDto? packageVersion;
 
-	private bool isLoadingPackage;
-	private bool isLoadingAnalysis;
-
-	private bool IsLoading => isLoadingPackage || isLoadingAnalysis;
+	private bool isLoading;
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -29,12 +25,11 @@
 
 	private async Task LoadPackage(CancellationToken cancellationToken)
 	{
-		isLoadingPackage = true;
-		isLoadingAnalysis = true;
+		isLoading = true;
 
 		try
 		{
-			package = await DartPackagesService.GetPackageAsync(Name, cancellationToken);
+			package = await NugetPackagesService.GetPackageAsync(PackageId, cancellationToken);
 
 			if (package is not null)
 				packageVersion = Version is null
@@ -43,54 +38,38 @@
 		}
 		finally
 		{
-			isLoadingPackage = false;
-		}
-
-		if (packageVersion is null)
-		{
-			isLoadingAnalysis = false;
-
-			return;
-		}
-
-		try
-		{
-			analysis = await DartPackagesService.GetPackageVersionAnalysisAsync(Name, packageVersion.Version!, cancellationToken);
-		}
-		finally
-		{
-			isLoadingAnalysis = false;
+			isLoading = false;
 		}
 	}
 
 }
 
-@if (IsLoading)
+@if (isLoading)
 {
-	<MudText Typo="Typo.h3" GutterBottom>@Name</MudText>
+	<MudText Typo="Typo.h3" GutterBottom>@PackageId</MudText>
 
 	<MudProgressCircular Indeterminate/>
 }
 else if (package is null)
 {
-	<MudText Typo="Typo.h3" GutterBottom>@Name</MudText>
+	<MudText Typo="Typo.h3" GutterBottom>@PackageId</MudText>
 
 	<MudAlert Severity="Severity.Error">
 		Package not found.<br/>
 		<br/>
-		<MudLink Href="@($"https://pub.dev/packages/{Name}")" Target="_blank">
-			Check on pub.dev
+		<MudLink Href="@($"https://nuget.org/packages/{PackageId}")" Target="_blank">
+			Check on nuget.org
 		</MudLink>
 	</MudAlert>
 }
 else if (packageVersion is null)
 {
-	<MudText Typo="Typo.h3" GutterBottom>@Name @Version</MudText>
+	<MudText Typo="Typo.h3" GutterBottom>@PackageId @Version</MudText>
 
 	<MudAlert Severity="Severity.Error">
 		Package version not found.<br/>
 		<br/>
-		<LinkToPackage PackageType="dart" Name="@Name">
+		<LinkToPackage PackageType="nuget" Name="@PackageId">
 			Show latest version
 		</LinkToPackage>
 	</MudAlert>
@@ -110,21 +89,10 @@ else if (package is not null && packageVersion is not null)
 
 			<MudTabs Rounded HideSlider PanelClass="mt-5 rounded overflow-x-auto">
 				<MudTabPanel Text="README">
-					@if (analysis?.ReadmeText is not null)
-					{
-						<Markdown Content="@analysis.ReadmeText"/>
-					}
-					else if (analysis is not null)
-					{
-						<MudText Typo="Typo.body1">No README found</MudText>
-					}
-					else
-					{
-						<MudText Typo="Typo.body1">Analysis not completed yet.</MudText>
-					}
+					TODO
 				</MudTabPanel>
 				<MudTabPanel Text="Versions">
-					<DartPackageVersionsTable Versions="package.Versions"/>
+					<NugetPackageVersionsTable Versions="package.Versions"/>
 				</MudTabPanel>
 			</MudTabs>
 		</MudStack>
@@ -136,20 +104,28 @@ else if (package is not null && packageVersion is not null)
 
 			<MudText Typo="Typo.subtitle1">Description</MudText>
 
-			<MudText Typo="Typo.body2">@packageVersion.Pubspec?.Description</MudText>
+			<MudText Typo="Typo.body2">@packageVersion.Description</MudText>
 
 			<MudDivider Class="flex-grow-0"/>
 
 			<MudText Typo="Typo.subtitle1">Dependencies</MudText>
 
-			@if (packageVersion.Pubspec?.Dependencies?.AdditionalData is { } dependencies)
+			@if (packageVersion.DependencyGroups is { } dependencies)
 			{
 				<MudText>
 					<ul>
-						@foreach (var (dependency, constraint) in dependencies.OrderBy(d => d.Key))
+						@foreach (var group in dependencies.OrderBy(d => d.TargetFramework))
 						{
 							<li>
-								<LinkToPackage PackageType="dart" Name="@(dependency!)"/> @constraint
+								@group.TargetFramework
+								<ul>
+									@foreach (var dependency in (group.Dependencies ?? []).OrderBy(d => d.Id))
+									{
+										<li>
+											<LinkToPackage PackageType="nuget" Name="@dependency.Id"/>
+										</li>
+									}
+								</ul>
 							</li>
 						}
 					</ul>

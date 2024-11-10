@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
 		services.TryAddScoped<IRegisterService, ApiRegisterService>();
 		services.TryAddScoped<IPersonalAccessTokenService, ApiPersonalAccessTokenService>();
 		services.TryAddScoped<IDartPackagesService, ApiDartPackagesService>();
+		services.TryAddScoped<INugetPackagesService, ApiNugetPackagesService>();
 		services.TryAddScoped<IAuthorsService, ApiAuthorsService>();
 
 		return services;

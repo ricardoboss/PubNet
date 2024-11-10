@@ -4,6 +4,7 @@ using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Errors;
+using PubNet.API.DTO.Packages.Nuget;
 using PubNet.API.DTO.Packages.Nuget.Spec;
 using PubNet.Auth;
 
@@ -35,10 +36,19 @@ public class NugetRootController(INugetServiceIndexProvider serviceIndexProvider
 	[Authorize, RequireAnyScope(Scopes.Packages.Nuget.Search, Scopes.Packages.Search)]
 	[ProducesResponseType<NugetSearchResultDto>(StatusCodes.Status200OK)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
-	public async Task<NugetSearchResultDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+	public async Task<NugetSearchResultDto> SearchJsonAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
 	{
 		var list = await packageDao.SearchAsync(q, skip, take, cancellationToken);
 
 		return NugetSearchResultDto.MapFrom(list);
+	}
+
+	[HttpGet("search")]
+	[Authorize, RequireAnyScope(Scopes.Packages.Nuget.Search, Scopes.Packages.Search)]
+	[ProducesResponseType<NugetPackageListDto>(StatusCodes.Status200OK)]
+	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status401Unauthorized)]
+	public async Task<NugetPackageListDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+	{
+		return await packageDao.SearchAsync(q, skip, take, cancellationToken);
 	}
 }

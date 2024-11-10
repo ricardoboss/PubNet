@@ -40,7 +40,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
-			return new()
+			return new DartPackageListDto
 			{
 				TotalHits = 0,
 				Packages = Array.Empty<DartPackageDto>(),
@@ -62,7 +62,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 		var searchResults = packages.ToList();
 		var packageDtos = searchResults.Select(p => DartPackageDto.MapFrom(p, archiveProvider.GetArchiveUriAndHash));
 
-		return new()
+		return new DartPackageListDto
 		{
 			TotalHits = filteredCount,
 			Packages = packageDtos,
@@ -76,7 +76,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
-			return new()
+			return new NugetPackageListDto
 			{
 				TotalHits = 0,
 				Packages = Array.Empty<NugetPackageDto>(),
@@ -87,7 +87,7 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 		if (q is not null)
 			packages = packages.Where(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase));
 
-		var filteredCount = await packages.CountAsync(cancellationToken);
+		var filteredCount = packages.Count();
 
 		if (skip is not null)
 			packages = packages.Skip(skip.Value);
@@ -95,10 +95,10 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 		if (take is not null)
 			packages = packages.Take(take.Value);
 
-		var searchResults = await packages.ToListAsync(cancellationToken);
+		var searchResults = packages.ToList();
 		var packageDtos = searchResults.Select(p => NugetPackageDto.MapFrom(p));
 
-		return new()
+		return new NugetPackageListDto
 		{
 			TotalHits = filteredCount,
 			Packages = packageDtos,
@@ -112,14 +112,14 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 	{
 		var author = await authorDao.TryFindByUsernameAsync(username, cancellationToken);
 		if (author is null)
-			return new()
+			return new PackageListCollectionDto
 			{
-				Dart = new()
+				Dart = new DartPackageListDto
 				{
 					TotalHits = 0,
 					Packages = Array.Empty<DartPackageDto>(),
 				},
-				Nuget = new()
+				Nuget = new NugetPackageListDto
 				{
 					TotalHits = 0,
 					Packages = Array.Empty<NugetPackageDto>(),
@@ -132,14 +132,14 @@ public class AuthorsByNameController(IAuthorDao authorDao, IDartPackageArchivePr
 		var nugetPackageDtos =
 			author.NugetPackages.Select(p => NugetPackageDto.MapFrom(p));
 
-		return new()
+		return new PackageListCollectionDto
 		{
-			Dart = new()
+			Dart = new DartPackageListDto
 			{
 				TotalHits = author.DartPackages.Count,
 				Packages = dartPackageDtos,
 			},
-			Nuget = new()
+			Nuget = new NugetPackageListDto
 			{
 				TotalHits = author.NugetPackages.Count,
 				Packages = nugetPackageDtos,

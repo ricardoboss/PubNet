@@ -1,7 +1,7 @@
 ﻿@code {
 
 	[Parameter, EditorRequired]
-	public required DartPackageListDto PackageList { get; set; }
+	public required NugetPackageListDto PackageList { get; set; }
 
 	[Parameter]
 	public bool Editable { get; set; }
@@ -31,10 +31,10 @@
 		</HeaderContent>
 		<RowTemplate>
 			<MudTh scope="row">
-				<LinkToPackage PackageType="dart" Name="@context.Name"/>
+				<LinkToPackage PackageType="nuget" Name="@context.Name"/>
 			</MudTh>
 			<MudTd>
-				<LinkToPackage PackageType="dart" Name="@context.Name" Version="@context.Latest!.Version"/>
+				<LinkToPackage PackageType="nuget" Name="@context.Name" Version="@context.Latest!.Version"/>
 			</MudTd>
 			<MudTd>@context.Latest?.PublishedAt</MudTd>
 

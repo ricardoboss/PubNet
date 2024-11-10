@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.DTO.Packages.Nuget;
 using PubNet.Database.Context;
@@ -8,12 +9,21 @@ namespace PubNet.API.Services.CQRS.Queries.Packages;
 
 public class NugetPackageDao(PubNetContext context) : INugetPackageDao
 {
-	public Task<NugetPackage?> TryGetByPackageIdAsync(string packageId, CancellationToken cancellationToken = default)
+	[SuppressMessage("Performance",
+		"CA1862:Use the \'StringComparison\' method overloads to perform case-insensitive string comparisons",
+		Justification = "Doesn't work with EF Core")]
+	public async Task<NugetPackage?> TryGetByPackageIdAsync(string packageId,
+		CancellationToken cancellationToken = default)
 	{
-		return Task.FromResult(context.NugetPackages.SingleOrDefault(p => p.Name == packageId));
+		var normalizedPackageId = packageId.ToLowerInvariant();
+
+		return await context.NugetPackages
+			.SingleOrDefaultAsync(p => p.Name.ToLower() == normalizedPackageId,
+				cancellationToken);
 	}
 
-	public async Task<NugetPackageListDto> SearchAsync(string? q = null, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+	public async Task<NugetPackageListDto> SearchAsync(string? q = null, int? skip = null, int? take = null,
+		CancellationToken cancellationToken = default)
 	{
 		var query = context.NugetPackages.AsQueryable();
 
@@ -30,7 +40,7 @@ public class NugetPackageDao(PubNetContext context) : INugetPackageDao
 
 		var packages = await query.ToListAsync(cancellationToken);
 
-		return new()
+		return new NugetPackageListDto
 		{
 			TotalHits = total,
 			Packages = packages.Select(p => NugetPackageDto.MapFrom(p)),
