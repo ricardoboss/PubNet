@@ -1,14 +1,16 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.Extensions;
 using PubNet.Database.Context;
+using PubNet.PackageStorage.Abstractions;
 using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
 
 public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 {
-	private IConfiguration? configuration;
+	private IOptions<PackageStorageOptions>? storageOptions;
 	private PubNetContext? db;
 	private ILogger<CleanupOldPendingArchivesTask>? logger;
 
@@ -23,11 +25,9 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 	{
 		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 		logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
-		configuration ??= services.GetRequiredService<IConfiguration>();
+		storageOptions ??= services.GetRequiredService<IOptions<PackageStorageOptions>>();
 
-		if (!TimeSpan.TryParse(configuration.GetSection("PackageStorage:PendingMaxAge").Value ?? "7d", out var maxAge))
-			throw new("Unable to parse PackageStorage:PendingMaxAge as a valid TimeSpan");
-
+		var maxAge = storageOptions.Value.PendingMaxAge ?? TimeSpan.FromDays(7);
 		var uploadedAtLowerLimit = DateTimeOffset.UtcNow.Subtract(maxAge);
 
 		var outdatedArchives = await db.DartPendingArchives
