@@ -8,9 +8,9 @@ public abstract class BasePackage<TVersion> where TVersion : class
 
 	public virtual Author Author { get; init; } = null!;
 
-	public string Name { get; init; } = null!;
+	public string Name { get; set; } = null!;
 
-	public Guid? LatestVersionId { get; init; }
+	public Guid? LatestVersionId { get; set; }
 
 	public virtual TVersion? LatestVersion { get; set; }
 
