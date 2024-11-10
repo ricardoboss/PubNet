@@ -20,9 +20,9 @@ public class NugetPackageDmo(PubNetContext context, IArchiveStorage archiveStora
 			Versions = [],
 		};
 
-		var version = ReadPackageVersion(package, nupkg);
+		var version = await ReadPackageVersion(package, nupkg, cancellationToken);
 
-		package.Name = version.NuspecId ?? throw new InvalidOperationException("Package ID is missing");
+		package.Name = version.NuspecId!;
 		package.Versions.Add(version);
 		package.LatestVersion = version;
 		package.LatestVersionId = version.Id;
@@ -43,10 +43,7 @@ public class NugetPackageDmo(PubNetContext context, IArchiveStorage archiveStora
 	public async Task<NugetPackageVersion> AddVersionAsync(NugetPackage package, byte[] nupkg,
 		CancellationToken cancellationToken = default)
 	{
-		var version = ReadPackageVersion(package, nupkg);
-
-		_ = await archiveStorage.StoreArchiveAsync(package.Author.UserName, package.Name, version.Version, nupkg,
-			cancellationToken);
+		var version = await ReadPackageVersion(package, nupkg, cancellationToken);
 
 		await context.NugetPackageVersions.AddAsync(version, cancellationToken);
 
@@ -61,14 +58,16 @@ public class NugetPackageDmo(PubNetContext context, IArchiveStorage archiveStora
 		return version;
 	}
 
-	private static NugetPackageVersion ReadPackageVersion(NugetPackage package, byte[] nupkg)
+	private async Task<NugetPackageVersion> ReadPackageVersion(NugetPackage package, byte[] nupkg,
+		CancellationToken cancellationToken)
 	{
 		using var packageStream = new MemoryStream(nupkg);
 
 		using var reader = new PackageArchiveReader(packageStream);
 		var nuspec = reader.NuspecReader;
 
-		var id = nuspec.GetId().ToNullIfEmpty();
+		var id = nuspec.GetId().ToNullIfEmpty() ??
+			throw new InvalidOperationException("Package ID is missing or empty");
 		var version = nuspec.GetVersion();
 		var title = nuspec.GetTitle().ToNullIfEmpty();
 		var description = nuspec.GetDescription().ToNullIfEmpty();
@@ -101,6 +100,9 @@ public class NugetPackageDmo(PubNetContext context, IArchiveStorage archiveStora
 			RepositoryMetadata = repositoryMetadata,
 			DependencyGroups = dependencyGroups.ToArray(),
 		};
+
+		_ = await archiveStorage.StoreArchiveAsync(package.Author.UserName, id, version.ToString(), nupkg,
+			cancellationToken);
 
 		return versionEntity;
 	}

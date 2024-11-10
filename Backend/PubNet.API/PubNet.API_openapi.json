@@ -1796,6 +1796,16 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -1843,6 +1853,16 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -1852,24 +1872,8 @@
                 }
               }
             }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
-                }
-              }
-            }
           }
-        },
-        "x-any-of-required-scopes": [
-          [
-            "packages:nuget:search",
-            "packages:search"
-          ]
-        ]
+        }
       },
       "delete": {
         "tags": [
@@ -1945,12 +1949,6 @@
         ],
         "x-required-scopes": [
           "packages:nuget:delete"
-        ],
-        "x-any-of-required-scopes": [
-          [
-            "packages:nuget:search",
-            "packages:search"
-          ]
         ]
       }
     },
@@ -1990,24 +1988,8 @@
                 }
               }
             }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
-                }
-              }
-            }
           }
-        },
-        "x-any-of-required-scopes": [
-          [
-            "packages:nuget:search",
-            "packages:search"
-          ]
-        ]
+        }
       }
     },
     "/Packages/Nuget/{id}/index.json": {
@@ -2032,6 +2014,65 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NugetPackageIndexDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/{id}": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
                 }
               }
             }
@@ -2270,6 +2311,101 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NugetSearchResultDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
+      }
+    },
+    "/Packages/Nuget/search": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageListDto"
                 }
               }
             }
@@ -3330,6 +3466,7 @@
       },
       "NugetPackageVersionDto": {
         "required": [
+          "packageId",
           "publishedAt",
           "version"
         ],
@@ -3342,6 +3479,56 @@
           "publishedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "packageId": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "authors": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "copyright": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true
+          },
+          "readmeFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "repositoryMetadata": {
+            "$ref": "#/components/schemas/NugetRepositoryMetadataDto"
+          },
+          "dependencyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageDependencyGroupDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3362,6 +3549,10 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "NugetRepositoryMetadataDto": {
+        "type": "object",
         "additionalProperties": false
       },
       "NugetSearchResultDto": {

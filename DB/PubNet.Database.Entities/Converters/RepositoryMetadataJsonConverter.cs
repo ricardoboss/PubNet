@@ -11,20 +11,68 @@ internal class RepositoryMetadataJsonConverter : JsonConverter<RepositoryMetadat
 		if (typeToConvert != typeof(RepositoryMetadata))
 			throw new NotSupportedException("Only RepositoryMetadata can be deserialized");
 
-		switch (reader.TokenType)
+		return reader.TokenType switch
 		{
-			case JsonTokenType.Null:
-				return null;
-			case JsonTokenType.StartObject:
-				return ReadMetadata(ref reader);
-			default:
-				throw new JsonException("Expected start object or null");
-		}
+			JsonTokenType.Null => null,
+			JsonTokenType.StartObject => ReadMetadata(ref reader),
+			_ => throw new JsonException("Expected start object or null"),
+		};
 	}
 
 	private static RepositoryMetadata ReadMetadata(ref Utf8JsonReader reader)
 	{
-		throw new NotImplementedException();
+		if (reader.TokenType != JsonTokenType.StartObject)
+			throw new JsonException("Expected start object");
+
+		var type = "";
+		var url = "";
+		var branch = "";
+		var commit = "";
+
+		while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
+		{
+			if (reader.TokenType != JsonTokenType.PropertyName)
+				throw new JsonException("Expected property name");
+
+			var propertyName = reader.GetString();
+			if (propertyName is null)
+				throw new JsonException("Missing property name");
+
+			if (!reader.Read())
+				throw new JsonException("Expected value");
+
+			switch (propertyName)
+			{
+				case "type":
+					if (reader.TokenType != JsonTokenType.String)
+						throw new JsonException("Expected string");
+
+					type = reader.GetString();
+					break;
+				case "url":
+					if (reader.TokenType != JsonTokenType.String)
+						throw new JsonException("Expected string");
+
+					url = reader.GetString();
+					break;
+				case "branch":
+					if (reader.TokenType != JsonTokenType.String)
+						throw new JsonException("Expected string");
+
+					branch = reader.GetString();
+					break;
+				case "commit":
+					if (reader.TokenType != JsonTokenType.String)
+						throw new JsonException("Expected string");
+
+					commit = reader.GetString();
+					break;
+				default:
+					throw new JsonException($"Unexpected property name: {propertyName}");
+			}
+		}
+
+		return new RepositoryMetadata(type, url, branch, commit);
 	}
 
 	public override void Write(Utf8JsonWriter writer, RepositoryMetadata? value, JsonSerializerOptions options)
