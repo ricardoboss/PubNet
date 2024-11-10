@@ -7,6 +7,7 @@ using PubNet.Client.ApiClient.Generated.Packages.Nuget.IndexJson;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Item;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Publish;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.Registrations;
+using PubNet.Client.ApiClient.Generated.Packages.Nuget.Search;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.SearchJson;
 using PubNet.Client.ApiClient.Generated.Packages.Nuget.VulnerabilitiesJson;
 using System.Collections.Generic;
@@ -40,6 +41,11 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget
         public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Registrations.RegistrationsRequestBuilder Registrations
         {
             get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Registrations.RegistrationsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The search property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Search.SearchRequestBuilder Search
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.Search.SearchRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The searchJson property</summary>
         public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.SearchJson.SearchJsonRequestBuilder SearchJson

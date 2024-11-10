@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API;
@@ -20,6 +22,7 @@ using PubNet.API.Abstractions.Guard;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
 using PubNet.API.Abstractions.Packages.Nuget;
+using PubNet.API.Authentication;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
 using PubNet.API.Helpers;
@@ -211,6 +214,12 @@ void ConfigureControllers(IHostApplicationBuilder builder)
 
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 		});
+
+	builder.Services.Configure<FormOptions>(o =>
+	{
+		// Set global upload limit to 256 MB
+		o.MultipartBodyLengthLimit = 1024 * 1024 * 256;
+	});
 }
 
 void ConfigureNugetServices(IHostApplicationBuilder builder)
@@ -249,6 +258,8 @@ void ConfigurePackageStorage(IHostApplicationBuilder builder)
 
 	// needed for extracting archives
 	builder.Services.AddSingleton<IArchiveReader, TempDirExtractingArchiveReader>();
+
+	builder.Services.AddOptions<PackageStorageOptions>().Bind(builder.Configuration.GetSection("PackageStorage"));
 }
 
 void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)
@@ -279,7 +290,7 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 		})
 		.AddJwtBearer(o =>
 		{
-			o.TokenValidationParameters = new()
+			o.TokenValidationParameters = new TokenValidationParameters
 			{
 				ValidIssuer = JwtFactory.GetIssuer(builder.Configuration),
 				ValidAudience = JwtFactory.GetAudience(builder.Configuration),
@@ -314,6 +325,7 @@ void ConfigureDataServices(IHostApplicationBuilder builder)
 	builder.Services.AddScoped<IAuthorDmo, AuthorDmo>();
 	builder.Services.AddScoped<IIdentityDmo, IdentityDmo>();
 	builder.Services.AddScoped<IDartPackageDmo, DartPackageDmo>();
+	builder.Services.AddScoped<INugetPackageDmo, NugetPackageDmo>();
 
 	builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 	builder.Services.AddScoped<IPasswordVerifier, DefaultPasswordVerifier>();
@@ -388,6 +400,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		c.EnableTryItOutByDefault();
 		c.EnablePersistAuthorization();
-		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {GitVersionInformation.MajorMinorPatch}");
+		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json",
+			$"PubNet API {GitVersionInformation.MajorMinorPatch}");
 	});
 }

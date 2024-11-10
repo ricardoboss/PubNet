@@ -8,58 +8,57 @@ public class NugetServiceIndexProvider(IKnownUrlsProvider knownUrlsProvider) : I
 	/// <inheritdoc />
 	public Task<NugetServiceIndexDto> GetServiceIndexAsync(CancellationToken cancellationToken = default)
 	{
-		return Task.FromResult<NugetServiceIndexDto>(new()
-		{
-			Resources = GetResources(),
-		});
-	}
-
-	private IEnumerable<NugetServiceIndexResourceDto> GetResources()
-	{
-		return from map in GetResourceTypesMaps()
-			select new NugetServiceIndexResourceDto
+		var resources = GetResourceTypesMaps()
+			.Select(map => new NugetServiceIndexResourceDto
 			{
 				Id = map.Id,
 				Type = map.Type,
 				Comment = map.Comment,
-			};
+			});
+
+		var dto = new NugetServiceIndexDto
+		{
+			Resources = resources,
+		};
+
+		return Task.FromResult(dto);
 	}
 
 	private record ResourceTypesMap(string Id, string Type, string? Comment = null);
 
 	private IEnumerable<ResourceTypesMap> GetResourceTypesMaps()
 	{
-		yield return new(
+		yield return new ResourceTypesMap(
 			knownUrlsProvider.GetRegistrationsBaseUrl(),
 			"RegistrationsBaseUrl/3.6.0",
 			"Includes SemVer 2.0.0 packages"
 		);
 
-		yield return new(
+		yield return new ResourceTypesMap(
 			knownUrlsProvider.GetPackageBaseAddress(),
 			"PackageBaseAddress/3.0.0",
 			"The initial release"
 		);
 
-		// yield return new(
-		// 	knownUrlsProvider.GetPackagePublishUrl(),
-		// 	"PackagePublish/2.0.0",
-		// 	"The initial release"
-		// );
+		yield return new ResourceTypesMap(
+			knownUrlsProvider.GetPackagePublishUrl(),
+			"PackagePublish/2.0.0",
+			"The initial release"
+		);
 
-		// yield return new(
+		// yield return new ResourceTypesMap(
 		// 	knownUrlsProvider.GetSearchAutocompleteServiceUrl(),
 		// 	"SearchAutocompleteService/3.5.0",
 		// 	"Includes support for packageType query parameter"
 		// );
 
-		// yield return new(
+		// yield return new ResourceTypesMap(
 		// 	knownUrlsProvider.GetSearchQueryServiceUrl(),
 		// 	"SearchQueryService/3.5.0",
 		// 	"Includes support for packageType query parameter"
 		// );
 
-		// yield return new(
+		// yield return new ResourceTypesMap(
 		// 	knownUrlsProvider.GetVulnerabilityInfoUrl(),
 		// 	"VulnerabilityInfo/6.7.0",
 		// 	"The initial release"

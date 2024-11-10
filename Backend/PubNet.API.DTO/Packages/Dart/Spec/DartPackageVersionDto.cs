@@ -7,7 +7,7 @@ public class DartPackageVersionDto : PackageVersionDto
 {
 	public static DartPackageVersionDto MapFrom(DartPackageVersion version, Uri archiveUrl, string archiveSha256)
 	{
-		return new()
+		return new DartPackageVersionDto
 		{
 			Version = version.Version,
 			ArchiveUrl = archiveUrl,

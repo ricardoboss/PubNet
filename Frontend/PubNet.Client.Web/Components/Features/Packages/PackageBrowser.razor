@@ -1,4 +1,5 @@
 ﻿@inject IDartPackagesService DartPackagesService
+@inject INugetPackagesService NugetPackagesService
 
 @code {
 
@@ -30,8 +31,8 @@
 	private async Task LoadPackages(CancellationToken cancellationToken)
 	{
 		await Task.WhenAll(
-			LoadDartPackages(cancellationToken)
-			// , LoadNugetPackages(cancellationToken)
+			LoadDartPackages(cancellationToken),
+			LoadNugetPackages(cancellationToken)
 		);
 	}
 
@@ -54,9 +55,23 @@
 		}
 	}
 
-	private Task LoadNugetPackages(CancellationToken cancellationToken)
+	private async Task LoadNugetPackages(CancellationToken cancellationToken)
 	{
-		throw new NotImplementedException();
+		isLoadingNuget = true;
+
+		try
+		{
+			var query = NugetPackagesService.GetPackages();
+
+			if (Author is not null)
+				query = query.ByAuthor(Author);
+
+			nugetPackages = await query.RunAsync(cancellationToken);
+		}
+		finally
+		{
+			isLoadingNuget = false;
+		}
 	}
 
 }
@@ -75,6 +90,13 @@
 		@AfterDartPackages
 	</MudTabPanel>
 	<MudTabPanel Text="NuGet">
-		<NuGetPackagesTable/>
+		@if (isLoadingNuget)
+		{
+			<MudProgressCircular Indeterminate/>
+		}
+		else
+		{
+			<NugetPackagesTable PackageList="nugetPackages" ShowAuthorColumn="@(Author is null)" Editable="@Editable"/>
+		}
 	</MudTabPanel>
 </MudTabs>

@@ -1796,6 +1796,16 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -1843,6 +1853,16 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -1852,24 +1872,8 @@
                 }
               }
             }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
-                }
-              }
-            }
           }
-        },
-        "x-any-of-required-scopes": [
-          [
-            "packages:nuget:search",
-            "packages:search"
-          ]
-        ]
+        }
       },
       "delete": {
         "tags": [
@@ -1945,12 +1949,6 @@
         ],
         "x-required-scopes": [
           "packages:nuget:delete"
-        ],
-        "x-any-of-required-scopes": [
-          [
-            "packages:nuget:search",
-            "packages:search"
-          ]
         ]
       }
     },
@@ -1990,24 +1988,8 @@
                 }
               }
             }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
-                }
-              }
-            }
           }
-        },
-        "x-any-of-required-scopes": [
-          [
-            "packages:nuget:search",
-            "packages:search"
-          ]
-        ]
+        }
       }
     },
     "/Packages/Nuget/{id}/index.json": {
@@ -2036,6 +2018,16 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -2047,6 +2039,149 @@
             }
           }
         }
+      }
+    },
+    "/Packages/Nuget/{id}": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/Publish": {
+      "put": {
+        "tags": [
+          "Nuget"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "package": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "package": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetSuccessDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageAlreadyExistsErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
       }
     },
     "/Packages/Nuget/index.json": {
@@ -2234,14 +2369,56 @@
         ]
       }
     },
-    "/Packages/Nuget/Publish": {
-      "put": {
+    "/Packages/Nuget/search": {
+      "get": {
         "tags": [
           "Nuget"
         ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageListDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error",
@@ -2249,16 +2426,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
                 }
               }
             }
@@ -2272,12 +2439,28 @@
                 }
               }
             }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
         },
         "security": [
           {
             "Bearer": [ ]
           }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
         ]
       }
     },
@@ -3044,6 +3227,32 @@
         },
         "additionalProperties": false
       },
+      "NugetInvalidPackageErrorDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NugetPackageAlreadyExistsErrorDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "NugetPackageDependencyDto": {
         "required": [
           "id"
@@ -3257,6 +3466,7 @@
       },
       "NugetPackageVersionDto": {
         "required": [
+          "packageId",
           "publishedAt",
           "version"
         ],
@@ -3269,6 +3479,56 @@
           "publishedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "packageId": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "authors": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "copyright": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true
+          },
+          "readmeFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "repositoryMetadata": {
+            "$ref": "#/components/schemas/NugetRepositoryMetadataDto"
+          },
+          "dependencyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageDependencyGroupDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3289,6 +3549,10 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "NugetRepositoryMetadataDto": {
+        "type": "object",
         "additionalProperties": false
       },
       "NugetSearchResultDto": {
@@ -3473,6 +3737,19 @@
             "nullable": true
           },
           "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NugetSuccessDto": {
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
             "type": "string",
             "nullable": true
           }

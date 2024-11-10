@@ -15,7 +15,7 @@
 {
 	<MudTable Items="packages" FixedHeader FixedFooter TotalItems="total">
 		<HeaderContent>
-			<MudTh>Name</MudTh>
+			<MudTh>PackageId</MudTh>
 			<MudTh>Latest Version</MudTh>
 			<MudTh>Published</MudTh>
 
@@ -31,10 +31,10 @@
 		</HeaderContent>
 		<RowTemplate>
 			<MudTh scope="row">
-				<LinkToPackage Name="@context.Name"/>
+				<LinkToPackage PackageType="dart" Name="@context.Name"/>
 			</MudTh>
 			<MudTd>
-				<LinkToPackage Name="@context.Name" Version="@context.Latest!.Version"/>
+				<LinkToPackage PackageType="dart" Name="@context.Name" Version="@context.Latest!.Version"/>
 			</MudTd>
 			<MudTd>@context.Latest?.PublishedAt</MudTd>
 

@@ -8,14 +8,14 @@ namespace PubNet.API.DTO.Packages.Nuget.Spec;
 /// <seealso cref="NugetPackageRegistrationPageDto"/>
 public class NugetPackageRegistrationIndexDto
 {
-	public static NugetPackageRegistrationIndexDto FromNugetPackage(NugetPackage package)
+	public static NugetPackageRegistrationIndexDto MapFrom(NugetPackage package)
 	{
 		var items = package.Versions.Select(v => new NugetPackageRegistrationLeafDto
 		{
 			Id = "",
 			CatalogEntry = new NugetCatalogEntryDto
 			{
-				Id = "null",
+				Id = "",
 				PackageId = v.Package.Name,
 				Version = v.Version,
 			},

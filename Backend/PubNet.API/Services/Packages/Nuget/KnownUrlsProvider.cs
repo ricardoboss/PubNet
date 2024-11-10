@@ -48,8 +48,8 @@ public class KnownUrlsProvider(IHttpContextAccessor contextAccessor, IActionTemp
 	public string GetPackagePublishUrl()
 	{
 		var route = actionTemplateGenerator.GetActionRoute(
-			nameof(NugetRootController),
-			nameof(NugetRootController.PublishAsync)
+			nameof(NugetPublishController),
+			nameof(NugetPublishController.PutAsync)
 		);
 
 		return BaseUrl + route;
