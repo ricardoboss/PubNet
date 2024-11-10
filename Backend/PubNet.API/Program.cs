@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -213,6 +214,12 @@ void ConfigureControllers(IHostApplicationBuilder builder)
 
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 		});
+
+	builder.Services.Configure<FormOptions>(o =>
+	{
+		// Set global upload limit to 256 MB
+		o.MultipartBodyLengthLimit = 1024 * 1024 * 256;
+	});
 }
 
 void ConfigureNugetServices(IHostApplicationBuilder builder)
@@ -251,6 +258,8 @@ void ConfigurePackageStorage(IHostApplicationBuilder builder)
 
 	// needed for extracting archives
 	builder.Services.AddSingleton<IArchiveReader, TempDirExtractingArchiveReader>();
+
+	builder.Services.AddOptions<PackageStorageOptions>().Bind(builder.Configuration.GetSection("PackageStorage"));
 }
 
 void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)
@@ -316,6 +325,7 @@ void ConfigureDataServices(IHostApplicationBuilder builder)
 	builder.Services.AddScoped<IAuthorDmo, AuthorDmo>();
 	builder.Services.AddScoped<IIdentityDmo, IdentityDmo>();
 	builder.Services.AddScoped<IDartPackageDmo, DartPackageDmo>();
+	builder.Services.AddScoped<INugetPackageDmo, NugetPackageDmo>();
 
 	builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 	builder.Services.AddScoped<IPasswordVerifier, DefaultPasswordVerifier>();

@@ -41,12 +41,4 @@ public class NugetRootController(INugetServiceIndexProvider serviceIndexProvider
 
 		return NugetSearchResultDto.MapFrom(list);
 	}
-
-	[HttpPut("Publish")]
-	[Authorize]
-	[ProducesResponseType(StatusCodes.Status201Created)]
-	public Task<IActionResult> PublishAsync(CancellationToken cancellationToken = default)
-	{
-		throw new NotImplementedException();
-	}
 }
