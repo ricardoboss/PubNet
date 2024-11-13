@@ -9,16 +9,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class EnvironmentObject : IParsable
+    public partial class EnvironmentObject : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The flutter property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>? Flutter { get; set; }
+        public UntypedNode? Flutter { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange> Flutter { get; set; }
+        public UntypedNode Flutter { get; set; }
 #endif
         /// <summary>The sdk property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -28,6 +30,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public List<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange> Sdk { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.EnvironmentObject"/> and sets the default values.
+        /// </summary>
+        public EnvironmentObject()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -46,7 +55,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "flutter", n => { Flutter = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>(global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "flutter", n => { Flutter = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "sdk", n => { Sdk = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>(global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
@@ -57,8 +66,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>("flutter", Flutter);
+            writer.WriteObjectValue<UntypedNode>("flutter", Flutter);
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>("sdk", Sdk);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

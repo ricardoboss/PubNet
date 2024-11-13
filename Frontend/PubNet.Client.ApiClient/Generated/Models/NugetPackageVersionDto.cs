@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class NugetPackageVersionDto : IParsable
+    public partial class NugetPackageVersionDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The authors property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -119,6 +121,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string Version { get; set; }
 #endif
         /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto"/> and sets the default values.
+        /// </summary>
+        public NugetPackageVersionDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
+        /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto"/></returns>
@@ -173,6 +182,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteStringValue("tags", Tags);
             writer.WriteStringValue("title", Title);
             writer.WriteStringValue("version", Version);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

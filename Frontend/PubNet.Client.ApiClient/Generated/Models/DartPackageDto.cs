@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class DartPackageDto : IParsable
+    public partial class DartPackageDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The author property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -51,11 +53,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The versions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>? Versions { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2>? Versions { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto> Versions { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2> Versions { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartPackageDto"/> and sets the default values.
+        /// </summary>
+        public DartPackageDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -80,7 +89,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "replacedBy", n => { ReplacedBy = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
-                { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -96,7 +105,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("replacedBy", ReplacedBy);
             writer.WriteIntValue("type", Type);
-            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>("versions", Versions);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2>("versions", Versions);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

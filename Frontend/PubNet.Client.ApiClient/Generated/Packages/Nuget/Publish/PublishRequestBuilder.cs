@@ -38,10 +38,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Publish
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.ValidationErrorsDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.AuthErrorDto">When receiving a 401 status code</exception>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageAlreadyExistsErrorDto">When receiving a 409 status code</exception>
-        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InvalidRoleErrorDto">When receiving a 461 status code</exception>
-        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.Client.ApiClient.Generated.Models.NugetSuccessDto?> PutAsync(Stream body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -56,10 +53,7 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Nuget.Publish
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
                 { "400", global::PubNet.Client.ApiClient.Generated.Models.ValidationErrorsDto.CreateFromDiscriminatorValue },
-                { "401", global::PubNet.Client.ApiClient.Generated.Models.AuthErrorDto.CreateFromDiscriminatorValue },
                 { "409", global::PubNet.Client.ApiClient.Generated.Models.NugetPackageAlreadyExistsErrorDto.CreateFromDiscriminatorValue },
-                { "461", global::PubNet.Client.ApiClient.Generated.Models.InvalidRoleErrorDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.NugetSuccessDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.NugetSuccessDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
