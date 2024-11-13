@@ -10,9 +10,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class NugetPackageAlreadyExistsErrorDto : ApiException, IParsable
+    public partial class NugetPackageAlreadyExistsErrorDto : ApiException, IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The primary error message.</summary>
         public override string Message { get => MessageEscaped ?? string.Empty; }
         /// <summary>The message property</summary>
@@ -23,6 +25,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public string MessageEscaped { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageAlreadyExistsErrorDto"/> and sets the default values.
+        /// </summary>
+        public NugetPackageAlreadyExistsErrorDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -52,6 +61,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("message", MessageEscaped);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }
