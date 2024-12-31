@@ -7,6 +7,10 @@ namespace PubNet.API.DTO.Authentication;
 [Mapper]
 public partial class TokenDto
 {
+	[MapperIgnoreSource(nameof(Token.IdentityId))]
+	[MapperIgnoreSource(nameof(Token.Identity))]
+	[MapperIgnoreSource(nameof(Token.Value))]
+	[MapperIgnoreSource(nameof(Token.IsExpired))]
 	public static partial TokenDto MapFrom(Token token);
 
 	[Required]

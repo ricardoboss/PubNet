@@ -7,8 +7,13 @@ namespace PubNet.API.DTO.Authentication;
 [Mapper]
 public partial class AccountCreatedDto
 {
-	[MapProperty([nameof(Identity.Email)], nameof(Email))]
+	[MapperIgnoreSource(nameof(Identity.Id))]
+	[MapperIgnoreSource(nameof(Identity.AuthorId))]
 	[MapProperty([nameof(Identity.Author), nameof(Identity.Author.UserName)], nameof(UserName))]
+	[MapProperty(nameof(Identity.Email), nameof(Email))]
+	[MapperIgnoreSource(nameof(Identity.PasswordHash))]
+	[MapperIgnoreSource(nameof(Identity.Role))]
+	[MapperIgnoreSource(nameof(Identity.Tokens))]
 	public static partial AccountCreatedDto MapFrom(Identity identity);
 
 	[Required, EmailAddress]
