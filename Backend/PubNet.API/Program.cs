@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
@@ -49,8 +48,6 @@ using Scalar.AspNetCore;
 using Serilog;
 using SignedUrl.Extensions;
 
-// const string openApiDocumentName = "openapi";
-
 if (ApiDescriptionToolDetector.IsToolInvocation())
 {
 	HandleApiDescriptionToolInvocation();
@@ -62,7 +59,7 @@ Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
 	.MinimumLevel.Verbose()
 	.Enrich.FromLogContext()
-	.CreateBootstrapLogger()!;
+	.CreateBootstrapLogger();
 
 try
 {
@@ -77,7 +74,7 @@ try
 
 	ConfigureHttpPipeline(app);
 
-	// await PubNetContext.RunMigrations(app.Services);
+	await PubNetContext.RunMigrations(app.Services);
 
 	app.Logger.LogInformation("Application started");
 
@@ -264,7 +261,7 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 		})
 		.AddJwtBearer(o =>
 		{
-			o.TokenValidationParameters = new TokenValidationParameters
+			o.TokenValidationParameters = new()
 			{
 				ValidIssuer = JwtFactory.GetIssuer(builder.Configuration),
 				ValidAudience = JwtFactory.GetAudience(builder.Configuration),
