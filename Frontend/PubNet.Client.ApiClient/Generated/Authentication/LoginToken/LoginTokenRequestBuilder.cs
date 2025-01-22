@@ -39,6 +39,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.LoginToken
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.ValidationErrorsDto">When receiving a 400 status code</exception>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.AuthErrorDto">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto?> PostAsync(global::PubNet.Client.ApiClient.Generated.Models.CreateLoginTokenDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -54,6 +55,7 @@ namespace PubNet.Client.ApiClient.Generated.Authentication.LoginToken
             {
                 { "400", global::PubNet.Client.ApiClient.Generated.Models.ValidationErrorsDto.CreateFromDiscriminatorValue },
                 { "401", global::PubNet.Client.ApiClient.Generated.Models.AuthErrorDto.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.TokenCreatedDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

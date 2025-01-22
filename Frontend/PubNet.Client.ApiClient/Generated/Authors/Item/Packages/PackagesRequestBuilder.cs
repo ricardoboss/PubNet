@@ -48,6 +48,7 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.PackageListCollectionDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.Client.ApiClient.Generated.Models.PackageListCollectionDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -58,7 +59,11 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
-            return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.PackageListCollectionDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.PackageListCollectionDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
+            {
+                { "500", global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
+            };
+            return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.PackageListCollectionDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.PackageListCollectionDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

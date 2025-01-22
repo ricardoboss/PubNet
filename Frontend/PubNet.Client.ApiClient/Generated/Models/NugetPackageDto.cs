@@ -43,10 +43,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The versions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto2>? Versions { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>? Versions { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto2> Versions { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto> Versions { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageDto"/> and sets the default values.
@@ -77,7 +77,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "latest", n => { Latest = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto.CreateFromDiscriminatorValue); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
-                { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto2>(global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto2.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -91,7 +91,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>("latest", Latest);
             writer.WriteStringValue("name", Name);
             writer.WriteIntValue("type", Type);
-            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto2>("versions", Versions);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto>("versions", Versions);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

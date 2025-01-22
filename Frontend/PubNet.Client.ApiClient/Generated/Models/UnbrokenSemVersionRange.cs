@@ -17,10 +17,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The end property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion2? End { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion? End { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion2 End { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion End { get; set; }
 #endif
         /// <summary>The endInclusive property</summary>
         public bool? EndInclusive { get; set; }
@@ -29,10 +29,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The start property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion2? Start { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion? Start { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion2 Start { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion Start { get; set; }
 #endif
         /// <summary>The startInclusive property</summary>
         public bool? StartInclusive { get; set; }
@@ -61,10 +61,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "end", n => { End = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion2>(global::PubNet.Client.ApiClient.Generated.Models.SemVersion2.CreateFromDiscriminatorValue); } },
+                { "end", n => { End = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>(global::PubNet.Client.ApiClient.Generated.Models.SemVersion.CreateFromDiscriminatorValue); } },
                 { "endInclusive", n => { EndInclusive = n.GetBoolValue(); } },
                 { "includeAllPrerelease", n => { IncludeAllPrerelease = n.GetBoolValue(); } },
-                { "start", n => { Start = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion2>(global::PubNet.Client.ApiClient.Generated.Models.SemVersion2.CreateFromDiscriminatorValue); } },
+                { "start", n => { Start = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>(global::PubNet.Client.ApiClient.Generated.Models.SemVersion.CreateFromDiscriminatorValue); } },
                 { "startInclusive", n => { StartInclusive = n.GetBoolValue(); } },
             };
         }
@@ -75,10 +75,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion2>("end", End);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>("end", End);
             writer.WriteBoolValue("endInclusive", EndInclusive);
             writer.WriteBoolValue("includeAllPrerelease", IncludeAllPrerelease);
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion2>("start", Start);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>("start", Start);
             writer.WriteBoolValue("startInclusive", StartInclusive);
             writer.WriteAdditionalData(AdditionalData);
         }

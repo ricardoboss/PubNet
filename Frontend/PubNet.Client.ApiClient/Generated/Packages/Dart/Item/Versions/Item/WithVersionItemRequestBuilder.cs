@@ -57,25 +57,27 @@ namespace PubNet.Client.ApiClient.Generated.Packages.Dart.Item.Versions.Item
         public WithVersionItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Packages/Dart/{name}/Versions/{version}", rawUrl)
         {
         }
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto3"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.NotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto3?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto3> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
                 { "404", global::PubNet.Client.ApiClient.Generated.Models.NotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.Client.ApiClient.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto3>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto3.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>(requestInfo, global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

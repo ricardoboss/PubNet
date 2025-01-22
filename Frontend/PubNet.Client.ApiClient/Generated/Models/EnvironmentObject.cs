@@ -17,10 +17,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The flutter property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public UntypedNode? Flutter { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>? Flutter { get; set; }
 #nullable restore
 #else
-        public UntypedNode Flutter { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange> Flutter { get; set; }
 #endif
         /// <summary>The sdk property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -55,7 +55,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "flutter", n => { Flutter = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "flutter", n => { Flutter = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>(global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "sdk", n => { Sdk = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>(global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
@@ -66,7 +66,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<UntypedNode>("flutter", Flutter);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>("flutter", Flutter);
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange>("sdk", Sdk);
             writer.WriteAdditionalData(AdditionalData);
         }

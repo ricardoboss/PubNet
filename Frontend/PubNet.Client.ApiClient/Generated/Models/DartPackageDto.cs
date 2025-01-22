@@ -53,10 +53,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The versions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2>? Versions { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>? Versions { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2> Versions { get; set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto> Versions { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartPackageDto"/> and sets the default values.
@@ -89,7 +89,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "replacedBy", n => { ReplacedBy = n.GetStringValue(); } },
                 { "type", n => { Type = n.GetIntValue(); } },
-                { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -105,7 +105,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("replacedBy", ReplacedBy);
             writer.WriteIntValue("type", Type);
-            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto2>("versions", Versions);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>("versions", Versions);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
