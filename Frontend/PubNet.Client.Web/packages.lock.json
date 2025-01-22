@@ -31,9 +31,9 @@
       },
       "GitVersion.MsBuild": {
         "type": "Direct",
-        "requested": "[5.12.0, 6.0.0)",
-        "resolved": "5.12.0",
-        "contentHash": "dJuigXycpJNOiLT9or7mkHSkGFHgGW3/p6cNNYEKZBa7Hhp1FdX/cvqYWWYhRLpfoZOedeA7aRbYiOB3vW/dvA=="
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "qZFJ+vJQp/BybHH15RUq15Cg46tHXVKaxwdDFEvrA3MjClEXHpmDwKQzvaPOk9ysS2h6A+fOzcsyXiXqRbF5ZA=="
       },
       "Markdig": {
         "type": "Direct",
@@ -112,12 +112,6 @@
         "dependencies": {
           "Microsoft.AspNetCore.Components.Web": "8.0.8"
         }
-      },
-      "System.Text.Encodings.Web": {
-        "type": "Direct",
-        "requested": "[9.0.0, )",
-        "resolved": "9.0.0",
-        "contentHash": "e2hMgAErLbKyUUwt18qSBf9T5Y+SFAL3ZedM8fLupkVj8Rj2PZ9oxQ37XX2LF8fTO1wNIxvKpihD7Of7D/NxZw=="
       },
       "TextCopy": {
         "type": "Direct",
@@ -466,13 +460,6 @@
         "contentHash": "HDeCgFmyu9IgM40AWOvB0ieuoLVHSYE4EN6uQNv7bVkUnaZnn6GeGDMIb/zvfOJbtyIEn411eQ8g+iIrzCM4ng=="
       }
     },
-    "net9.0/browser-wasm": {
-      "System.Text.Encodings.Web": {
-        "type": "Direct",
-        "requested": "[9.0.0, )",
-        "resolved": "9.0.0",
-        "contentHash": "e2hMgAErLbKyUUwt18qSBf9T5Y+SFAL3ZedM8fLupkVj8Rj2PZ9oxQ37XX2LF8fTO1wNIxvKpihD7Of7D/NxZw=="
-      }
-    }
+    "net9.0/browser-wasm": {}
   }
 }

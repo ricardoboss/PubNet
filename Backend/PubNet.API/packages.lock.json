@@ -4,9 +4,9 @@
     "net9.0": {
       "GitVersion.MsBuild": {
         "type": "Direct",
-        "requested": "[5.12.0, 6.0.0)",
-        "resolved": "5.12.0",
-        "contentHash": "dJuigXycpJNOiLT9or7mkHSkGFHgGW3/p6cNNYEKZBa7Hhp1FdX/cvqYWWYhRLpfoZOedeA7aRbYiOB3vW/dvA=="
+        "requested": "[6.1.0, )",
+        "resolved": "6.1.0",
+        "contentHash": "qZFJ+vJQp/BybHH15RUq15Cg46tHXVKaxwdDFEvrA3MjClEXHpmDwKQzvaPOk9ysS2h6A+fOzcsyXiXqRbF5ZA=="
       },
       "Microsoft.AspNetCore.Authentication.Google": {
         "type": "Direct",
@@ -123,12 +123,6 @@
           "SignedUrl.Abstractions": "1.2.0",
           "SignedUrl.AspNet": "1.2.0"
         }
-      },
-      "System.Text.Encodings.Web": {
-        "type": "Direct",
-        "requested": "[9.0.0, )",
-        "resolved": "9.0.0",
-        "contentHash": "e2hMgAErLbKyUUwt18qSBf9T5Y+SFAL3ZedM8fLupkVj8Rj2PZ9oxQ37XX2LF8fTO1wNIxvKpihD7Of7D/NxZw=="
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -481,6 +475,11 @@
         "type": "Transitive",
         "resolved": "4.4.0",
         "contentHash": "cJV7ScGW7EhatRsjehfvvYVBvtiSMKgN8bOVI0bQhnF5bU7vnHVIsH49Kva7i7GWaWYvmEzkYVk1TC+gZYBEog=="
+      },
+      "System.Text.Encodings.Web": {
+        "type": "Transitive",
+        "resolved": "4.5.0",
+        "contentHash": "Xg4G4Indi4dqP1iuAiMSwpiWS54ZghzR644OtsRCm/m/lBMG8dUBhLVN7hLm8NNrNTR+iGbshCPTwrvxZPlm4g=="
       },
       "Wangkanai.Hosting": {
         "type": "Transitive",
