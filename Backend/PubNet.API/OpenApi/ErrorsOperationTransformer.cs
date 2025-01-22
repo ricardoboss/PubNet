@@ -4,23 +4,23 @@ using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.OpenApi;
 
-public class ErrorsOperationTransformer : IOpenApiOperationTransformer
+public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApiDocumentTransformer
 {
 	public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken)
 	{
 		if (operation.RequestBody != null)
 		{
-			operation.Responses["400"] = new OpenApiResponse
+			operation.Responses["400"] = new()
 			{
 				Description = "Bad Request",
 				Content = new Dictionary<string, OpenApiMediaType>
 				{
 					["application/json"] = new()
 					{
-						Schema = new OpenApiSchema
+						Schema = new()
 						{
-							Reference = new OpenApiReference
+							Reference = new()
 							{
 								Type = ReferenceType.Schema,
 								Id = nameof(ValidationErrorsDto),
@@ -39,9 +39,9 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 			{
 				["application/json"] = new()
 				{
-					Schema = new OpenApiSchema
+					Schema = new()
 					{
-						Reference = new OpenApiReference
+						Reference = new()
 						{
 							Type = ReferenceType.Schema,
 							Id = nameof(InternalServerErrorDto),
@@ -52,6 +52,40 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 		};
 
 		_ = operation.Responses.TryAdd("500", internalServerErrorResponse);
+
+		return Task.CompletedTask;
+	}
+
+	public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context,
+		CancellationToken cancellationToken)
+	{
+		document.Components ??= new();
+		document.Components.Schemas ??= new Dictionary<string, OpenApiSchema>();
+		document.Components.Schemas[nameof(InternalServerErrorDto)] = new()
+		{
+			Properties = new Dictionary<string, OpenApiSchema>
+			{
+				["error"] = new()
+				{
+					Type = "string",
+					Nullable = false,
+				},
+				["message"] = new()
+				{
+					Type = "string",
+					Nullable = false,
+				},
+				["stackTrace"] = new()
+				{
+					Type = "array",
+					Items = new()
+					{
+						Type = "string",
+						Nullable = false,
+					},
+				},
+			},
+		};
 
 		return Task.CompletedTask;
 	}

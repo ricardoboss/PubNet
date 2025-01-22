@@ -1930,6 +1930,22 @@
   },
   "components": {
     "schemas": {
+      "InternalServerErrorDto": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stackTrace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "AccountCreatedDto": {
         "required": [
           "email",

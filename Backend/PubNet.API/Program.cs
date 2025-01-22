@@ -173,6 +173,7 @@ void ConfigureOpenApi(IHostApplicationBuilder builder)
 		o.AddDocumentTransformer<PubNetDocumentTransformer>();
 		o.AddOperationTransformer<CleanupOperationTransformer>();
 		o.AddOperationTransformer<ErrorsOperationTransformer>();
+		o.AddDocumentTransformer<ErrorsOperationTransformer>();
 		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
 	});
 }
