@@ -10,7 +10,7 @@
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="3.0.1" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="3.0.1" />
-    <PackageVersion Include="GitVersion.MsBuild" Version="6.1.0" />
+    <PackageVersion Include="GitVersion.MsBuild" Version="[5.12.0,6.0.0)" />
     <PackageVersion Include="Markdig" Version="0.40.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
