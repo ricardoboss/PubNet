@@ -74,8 +74,8 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 		CancellationToken cancellationToken = default)
 	{
 		var incompleteAnalyses = (await db.DartPackageVersionAnalyses
-				.Where(a => a.CompletedAt == null)
 				.Include(dartPackageVersionAnalysis => dartPackageVersionAnalysis.PackageVersion)
+				.Where(a => a.CompletedAt == null)
 				.ToListAsync(cancellationToken))
 			.Where(a => !TaskQueueContainsTaskFor(taskQueue, a.PackageVersion))
 			.ToList();
