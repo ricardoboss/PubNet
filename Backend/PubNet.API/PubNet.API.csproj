@@ -10,14 +10,15 @@
 		<OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
 	</PropertyGroup>
 
-<!--	<Target Name="FixSpec" DependsOnTargets="GenerateOpenApiDocuments" AfterTargets="GenerateOpenApiDocuments">-->
-<!--		<Message Importance="high" Text="Removing duplicate models from OpenAPI spec" />-->
-<!--		<Exec-->
-<!--			Command="pwsh -ExecutionPolicy Unrestricted -NoProfile -File $(MSBuildThisFileDirectory)FixSpec.ps1 -SpecFile $(OpenApiDocumentsDirectory)\$(MSBuildProjectName).json"-->
-<!--			LogStandardErrorAsError="true"-->
-<!--			ContinueOnError="False"-->
-<!--		/>-->
-<!--	</Target>-->
+	<!-- TODO: remove after .NET 9.0.2 is released -->
+	<Target Name="FixSpec" DependsOnTargets="GenerateOpenApiDocuments" AfterTargets="GenerateOpenApiDocuments" BeforeTargets="Build">
+		<Message Importance="high" Text="Fixing OpenAPI spec"/>
+		<Exec
+			Command="pwsh -ExecutionPolicy Unrestricted -NoProfile -File $(MSBuildThisFileDirectory)FixSpec.ps1 -SpecFile $(OpenApiDocumentsDirectory)\$(MSBuildProjectName).json"
+			LogStandardErrorAsError="true"
+			ContinueOnError="False"
+		/>
+	</Target>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
@@ -41,8 +42,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="NuGet.Packaging" />
-		<PackageReference Include="Scalar.AspNetCore" />
+		<PackageReference Include="NuGet.Packaging"/>
+		<PackageReference Include="Scalar.AspNetCore"/>
 		<PackageReference Include="Serilog.AspNetCore"/>
 		<PackageReference Include="Serilog.Sinks.Seq"/>
 		<PackageReference Include="SerilogAnalyzer"/>

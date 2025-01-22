@@ -3,7 +3,7 @@
 	[string]$SpecFile
 )
 
-function Replace-RefsRecursively {
+function Replace-ObsoleteRefs {
 	param (
 		[PSCustomObject]$Object,
 		[hashtable]$ModelMap
@@ -11,12 +11,12 @@ function Replace-RefsRecursively {
 	foreach ($property in $Object.PSObject.Properties) {
 		if ($property.Value -is [PSCustomObject]) {
 			# Recursively handle nested objects
-			Replace-RefsRecursively -Object $property.Value -ModelMap $ModelMap
+			Replace-ObsoleteRefs -Object $property.Value -ModelMap $ModelMap
 		} elseif ($property.Value -is [System.Collections.IEnumerable] -and -not ($property.Value -is [string])) {
 			# Recursively handle arrays
 			foreach ($item in $property.Value) {
 				if ($item -is [PSCustomObject]) {
-					Replace-RefsRecursively -Object $item -ModelMap $ModelMap
+					Replace-ObsoleteRefs -Object $item -ModelMap $ModelMap
 				}
 			}
 		} elseif ($property.Name -eq '$ref') {
@@ -29,31 +29,62 @@ function Replace-RefsRecursively {
 	}
 }
 
+function Find-KeyCaseInsensitive {
+	param(
+		[PSCustomObject]$obj,
+		[string]$key
+	)
+	$obj.PSObject.Properties | Where-Object { $_.Name -ieq $key } | Select-Object -First 1
+}
+
 # Recursive function to fix invalid $ref entries
-function Fix-Refs {
-	param ($node, $parent)
+function Fix-InvalidNestedRefs {
+	param (
+		[PSCustomObject]$root,
+		[PSCustomObject]$node,
+		[PSCustomObject]$parent
+	)
 
 	foreach ($key in $node.PSObject.Properties.Name) {
 		$value = $node.$key
 
 		if ($key -eq '$ref' -and $value -match '^#/components/schemas/#/.*') {
-			# Split the ref path by '/' and remove everything before the last 'properties'
+			# Split the ref path by '/' and drop everything before the last 'properties'
 			$refParts = $value -split '/'
 			$lastPropertiesIndex = [Array]::LastIndexOf($refParts, 'properties')
 
 			if ($lastPropertiesIndex -gt 0) {
-				# Extract the relevant part after the last 'properties'
-				$relevantParts = $refParts[$lastPropertiesIndex..($refParts.Length - 1)]
-				$parentPath = $value -replace '(/properties/.*)', ''  # Get the base path without the invalid part
-				$newRef = "$parentPath/properties/$($relevantParts -join '/')"
-				$node.$key = $newRef
+				# Extract the part before the last 'properties' to get the target schema
+				$targetParts = $refParts[($lastPropertiesIndex - 1)..($refParts.Length - 1)]
+
+				# Traverse the schema using the base path and relevant parts
+				$targetSchema = $root.components.schemas
+
+				# Traverse to the target schema based on the basePath
+				foreach ($part in $targetParts) {
+					$targetProperty = Find-KeyCaseInsensitive -obj $targetSchema -key $part
+					if ($targetProperty) {
+						$targetSchema = $targetProperty.Value
+
+						if ($targetProperty.Name -eq '$ref') {
+							break
+						}
+					}
+					else
+					{
+						throw "Could not find '$part' of target schema '" + ($targetParts -join '/') + "' in available keys $( $targetSchema.PSObject.Properties.Name -join ', ' )"
+					}
+				}
+
+				# If path is valid, replace the ref with the found schema
+				$node.$key = $targetSchema.'$ref'
 			}
 		} elseif ($value -is [PSCustomObject]) {
-			Fix-Refs -node $value -parent $node
+			Fix-InvalidNestedRefs -root $root -node $value -parent $node
 		} elseif ($value -is [System.Collections.IEnumerable]) {
 			foreach ($item in $value) {
 				if ($item -is [PSCustomObject]) {
-					Fix-Refs -node $item -parent $node
+					Fix-InvalidNestedRefs -root $root -node $item -parent $node
 				}
 			}
 		}
@@ -92,7 +123,7 @@ try {
 	}
 
 	# Update all $ref values recursively
-	Replace-RefsRecursively -Object $spec -ModelMap $modelMap
+	Replace-ObsoleteRefs -Object $spec -ModelMap $modelMap
 
 	# Remove duplicate models
 	foreach ($key in $modelMap.Keys) {
@@ -100,7 +131,7 @@ try {
 	}
 
 	# Fix invalid $ref entries
-	Fix-Refs -node $spec -parent $null
+	Fix-InvalidNestedRefs -root $spec -node $spec -parent $null
 
 	# Save the modified spec
 	$spec | ConvertTo-Json -Depth 100 | Set-Content -Path $SpecFile

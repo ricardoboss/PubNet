@@ -510,7 +510,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NugetPackageVersionDto3"
+                  "$ref": "#/components/schemas/NugetPackageVersionDto"
                 }
               }
             }
@@ -686,7 +686,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NugetPackageDto2"
+                  "$ref": "#/components/schemas/NugetPackageDto"
                 }
               }
             }
@@ -975,7 +975,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NugetPackageListDto2"
+                  "$ref": "#/components/schemas/NugetPackageListDto"
                 }
               }
             }
@@ -1032,7 +1032,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartPackageVersionDto3"
+                  "$ref": "#/components/schemas/DartPackageVersionDto"
                 }
               }
             }
@@ -1340,7 +1340,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartPackageDto2"
+                  "$ref": "#/components/schemas/DartPackageDto"
                 }
               }
             }
@@ -1407,7 +1407,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartPackageListDto2"
+                  "$ref": "#/components/schemas/DartPackageListDto"
                 }
               }
             }
@@ -1748,7 +1748,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DartPackageListDto2"
+                  "$ref": "#/components/schemas/DartPackageListDto"
                 }
               }
             }
@@ -1813,7 +1813,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NugetPackageListDto2"
+                  "$ref": "#/components/schemas/NugetPackageListDto"
                 }
               }
             }
@@ -2140,85 +2140,7 @@
           "versions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DartPackageVersionDto2"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "DartPackageDto2": {
-        "required": [
-          "name",
-          "author",
-          "type",
-          "latest",
-          "versions"
-        ],
-        "type": "object",
-        "properties": {
-          "isDiscontinued": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "replacedBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/components/schemas/PackageType"
-          },
-          "latest": {
-            "$ref": "#/components/schemas/DartPackageVersionDto4"
-          },
-          "versions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DartPackageVersionDto5"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "DartPackageDto3": {
-        "required": [
-          "name",
-          "author",
-          "type",
-          "latest",
-          "versions"
-        ],
-        "type": "object",
-        "properties": {
-          "isDiscontinued": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "replacedBy": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/components/schemas/PackageType"
-          },
-          "latest": {
-            "$ref": "#/components/schemas/DartPackageVersionDto6"
-          },
-          "versions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DartPackageVersionDto7"
+              "$ref": "#/components/schemas/DartPackageVersionDto"
             },
             "nullable": true
           }
@@ -2239,25 +2161,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DartPackageDto"
-            }
-          }
-        }
-      },
-      "DartPackageListDto2": {
-        "required": [
-          "totalHits",
-          "packages"
-        ],
-        "type": "object",
-        "properties": {
-          "totalHits": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "packages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DartPackageDto3"
             }
           }
         }
@@ -2322,206 +2225,6 @@
         },
         "nullable": true
       },
-      "DartPackageVersionDto2": {
-        "required": [
-          "archiveUrl",
-          "archiveSha256",
-          "pubspec",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "retracted": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "archiveUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "archiveSha256": {
-            "type": "string"
-          },
-          "pubspec": {
-            "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "DartPackageVersionDto3": {
-        "required": [
-          "archiveUrl",
-          "archiveSha256",
-          "pubspec",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "retracted": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "archiveUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "archiveSha256": {
-            "type": "string"
-          },
-          "pubspec": {
-            "$ref": "#/components/schemas/PubSpec2"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "DartPackageVersionDto4": {
-        "required": [
-          "archiveUrl",
-          "archiveSha256",
-          "pubspec",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "retracted": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "archiveUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "archiveSha256": {
-            "type": "string"
-          },
-          "pubspec": {
-            "$ref": "#/components/schemas/PubSpec3"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "nullable": true
-      },
-      "DartPackageVersionDto5": {
-        "required": [
-          "archiveUrl",
-          "archiveSha256",
-          "pubspec",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "retracted": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "archiveUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "archiveSha256": {
-            "type": "string"
-          },
-          "pubspec": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/pubspec"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "DartPackageVersionDto6": {
-        "required": [
-          "archiveUrl",
-          "archiveSha256",
-          "pubspec",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "retracted": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "archiveUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "archiveSha256": {
-            "type": "string"
-          },
-          "pubspec": {
-            "$ref": "#/components/schemas/PubSpec4"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "nullable": true
-      },
-      "DartPackageVersionDto7": {
-        "required": [
-          "archiveUrl",
-          "archiveSha256",
-          "pubspec",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "retracted": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "archiveUrl": {
-            "type": "string",
-            "format": "uri"
-          },
-          "archiveSha256": {
-            "type": "string"
-          },
-          "pubspec": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
       "DartSuccessDto": {
         "required": [
           "success"
@@ -2560,67 +2263,7 @@
           "flutter": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/environment/properties/sdk/items"
-            },
-            "nullable": true
-          }
-        },
-        "nullable": true
-      },
-      "Environment2": {
-        "type": "object",
-        "properties": {
-          "sdk": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UnbrokenSemVersionRange2"
-            },
-            "nullable": true
-          },
-          "flutter": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/#/properties/pubspec/properties/environment/properties/sdk/items"
-            },
-            "nullable": true
-          }
-        },
-        "nullable": true
-      },
-      "Environment3": {
-        "type": "object",
-        "properties": {
-          "sdk": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UnbrokenSemVersionRange3"
-            },
-            "nullable": true
-          },
-          "flutter": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/environment/properties/sdk/items"
-            },
-            "nullable": true
-          }
-        },
-        "nullable": true
-      },
-      "Environment4": {
-        "type": "object",
-        "properties": {
-          "sdk": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UnbrokenSemVersionRange4"
-            },
-            "nullable": true
-          },
-          "flutter": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/environment/properties/sdk/items"
+              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
             },
             "nullable": true
           }
@@ -2916,69 +2559,7 @@
           "versions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NugetPackageVersionDto2"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "NugetPackageDto2": {
-        "required": [
-          "name",
-          "author",
-          "type",
-          "latest",
-          "versions"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/components/schemas/PackageType"
-          },
-          "latest": {
-            "$ref": "#/components/schemas/NugetPackageVersionDto"
-          },
-          "versions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NugetPackageVersionDto4"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "NugetPackageDto3": {
-        "required": [
-          "name",
-          "author",
-          "type",
-          "latest",
-          "versions"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/components/schemas/PackageType"
-          },
-          "latest": {
-            "$ref": "#/components/schemas/NugetPackageVersionDto"
-          },
-          "versions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NugetPackageVersionDto5"
+              "$ref": "#/components/schemas/NugetPackageVersionDto"
             },
             "nullable": true
           }
@@ -3010,25 +2591,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/NugetPackageDto"
-            }
-          }
-        }
-      },
-      "NugetPackageListDto2": {
-        "required": [
-          "totalHits",
-          "packages"
-        ],
-        "type": "object",
-        "properties": {
-          "totalHits": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "packages": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NugetPackageDto3"
             }
           }
         }
@@ -3172,258 +2734,6 @@
           }
         },
         "nullable": true
-      },
-      "NugetPackageVersionDto2": {
-        "required": [
-          "packageId",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "packageId": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "authors": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "projectUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "copyright": {
-            "type": "string",
-            "nullable": true
-          },
-          "tags": {
-            "type": "string",
-            "nullable": true
-          },
-          "readmeFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "repositoryMetadata": {
-            "$ref": "#/components/schemas/#/properties/nuget/properties/packages/items/properties/latest/properties/repositoryMetadata"
-          },
-          "dependencyGroups": {
-            "$ref": "#/components/schemas/#/properties/nuget/properties/packages/items/properties/latest/properties/dependencyGroups"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "NugetPackageVersionDto3": {
-        "required": [
-          "packageId",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "packageId": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "authors": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "projectUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "copyright": {
-            "type": "string",
-            "nullable": true
-          },
-          "tags": {
-            "type": "string",
-            "nullable": true
-          },
-          "readmeFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "repositoryMetadata": {
-            "$ref": "#/components/schemas/NugetRepositoryMetadataDto"
-          },
-          "dependencyGroups": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NugetPackageDependencyGroupDto"
-            },
-            "nullable": true
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "NugetPackageVersionDto4": {
-        "required": [
-          "packageId",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "packageId": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "authors": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "projectUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "copyright": {
-            "type": "string",
-            "nullable": true
-          },
-          "tags": {
-            "type": "string",
-            "nullable": true
-          },
-          "readmeFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "repositoryMetadata": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/repositoryMetadata"
-          },
-          "dependencyGroups": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/dependencyGroups"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "NugetPackageVersionDto5": {
-        "required": [
-          "packageId",
-          "version",
-          "publishedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "packageId": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "authors": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "projectUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "copyright": {
-            "type": "string",
-            "nullable": true
-          },
-          "tags": {
-            "type": "string",
-            "nullable": true
-          },
-          "readmeFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "iconFile": {
-            "type": "string",
-            "nullable": true
-          },
-          "repositoryMetadata": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/repositoryMetadata"
-          },
-          "dependencyGroups": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/dependencyGroups"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
       },
       "NugetPackageVulnerabilityDto": {
         "required": [
@@ -3803,7 +3113,7 @@
           "devDependencies": {
             "type": "object",
             "additionalProperties": {
-              "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/dependencies/additionalProperties"
+              "$ref": "#/components/schemas/Dependency"
             },
             "nullable": true
           },
@@ -3862,321 +3172,6 @@
           }
         }
       },
-      "PubSpec2": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "version": {
-            "$ref": "#/components/schemas/SemVersion"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "homepage": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "repository": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "issueTracker": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "documentation": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/Dependency"
-            },
-            "nullable": true
-          },
-          "devDependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/#/properties/pubspec/properties/dependencies/additionalProperties"
-            },
-            "nullable": true
-          },
-          "executables": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "platforms": {
-            "$ref": "#/components/schemas/Platforms"
-          },
-          "publishTo": {
-            "type": "string",
-            "nullable": true
-          },
-          "funding": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
-            },
-            "nullable": true
-          },
-          "falseSecrets": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "screenshots": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Screenshot"
-            },
-            "nullable": true
-          },
-          "topics": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "ignoredAdvisories": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "environment": {
-            "$ref": "#/components/schemas/Environment2"
-          }
-        }
-      },
-      "PubSpec3": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "version": {
-            "$ref": "#/components/schemas/SemVersion"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "homepage": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "repository": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "issueTracker": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "documentation": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/Dependency"
-            },
-            "nullable": true
-          },
-          "devDependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/dependencies/additionalProperties"
-            },
-            "nullable": true
-          },
-          "executables": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "platforms": {
-            "$ref": "#/components/schemas/Platforms"
-          },
-          "publishTo": {
-            "type": "string",
-            "nullable": true
-          },
-          "funding": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
-            },
-            "nullable": true
-          },
-          "falseSecrets": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "screenshots": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Screenshot"
-            },
-            "nullable": true
-          },
-          "topics": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "ignoredAdvisories": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "environment": {
-            "$ref": "#/components/schemas/Environment3"
-          }
-        }
-      },
-      "PubSpec4": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "version": {
-            "$ref": "#/components/schemas/SemVersion"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "homepage": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "repository": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "issueTracker": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "documentation": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/Dependency"
-            },
-            "nullable": true
-          },
-          "devDependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/dependencies/additionalProperties"
-            },
-            "nullable": true
-          },
-          "executables": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "platforms": {
-            "$ref": "#/components/schemas/Platforms"
-          },
-          "publishTo": {
-            "type": "string",
-            "nullable": true
-          },
-          "funding": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
-            },
-            "nullable": true
-          },
-          "falseSecrets": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "screenshots": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Screenshot"
-            },
-            "nullable": true
-          },
-          "topics": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "ignoredAdvisories": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "environment": {
-            "$ref": "#/components/schemas/Environment4"
-          }
-        }
-      },
       "Screenshot": {
         "required": [
           "description",
@@ -4231,146 +3226,6 @@
               "$ref": "#/components/schemas/MetadataIdentifier"
             },
             "nullable": true
-          }
-        },
-        "nullable": true
-      },
-      "SemVersion2": {
-        "type": "object",
-        "properties": {
-          "major": {
-            "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/major"
-          },
-          "minor": {
-            "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/minor"
-          },
-          "patch": {
-            "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/patch"
-          },
-          "prerelease": {
-            "type": "string",
-            "nullable": true
-          },
-          "prereleaseIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/prereleaseIdentifiers"
-          },
-          "isPrerelease": {
-            "type": "boolean"
-          },
-          "isRelease": {
-            "type": "boolean"
-          },
-          "metadata": {
-            "type": "string",
-            "nullable": true
-          },
-          "metadataIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/dart/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/metadataIdentifiers"
-          }
-        },
-        "nullable": true
-      },
-      "SemVersion3": {
-        "type": "object",
-        "properties": {
-          "major": {
-            "$ref": "#/components/schemas/#/properties/pubspec/properties/version/properties/major"
-          },
-          "minor": {
-            "$ref": "#/components/schemas/#/properties/pubspec/properties/version/properties/minor"
-          },
-          "patch": {
-            "$ref": "#/components/schemas/#/properties/pubspec/properties/version/properties/patch"
-          },
-          "prerelease": {
-            "type": "string",
-            "nullable": true
-          },
-          "prereleaseIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/pubspec/properties/version/properties/prereleaseIdentifiers"
-          },
-          "isPrerelease": {
-            "type": "boolean"
-          },
-          "isRelease": {
-            "type": "boolean"
-          },
-          "metadata": {
-            "type": "string",
-            "nullable": true
-          },
-          "metadataIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/pubspec/properties/version/properties/metadataIdentifiers"
-          }
-        },
-        "nullable": true
-      },
-      "SemVersion4": {
-        "type": "object",
-        "properties": {
-          "major": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/version/properties/major"
-          },
-          "minor": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/version/properties/minor"
-          },
-          "patch": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/version/properties/patch"
-          },
-          "prerelease": {
-            "type": "string",
-            "nullable": true
-          },
-          "prereleaseIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/version/properties/prereleaseIdentifiers"
-          },
-          "isPrerelease": {
-            "type": "boolean"
-          },
-          "isRelease": {
-            "type": "boolean"
-          },
-          "metadata": {
-            "type": "string",
-            "nullable": true
-          },
-          "metadataIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/latest/properties/pubspec/properties/version/properties/metadataIdentifiers"
-          }
-        },
-        "nullable": true
-      },
-      "SemVersion5": {
-        "type": "object",
-        "properties": {
-          "major": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/major"
-          },
-          "minor": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/minor"
-          },
-          "patch": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/patch"
-          },
-          "prerelease": {
-            "type": "string",
-            "nullable": true
-          },
-          "prereleaseIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/prereleaseIdentifiers"
-          },
-          "isPrerelease": {
-            "type": "boolean"
-          },
-          "isRelease": {
-            "type": "boolean"
-          },
-          "metadata": {
-            "type": "string",
-            "nullable": true
-          },
-          "metadataIdentifiers": {
-            "$ref": "#/components/schemas/#/properties/packages/items/properties/latest/properties/pubspec/properties/version/properties/metadataIdentifiers"
           }
         },
         "nullable": true
@@ -4472,73 +3327,13 @@
         "type": "object",
         "properties": {
           "start": {
-            "$ref": "#/components/schemas/SemVersion2"
+            "$ref": "#/components/schemas/SemVersion"
           },
           "startInclusive": {
             "type": "boolean"
           },
           "end": {
-            "$ref": "#/components/schemas/SemVersion2"
-          },
-          "endInclusive": {
-            "type": "boolean"
-          },
-          "includeAllPrerelease": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UnbrokenSemVersionRange2": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "$ref": "#/components/schemas/SemVersion3"
-          },
-          "startInclusive": {
-            "type": "boolean"
-          },
-          "end": {
-            "$ref": "#/components/schemas/SemVersion3"
-          },
-          "endInclusive": {
-            "type": "boolean"
-          },
-          "includeAllPrerelease": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UnbrokenSemVersionRange3": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "$ref": "#/components/schemas/SemVersion4"
-          },
-          "startInclusive": {
-            "type": "boolean"
-          },
-          "end": {
-            "$ref": "#/components/schemas/SemVersion4"
-          },
-          "endInclusive": {
-            "type": "boolean"
-          },
-          "includeAllPrerelease": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UnbrokenSemVersionRange4": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "$ref": "#/components/schemas/SemVersion5"
-          },
-          "startInclusive": {
-            "type": "boolean"
-          },
-          "end": {
-            "$ref": "#/components/schemas/SemVersion5"
+            "$ref": "#/components/schemas/SemVersion"
           },
           "endInclusive": {
             "type": "boolean"
@@ -4580,7 +3375,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ],
   "tags": [
