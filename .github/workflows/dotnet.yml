@@ -31,13 +31,12 @@ jobs:
           dotnet-version: ${{ matrix.dotnet }}
           dotnet-quality: ${{ matrix.quality }}
           cache: true
-          cache-dependency-path: '**/packages.lock.json'
 
       - name: Restore tooling
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore ${{ matrix.quality == 'ga' && '--locked-mode' || '' }}
+        run: dotnet restore
 
       - name: Check code style
         if: ${{ matrix.os == 'ubuntu-latest' }}
