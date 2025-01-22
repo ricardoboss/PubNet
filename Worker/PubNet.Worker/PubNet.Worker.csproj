@@ -15,7 +15,6 @@
 		<PackageReference Include="Serilog.Sinks.Console"/>
 		<PackageReference Include="Serilog.Sinks.Seq"/>
 		<PackageReference Include="SerilogAnalyzer"/>
-		<PackageReference Include="SharpCompress"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -27,6 +26,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
 		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Storage.Utils.Abstractions\PubNet.Storage.Utils.Abstractions.csproj" />
+		<ProjectReference Include="..\..\PubNet.Storage.Utils\PubNet.Storage.Utils.csproj" />
 		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.Abstractions\PubNet.PackageStorage.Abstractions.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.PackageStorage.BlobStorage\PubNet.PackageStorage.BlobStorage.csproj"/>
 		<ProjectReference Include="..\..\Storage\PubNet.BlobStorage.LocalFileBlobStorage\PubNet.BlobStorage.LocalFileBlobStorage.csproj"/>

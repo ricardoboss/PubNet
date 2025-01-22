@@ -1,4 +1,4 @@
-namespace PubNet.API.Abstractions.Archives;
+namespace PubNet.Storage.Utils.Abstractions.Archives;
 
 /// <summary>
 /// Represents an entry in an archive.

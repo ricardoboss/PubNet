@@ -1,8 +1,8 @@
-using PubNet.API.Abstractions.Archives;
+using PubNet.Storage.Utils.Abstractions.Archives;
 using SharpCompress.Readers;
 using SharpCompress.Readers.Tar;
 
-namespace PubNet.API.Services.Archives;
+namespace PubNet.Storage.Utils.Archives;
 
 /// <summary>
 /// Extracts the archive to a temporary directory and then iterates over the entries in that directory.
@@ -16,26 +16,7 @@ public class TempDirExtractingArchiveReader : IArchiveReader
 		if (Directory.Exists(tempDir))
 			Directory.Delete(tempDir, true);
 
-		Directory.CreateDirectory(tempDir);
-
-		if (!archive.CanSeek)
-			throw new InvalidOperationException("Stream must be seekable");
-
-		archive.Seek(0, SeekOrigin.Begin);
-
-		using (var reader = TarReader.Open(archive, new()
-		{
-			LeaveStreamOpen = leaveStreamOpen,
-		}))
-		{
-			while (reader.MoveToNextEntry())
-				if (!reader.Entry.IsDirectory)
-					reader.WriteEntryToDirectory(tempDir, new()
-					{
-						ExtractFullPath = true,
-						Overwrite = true,
-					});
-		}
+		ReadIntoDirectory(archive, tempDir, leaveStreamOpen);
 
 		foreach (var entry in Directory.EnumerateFileSystemEntries(tempDir))
 		{
@@ -47,6 +28,33 @@ public class TempDirExtractingArchiveReader : IArchiveReader
 		}
 
 		Directory.Delete(tempDir, true);
+	}
+
+	public void ReadIntoDirectory(Stream archive, string destinationDirectory, bool leaveStreamOpen = true)
+	{
+		Directory.CreateDirectory(destinationDirectory);
+
+		if (!archive.CanSeek)
+			throw new InvalidOperationException("Stream must be seekable");
+
+		archive.Seek(0, SeekOrigin.Begin);
+
+		using var reader = TarReader.Open(archive, new()
+		{
+			LeaveStreamOpen = leaveStreamOpen,
+		});
+
+		while (reader.MoveToNextEntry())
+		{
+			if (!reader.Entry.IsDirectory)
+			{
+				reader.WriteEntryToDirectory(destinationDirectory, new()
+				{
+					ExtractFullPath = true,
+					Overwrite = true,
+				});
+			}
+		}
 	}
 }
 

@@ -108,16 +108,6 @@
         "resolved": "0.15.0",
         "contentHash": "sVpwfls4MfNnwIXLSGCgaUnV+c9kgJ8ia6GsyRcpd4Vs3gLogSDtSYBYrre2K2u/PNMo8GgG09RehwVnze70Tw=="
       },
-      "SharpCompress": {
-        "type": "Direct",
-        "requested": "[0.39.0, )",
-        "resolved": "0.39.0",
-        "contentHash": "0esqIUDlg68Z7+Weuge4QzEvNtawUO4obTJFL7xuf4DBHMxVRr+wbNgiX9arMrj3kGXQSvLe0zbZG3oxpkwJOA==",
-        "dependencies": {
-          "System.Buffers": "4.6.0",
-          "ZstdSharp.Port": "0.8.4"
-        }
-      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "5.1.1",
@@ -546,6 +536,16 @@
           "PubNet.PackageStorage.Abstractions": "[1.0.0, )"
         }
       },
+      "pubnet.storage.utils": {
+        "type": "Project",
+        "dependencies": {
+          "PubNet.Storage.Utils.Abstractions": "[1.0.0, )",
+          "SharpCompress": "[0.39.0, )"
+        }
+      },
+      "pubnet.storage.utils.abstractions": {
+        "type": "Project"
+      },
       "DartLang.PubSpec.Serialization.Json": {
         "type": "CentralTransitive",
         "requested": "[3.0.1, )",
@@ -646,6 +646,16 @@
         "contentHash": "9jZCicsVgTebqkAujRWtC9J1A5EQVlu0TVKHcgoCuv345ve5DYf4D1MjhKEnQjdRZo6x/vdv6QQrYFs7ilGzLA==",
         "dependencies": {
           "Microsoft.Extensions.Primitives": "5.0.1"
+        }
+      },
+      "SharpCompress": {
+        "type": "CentralTransitive",
+        "requested": "[0.39.0, )",
+        "resolved": "0.39.0",
+        "contentHash": "0esqIUDlg68Z7+Weuge4QzEvNtawUO4obTJFL7xuf4DBHMxVRr+wbNgiX9arMrj3kGXQSvLe0zbZG3oxpkwJOA==",
+        "dependencies": {
+          "System.Buffers": "4.6.0",
+          "ZstdSharp.Port": "0.8.4"
         }
       },
       "Vogen": {

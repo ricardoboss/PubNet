@@ -538,8 +538,8 @@
           "PubNet.BlobStorage.Extensions": "[1.0.0, )",
           "PubNet.Database.Context": "[1.0.0, )",
           "PubNet.PackageStorage.Abstractions": "[1.0.0, )",
+          "PubNet.Storage.Utils.Abstractions": "[1.0.0, )",
           "Semver": "[3.0.0, )",
-          "SharpCompress": "[0.39.0, )",
           "System.IdentityModel.Tokens.Jwt": "[8.3.1, )",
           "Wangkanai.Detection": "[8.14.0, )"
         }
@@ -615,6 +615,16 @@
           "PubNet.BlobStorage.Extensions": "[1.0.0, )",
           "PubNet.PackageStorage.Abstractions": "[1.0.0, )"
         }
+      },
+      "pubnet.storage.utils": {
+        "type": "Project",
+        "dependencies": {
+          "PubNet.Storage.Utils.Abstractions": "[1.0.0, )",
+          "SharpCompress": "[0.39.0, )"
+        }
+      },
+      "pubnet.storage.utils.abstractions": {
+        "type": "Project"
       },
       "DartLang.PubSpec.Serialization.Json": {
         "type": "CentralTransitive",

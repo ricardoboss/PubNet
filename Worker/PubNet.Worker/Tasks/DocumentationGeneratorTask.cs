@@ -3,27 +3,31 @@ using PubNet.Database.Context;
 using PubNet.Database.Entities.Dart;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.PackageStorage.Abstractions;
+using PubNet.Storage.Utils.Abstractions.Archives;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
-using PubNet.Worker.Utils;
 
 namespace PubNet.Worker.Tasks;
 
 public class DocumentationGeneratorTask : BaseWorkerTask
 {
 	private readonly DartPackageVersionAnalysis analysis;
+	private readonly string author;
 	private readonly string package;
 	private readonly string version;
 
 	private ILogger<DocumentationGeneratorTask>? logger;
 	private IArchiveStorage? archiveStorage;
+	private IArchiveReader? archiveReader;
 	private IDocsStorage? docsStorage;
 	private DartCli? dart;
 	private PubNetContext? db;
 
-	public DocumentationGeneratorTask(DartPackageVersionAnalysis analysis) : base($"{nameof(DocumentationGeneratorTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
+	public DocumentationGeneratorTask(DartPackageVersionAnalysis analysis) : base($"{nameof(DocumentationGeneratorTask)} for {analysis.PackageVersion.Package.Author.UserName}/{analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
 		this.analysis = analysis;
+
+		author = this.analysis.PackageVersion.Package.Author.UserName;
 		package = this.analysis.PackageVersion.Package.Name;
 		version = this.analysis.PackageVersion.Version;
 	}
@@ -32,6 +36,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 	{
 		logger ??= services.GetRequiredService<ILogger<DocumentationGeneratorTask>>();
 		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
+		archiveReader ??= services.GetRequiredService<IArchiveReader>();
 		docsStorage ??= services.GetRequiredService<IDocsStorage>();
 		dart ??= services.GetRequiredService<DartCli>();
 		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
@@ -44,10 +49,9 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 
 		logger.LogTrace("Running {TaskName} in {WorkingDirectory}", Name, workingDir);
 
-		// FIXME: get author
-		await using (var archiveStream = await archiveStorage.ReadArchiveAsync("test", package, version, cancellationToken))
+		await using (var archiveStream = await archiveStorage.ReadArchiveAsync(author, package, version, cancellationToken))
 		{
-			ArchiveHelper.UnpackInto(archiveStream, workingDir);
+			archiveReader.ReadIntoDirectory(archiveStream, workingDir);
 		}
 
 		try

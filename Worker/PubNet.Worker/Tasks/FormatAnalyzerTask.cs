@@ -1,27 +1,30 @@
 using PubNet.Database.Context;
 using PubNet.Database.Entities.Dart;
 using PubNet.PackageStorage.Abstractions;
+using PubNet.Storage.Utils.Abstractions.Archives;
 using PubNet.Worker.Models;
 using PubNet.Worker.Services;
-using PubNet.Worker.Utils;
 
 namespace PubNet.Worker.Tasks;
 
 public class FormatAnalyzerTask : BaseWorkerTask
 {
 	private readonly DartPackageVersionAnalysis analysis;
+	private readonly string author;
 	private readonly string package;
 	private readonly string version;
 
 	private ILogger<FormatAnalyzerTask>? logger;
 	private IArchiveStorage? archiveStorage;
+	private IArchiveReader? archiveReader;
 	private DartCli? dart;
 	private PubNetContext? db;
 
-	public FormatAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(FormatAnalyzerTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
+	public FormatAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(FormatAnalyzerTask)} for {analysis.PackageVersion.Package.Author.UserName}/{analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
 		this.analysis = analysis;
 
+		author = this.analysis.PackageVersion.Package.Author.UserName;
 		package = this.analysis.PackageVersion.Package.Name;
 		version = this.analysis.PackageVersion.Version;
 	}
@@ -30,6 +33,7 @@ public class FormatAnalyzerTask : BaseWorkerTask
 	{
 		logger ??= services.GetRequiredService<ILogger<FormatAnalyzerTask>>();
 		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
+		archiveReader ??= services.GetRequiredService<IArchiveReader>();
 		dart ??= services.GetRequiredService<DartCli>();
 		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
 
@@ -41,10 +45,9 @@ public class FormatAnalyzerTask : BaseWorkerTask
 
 		logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(FormatAnalyzerTask), workingDir);
 
-		// FIXME: author
-		await using (var archiveStream = await archiveStorage.ReadArchiveAsync("test", package, version, cancellationToken))
+		await using (var archiveStream = await archiveStorage.ReadArchiveAsync(author, package, version, cancellationToken))
 		{
-			ArchiveHelper.UnpackInto(archiveStream, workingDir);
+			archiveReader.ReadIntoDirectory(archiveStream, workingDir);
 		}
 
 		try

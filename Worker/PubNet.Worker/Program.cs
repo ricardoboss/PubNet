@@ -7,6 +7,8 @@ using PubNet.Database.Context;
 using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
+using PubNet.Storage.Utils.Abstractions.Archives;
+using PubNet.Storage.Utils.Archives;
 using PubNet.Worker;
 using PubNet.Worker.Services;
 using Serilog;
@@ -52,6 +54,8 @@ try
 				sp.GetRequiredKeyedService<IBlobStorage>(LocalFileBlobStorage.ServiceKey));
 			services.AddSingleton<IArchiveStorage, BlobArchiveStorage>();
 			services.AddSingleton<IDocsStorage, LocalFileDocsStorage>();
+
+			services.AddSingleton<IArchiveReader, TempDirExtractingArchiveReader>();
 
 			services.AddHostedService<Worker>();
 		});

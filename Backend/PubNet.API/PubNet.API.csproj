@@ -72,6 +72,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\DB\PubNet.Database.Context\PubNet.Database.Context.csproj"/>
 		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
+		<ProjectReference Include="..\..\PubNet.Storage.Utils\PubNet.Storage.Utils.csproj" />
 		<ProjectReference Include="..\PubNet.API.Abstractions\PubNet.API.Abstractions.csproj"/>
 		<ProjectReference Include="..\PubNet.API.Services\PubNet.API.Services.csproj"/>
 		<ProjectReference Include="..\PubNet.API.DTO\PubNet.API.DTO.csproj"/>
