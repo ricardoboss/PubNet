@@ -324,7 +324,7 @@ void ConfigureLogging(WebApplicationBuilder builder)
 {
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
-			.ReadFrom.Services(services)!
+			.ReadFrom.Services(services)
 			.Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
 			.Enrich.FromLogContext()
 			.WriteTo.Console()
@@ -341,7 +341,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
 		{
-			diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+			diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value ?? string.Empty);
 			diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
 			diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent);
 		};
