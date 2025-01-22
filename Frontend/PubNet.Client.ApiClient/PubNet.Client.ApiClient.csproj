@@ -13,6 +13,15 @@
 		<Watch Include="$(GeneratedClientSpecFile)" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<!-- To ensure the spec file is up-to-date -->
+		<ProjectReference Include="..\..\Backend\PubNet.API\PubNet.API.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<Targets>GenerateOpenApiDocuments</Targets>
+		</ProjectReference>
+	</ItemGroup>
+
 	<Target Name="EnsureClientUpdated" BeforeTargets="CoreCompile;CompileDesignTime">
 		<CallTarget Targets="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')" />
 		<CallTarget Targets="UpdateClient" Condition="Exists('$(GeneratedClientLockFile)')" />
