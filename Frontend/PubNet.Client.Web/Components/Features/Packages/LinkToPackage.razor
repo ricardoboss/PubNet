@@ -1,6 +1,9 @@
 ﻿@code {
 
 	[Parameter, EditorRequired]
+	public required string PackageType { get; set; }
+
+	[Parameter, EditorRequired]
 	public required string Name { get; set; }
 
 	[Parameter]
@@ -11,7 +14,7 @@
 
 }
 
-<MudLink Href="@($"/dart/{Name}{(Version is null ? string.Empty : $"/v/{Version}")}")">
+<MudLink Href="@($"/{PackageType}/{Name}{(Version is null ? string.Empty : $"/v/{Version}")}")">
 	@if (ChildContent is not null)
 	{
 		@ChildContent

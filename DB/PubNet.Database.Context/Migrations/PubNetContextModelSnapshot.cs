@@ -316,11 +316,50 @@ namespace PubNet.Database.Context.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Authors")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Copyright")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DependencyGroups")
+                        .HasColumnType("json");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IconFile")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IconUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NuspecId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NuspecVersion")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("PackageId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ProjectUrl")
+                        .HasColumnType("text");
+
                     b.Property<DateTimeOffset>("PublishedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReadmeFile")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RepositoryMetadata")
+                        .HasColumnType("json");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
 
                     b.Property<string>("Version")
                         .IsRequired()

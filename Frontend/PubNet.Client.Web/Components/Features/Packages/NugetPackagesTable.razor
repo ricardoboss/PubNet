@@ -1,0 +1,65 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required NugetPackageListDto PackageList { get; set; }
+
+	[Parameter]
+	public bool Editable { get; set; }
+
+	[Parameter]
+	public bool ShowAuthorColumn { get; set; } = true;
+
+}
+
+@if (PackageList is { Packages: { } packages, TotalHits: { } total and > 0 })
+{
+	<MudTable Items="packages" FixedHeader FixedFooter TotalItems="total">
+		<HeaderContent>
+			<MudTh>PackageId</MudTh>
+			<MudTh>Latest Version</MudTh>
+			<MudTh>Published</MudTh>
+
+			@if (ShowAuthorColumn)
+			{
+				<MudTh>Author</MudTh>
+			}
+
+			@if (Editable)
+			{
+				<MudTh></MudTh>
+			}
+		</HeaderContent>
+		<RowTemplate>
+			<MudTh scope="row">
+				<LinkToPackage PackageType="nuget" Name="@context.Name"/>
+			</MudTh>
+			<MudTd>
+				<LinkToPackage PackageType="nuget" Name="@context.Name" Version="@context.Latest!.Version"/>
+			</MudTd>
+			<MudTd>@context.Latest?.PublishedAt</MudTd>
+
+			@if (ShowAuthorColumn)
+			{
+				<MudTd>
+					<LinkToAuthor Name="@context.Author"/>
+				</MudTd>
+			}
+
+			@if (Editable)
+			{
+				<MudTd>
+					<MudButtonGroup>
+						<MudIconButton Icon="@Icons.Material.Rounded.Edit"/>
+					</MudButtonGroup>
+				</MudTd>
+			}
+		</RowTemplate>
+		<PagerContent>
+			<MudTablePager/>
+		</PagerContent>
+	</MudTable>
+}
+else
+{
+	<MudText Align="Align.Center">No packages found</MudText>
+}

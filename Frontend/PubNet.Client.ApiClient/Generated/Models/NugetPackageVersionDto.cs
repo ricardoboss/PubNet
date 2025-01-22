@@ -12,8 +12,104 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class NugetPackageVersionDto : IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>The authors property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Authors { get; set; }
+#nullable restore
+#else
+        public string Authors { get; set; }
+#endif
+        /// <summary>The copyright property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Copyright { get; set; }
+#nullable restore
+#else
+        public string Copyright { get; set; }
+#endif
+        /// <summary>The dependencyGroups property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageDependencyGroupDto>? DependencyGroups { get; set; }
+#nullable restore
+#else
+        public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageDependencyGroupDto> DependencyGroups { get; set; }
+#endif
+        /// <summary>The description property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Description { get; set; }
+#nullable restore
+#else
+        public string Description { get; set; }
+#endif
+        /// <summary>The iconFile property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? IconFile { get; set; }
+#nullable restore
+#else
+        public string IconFile { get; set; }
+#endif
+        /// <summary>The iconUrl property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? IconUrl { get; set; }
+#nullable restore
+#else
+        public string IconUrl { get; set; }
+#endif
+        /// <summary>The packageId property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? PackageId { get; set; }
+#nullable restore
+#else
+        public string PackageId { get; set; }
+#endif
+        /// <summary>The projectUrl property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? ProjectUrl { get; set; }
+#nullable restore
+#else
+        public string ProjectUrl { get; set; }
+#endif
         /// <summary>The publishedAt property</summary>
         public DateTimeOffset? PublishedAt { get; set; }
+        /// <summary>The readmeFile property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? ReadmeFile { get; set; }
+#nullable restore
+#else
+        public string ReadmeFile { get; set; }
+#endif
+        /// <summary>The repositoryMetadata property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.Client.ApiClient.Generated.Models.NugetRepositoryMetadataDto? RepositoryMetadata { get; set; }
+#nullable restore
+#else
+        public global::PubNet.Client.ApiClient.Generated.Models.NugetRepositoryMetadataDto RepositoryMetadata { get; set; }
+#endif
+        /// <summary>The tags property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Tags { get; set; }
+#nullable restore
+#else
+        public string Tags { get; set; }
+#endif
+        /// <summary>The title property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Title { get; set; }
+#nullable restore
+#else
+        public string Title { get; set; }
+#endif
         /// <summary>The version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -40,7 +136,19 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "authors", n => { Authors = n.GetStringValue(); } },
+                { "copyright", n => { Copyright = n.GetStringValue(); } },
+                { "dependencyGroups", n => { DependencyGroups = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageDependencyGroupDto>(global::PubNet.Client.ApiClient.Generated.Models.NugetPackageDependencyGroupDto.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "description", n => { Description = n.GetStringValue(); } },
+                { "iconFile", n => { IconFile = n.GetStringValue(); } },
+                { "iconUrl", n => { IconUrl = n.GetStringValue(); } },
+                { "packageId", n => { PackageId = n.GetStringValue(); } },
+                { "projectUrl", n => { ProjectUrl = n.GetStringValue(); } },
                 { "publishedAt", n => { PublishedAt = n.GetDateTimeOffsetValue(); } },
+                { "readmeFile", n => { ReadmeFile = n.GetStringValue(); } },
+                { "repositoryMetadata", n => { RepositoryMetadata = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetRepositoryMetadataDto>(global::PubNet.Client.ApiClient.Generated.Models.NugetRepositoryMetadataDto.CreateFromDiscriminatorValue); } },
+                { "tags", n => { Tags = n.GetStringValue(); } },
+                { "title", n => { Title = n.GetStringValue(); } },
                 { "version", n => { Version = n.GetStringValue(); } },
             };
         }
@@ -51,7 +159,19 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("authors", Authors);
+            writer.WriteStringValue("copyright", Copyright);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageDependencyGroupDto>("dependencyGroups", DependencyGroups);
+            writer.WriteStringValue("description", Description);
+            writer.WriteStringValue("iconFile", IconFile);
+            writer.WriteStringValue("iconUrl", IconUrl);
+            writer.WriteStringValue("packageId", PackageId);
+            writer.WriteStringValue("projectUrl", ProjectUrl);
             writer.WriteDateTimeOffsetValue("publishedAt", PublishedAt);
+            writer.WriteStringValue("readmeFile", ReadmeFile);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetRepositoryMetadataDto>("repositoryMetadata", RepositoryMetadata);
+            writer.WriteStringValue("tags", Tags);
+            writer.WriteStringValue("title", Title);
             writer.WriteStringValue("version", Version);
         }
     }

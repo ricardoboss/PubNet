@@ -4,13 +4,20 @@ using Microsoft.Net.Http.Headers;
 using PubNet.API.DTO;
 using PubNet.API.DTO.Errors;
 
-namespace PubNet.API.Helpers;
+namespace PubNet.API.Authentication;
 
 internal sealed class BearerEventsHandler : JwtBearerEvents
 {
-	public override Task Forbidden(ForbiddenContext context)
+	public override Task Forbidden(ForbiddenContext context) => SendUnauthorized(context);
+
+	public override async Task MessageReceived(MessageReceivedContext context)
 	{
-		return SendUnauthorized(context);
+		if (context.Request.Headers.TryGetValue("X-NuGet-ApiKey", out var apiKey))
+		{
+			context.Token = apiKey;
+		}
+
+		await base.MessageReceived(context);
 	}
 
 	public override async Task Challenge(JwtBearerChallengeContext context)
