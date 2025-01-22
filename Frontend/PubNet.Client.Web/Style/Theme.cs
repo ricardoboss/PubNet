@@ -8,11 +8,10 @@ public static class Theme
 	{
 		Typography = new()
 		{
-			Default = new()
+			Default = new DefaultTypography
 			{
 				FontFamily = ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji"],
 				FontSize = "1rem",
-				FontWeight = 400,
 			},
 		},
 
