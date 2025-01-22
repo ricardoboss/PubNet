@@ -30,7 +30,6 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet }}
           dotnet-quality: ${{ matrix.quality }}
-          cache: true
 
       - name: Restore tooling
         run: dotnet tool restore
