@@ -18,7 +18,6 @@
 		<ProjectReference Include="..\..\Backend\PubNet.API\PubNet.API.csproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-			<Targets>GenerateOpenApiDocuments</Targets>
 		</ProjectReference>
 	</ItemGroup>
 
