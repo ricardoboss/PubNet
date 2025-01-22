@@ -1,0 +1,3398 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "PubNet API",
+    "description": "An API for Dart and NuGet package hosting",
+    "contact": {
+      "name": "GitHub",
+      "url": "https://github.com/ricardoboss/PubNet/issues"
+    },
+    "license": {
+      "name": "AGPL-3.0",
+      "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
+    },
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/Authentication/LoginToken": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLoginTokenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCreatedDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/PersonalAccessToken": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePersonalAccessTokenDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCreatedDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "includeExpired",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenCollectionDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "tokenId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/PersonalAccessToken/AllowedScopes": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/Account": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCreatedDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/RegistrationsOpen": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/Self": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Search": {
+      "get": {
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skipDart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "takeDart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "skipNuget",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "takeNuget",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageListCollectionDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/Registrations/{id}/index.json": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageRegistrationIndexDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/{id}/Versions/{version}": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageVersionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/{id}/Versions/{version}/archive.nupkg": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/{id}/index.json": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageIndexDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/{id}": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/Publish": {
+      "put": {
+        "tags": [
+          "Nuget"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "package": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetSuccessDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageAlreadyExistsErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/index.json": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetServiceIndexDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/autocomplete.json": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetAutocompleteResultDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/vulnerabilities.json": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NugetVulnerabilityIndexEntryDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/search.json": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetSearchResultDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Nuget/search": {
+      "get": {
+        "tags": [
+          "Nuget"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageListDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Versions/{version}": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageVersionDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Versions/{version}/analysis.json": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageVersionAnalysisDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Versions/{version}/archive.tar.gz": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Versions/{version}/Docs/{path}": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Versions/{version}/Retract": {
+      "patch": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartSuccessDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}/Discontinue": {
+      "patch": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartSuccessDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/{name}": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/Search": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageListDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/Versions/New": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartArchiveUploadInformationDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/Storage": {
+      "post": {
+        "tags": [
+          "Dart"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "411": {
+            "description": "Length Required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Packages/Dart/Storage/{pendingId}": {
+      "get": {
+        "tags": [
+          "Dart"
+        ],
+        "parameters": [
+          {
+            "name": "pendingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartSuccessDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authors/{username}": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAuthorDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authors/{username}/Packages/Dart": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageListDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authors/{username}/Packages/Nuget": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NugetPackageListDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authors/{username}/Packages": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageListCollectionDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authors/Search": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorListDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountCreatedDto": {
+        "required": [
+          "email",
+          "userName"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthErrorDto": {
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthorDto": {
+        "required": [
+          "id",
+          "userName",
+          "registeredAtUtc"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "registeredAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthorListDto": {
+        "required": [
+          "totalHits",
+          "authors"
+        ],
+        "type": "object",
+        "properties": {
+          "totalHits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorDto"
+            }
+          }
+        }
+      },
+      "BigInteger": {
+        "type": "object",
+        "properties": {
+          "isPowerOfTwo": {
+            "type": "boolean"
+          },
+          "isZero": {
+            "type": "boolean"
+          },
+          "isOne": {
+            "type": "boolean"
+          },
+          "isEven": {
+            "type": "boolean"
+          },
+          "sign": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CreateAccountDto": {
+        "required": [
+          "userName",
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateLoginTokenDto": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePersonalAccessTokenDto": {
+        "required": [
+          "name",
+          "scopes",
+          "lifetimeInDays"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lifetimeInDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DartArchiveUploadInformationDto": {
+        "required": [
+          "url",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DartMessageDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "DartPackageDto": {
+        "required": [
+          "name",
+          "author",
+          "type",
+          "latest",
+          "versions"
+        ],
+        "type": "object",
+        "properties": {
+          "isDiscontinued": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "replacedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PackageType"
+          },
+          "latest": {
+            "$ref": "#/components/schemas/DartPackageVersionDto"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DartPackageVersionDto"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "DartPackageListDto": {
+        "required": [
+          "totalHits",
+          "packages"
+        ],
+        "type": "object",
+        "properties": {
+          "totalHits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DartPackageDto"
+            }
+          }
+        }
+      },
+      "DartPackageVersionAnalysisDto": {
+        "type": "object",
+        "properties": {
+          "formatted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "documentationGenerated": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "readmeText": {
+            "type": "string",
+            "nullable": true
+          },
+          "spdxLicenseIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "DartPackageVersionDto": {
+        "required": [
+          "archiveUrl",
+          "archiveSha256",
+          "pubspec",
+          "version",
+          "publishedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "retracted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "archiveUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "archiveSha256": {
+            "type": "string"
+          },
+          "pubspec": {
+            "$ref": "#/components/schemas/PubSpec"
+          },
+          "version": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "nullable": true
+      },
+      "DartSuccessDto": {
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "$ref": "#/components/schemas/DartMessageDto"
+          }
+        }
+      },
+      "DeleteAuthorDto": {
+        "required": [
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Dependency": {
+        "type": "object"
+      },
+      "Environment": {
+        "type": "object",
+        "properties": {
+          "sdk": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
+            },
+            "nullable": true
+          },
+          "flutter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/properties/properties/sdk/items"
+            },
+            "nullable": true
+          }
+        },
+        "nullable": true
+      },
+      "GenericErrorContentDto": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stackTrace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "GenericErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericErrorContentDto"
+          }
+        }
+      },
+      "MetadataIdentifier": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NotFoundErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericErrorContentDto"
+          }
+        }
+      },
+      "NugetAlternatePackageDto": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "range": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "nullable": true
+      },
+      "NugetAutocompleteResultDto": {
+        "type": "object",
+        "properties": {
+          "totalHits": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NugetCatalogEntryDto": {
+        "required": [
+          "@id",
+          "id",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "@id": {
+            "type": "string"
+          },
+          "authors": {
+            "type": "string",
+            "nullable": true
+          },
+          "dependencyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageDependencyGroupDto"
+            },
+            "nullable": true
+          },
+          "deprecation": {
+            "$ref": "#/components/schemas/NugetPackageDeprecationDto"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseExpression": {
+            "type": "string",
+            "nullable": true
+          },
+          "listed": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "minClientVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "packageContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "published": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "readmeUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "requireLicenseAcceptance": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "version": {
+            "type": "string"
+          },
+          "vulnerabilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageVulnerabilityDto"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "NugetInvalidPackageErrorDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetPackageAlreadyExistsErrorDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetPackageDependencyDto": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "range": {
+            "type": "string",
+            "nullable": true
+          },
+          "registration": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NugetPackageDependencyGroupDto": {
+        "type": "object",
+        "properties": {
+          "targetFramework": {
+            "type": "string",
+            "nullable": true
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageDependencyDto"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "NugetPackageDeprecationDto": {
+        "required": [
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "alternatePackage": {
+            "$ref": "#/components/schemas/NugetAlternatePackageDto"
+          }
+        },
+        "nullable": true
+      },
+      "NugetPackageDto": {
+        "required": [
+          "name",
+          "author",
+          "type",
+          "latest",
+          "versions"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PackageType"
+          },
+          "latest": {
+            "$ref": "#/components/schemas/NugetPackageVersionDto"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageVersionDto"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "NugetPackageIndexDto": {
+        "type": "object",
+        "properties": {
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NugetPackageListDto": {
+        "required": [
+          "totalHits",
+          "packages"
+        ],
+        "type": "object",
+        "properties": {
+          "totalHits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageDto"
+            }
+          }
+        }
+      },
+      "NugetPackageRegistrationIndexDto": {
+        "required": [
+          "count",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageRegistrationPageDto"
+            }
+          }
+        }
+      },
+      "NugetPackageRegistrationLeafDto": {
+        "required": [
+          "@id",
+          "catalogEntry",
+          "packageContent"
+        ],
+        "type": "object",
+        "properties": {
+          "@id": {
+            "type": "string"
+          },
+          "catalogEntry": {
+            "$ref": "#/components/schemas/NugetCatalogEntryDto"
+          },
+          "packageContent": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetPackageRegistrationPageDto": {
+        "required": [
+          "@id",
+          "count",
+          "lower",
+          "upper"
+        ],
+        "type": "object",
+        "properties": {
+          "parent": {
+            "type": "string",
+            "nullable": true
+          },
+          "@id": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageRegistrationLeafDto"
+            },
+            "nullable": true
+          },
+          "lower": {
+            "type": "string"
+          },
+          "upper": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetPackageVersionDto": {
+        "required": [
+          "packageId",
+          "version",
+          "publishedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "packageId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "authors": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "copyright": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true
+          },
+          "readmeFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "repositoryMetadata": {
+            "$ref": "#/components/schemas/NugetRepositoryMetadataDto"
+          },
+          "dependencyGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetPackageDependencyGroupDto"
+            },
+            "nullable": true
+          },
+          "version": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "nullable": true
+      },
+      "NugetPackageVulnerabilityDto": {
+        "required": [
+          "advisoryUrl",
+          "severity"
+        ],
+        "type": "object",
+        "properties": {
+          "advisoryUrl": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetRepositoryMetadataDto": {
+        "type": "object",
+        "nullable": true
+      },
+      "NugetSearchResultDto": {
+        "required": [
+          "totalHits",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "totalHits": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetSearchResultHitDto"
+            }
+          }
+        }
+      },
+      "NugetSearchResultHitDto": {
+        "required": [
+          "@id",
+          "version",
+          "versions",
+          "packageTypes"
+        ],
+        "type": "object",
+        "properties": {
+          "@id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetSearchResultHitVersionInfoDto"
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "iconUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "projectUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "registration": {
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalDownloads": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "verified": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "packageTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetSearchResultHitPackageTypeDto"
+            }
+          }
+        }
+      },
+      "NugetSearchResultHitPackageTypeDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetSearchResultHitVersionInfoDto": {
+        "required": [
+          "@id",
+          "version",
+          "downloads"
+        ],
+        "type": "object",
+        "properties": {
+          "@id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "downloads": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "NugetServiceIndexDto": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NugetServiceIndexResourceDto"
+            }
+          }
+        }
+      },
+      "NugetServiceIndexResourceDto": {
+        "required": [
+          "@id",
+          "@type"
+        ],
+        "type": "object",
+        "properties": {
+          "@id": {
+            "type": "string"
+          },
+          "@type": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NugetSuccessDto": {
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "string"
+          }
+        }
+      },
+      "NugetVulnerabilityIndexEntryDto": {
+        "required": [
+          "@name",
+          "@id",
+          "@updated"
+        ],
+        "type": "object",
+        "properties": {
+          "@name": {
+            "type": "string"
+          },
+          "@id": {
+            "type": "string"
+          },
+          "@updated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "NullableOfBigInteger": {
+        "type": "object",
+        "properties": {
+          "isPowerOfTwo": {
+            "type": "boolean"
+          },
+          "isZero": {
+            "type": "boolean"
+          },
+          "isOne": {
+            "type": "boolean"
+          },
+          "isEven": {
+            "type": "boolean"
+          },
+          "sign": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "nullable": true
+      },
+      "PackageListCollectionDto": {
+        "required": [
+          "dart",
+          "nuget"
+        ],
+        "type": "object",
+        "properties": {
+          "dart": {
+            "$ref": "#/components/schemas/DartPackageListDto"
+          },
+          "nuget": {
+            "$ref": "#/components/schemas/NugetPackageListDto"
+          }
+        }
+      },
+      "PackageType": {
+        "type": "integer"
+      },
+      "Platforms": {
+        "type": "object",
+        "properties": {
+          "android": {
+            "type": "boolean",
+            "default": false
+          },
+          "iOS": {
+            "type": "boolean",
+            "default": false
+          },
+          "linux": {
+            "type": "boolean",
+            "default": false
+          },
+          "macOS": {
+            "type": "boolean",
+            "default": false
+          },
+          "windows": {
+            "type": "boolean",
+            "default": false
+          },
+          "web": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "nullable": true
+      },
+      "PrereleaseIdentifier": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "numericValue": {
+            "$ref": "#/components/schemas/NullableOfBigInteger"
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PubSpec": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "homepage": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "repository": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "issueTracker": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "documentation": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Dependency"
+            },
+            "nullable": true
+          },
+          "devDependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/#/properties/properties/dependencies/additionalProperties"
+            },
+            "nullable": true
+          },
+          "executables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "platforms": {
+            "$ref": "#/components/schemas/Platforms"
+          },
+          "publishTo": {
+            "type": "string",
+            "nullable": true
+          },
+          "funding": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "nullable": true
+          },
+          "falseSecrets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "screenshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Screenshot"
+            },
+            "nullable": true
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "ignoredAdvisories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          }
+        }
+      },
+      "Screenshot": {
+        "required": [
+          "description",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "SemVersion": {
+        "type": "object",
+        "properties": {
+          "major": {
+            "$ref": "#/components/schemas/BigInteger"
+          },
+          "minor": {
+            "$ref": "#/components/schemas/BigInteger"
+          },
+          "patch": {
+            "$ref": "#/components/schemas/BigInteger"
+          },
+          "prerelease": {
+            "type": "string",
+            "nullable": true
+          },
+          "prereleaseIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrereleaseIdentifier"
+            },
+            "nullable": true
+          },
+          "isPrerelease": {
+            "type": "boolean"
+          },
+          "isRelease": {
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadataIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataIdentifier"
+            },
+            "nullable": true
+          }
+        },
+        "nullable": true
+      },
+      "TokenCollectionDto": {
+        "required": [
+          "tokens"
+        ],
+        "type": "object",
+        "properties": {
+          "tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TokenDto"
+            }
+          },
+          "currentTokenId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        }
+      },
+      "TokenCreatedDto": {
+        "required": [
+          "value",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "token": {
+            "$ref": "#/components/schemas/TokenDto"
+          }
+        }
+      },
+      "TokenDto": {
+        "required": [
+          "id",
+          "name",
+          "ipAddress",
+          "userAgent",
+          "deviceType",
+          "browser",
+          "platform",
+          "scopes",
+          "createdAtUtc",
+          "expiresAtUtc",
+          "revokedAtUtc"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "browser": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokedAtUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "UnbrokenSemVersionRange": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "startInclusive": {
+            "type": "boolean"
+          },
+          "end": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "endInclusive": {
+            "type": "boolean"
+          },
+          "includeAllPrerelease": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ValidationErrorsDto": {
+        "required": [
+          "errors",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "The bearer token used to authenticate requests.",
+        "scheme": "Bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication"
+    },
+    {
+      "name": "Packages"
+    },
+    {
+      "name": "Nuget"
+    },
+    {
+      "name": "Dart"
+    },
+    {
+      "name": "Authors"
+    }
+  ]
+}
