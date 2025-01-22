@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace PubNet.Database.Entities.Packages;
 
-public abstract class BasePackageVersionConfiguration<TVersion, TPackage> : IEntityTypeConfiguration<TVersion> where TVersion : BasePackageVersion<TPackage> where TPackage : BasePackage<TVersion>
+public abstract class BasePackageVersionConfiguration<[DynamicallyAccessedMembers(AotHelper.DynamicallyAccessedMemberTypes)] TVersion, TPackage> : IEntityTypeConfiguration<TVersion> where TVersion : BasePackageVersion<TPackage> where TPackage : BasePackage<TVersion>
 {
 	public virtual void Configure(EntityTypeBuilder<TVersion> builder)
 	{

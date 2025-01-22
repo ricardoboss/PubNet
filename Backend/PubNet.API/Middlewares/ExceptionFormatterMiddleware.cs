@@ -1,4 +1,5 @@
 using System.Security.Authentication;
+using System.Text.Json.Serialization.Metadata;
 using PubNet.API.Abstractions;
 using PubNet.API.DTO;
 using PubNet.API.DTO.Errors;
@@ -26,6 +27,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 	{
 		string? code = null;
 		object dto;
+		JsonTypeInfo info;
 		switch (e)
 		{
 			case OperationCanceledException or TaskCanceledException:
@@ -35,6 +37,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case MissingScopeException missingScopeException:
 				context.Response.StatusCode = PubNetHttpStatusCodes.Status460MissingScope;
 
+				info = DtoGenerationContext.Default.MissingScopeErrorDto;
 				dto = new MissingScopeErrorDto
 				{
 					GivenScopes = missingScopeException.AvailableScopes.Select(s => s.Value).ToArray(),
@@ -45,6 +48,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case InvalidRoleException invalidRoleException:
 				context.Response.StatusCode = PubNetHttpStatusCodes.Status461InvalidRole;
 
+				info = DtoGenerationContext.Default.InvalidRoleErrorDto;
 				dto = new InvalidRoleErrorDto
 				{
 					GivenRole = invalidRoleException.GivenRole.ToClaimValue(),
@@ -55,6 +59,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case UnauthorizedAccessException:
 				context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
+				info = DtoGenerationContext.Default.AuthErrorDto;
 				dto = new AuthErrorDto
 				{
 					Error = "unauthorized",
@@ -69,6 +74,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 					$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
 				};
 
+				info = DtoGenerationContext.Default.AuthErrorDto;
 				dto = new AuthErrorDto
 				{
 					Error = "authentication_failed",
@@ -79,6 +85,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case ApiException apiException:
 				context.Response.StatusCode = apiException.StatusCode;
 
+				info = DtoGenerationContext.Default.GenericErrorDto;
 				dto = new GenericErrorDto
 				{
 					Error = new()
@@ -91,6 +98,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				break;
 			default:
 				context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+				info = DtoGenerationContext.Default.InternalServerErrorDto;
 				dto = new InternalServerErrorDto
 				{
 					Error = code ?? e.GetType().Name,
@@ -105,10 +113,6 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				break;
 		}
 
-		await context.Response.WriteAsJsonAsync(
-			dto,
-			options: DtoGenerationContext.Default.Options,
-			cancellationToken: context.RequestAborted
-		);
+		await context.Response.WriteAsJsonAsync(dto, info, cancellationToken: context.RequestAborted);
 	}
 }

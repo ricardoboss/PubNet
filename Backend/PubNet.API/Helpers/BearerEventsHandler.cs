@@ -34,7 +34,7 @@ internal sealed class BearerEventsHandler : JwtBearerEvents
 
 		context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
-		await context.Response.WriteAsJsonAsync(dto, DtoGenerationContext.Default.Options);
+		await context.Response.WriteAsJsonAsync(dto, DtoGenerationContext.Default.AuthErrorDto);
 	}
 
 	private const string FallbackUnauthenticatedError = "unauthenticated";
@@ -50,7 +50,7 @@ internal sealed class BearerEventsHandler : JwtBearerEvents
 
 		context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
-		await context.Response.WriteAsJsonAsync(dto, DtoGenerationContext.Default.Options);
+		await context.Response.WriteAsJsonAsync(dto, DtoGenerationContext.Default.AuthErrorDto);
 	}
 
 	/// From: https://github.com/dotnet/aspnetcore/blob/d12868dd7c10ff0433c16b06d3b59d03c40d987a/src/Security/Authentication/JwtBearer/src/JwtBearerHandler.cs#L226

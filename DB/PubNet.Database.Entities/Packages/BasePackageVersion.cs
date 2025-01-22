@@ -1,6 +1,9 @@
-﻿namespace PubNet.Database.Entities.Packages;
+﻿using System.Diagnostics.CodeAnalysis;
 
-public abstract class BasePackageVersion<TPackage> where TPackage : class
+namespace PubNet.Database.Entities.Packages;
+
+public abstract class BasePackageVersion<
+	[DynamicallyAccessedMembers(AotHelper.DynamicallyAccessedMemberTypes)] TPackage> where TPackage : class
 {
 	public Guid Id { get; init; }
 

@@ -8,7 +8,7 @@ public class SeedingAndConfiguredRegistrationsService(IConfiguration configurati
 {
 	public async Task<bool> AreRegistrationsOpenAsync(CancellationToken cancellationToken = default)
 	{
-		if (configuration.GetValue<bool>("RegistrationsOpen"))
+		if (bool.Parse(configuration.GetValue("RegistrationsOpen", "false") ?? "false"))
 			return true;
 
 		var anyUserExists = await identityDao.AnyAsync(cancellationToken);
