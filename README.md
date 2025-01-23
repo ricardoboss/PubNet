@@ -7,7 +7,7 @@ Self-hosted pub.dev alternative.
 
 > [!NOTE]
 > I am currently in the process of rewriting the entire app so it can support Dart _and_ NuGet (C#) packages.
-> If you want to test it, check out the [`v2` branch](https://github.com/ricardoboss/PubNet/tree/v2).
+> If you want to test it, check out the [`develop` branch](https://github.com/ricardoboss/PubNet/tree/develop).
 
 ## Contents
 
