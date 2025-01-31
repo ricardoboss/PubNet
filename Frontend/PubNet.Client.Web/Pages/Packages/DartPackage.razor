@@ -90,7 +90,7 @@ else if (packageVersion is null)
 	<MudAlert Severity="Severity.Error">
 		Package version not found.<br/>
 		<br/>
-		<LinkToPackage Name="@Name">
+		<LinkToPackage PackageType="dart" Name="@Name">
 			Show latest version
 		</LinkToPackage>
 	</MudAlert>
@@ -149,7 +149,7 @@ else if (package is not null && packageVersion is not null)
 						@foreach (var (dependency, constraint) in dependencies.OrderBy(d => d.Key))
 						{
 							<li>
-								<LinkToPackage Name="@(dependency!)"/> @constraint
+								<LinkToPackage PackageType="dart" Name="@(dependency!)"/> @constraint
 							</li>
 						}
 					</ul>

@@ -1,0 +1,149 @@
+@page "/nuget/{PackageId}"
+@page "/nuget/{PackageId}/v/{Version}"
+
+@inject INugetPackagesService NugetPackagesService
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required string PackageId { get; set; }
+
+	[Parameter]
+	public string? Version { get; set; }
+
+	private NugetPackageDto? package;
+	private NugetPackageVersionDto? packageVersion;
+
+	private bool isLoading;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+
+		await LoadPackage(default);
+	}
+
+	private async Task LoadPackage(CancellationToken cancellationToken)
+	{
+		isLoading = true;
+
+		try
+		{
+			package = await NugetPackagesService.GetPackageAsync(PackageId, cancellationToken);
+
+			if (package is not null)
+				packageVersion = Version is null
+					? package.Latest
+					: package.Versions?.FirstOrDefault(v => v.Version == Version);
+		}
+		finally
+		{
+			isLoading = false;
+		}
+	}
+
+}
+
+@if (isLoading)
+{
+	<MudText Typo="Typo.h3" GutterBottom>@PackageId</MudText>
+
+	<MudProgressCircular Indeterminate/>
+}
+else if (package is null)
+{
+	<MudText Typo="Typo.h3" GutterBottom>@PackageId</MudText>
+
+	<MudAlert Severity="Severity.Error">
+		Package not found.<br/>
+		<br/>
+		<MudLink Href="@($"https://nuget.org/packages/{PackageId}")" Target="_blank">
+			Check on nuget.org
+		</MudLink>
+	</MudAlert>
+}
+else if (packageVersion is null)
+{
+	<MudText Typo="Typo.h3" GutterBottom>@PackageId @Version</MudText>
+
+	<MudAlert Severity="Severity.Error">
+		Package version not found.<br/>
+		<br/>
+		<LinkToPackage PackageType="nuget" Name="@PackageId">
+			Show latest version
+		</LinkToPackage>
+	</MudAlert>
+}
+else if (package is not null && packageVersion is not null)
+{
+	<MudText Typo="Typo.h3">@package.Name @packageVersion.Version</MudText>
+
+	<MudText Typo="Typo.subtitle1">
+		created by <LinkToAuthor Name="@package.Author"/>
+		at <em>@packageVersion.PublishedAt</em>
+	</MudText>
+
+	<MudStack Row Spacing="5" Class="mt-5">
+		<MudStack Spacing="5" Class="flex-grow-1">
+			<!-- TODO: Badges -->
+
+			<MudTabs Rounded HideSlider PanelClass="mt-5 rounded overflow-x-auto">
+				<MudTabPanel Text="README">
+					TODO
+				</MudTabPanel>
+				<MudTabPanel Text="Versions">
+					<NugetPackageVersionsTable Versions="package.Versions"/>
+				</MudTabPanel>
+			</MudTabs>
+		</MudStack>
+
+		<MudStack Justify="Justify.FlexStart" AlignItems="AlignItems.Stretch" StretchItems="StretchItems.None">
+			<MudText Typo="Typo.subtitle1">Points</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.subtitle1">Description</MudText>
+
+			<MudText Typo="Typo.body2">@packageVersion.Description</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.subtitle1">Dependencies</MudText>
+
+			@if (packageVersion.DependencyGroups is { } dependencies)
+			{
+				<MudText>
+					<ul>
+						@foreach (var group in dependencies.OrderBy(d => d.TargetFramework))
+						{
+							<li>
+								@group.TargetFramework
+								<ul>
+									@foreach (var dependency in (group.Dependencies ?? []).OrderBy(d => d.Id))
+									{
+										<li>
+											<LinkToPackage PackageType="nuget" Name="@dependency.Id"/>
+										</li>
+									}
+								</ul>
+							</li>
+						}
+					</ul>
+				</MudText>
+			}
+			else
+			{
+				<MudText>This package has no dependencies</MudText>
+			}
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.subtitle1">License</MudText>
+
+			<MudDivider Class="flex-grow-0"/>
+
+			<MudText Typo="Typo.subtitle1">Dependents</MudText>
+
+		</MudStack>
+	</MudStack>
+}

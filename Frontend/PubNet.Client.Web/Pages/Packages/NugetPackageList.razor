@@ -1,0 +1,40 @@
+@page "/nuget"
+
+@inject INugetPackagesService PackagesService
+
+@code {
+
+	private NugetPackageListDto? packages;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await LoadPackages(default);
+	}
+
+	private async Task LoadPackages(CancellationToken cancellationToken)
+	{
+		try
+		{
+			packages = await PackagesService
+				.GetPackages()
+				.RunAsync(cancellationToken);
+		}
+		finally
+		{
+			StateHasChanged();
+		}
+	}
+}
+
+<PageTitle>NuGet Packages | PubNet</PageTitle>
+
+@if (packages is null)
+{
+	<MudProgressCircular Indeterminate/>
+}
+else
+{
+	<NugetPackagesTable PackageList="packages"/>
+}
