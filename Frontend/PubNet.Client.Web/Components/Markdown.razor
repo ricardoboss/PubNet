@@ -40,7 +40,7 @@
 
 	private static readonly Lazy<MarkdownPipeline> LazyPipeline = new(() => new MarkdownPipelineBuilder()
 		.UseAdvancedExtensions()
-		.UseAutoLinks(new AutoLinkOptions
+		.UseAutoLinks(new()
 		{
 			OpenInNewWindow = true,
 			UseHttpsForWWWLinks = true,

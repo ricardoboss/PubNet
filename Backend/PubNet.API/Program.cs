@@ -57,7 +57,7 @@ Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
 	.MinimumLevel.Verbose()
 	.Enrich.FromLogContext()
-	.CreateBootstrapLogger()!;
+	.CreateBootstrapLogger();
 
 try
 {
@@ -164,20 +164,20 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 	builder.Services.AddEndpointsApiExplorer();
 	builder.Services.AddSwaggerGen(o =>
 	{
-		o.SwaggerDoc(openApiDocumentName, new OpenApiInfo
+		o.SwaggerDoc(openApiDocumentName, new()
 		{
 			Title = "PubNet API",
 			Description = "An API for Dart and NuGet package hosting",
 			Version = ThisAssembly.AssemblyVersion,
-			Contact = new OpenApiContact
+			Contact = new()
 			{
 				Name = "GitHub",
-				Url = new Uri("https://github.com/ricardoboss/PubNet/issues"),
+				Url = new("https://github.com/ricardoboss/PubNet/issues"),
 			},
-			License = new OpenApiLicense
+			License = new()
 			{
 				Name = "AGPL-3.0",
-				Url = new Uri("https://www.gnu.org/licenses/agpl-3.0.en.html"),
+				Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
 			},
 		});
 
@@ -345,7 +345,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
 		{
-			diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+			diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value ?? string.Empty);
 			diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
 			diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent);
 		};
