@@ -19,10 +19,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GitVersion.MsBuild">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google"/>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi"/>

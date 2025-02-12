@@ -8,7 +8,6 @@
 		<PackageReference Include="Blazored.LocalStorage"/>
 		<PackageReference Include="Blism.Language.Bash" />
 		<PackageReference Include="Blism.Language.Yaml" />
-		<PackageReference Include="GitVersion.MsBuild" PrivateAssets="All" />
 		<PackageReference Include="Markdig" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
