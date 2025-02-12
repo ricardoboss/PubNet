@@ -4,67 +4,65 @@
 		<NuGetAuditMode>all</NuGetAuditMode>
 	</PropertyGroup>
 	<ItemGroup>
-		<GlobalPackageReference Include="System.Text.Json" Version="[8.0.5,)"/>
-		<GlobalPackageReference Include="Microsoft.Extensions.Caching.Memory" Version="[8.0.1,)"/>
-		<GlobalPackageReference Include="System.Text.Encodings.Web" Version="[8.0.0,)"/>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageVersion Include="Blism.Language.Bash" Version="1.1.0"/>
-		<PackageVersion Include="Blism.Language.Yaml" Version="1.1.0"/>
-		<PackageVersion Include="CliWrap" Version="3.6.7"/>
-		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0"/>
-		<PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="3.0.1"/>
-		<PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="3.0.1"/>
-		<PackageVersion Include="Markdig" Version="0.38.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+		<PackageVersion Include="Blism.Language.Bash" Version="1.1.0" />
+		<PackageVersion Include="Blism.Language.Yaml" Version="1.1.0" />
+		<PackageVersion Include="CliWrap" Version="3.7.1" />
+		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+		<PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="3.0.1" />
+		<PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="3.0.1" />
+		<PackageVersion Include="GitVersion.MsBuild" Version="[5.12.0,6.0.0)" />
+		<PackageVersion Include="Markdig" Version="0.40.0" />
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageVersion>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="8.0.10">
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageVersion>
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2"/>
-		<PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1"/>
-		<PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="8.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
-		<PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.14.0"/>
-		<PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.14.0"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.14.0"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.14.0"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.14.0"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.14.0"/>
-		<PackageVersion Include="MudBlazor" Version="7.15.0"/>
-		<PackageVersion Include="Nerdbank.GitVersioning" Version="3.7.115"/>
-		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10"/>
-		<PackageVersion Include="PasswordRulesSharp" Version="2.0.0"/>
-		<PackageVersion Include="Riok.Mapperly" Version="4.1.0"/>
-		<PackageVersion Include="Rive.Blazor.Wasm" Version="1.0.1"/>
-		<PackageVersion Include="Semver" Version="3.0.0"/>
-		<PackageVersion Include="SerilogAnalyzer" Version="0.15.0"/>
-		<PackageVersion Include="Serilog.AspNetCore" Version="8.0.3"/>
-		<PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0"/>
-		<PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.4"/>
-		<PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0"/>
-		<PackageVersion Include="Serilog.Sinks.Seq" Version="8.0.0"/>
-		<PackageVersion Include="SharpCompress" Version="0.38.0"/>
-		<PackageVersion Include="SignedUrl.Extensions" Version="1.2.0"/>
-		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.9.0"/>
-		<PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0"/>
-		<PackageVersion Include="TextCopy" Version="6.2.1"/>
-		<PackageVersion Include="Vogen" Version="5.0.3"/>
-		<PackageVersion Include="Wangkanai.Detection" Version="8.14.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+		<PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.17.1" />
+		<PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.1" />
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.17.1" />
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.17.1" />
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.17.1" />
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.17.1" />
+		<PackageVersion Include="MudBlazor" Version="8.2.0" />
+		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
+		<PackageVersion Include="PasswordRulesSharp" Version="2.0.0" />
+		<PackageVersion Include="Riok.Mapperly" Version="4.1.1" />
+		<PackageVersion Include="Rive.Blazor.Wasm" Version="1.0.1" />
+		<PackageVersion Include="Semver" Version="3.0.0" />
+		<PackageVersion Include="SerilogAnalyzer" Version="0.15.0" />
+		<PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageVersion Include="Serilog.Extensions.Hosting" Version="9.0.0" />
+		<PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
+		<PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0" />
+		<PackageVersion Include="SharpCompress" Version="0.39.0" />
+		<PackageVersion Include="SignedUrl.Extensions" Version="1.2.0" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+		<PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.4.0" />
+		<PackageVersion Include="System.Text.Encodings.Web" Version="9.0.2" />
+		<PackageVersion Include="System.Text.Json" Version="9.0.2" />
+		<PackageVersion Include="TextCopy" Version="6.2.1" />
+		<PackageVersion Include="Vogen" Version="6.0.0" />
+		<PackageVersion Include="Wangkanai.Detection" Version="8.14.0" />
 	</ItemGroup>
 </Project>
