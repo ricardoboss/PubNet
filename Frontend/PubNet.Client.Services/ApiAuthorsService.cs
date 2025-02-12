@@ -29,7 +29,7 @@ public class ApiAuthorsService(PubNetApiClient apiClient) : IAuthorsService
 	}
 
 	public async Task<AuthorListDto?> GetAuthorsAsync(string? query = null, int? page = null, int? perPage = null,
-		CancellationToken? cancellationToken = default)
+		CancellationToken cancellationToken = default)
 	{
 		throw new NotImplementedException();
 	}
