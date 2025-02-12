@@ -1,8 +1,8 @@
 {
-  "descriptionHash": "7E84F8C038D3D026D70AD1D88B28C6A5534C42881310DFBBDA7FA38C6DEDFD4508B491EF95BB2EBFA672780C94285018A372D1EC64EE48BA9B165E73EFB25CC2",
+  "descriptionHash": "2C04C7CD4D6F46EA46623F5C3FCB299067D4A72233D45CBB9A8A39CD3A4EDEC505D48F015FEAB72FDC4B05732EDF03D4190BDADB7D29B7DFAD89373FA27095A2",
   "descriptionLocation": "../../../Backend/PubNet.API/PubNet_openapi.json",
   "lockFileVersion": "1.0.0",
-  "kiotaVersion": "1.21.0",
+  "kiotaVersion": "1.23.0",
   "clientClassName": "PubNetApiClient",
   "typeAccessModifier": "Public",
   "clientNamespaceName": "PubNet.Client.ApiClient.Generated",
