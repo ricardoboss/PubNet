@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class Platforms : IParsable
+    public partial class Platforms : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The android property</summary>
         public bool? Android { get; set; }
         /// <summary>The iOS property</summary>
@@ -24,6 +26,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public bool? Web { get; set; }
         /// <summary>The windows property</summary>
         public bool? Windows { get; set; }
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.Platforms"/> and sets the default values.
+        /// </summary>
+        public Platforms()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -63,6 +72,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteBoolValue("macOS", MacOS);
             writer.WriteBoolValue("web", Web);
             writer.WriteBoolValue("windows", Windows);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

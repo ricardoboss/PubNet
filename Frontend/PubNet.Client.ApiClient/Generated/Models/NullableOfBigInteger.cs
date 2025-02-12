@@ -9,43 +9,37 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class PrereleaseIdentifier : IAdditionalDataHolder, IParsable
+    public partial class NullableOfBigInteger : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The numericValue property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger? NumericValue { get; set; }
-#nullable restore
-#else
-        public global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger NumericValue { get; set; }
-#endif
-        /// <summary>The value property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Value { get; set; }
-#nullable restore
-#else
-        public string Value { get; set; }
-#endif
+        /// <summary>The isEven property</summary>
+        public bool? IsEven { get; set; }
+        /// <summary>The isOne property</summary>
+        public bool? IsOne { get; set; }
+        /// <summary>The isPowerOfTwo property</summary>
+        public bool? IsPowerOfTwo { get; set; }
+        /// <summary>The isZero property</summary>
+        public bool? IsZero { get; set; }
+        /// <summary>The sign property</summary>
+        public int? Sign { get; set; }
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger"/> and sets the default values.
         /// </summary>
-        public PrereleaseIdentifier()
+        public NullableOfBigInteger()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier();
+            return new global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -55,8 +49,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "numericValue", n => { NumericValue = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger>(global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger.CreateFromDiscriminatorValue); } },
-                { "value", n => { Value = n.GetStringValue(); } },
+                { "isEven", n => { IsEven = n.GetBoolValue(); } },
+                { "isOne", n => { IsOne = n.GetBoolValue(); } },
+                { "isPowerOfTwo", n => { IsPowerOfTwo = n.GetBoolValue(); } },
+                { "isZero", n => { IsZero = n.GetBoolValue(); } },
+                { "sign", n => { Sign = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -66,8 +63,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NullableOfBigInteger>("numericValue", NumericValue);
-            writer.WriteStringValue("value", Value);
+            writer.WriteBoolValue("isEven", IsEven);
+            writer.WriteBoolValue("isOne", IsOne);
+            writer.WriteBoolValue("isPowerOfTwo", IsPowerOfTwo);
+            writer.WriteBoolValue("isZero", IsZero);
+            writer.WriteIntValue("sign", Sign);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
