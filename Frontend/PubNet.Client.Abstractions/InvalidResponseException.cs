@@ -14,6 +14,6 @@ public class InvalidResponseException : ApiClientException
 
 	public static InvalidResponseException UnexpectedResponse(ApiException e)
 	{
-		return new InvalidResponseException($"API returned an unexpected status code: {e.ResponseStatusCode}", e);
+		return new($"API returned an unexpected status code: {e.ResponseStatusCode}", e);
 	}
 }

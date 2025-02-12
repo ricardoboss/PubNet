@@ -13,7 +13,7 @@ public class NugetPackageRegistrationIndexDto
 		var items = package.Versions.Select(v => new NugetPackageRegistrationLeafDto
 		{
 			Id = "",
-			CatalogEntry = new NugetCatalogEntryDto
+			CatalogEntry = new()
 			{
 				Id = "null",
 				PackageId = v.Package.Name,

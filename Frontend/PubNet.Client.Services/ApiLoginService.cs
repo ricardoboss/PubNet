@@ -21,7 +21,7 @@ public class ApiLoginService(PubNetApiClient apiClient) : ILoginService
 
 			var jwt = JsonWebToken.From(tokenValue);
 
-			return new LoginSuccessResult(jwt);
+			return new(jwt);
 		}
 		catch (AuthErrorDto e)
 		{

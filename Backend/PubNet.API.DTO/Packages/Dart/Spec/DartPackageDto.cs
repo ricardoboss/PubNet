@@ -23,7 +23,7 @@ public class DartPackageDto : PackageDto<DartPackageVersionDto>
 			}).ToList()
 			: null;
 
-		return new DartPackageDto
+		return new()
 		{
 			Name = package.Name,
 			Author = package.Author.UserName,

@@ -57,12 +57,12 @@ internal sealed class SecurityRequirementsOperationFilter : IOperationFilter
 		var requiredScheme = authorizeAttribute.AuthenticationSchemes ?? JwtBearerDefaults.AuthenticationScheme;
 
 		operation.Security.Add(
-			new OpenApiSecurityRequirement
+			new()
 			{
 				{
-					new OpenApiSecurityScheme
+					new()
 					{
-						Reference = new OpenApiReference
+						Reference = new()
 						{
 							Type = ReferenceType.SecurityScheme,
 							Id = requiredScheme,
