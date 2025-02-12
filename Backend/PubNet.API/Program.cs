@@ -163,37 +163,6 @@ void ConfigureOpenApi(IHostApplicationBuilder builder)
 {
 	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
-		// o.SwaggerDoc(openApiDocumentName, new()
-		// {
-		// 	Title = "PubNet API",
-		// 	Description = "An API for Dart and NuGet package hosting",
-		// 	Version = ThisAssembly.AssemblyVersion,
-		// 	Contact = new()
-		// 	{
-		// 		Name = "GitHub",
-		// 		Url = new("https://github.com/ricardoboss/PubNet/issues"),
-		// 	},
-		// 	License = new()
-		// 	{
-		// 		Name = "AGPL-3.0",
-		// 		Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
-		// 	},
-		// });
-		//
-		// var bearerTokenScheme = new OpenApiSecurityScheme
-		// {
-		// 	Name = JwtBearerDefaults.AuthenticationScheme,
-		// 	Description = "The bearer token used to authenticate requests.",
-		// 	Scheme = JwtBearerDefaults.AuthenticationScheme,
-		// 	Type = SecuritySchemeType.Http,
-		// 	In = ParameterLocation.Header,
-		// };
-		//
-		// o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, bearerTokenScheme);
-		//
-		// o.OperationFilter<CommonErrorsOperationFilter>();
-		// o.OperationFilter<SecurityRequirementsOperationFilter>();
-
 		o.AddDocumentTransformer<PubNetDocumentTransformer>();
 		o.AddOperationTransformer<CleanupOperationTransformer>();
 		o.AddOperationTransformer<ErrorsOperationTransformer>();
