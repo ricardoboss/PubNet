@@ -8,7 +8,17 @@
 	<PropertyGroup>
 		<OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
 		<OpenApiDocumentsDirectory>.</OpenApiDocumentsDirectory>
+		<OpenApiGenerateDocumentsOptions>--file-name PubNet</OpenApiGenerateDocumentsOptions>
 	</PropertyGroup>
+
+	<Target Name="FixSpec" DependsOnTargets="GenerateOpenApiDocuments" AfterTargets="GenerateOpenApiDocuments" BeforeTargets="Build">
+		<Message Importance="high" Text="Fixing OpenAPI spec"/>
+		<Exec
+			Command="pwsh -ExecutionPolicy Unrestricted -NoProfile -File $(MSBuildThisFileDirectory)FixSpec.ps1 -SpecFile $(OpenApiDocumentsDirectory)\PubNet_openapi.json"
+			LogStandardErrorAsError="true"
+			ContinueOnError="False"
+		/>
+	</Target>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 		<DefineConstants>TRACE;EFCORE</DefineConstants>
@@ -32,11 +42,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Scalar.AspNetCore" />
 		<PackageReference Include="Serilog.AspNetCore"/>
 		<PackageReference Include="Serilog.Sinks.Seq"/>
 		<PackageReference Include="SerilogAnalyzer"/>
 		<PackageReference Include="SignedUrl.Extensions"/>
-		<PackageReference Include="Swashbuckle.AspNetCore"/>
 	</ItemGroup>
 
 	<ItemGroup>

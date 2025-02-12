@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class NugetPackageVersionDto : IParsable
+    public partial class NugetPackageVersionDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The publishedAt property</summary>
         public DateTimeOffset? PublishedAt { get; set; }
         /// <summary>The version property</summary>
@@ -22,6 +24,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public string Version { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageVersionDto"/> and sets the default values.
+        /// </summary>
+        public NugetPackageVersionDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -53,6 +62,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteDateTimeOffsetValue("publishedAt", PublishedAt);
             writer.WriteStringValue("version", Version);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }
