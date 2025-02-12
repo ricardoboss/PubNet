@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class UnbrokenSemVersionRange : IParsable
+    public partial class UnbrokenSemVersionRange : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The end property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -21,9 +23,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public global::PubNet.Client.ApiClient.Generated.Models.SemVersion End { get; set; }
 #endif
         /// <summary>The endInclusive property</summary>
-        public bool? EndInclusive { get; private set; }
+        public bool? EndInclusive { get; set; }
         /// <summary>The includeAllPrerelease property</summary>
-        public bool? IncludeAllPrerelease { get; private set; }
+        public bool? IncludeAllPrerelease { get; set; }
         /// <summary>The start property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -33,7 +35,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public global::PubNet.Client.ApiClient.Generated.Models.SemVersion Start { get; set; }
 #endif
         /// <summary>The startInclusive property</summary>
-        public bool? StartInclusive { get; private set; }
+        public bool? StartInclusive { get; set; }
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.UnbrokenSemVersionRange"/> and sets the default values.
+        /// </summary>
+        public UnbrokenSemVersionRange()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -67,7 +76,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>("end", End);
+            writer.WriteBoolValue("endInclusive", EndInclusive);
+            writer.WriteBoolValue("includeAllPrerelease", IncludeAllPrerelease);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>("start", Start);
+            writer.WriteBoolValue("startInclusive", StartInclusive);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

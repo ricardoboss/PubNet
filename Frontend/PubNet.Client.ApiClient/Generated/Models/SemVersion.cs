@@ -9,13 +9,15 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class SemVersion : IParsable
+    public partial class SemVersion : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The isPrerelease property</summary>
-        public bool? IsPrerelease { get; private set; }
+        public bool? IsPrerelease { get; set; }
         /// <summary>The isRelease property</summary>
-        public bool? IsRelease { get; private set; }
+        public bool? IsRelease { get; set; }
         /// <summary>The major property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -27,18 +29,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The metadata property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Metadata { get; private set; }
+        public string? Metadata { get; set; }
 #nullable restore
 #else
-        public string Metadata { get; private set; }
+        public string Metadata { get; set; }
 #endif
         /// <summary>The metadataIdentifiers property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier>? MetadataIdentifiers { get; private set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier>? MetadataIdentifiers { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier> MetadataIdentifiers { get; private set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier> MetadataIdentifiers { get; set; }
 #endif
         /// <summary>The minor property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -59,19 +61,26 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The prerelease property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? Prerelease { get; private set; }
+        public string? Prerelease { get; set; }
 #nullable restore
 #else
-        public string Prerelease { get; private set; }
+        public string Prerelease { get; set; }
 #endif
         /// <summary>The prereleaseIdentifiers property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier>? PrereleaseIdentifiers { get; private set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier>? PrereleaseIdentifiers { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier> PrereleaseIdentifiers { get; private set; }
+        public List<global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier> PrereleaseIdentifiers { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.SemVersion"/> and sets the default values.
+        /// </summary>
+        public SemVersion()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -108,9 +117,16 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteBoolValue("isPrerelease", IsPrerelease);
+            writer.WriteBoolValue("isRelease", IsRelease);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("major", Major);
+            writer.WriteStringValue("metadata", Metadata);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.MetadataIdentifier>("metadataIdentifiers", MetadataIdentifiers);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("minor", Minor);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.BigInteger>("patch", Patch);
+            writer.WriteStringValue("prerelease", Prerelease);
+            writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.PrereleaseIdentifier>("prereleaseIdentifiers", PrereleaseIdentifiers);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

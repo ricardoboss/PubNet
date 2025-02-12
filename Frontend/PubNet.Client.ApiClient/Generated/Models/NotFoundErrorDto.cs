@@ -10,27 +10,28 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class NotFoundErrorDto : ApiException, IParsable
+    public partial class NotFoundErrorDto : ApiException, IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The error property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto? Error { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto? Error { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto Error { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto Error { get; set; }
 #endif
         /// <summary>The primary error message.</summary>
         public override string Message { get => base.Message; }
-        /// <summary>The stackTrace property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<string>? StackTraceEscaped { get; set; }
-#nullable restore
-#else
-        public List<string> StackTraceEscaped { get; set; }
-#endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NotFoundErrorDto"/> and sets the default values.
+        /// </summary>
+        public NotFoundErrorDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -49,8 +50,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>(global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto.CreateFromDiscriminatorValue); } },
-                { "stackTrace", n => { StackTraceEscaped = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto>(global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -60,8 +60,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>("error", Error);
-            writer.WriteCollectionOfPrimitiveValues<string>("stackTrace", StackTraceEscaped);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto>("error", Error);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

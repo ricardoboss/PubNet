@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
@@ -23,6 +22,7 @@ using PubNet.API.Converter;
 using PubNet.API.DTO;
 using PubNet.API.Helpers;
 using PubNet.API.Middlewares;
+using PubNet.API.OpenApi;
 using PubNet.API.Services;
 using PubNet.API.Services.Archives;
 using PubNet.API.Services.Authentication;
@@ -32,7 +32,6 @@ using PubNet.API.Services.CQRS.Queries;
 using PubNet.API.Services.CQRS.Queries.Packages;
 using PubNet.API.Services.Guard;
 using PubNet.API.Services.Packages.Dart;
-using PubNet.API.Swagger;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
 using PubNet.Database.Context;
@@ -41,6 +40,7 @@ using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
 using PubNet.PackageStorage.BlobStorage;
+using Scalar.AspNetCore;
 using Serilog;
 using SignedUrl.Extensions;
 
@@ -123,7 +123,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 	ConfigureControllers(builder);
 
-	ConfigureSwagger(builder);
+	ConfigureOpenApi(builder);
 
 	ConfigureCors(builder);
 
@@ -159,41 +159,46 @@ void ConfigureCors(WebApplicationBuilder builder)
 	});
 }
 
-void ConfigureSwagger(IHostApplicationBuilder builder)
+void ConfigureOpenApi(IHostApplicationBuilder builder)
 {
-	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwaggerGen(o =>
+	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
-		o.SwaggerDoc(openApiDocumentName, new()
-		{
-			Title = "PubNet API",
-			Description = "An API for Dart and NuGet package hosting",
-			Version = ThisAssembly.AssemblyVersion,
-			Contact = new()
-			{
-				Name = "GitHub",
-				Url = new("https://github.com/ricardoboss/PubNet/issues"),
-			},
-			License = new()
-			{
-				Name = "AGPL-3.0",
-				Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
-			},
-		});
+		// o.SwaggerDoc(openApiDocumentName, new()
+		// {
+		// 	Title = "PubNet API",
+		// 	Description = "An API for Dart and NuGet package hosting",
+		// 	Version = ThisAssembly.AssemblyVersion,
+		// 	Contact = new()
+		// 	{
+		// 		Name = "GitHub",
+		// 		Url = new("https://github.com/ricardoboss/PubNet/issues"),
+		// 	},
+		// 	License = new()
+		// 	{
+		// 		Name = "AGPL-3.0",
+		// 		Url = new("https://www.gnu.org/licenses/agpl-3.0.en.html"),
+		// 	},
+		// });
+		//
+		// var bearerTokenScheme = new OpenApiSecurityScheme
+		// {
+		// 	Name = JwtBearerDefaults.AuthenticationScheme,
+		// 	Description = "The bearer token used to authenticate requests.",
+		// 	Scheme = JwtBearerDefaults.AuthenticationScheme,
+		// 	Type = SecuritySchemeType.Http,
+		// 	In = ParameterLocation.Header,
+		// };
+		//
+		// o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, bearerTokenScheme);
+		//
+		// o.OperationFilter<CommonErrorsOperationFilter>();
+		// o.OperationFilter<SecurityRequirementsOperationFilter>();
 
-		var bearerTokenScheme = new OpenApiSecurityScheme
-		{
-			Name = JwtBearerDefaults.AuthenticationScheme,
-			Description = "The bearer token used to authenticate requests.",
-			Scheme = JwtBearerDefaults.AuthenticationScheme,
-			Type = SecuritySchemeType.Http,
-			In = ParameterLocation.Header,
-		};
-
-		o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, bearerTokenScheme);
-
-		o.OperationFilter<CommonErrorsOperationFilter>();
-		o.OperationFilter<SecurityRequirementsOperationFilter>();
+		o.AddDocumentTransformer<PubNetDocumentTransformer>();
+		o.AddOperationTransformer<CleanupOperationTransformer>();
+		o.AddOperationTransformer<ErrorsOperationTransformer>();
+		o.AddDocumentTransformer<ErrorsOperationTransformer>();
+		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
 	});
 }
 
@@ -328,7 +333,7 @@ void ConfigureLogging(WebApplicationBuilder builder)
 {
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
-			.ReadFrom.Services(services)!
+			.ReadFrom.Services(services)
 			.Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
 			.Enrich.FromLogContext()
 			.WriteTo.Console()
@@ -368,15 +373,14 @@ void ConfigureHttpPipeline(WebApplication app)
 
 	app.MapControllers();
 
-	app.MapSwagger("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
+	app.MapOpenApi("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
 
 	if (!app.Environment.IsDevelopment())
 		return;
 
-	app.UseSwaggerUI(c =>
+	app.MapScalarApiReference(c =>
 	{
-		c.EnableTryItOutByDefault();
-		c.EnablePersistAuthorization();
-		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {ThisAssembly.AssemblyVersion}");
+		c.Theme = ScalarTheme.DeepSpace;
+		c.OpenApiRoutePattern = $"/.well-known/{openApiDocumentName}.json";
 	});
 }
