@@ -9,17 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class CodeMessageDto : IParsable
+    public partial class DartMessageDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
-        /// <summary>The code property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Code { get; set; }
-#nullable restore
-#else
-        public string Code { get; set; }
-#endif
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The message property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -29,14 +23,21 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string Message { get; set; }
 #endif
         /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto"/> and sets the default values.
+        /// </summary>
+        public DartMessageDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
+        /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto();
+            return new global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -46,7 +47,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "code", n => { Code = n.GetStringValue(); } },
                 { "message", n => { Message = n.GetStringValue(); } },
             };
         }
@@ -57,8 +57,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("code", Code);
             writer.WriteStringValue("message", Message);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }
