@@ -80,33 +80,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 	public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context,
 		CancellationToken cancellationToken)
 	{
-		document.Components ??= new();
-		document.Components.Schemas ??= new Dictionary<string, OpenApiSchema>();
-		document.Components.Schemas[nameof(InternalServerErrorDto)] = new()
-		{
-			Properties = new Dictionary<string, OpenApiSchema>
-			{
-				["error"] = new()
-				{
-					Type = "string",
-					Nullable = false,
-				},
-				["message"] = new()
-				{
-					Type = "string",
-					Nullable = false,
-				},
-				["stackTrace"] = new()
-				{
-					Type = "array",
-					Items = new()
-					{
-						Type = "string",
-						Nullable = false,
-					},
-				},
-			},
-		};
+		document.EnsureAdded<InternalServerErrorDto>();
 
 		return Task.CompletedTask;
 	}
