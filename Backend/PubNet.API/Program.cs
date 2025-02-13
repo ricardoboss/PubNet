@@ -164,10 +164,13 @@ void ConfigureOpenApi(IHostApplicationBuilder builder)
 	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
 		o.AddDocumentTransformer<PubNetDocumentTransformer>();
+		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
+		o.AddDocumentTransformer<ErrorsOperationTransformer>();
+		o.AddDocumentTransformer<AuthMetadataTransformer>();
+
 		o.AddOperationTransformer<CleanupOperationTransformer>();
 		o.AddOperationTransformer<ErrorsOperationTransformer>();
-		o.AddDocumentTransformer<ErrorsOperationTransformer>();
-		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
+		o.AddOperationTransformer<AuthMetadataTransformer>();
 	});
 }
 
