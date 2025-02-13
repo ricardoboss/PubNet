@@ -138,8 +138,46 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "pat:create"
+        ]
       },
       "get": {
         "tags": [
@@ -185,8 +223,48 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "pat:read"
+          ]
+        ]
       },
       "delete": {
         "tags": [
@@ -234,8 +312,46 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "pat:delete"
+        ]
       }
     },
     "/Authentication/PersonalAccessToken/AllowedScopes": {
@@ -276,8 +392,46 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "pat:create"
+        ]
       }
     },
     "/Authentication/Account": {
@@ -423,8 +577,33 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/Packages/Search": {
@@ -518,8 +697,36 @@
                 }
               }
             }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "packages:search"
+        ]
       }
     },
     "/Packages/Nuget/Registrations/{id}/index.json": {
@@ -624,8 +831,24 @@
                 }
               }
             }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
       },
       "delete": {
         "tags": [
@@ -672,8 +895,52 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "packages:nuget:delete"
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Packages/Nuget/{id}/Versions/{version}/archive.nupkg": {
@@ -722,8 +989,24 @@
                 }
               }
             }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Packages/Nuget/{id}/index.json": {
@@ -968,8 +1251,39 @@
                 }
               }
             }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Packages/Nuget/Publish": {
@@ -1000,8 +1314,33 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/Packages/Dart/{name}/Versions/{version}": {
@@ -1327,8 +1666,46 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "packages:dart:retract"
+        ]
       }
     },
     "/Packages/Dart/{name}/Discontinue": {
@@ -1376,8 +1753,21 @@
                 }
               }
             }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-required-scopes": [
+          "packages:dart:discontinue"
+        ]
       }
     },
     "/Packages/Dart/{name}": {
@@ -1512,8 +1902,39 @@
                 }
               }
             }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:dart:search",
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Packages/Dart/Versions/New": {
@@ -1561,8 +1982,36 @@
                 }
               }
             }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "packages:dart:new"
+        ]
       }
     },
     "/Packages/Dart/Storage": {
@@ -1768,8 +2217,33 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -1828,8 +2302,49 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "author:delete:self",
+            "author:delete:*"
+          ]
+        ]
       }
     },
     "/Authors/{username}/Packages/Dart": {
@@ -1903,8 +2418,49 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:dart:search",
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Authors/{username}/Packages/Nuget": {
@@ -1978,8 +2534,49 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:nuget:search",
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Authors/{username}/Packages": {
@@ -2027,8 +2624,48 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:search"
+          ]
+        ]
       }
     },
     "/Authors/Search": {
@@ -2094,14 +2731,58 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "x-required-scopes": [
+          "author:search"
+        ]
       }
     }
   },
   "components": {
     "schemas": {
       "InternalServerErrorDto": {
+        "required": [
+          "error",
+          "message",
+          "stackTrace"
+        ],
+        "type": "object",
         "properties": {
           "error": {
             "type": "string"
@@ -2110,6 +2791,42 @@
             "type": "string"
           },
           "stackTrace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "InvalidRoleErrorDto": {
+        "required": [
+          "requiredRole",
+          "givenRole"
+        ],
+        "type": "object",
+        "properties": {
+          "requiredRole": {
+            "type": "string"
+          },
+          "givenRole": {
+            "type": "string"
+          }
+        }
+      },
+      "MissingScopeErrorDto": {
+        "required": [
+          "requiredScopes",
+          "givenScopes"
+        ],
+        "type": "object",
+        "properties": {
+          "requiredScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "givenScopes": {
             "type": "array",
             "items": {
               "type": "string"
