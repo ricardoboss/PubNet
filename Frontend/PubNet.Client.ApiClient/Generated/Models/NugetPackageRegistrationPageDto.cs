@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class NugetPackageRegistrationPageDto : IParsable
+    public partial class NugetPackageRegistrationPageDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The count property</summary>
         public int? Count { get; set; }
         /// <summary>The Id property</summary>
@@ -55,6 +57,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string Upper { get; set; }
 #endif
         /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageRegistrationPageDto"/> and sets the default values.
+        /// </summary>
+        public NugetPackageRegistrationPageDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
+        /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageRegistrationPageDto"/></returns>
@@ -93,6 +102,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteStringValue("lower", Lower);
             writer.WriteStringValue("parent", Parent);
             writer.WriteStringValue("upper", Upper);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

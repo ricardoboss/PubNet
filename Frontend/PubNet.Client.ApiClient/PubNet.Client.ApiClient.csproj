@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<MSBuildWarningsAsMessages>CS0618</MSBuildWarningsAsMessages>
 
-		<GeneratedClientSpecFile>$(MSBuildThisFileDirectory)../../Backend/PubNet.API/PubNet.API_openapi.json</GeneratedClientSpecFile>
+		<GeneratedClientSpecFile>$(MSBuildThisFileDirectory)../../Backend/PubNet.API/PubNet_openapi.json</GeneratedClientSpecFile>
 		<GeneratedClientDirectory>$(MSBuildThisFileDirectory)Generated/</GeneratedClientDirectory>
 		<GeneratedClientNamespace>$(RootNamespace).Generated</GeneratedClientNamespace>
 		<GeneratedClientLockFile>$(GeneratedClientDirectory)kiota-lock.json</GeneratedClientLockFile>

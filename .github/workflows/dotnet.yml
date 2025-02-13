@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        dotnet: ['8.x']
+        dotnet: ['9.x']
         quality: ['ga']
 
     name: Build & Test using ${{ matrix.dotnet }} on ${{ matrix.os }}

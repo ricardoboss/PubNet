@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class NugetPackageRegistrationIndexDto : IParsable
+    public partial class NugetPackageRegistrationIndexDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The count property</summary>
         public int? Count { get; set; }
         /// <summary>The items property</summary>
@@ -22,6 +24,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public List<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageRegistrationPageDto> Items { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.NugetPackageRegistrationIndexDto"/> and sets the default values.
+        /// </summary>
+        public NugetPackageRegistrationIndexDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -53,6 +62,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("count", Count);
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageRegistrationPageDto>("items", Items);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }
