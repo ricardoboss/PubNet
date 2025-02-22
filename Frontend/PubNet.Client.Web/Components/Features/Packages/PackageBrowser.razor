@@ -15,7 +15,6 @@
 	public string? Class { get; set; }
 
 	private bool isLoadingDart = true;
-	private bool isLoadingNuget = true;
 
 	private DartPackageListDto? dartPackages;
 
@@ -23,14 +22,13 @@
 	{
 		await base.OnInitializedAsync();
 
-		await LoadPackages(default);
+		await LoadPackages();
 	}
 
-	private async Task LoadPackages(CancellationToken cancellationToken)
+	private async Task LoadPackages(CancellationToken cancellationToken = default)
 	{
 		await Task.WhenAll(
 			LoadDartPackages(cancellationToken)
-			// , LoadNugetPackages(cancellationToken)
 		);
 	}
 
@@ -51,11 +49,6 @@
 		{
 			isLoadingDart = false;
 		}
-	}
-
-	private Task LoadNugetPackages(CancellationToken cancellationToken)
-	{
-		throw new NotImplementedException();
 	}
 
 }
