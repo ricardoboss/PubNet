@@ -101,14 +101,15 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 
 		_logger.LogTrace("Added pending archive {ArchiveId}", pending.Uuid);
 
-		var finalizeUrl = _endpointHelper.GenerateFullyQualified(
-			Request,
-			"/api/storage/finalize",
-			new Dictionary<string, string?>
-			{
-				{ "pendingId", pendingId.ToString() },
-			},
-			true
+		var finalizeUrl = _endpointHelper.SignEndpoint(
+			_endpointHelper.GenerateFullyQualified(
+				Request,
+				"/api/storage/finalize",
+				new Dictionary<string, string?>
+				{
+					{ "pendingId", pendingId.ToString() },
+				}
+			)
 		);
 
 		_logger.LogTrace("Generated finalize url for archive {ArchiveId} to {FinalizeUrl}", pending.Uuid, finalizeUrl);

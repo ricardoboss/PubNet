@@ -19,24 +19,32 @@ public class EndpointHelper
 	private IDataProtector Protector => _dataProtectionProvider.CreateProtector(nameof(EndpointHelper));
 
 	public string GenerateFullyQualified(HttpRequest request, string endpoint,
-		IDictionary<string, string?>? queryParams = null, bool signed = false)
+		IDictionary<string, string?>? queryParams = null)
 	{
+		var scheme = request.Headers.TryGetValue("X-Forwarded-Proto", out var forwardedScheme)
+			? forwardedScheme.Single()!
+			: request.Scheme;
+
+		var host = request.Headers.TryGetValue("X-Forwarded-Host", out var forwardedHost)
+			? forwardedHost.Single()!
+			: request.Host.Host;
+
 		var builder = new UriBuilder
 		{
-			Scheme = request.Scheme,
-			Host = request.Host.Host,
+			Scheme = scheme,
+			Host = host,
 			Path = endpoint,
 		};
 
-		if (request.Host.Port.HasValue)
+		if (request.Headers.TryGetValue("X-Forwarded-Port", out var forwardedPort))
+			builder.Port = int.Parse(forwardedPort.Single()!);
+		else if (request.Host.Port.HasValue)
 			builder.Port = request.Host.Port.Value;
 
 		if (queryParams is not null)
 			builder.Query = QueryString.Create(queryParams).ToUriComponent();
 
-		var fqu = builder.ToString();
-
-		return signed ? SignEndpoint(fqu) : fqu;
+		return builder.ToString();
 	}
 
 	public string SignEndpoint(string endpoint, IDictionary<string, string?>? queryParams = null,
