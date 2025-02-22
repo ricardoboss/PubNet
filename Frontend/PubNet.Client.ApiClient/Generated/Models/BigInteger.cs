@@ -9,19 +9,28 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class BigInteger : IParsable
+    public partial class BigInteger : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The isEven property</summary>
-        public bool? IsEven { get; private set; }
+        public bool? IsEven { get; set; }
         /// <summary>The isOne property</summary>
-        public bool? IsOne { get; private set; }
+        public bool? IsOne { get; set; }
         /// <summary>The isPowerOfTwo property</summary>
-        public bool? IsPowerOfTwo { get; private set; }
+        public bool? IsPowerOfTwo { get; set; }
         /// <summary>The isZero property</summary>
-        public bool? IsZero { get; private set; }
+        public bool? IsZero { get; set; }
         /// <summary>The sign property</summary>
-        public int? Sign { get; private set; }
+        public int? Sign { get; set; }
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.BigInteger"/> and sets the default values.
+        /// </summary>
+        public BigInteger()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -54,6 +63,12 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteBoolValue("isEven", IsEven);
+            writer.WriteBoolValue("isOne", IsOne);
+            writer.WriteBoolValue("isPowerOfTwo", IsPowerOfTwo);
+            writer.WriteBoolValue("isZero", IsZero);
+            writer.WriteIntValue("sign", Sign);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }
