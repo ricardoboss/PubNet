@@ -169,7 +169,26 @@ public class DartStorageController(
 
 		logger.LogInformation("Assigned pending ID {PendingId} to package file", pendingArchive.Id);
 
-		var finalizeUrl = Url.ActionLink("Finalize", "DartStorage", new { pendingId = pendingArchive.Id });
+		string? forwardedScheme = null;
+		if (Request.Headers.TryGetValue("X-Forwarded-Proto", out var forwardedSchemeCollection))
+			forwardedScheme = forwardedSchemeCollection.SingleOrDefault();
+
+		string? forwardedHost = null;
+		if (Request.Headers.TryGetValue("X-Forwarded-Host", out var forwardedHostCollection))
+			forwardedHost = forwardedHostCollection.SingleOrDefault();
+
+		string? forwardedPort = null;
+		if (Request.Headers.TryGetValue("X-Forwarded-Port", out var forwardedPortCollection))
+			forwardedPort = forwardedPortCollection.SingleOrDefault();
+
+		var finalizeUrl = Url.ActionLink(
+			"Finalize",
+			"DartStorage",
+			new { pendingId = pendingArchive.Id },
+			protocol: forwardedScheme,
+			host: $"{forwardedHost}:{forwardedPort}"
+		);
+
 		if (finalizeUrl is null)
 			throw new InvalidOperationException("Could not generate URL for finalize endpoint");
 
