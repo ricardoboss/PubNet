@@ -4,7 +4,6 @@ using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart;
-using PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget;
 using PubNet.Client.ApiClient.Generated.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -23,11 +22,6 @@ namespace PubNet.Client.ApiClient.Generated.Authors.Item.Packages
         public global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart.DartRequestBuilder Dart
         {
             get => new global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Dart.DartRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The Nuget property</summary>
-        public global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder Nuget
-        {
-            get => new global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.Nuget.NugetRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Authors.Item.Packages.PackagesRequestBuilder"/> and sets the default values.

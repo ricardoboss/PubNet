@@ -3,7 +3,6 @@
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Packages.Dart;
-using PubNet.Client.ApiClient.Generated.Packages.Nuget;
 using PubNet.Client.ApiClient.Generated.Packages.Search;
 using System.Collections.Generic;
 using System.IO;
@@ -21,11 +20,6 @@ namespace PubNet.Client.ApiClient.Generated.Packages
         public global::PubNet.Client.ApiClient.Generated.Packages.Dart.DartRequestBuilder Dart
         {
             get => new global::PubNet.Client.ApiClient.Generated.Packages.Dart.DartRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The Nuget property</summary>
-        public global::PubNet.Client.ApiClient.Generated.Packages.Nuget.NugetRequestBuilder Nuget
-        {
-            get => new global::PubNet.Client.ApiClient.Generated.Packages.Nuget.NugetRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Search property</summary>
         public global::PubNet.Client.ApiClient.Generated.Packages.Search.SearchRequestBuilder Search

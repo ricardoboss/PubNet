@@ -6,8 +6,6 @@ using PubNet.API.DTO.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Dart;
 using PubNet.API.DTO.Packages.Dart.Spec;
-using PubNet.API.DTO.Packages.Nuget;
-using PubNet.API.DTO.Packages.Nuget.Spec;
 
 namespace PubNet.API.DTO;
 
@@ -38,30 +36,6 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(DartSuccessDto))]
 [JsonSerializable(typeof(DartPackageVersionAnalysisDto))]
 [JsonSerializable(typeof(DartPackageListDto))]
-#endregion
-
-#region Nuget
-[JsonSerializable(typeof(NugetAlternatePackageDto))]
-[JsonSerializable(typeof(NugetAutocompleteResultDto))]
-[JsonSerializable(typeof(NugetCatalogEntryDto))]
-[JsonSerializable(typeof(NugetPackageDependencyDto))]
-[JsonSerializable(typeof(NugetPackageDependencyGroupDto))]
-[JsonSerializable(typeof(NugetPackageDeprecationDto))]
-[JsonSerializable(typeof(NugetPackageIndexDto))]
-[JsonSerializable(typeof(NugetPackageRegistrationIndexDto))]
-[JsonSerializable(typeof(NugetPackageRegistrationLeafDto))]
-[JsonSerializable(typeof(NugetPackageRegistrationPageDto))]
-[JsonSerializable(typeof(NugetPackageVulnerabilityDto))]
-[JsonSerializable(typeof(NugetSearchResultDto))]
-[JsonSerializable(typeof(NugetSearchResultHitDto))]
-[JsonSerializable(typeof(NugetSearchResultHitPackageTypeDto))]
-[JsonSerializable(typeof(NugetSearchResultHitVersionInfoDto))]
-[JsonSerializable(typeof(NugetServiceIndexDto))]
-[JsonSerializable(typeof(NugetServiceIndexResourceDto))]
-[JsonSerializable(typeof(NugetVulnerabilityIndexEntryDto))]
-[JsonSerializable(typeof(NugetPackageDto))]
-[JsonSerializable(typeof(NugetPackageListDto))]
-[JsonSerializable(typeof(NugetPackageVersionDto))]
 #endregion
 
 #endregion

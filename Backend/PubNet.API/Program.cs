@@ -19,7 +19,6 @@ using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
-using PubNet.API.Abstractions.Packages.Nuget;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
 using PubNet.API.Helpers;
@@ -33,7 +32,6 @@ using PubNet.API.Services.CQRS.Queries;
 using PubNet.API.Services.CQRS.Queries.Packages;
 using PubNet.API.Services.Guard;
 using PubNet.API.Services.Packages.Dart;
-using PubNet.API.Services.Packages.Nuget;
 using PubNet.API.Swagger;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
@@ -118,8 +116,6 @@ void ConfigureServices(WebApplicationBuilder builder)
 	ConfigureDynamicUrlGeneration(builder);
 
 	ConfigurePackageStorage(builder);
-
-	ConfigureNugetServices(builder);
 
 	ConfigureDartServices(builder);
 
@@ -213,12 +209,6 @@ void ConfigureControllers(IHostApplicationBuilder builder)
 		});
 }
 
-void ConfigureNugetServices(IHostApplicationBuilder builder)
-{
-	builder.Services.AddScoped<IKnownUrlsProvider, KnownUrlsProvider>();
-	builder.Services.AddScoped<INugetServiceIndexProvider, NugetServiceIndexProvider>();
-}
-
 void ConfigureDartServices(IHostApplicationBuilder builder)
 {
 	builder.Services.AddScoped<IDartPackageUploadService, DartPackageUploadService>();
@@ -306,7 +296,6 @@ void ConfigureDataServices(IHostApplicationBuilder builder)
 {
 	builder.Services.AddScoped<IAuthorDao, AuthorDao>();
 	builder.Services.AddScoped<IIdentityDao, IdentityDao>();
-	builder.Services.AddScoped<INugetPackageDao, NugetPackageDao>();
 	builder.Services.AddScoped<IDartPackageDao, DartPackageDao>();
 	builder.Services.AddScoped<ITokenDao, TokenDao>();
 

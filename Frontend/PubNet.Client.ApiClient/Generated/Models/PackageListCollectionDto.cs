@@ -20,14 +20,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public global::PubNet.Client.ApiClient.Generated.Models.DartPackageListDto Dart { get; set; }
 #endif
-        /// <summary>The nuget property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto? Nuget { get; set; }
-#nullable restore
-#else
-        public global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto Nuget { get; set; }
-#endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -47,7 +39,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "dart", n => { Dart = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartPackageListDto>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageListDto.CreateFromDiscriminatorValue); } },
-                { "nuget", n => { Nuget = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto>(global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -58,7 +49,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartPackageListDto>("dart", Dart);
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.NugetPackageListDto>("nuget", Nuget);
         }
     }
 }
