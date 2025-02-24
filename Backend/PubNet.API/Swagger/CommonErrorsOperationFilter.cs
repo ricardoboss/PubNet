@@ -62,6 +62,6 @@ internal sealed class CommonErrorsOperationFilter : IOperationFilter
 		};
 
 		// _ = operation.Responses.TryAdd("429", tooManyRequestsResponse);
-		_ = operation.Responses.TryAdd("500", internalServerErrorResponse);
+		_ = operation.Responses.TryAdd("default", internalServerErrorResponse);
 	}
 }
