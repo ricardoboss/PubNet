@@ -13,7 +13,6 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
         dotnet: ['8.x']
-        quality: ['ga']
 
     name: ${{ matrix.dotnet }} on ${{ matrix.os }}
 
@@ -29,7 +28,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet }}
-          dotnet-quality: ${{ matrix.quality }}
 
       - name: Restore tooling
         run: dotnet tool restore
