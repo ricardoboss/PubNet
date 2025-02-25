@@ -5,11 +5,9 @@ on:
   #     - cron: '38 20 * * *'
   push:
     tags: [ 'v*.*.*' ]
-    branches:
-      - main
+    branches: [ "main", "develop" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main", "develop" ]
 
 env:
   # Use docker.io for Docker Hub if empty
