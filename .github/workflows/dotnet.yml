@@ -15,7 +15,7 @@ jobs:
         dotnet: ['8.x']
         quality: ['ga']
 
-    name: Build & Test using ${{ matrix.dotnet }} on ${{ matrix.os }}
+    name: ${{ matrix.dotnet }} on ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 

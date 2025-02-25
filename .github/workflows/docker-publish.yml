@@ -17,8 +17,6 @@ env:
 
 jobs:
   build-and-push-image:
-    name: Build and push image
-
     runs-on: ubuntu-latest
 
     permissions:
@@ -31,6 +29,8 @@ jobs:
       fail-fast: false
       matrix:
         project: [ 'API', 'Worker', 'Frontend' ]
+
+    name: ${{ matrix.project }} image
 
     steps:
       - name: Checkout target branch
