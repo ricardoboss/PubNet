@@ -6,20 +6,24 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage"/>
-		<PackageReference Include="Blism.Language.Bash" />
-		<PackageReference Include="Blism.Language.Yaml" />
-		<PackageReference Include="Markdig" />
+		<PackageReference Include="Blism.Language.Bash"/>
+		<PackageReference Include="Blism.Language.Yaml"/>
+		<PackageReference Include="Markdig"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="All"/>
 		<PackageReference Include="MudBlazor"/>
+		<PackageReference Include="Nerdbank.GitVersioning">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="PasswordRulesSharp"/>
 		<PackageReference Include="Rive.Blazor.Wasm"/>
-		<PackageReference Include="TextCopy" />
+		<PackageReference Include="TextCopy"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PubNet.Client.Extensions\PubNet.Client.Extensions.csproj" />
+		<ProjectReference Include="..\PubNet.Client.Extensions\PubNet.Client.Extensions.csproj"/>
 		<ProjectReference Include="..\PubNet.Client.Services\PubNet.Client.Services.csproj"/>
 	</ItemGroup>
 
@@ -30,11 +34,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="wwwroot\css\markdown.css" />
+		<None Include="wwwroot\css\markdown.css"/>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Pages\Authors\" />
+		<Folder Include="Pages\Authors\"/>
 	</ItemGroup>
 
 </Project>
