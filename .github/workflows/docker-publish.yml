@@ -5,11 +5,12 @@ on:
   #     - cron: '38 20 * * *'
   push:
     tags: [ 'v*.*.*' ]
-    branches:
-      - main
+    branches: [ "main", "develop" ]
   pull_request:
-    branches:
-      - main
+    paths:
+      - 'Backend/PubNet.API/Dockerfile'
+      - 'Worker/PubNet.Worker/Dockerfile'
+      - 'Frontend/PubNet.Client.Web/Dockerfile'
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -18,29 +19,32 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  build-and-push-image:
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       packages: write
+      attestations: write
+      id-token: write
 
     strategy:
       fail-fast: false
       matrix:
-        project: [ 'API','Worker','Frontend' ]
+        project: [ 'API', 'Worker', 'Frontend' ]
+
+    name: ${{ matrix.project }} image
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - name: Fetch main branch
+        run: git fetch origin main:main
 
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log into registry ${{ env.REGISTRY }}
+      - name: Log in to the Container registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
@@ -48,21 +52,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Docker metadata (PubNet.${{ matrix.project }})
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.project }}
 
-      - name: Build and push Docker image (PubNet.${{ matrix.project }})
-        id: build-and-push
+      - name: Build and push Docker image (${{ matrix.project }})
+        id: push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: src/PubNet.${{ matrix.project }}/Dockerfile
+          file: ${{ matrix.project == 'API' && 'Backend/PubNet.API' || matrix.project == 'Worker' && 'Worker/PubNet.Worker' || 'Frontend/PubNet.Client.Web' }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        if : github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}/${{ matrix.project }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: ${{ github.event_name != 'pull_request' }}
