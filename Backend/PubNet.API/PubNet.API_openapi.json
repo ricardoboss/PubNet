@@ -59,7 +59,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -107,7 +107,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -182,7 +182,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -261,7 +261,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -331,7 +331,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -427,7 +427,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -456,7 +456,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -485,7 +485,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -559,7 +559,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -633,7 +633,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -736,7 +736,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -816,7 +816,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -910,7 +910,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1005,7 +1005,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1062,7 +1062,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1120,7 +1120,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1178,7 +1178,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1225,7 +1225,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1302,7 +1302,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1364,7 +1364,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1428,7 +1428,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1498,7 +1498,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1595,7 +1595,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1654,7 +1654,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -1734,7 +1734,7 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
