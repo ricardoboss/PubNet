@@ -68,7 +68,7 @@ try
 	var app = builder.Build();
 
 	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
-	app.Logger.LogInformation("Version: {Version}", GitVersionInformation.InformationalVersion);
+	app.Logger.LogInformation("Version: {Version}", ThisAssembly.AssemblyInformationalVersion);
 
 	ConfigureHttpPipeline(app);
 
@@ -168,7 +168,7 @@ void ConfigureSwagger(IHostApplicationBuilder builder)
 		{
 			Title = "PubNet API",
 			Description = "An API for Dart and NuGet package hosting",
-			Version = GitVersionInformation.MajorMinorPatch,
+			Version = ThisAssembly.AssemblyVersion,
 			Contact = new OpenApiContact
 			{
 				Name = "GitHub",
@@ -377,6 +377,6 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		c.EnableTryItOutByDefault();
 		c.EnablePersistAuthorization();
-		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {GitVersionInformation.MajorMinorPatch}");
+		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {ThisAssembly.AssemblyVersion}");
 	});
 }

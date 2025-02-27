@@ -5,9 +5,9 @@
       "release-type": "simple",
       "extra-files": [
         {
-          "type": "xml",
-          "path": "Directory.Packages.props",
-          "xpath": "//Project/PropertyGroup/Version"
+          "type": "json",
+          "path": "version.json",
+          "jsonpath": "$.version"
         }
       ]
     }
