@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Admin;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Attributes;
@@ -113,19 +113,28 @@ public class AuthenticationController(
 	[ProducesResponseType<AccountCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status409Conflict)]
 	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
-	public async Task<AccountCreatedDto> CreateAccountAsync(CreateAccountDto dto,
+	public async Task<IActionResult> CreateAccountAsync(CreateAccountDto dto,
 		CancellationToken cancellationToken = default)
 	{
 		var siteConfiguration = await siteConfigurationProvider.GetAsync(cancellationToken);
 		if (!siteConfiguration.RegistrationsOpen)
 			throw new RegistrationsClosedException();
 
-		var identity = await accountService.CreateAccountAsync(dto, Role.Default, cancellationToken);
+		if (dto.Role is not Role.Default)
+			return BadRequest(new ValidationErrorsDto
+			{
+				Title = "Invalid role",
+				Errors = new()
+				{
+					{ "role", ["The role must be 'default'."] },
+				},
+			});
+
+		var identity = await accountService.CreateAccountAsync(dto, cancellationToken);
 
 		var accountCreatedDto = AccountCreatedDto.MapFrom(identity);
 
-		Response.StatusCode = StatusCodes.Status201Created;
-		return accountCreatedDto;
+		return StatusCode(StatusCodes.Status201Created, accountCreatedDto);
 	}
 
 	[HttpGet("Self")]

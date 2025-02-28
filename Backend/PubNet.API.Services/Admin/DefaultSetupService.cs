@@ -1,4 +1,5 @@
 ﻿using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Admin;
 using PubNet.API.Abstractions.CQRS.Queries;
 
 namespace PubNet.API.Services;

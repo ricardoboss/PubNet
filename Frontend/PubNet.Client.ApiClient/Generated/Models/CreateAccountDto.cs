@@ -30,6 +30,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public string Password { get; set; }
 #endif
+        /// <summary>The role property</summary>
+        public int? Role { get; set; }
         /// <summary>The userName property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -65,6 +67,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             {
                 { "email", n => { Email = n.GetStringValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
+                { "role", n => { Role = n.GetIntValue(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
             };
         }
@@ -77,6 +80,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("email", Email);
             writer.WriteStringValue("password", Password);
+            writer.WriteIntValue("role", Role);
             writer.WriteStringValue("userName", UserName);
             writer.WriteAdditionalData(AdditionalData);
         }
