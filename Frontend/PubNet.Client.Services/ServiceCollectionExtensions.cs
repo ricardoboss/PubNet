@@ -11,12 +11,12 @@ namespace PubNet.Client.Services;
 
 public static class ServiceCollectionExtensions
 {
-	public static IServiceCollection AddPubNetApiClient(this IServiceCollection services, Action<HttpClient>? configureHttpClient = default)
+	public static IServiceCollection AddPubNetApiClient(this IServiceCollection services, Action<HttpClient>? configureHttpClient = null)
 	{
 		services.TryAddTransient<IParseNodeFactory>(_ => ParseNodeFactoryRegistry.DefaultInstance);
 		services.TryAddTransient<ISerializationWriterFactory>(_ => SerializationWriterFactoryRegistry.DefaultInstance);
 		services.TryAddTransient<IAuthenticationProvider, LoginTokenAuthenticationProvider>();
-		services.TryAddScoped<HttpClient>(_ =>
+		services.TryAddSingleton<HttpClient>(_ =>
 		{
 			var httpClient = new HttpClient();
 
@@ -25,13 +25,14 @@ public static class ServiceCollectionExtensions
 			return httpClient;
 		});
 		services.TryAddTransient<IRequestAdapter, HttpClientRequestAdapter>();
-		services.TryAddScoped<PubNetApiClient>();
+		services.TryAddSingleton<PubNetApiClient>();
 
-		services.TryAddScoped<ILoginService, ApiLoginService>();
-		services.TryAddScoped<IRegisterService, ApiRegisterService>();
-		services.TryAddScoped<IPersonalAccessTokenService, ApiPersonalAccessTokenService>();
-		services.TryAddScoped<IDartPackagesService, ApiDartPackagesService>();
-		services.TryAddScoped<IAuthorsService, ApiAuthorsService>();
+		services.TryAddSingleton<ILoginService, ApiAuthService>();
+		services.TryAddSingleton<IAuthenticationService, ApiAuthService>();
+		services.TryAddSingleton<IRegisterService, ApiRegisterService>();
+		services.TryAddSingleton<IPersonalAccessTokenService, ApiPersonalAccessTokenService>();
+		services.TryAddSingleton<IDartPackagesService, ApiDartPackagesService>();
+		services.TryAddSingleton<IAuthorsService, ApiAuthorsService>();
 
 		return services;
 	}

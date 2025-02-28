@@ -9,13 +9,18 @@ namespace PubNet.Client.Web.Services;
 public class LoginTokenStorageAuthenticationStateProvider : AuthenticationStateProvider
 {
 	private readonly ILoginTokenStorage loginTokenStorage;
+	private readonly IAuthenticationService authService;
 	private readonly ILogger<LoginTokenStorageAuthenticationStateProvider> logger;
+
+	private bool tokenValidated;
 
 	public LoginTokenStorageAuthenticationStateProvider(
 		ILoginTokenStorage loginTokenStorage,
+		IAuthenticationService authService,
 		ILogger<LoginTokenStorageAuthenticationStateProvider> logger)
 	{
 		this.loginTokenStorage = loginTokenStorage;
+		this.authService = authService;
 		this.logger = logger;
 
 		loginTokenStorage.TokenChanged += OnTokenChanged;
@@ -23,14 +28,27 @@ public class LoginTokenStorageAuthenticationStateProvider : AuthenticationStateP
 
 	private void OnTokenChanged(object? sender, TokenChangedEventArgs e)
 	{
-		var principal = new ClaimsPrincipal();
+		tokenValidated = false;
 
-		if (e.Token is { } token)
-			principal.AddIdentity(GetIdentityFromToken(token));
+		if (e.Token is not { } token)
+		{
+			var state = new AuthenticationState(new());
 
-		var state = new AuthenticationState(principal);
+			NotifyAuthenticationStateChanged(Task.FromResult(state));
 
-		NotifyAuthenticationStateChanged(Task.FromResult(state));
+			return;
+		}
+
+		NotifyAuthenticationStateChanged(Task.Run(async () =>
+		{
+			var principal = new ClaimsPrincipal();
+
+			var valid = await ValidateTokenAsync(token);
+			if (valid)
+				principal.AddIdentity(GetIdentityFromToken(token));
+
+			return new AuthenticationState(principal);
+		}));
 	}
 
 	public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -41,14 +59,38 @@ public class LoginTokenStorageAuthenticationStateProvider : AuthenticationStateP
 		if (maybeLoginToken is not { } loginToken)
 			return new(principal);
 
-		principal.AddIdentity(GetIdentityFromToken(loginToken));
+		if (tokenValidated || await ValidateTokenAsync())
+			principal.AddIdentity(GetIdentityFromToken(loginToken));
 
 		return new(principal);
 	}
 
+	private async Task<bool> ValidateTokenAsync(JsonWebToken? token = null, CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			// will throw if the token is invalid
+			_ = await authService.GetSelfAsync(token, cancellationToken);
+
+			tokenValidated = true;
+
+			logger.LogTrace("Token validated");
+
+			return true;
+		}
+		catch
+		{
+			logger.LogWarning("Token validation failed");
+
+			await loginTokenStorage.DeleteTokenAsync(cancellationToken);
+
+			return false;
+		}
+	}
+
 	private ClaimsIdentity GetIdentityFromToken(JsonWebToken loginToken)
 	{
-		var identity = new ClaimsIdentity("loginToken", JwtClaims.AuthorUsername, null);
+		var identity = new ClaimsIdentity("loginToken", JwtClaims.AuthorUsername, JwtClaims.Role);
 
 		try
 		{
