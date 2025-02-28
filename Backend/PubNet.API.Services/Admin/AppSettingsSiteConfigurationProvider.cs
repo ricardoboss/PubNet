@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Admin;
 
 namespace PubNet.API.Services;
 

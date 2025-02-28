@@ -1,6 +1,7 @@
 ﻿@using PasswordRulesSharp.Builder
 @using PasswordRulesSharp.Rules
 @using PasswordRulesSharp.Validator
+@using PubNet.Auth.Models
 @using PubNet.Client.Web.Extensions
 @inject IRegisterService RegisterService
 @inject ILogger<RegisterForm> Logger
@@ -38,6 +39,13 @@
 		editContext.OnValidationRequested += ValidateModel;
 
 		validationMessageStore = new(editContext);
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		Model.Role = (int)(ForRootAdmin ? Role.Admin : Role.Default);
 	}
 
 	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)
@@ -78,10 +86,7 @@
 
 		try
 		{
-			if (ForRootAdmin)
-				await RegisterService.RegisterRootAdminAsync(Model);
-			else
-				await RegisterService.RegisterAsync(Model);
+			await RegisterService.RegisterAsync(Model);
 
 			success = "Successfully registered. You can now log in using the same credentials.";
 		}

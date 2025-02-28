@@ -1,4 +1,4 @@
-﻿namespace PubNet.API.Abstractions;
+﻿namespace PubNet.API.Abstractions.Admin;
 
 public interface ISetupService
 {
