@@ -14,53 +14,6 @@
     "version": "2.0.0.0"
   },
   "paths": {
-    "/Admin": {
-      "get": {
-        "tags": [
-          "Admin"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "default": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": [ ]
-          }
-        ]
-      }
-    },
     "/Authentication/LoginToken": {
       "post": {
         "tags": [
