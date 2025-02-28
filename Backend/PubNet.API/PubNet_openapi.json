@@ -11,9 +11,56 @@
       "name": "AGPL-3.0",
       "url": "https://www.gnu.org/licenses/agpl-3.0.en.html"
     },
-    "version": "2.0.0"
+    "version": "2.0.0.0"
   },
   "paths": {
+    "/Admin": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/Authentication/LoginToken": {
       "post": {
         "tags": [
@@ -26,8 +73,7 @@
                 "$ref": "#/components/schemas/CreateLoginTokenDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -60,22 +106,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -95,8 +131,7 @@
                 "$ref": "#/components/schemas/CreatePersonalAccessTokenDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -119,22 +154,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -172,7 +197,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-required-scopes": [
@@ -204,22 +229,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -257,7 +272,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-any-of-required-scopes": [
@@ -293,22 +308,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -346,7 +351,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-required-scopes": [
@@ -373,22 +378,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -426,7 +421,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-required-scopes": [
@@ -446,8 +441,7 @@
                 "$ref": "#/components/schemas/CreateAccountDto"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "201": {
@@ -480,61 +474,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Authentication/RegistrationsOpen": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -558,22 +503,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -601,59 +536,23 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ]
       }
     },
-    "/Packages/Search": {
+    "/Authors/{username}": {
       "get": {
         "tags": [
-          "Packages"
+          "Authors"
         ],
         "parameters": [
           {
-            "name": "q",
-            "in": "query",
+            "name": "username",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "string",
-              "default": null
-            }
-          },
-          {
-            "name": "skipDart",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          },
-          {
-            "name": "takeDart",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          },
-          {
-            "name": "skipNuget",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          },
-          {
-            "name": "takeNuget",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
+              "type": "string"
             }
           }
         ],
@@ -663,7 +562,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageListCollectionDto"
+                  "$ref": "#/components/schemas/AuthorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundErrorDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
@@ -678,7 +597,61 @@
               }
             }
           },
-          "500": {
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAuthorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -688,12 +661,12 @@
               }
             }
           },
-          "default": {
-            "description": "Default Error",
+          "401": {
+            "description": "Unauthenticated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/AuthErrorDto"
                 }
               }
             }
@@ -721,11 +694,288 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "author:delete:self",
+            "author:delete:*"
+          ]
+        ]
+      }
+    },
+    "/Authors/{username}/Packages/Dart": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DartPackageListDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:dart:search",
+            "packages:search"
+          ]
+        ]
+      }
+    },
+    "/Authors/{username}/Packages": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageListCollectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ],
+        "x-any-of-required-scopes": [
+          [
+            "packages:search"
+          ]
+        ]
+      }
+    },
+    "/Authors/Search": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorListDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          },
+          "460": {
+            "description": "Missing required scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
           }
         ],
         "x-required-scopes": [
-          "packages:search"
+          "author:search"
         ]
       }
     },
@@ -773,22 +1023,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -840,22 +1080,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -908,22 +1138,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -976,22 +1196,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -1033,22 +1243,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -1086,7 +1286,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-required-scopes": [
@@ -1120,22 +1320,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -1192,22 +1382,12 @@
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
@@ -1225,8 +1405,7 @@
             "name": "q",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             }
           },
           {
@@ -1234,8 +1413,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -1243,8 +1421,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           }
         ],
@@ -1260,31 +1437,21 @@
             }
           },
           "401": {
-            "description": "Unauthenticated",
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
           },
           "default": {
-            "description": "Default Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
@@ -1312,7 +1479,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-any-of-required-scopes": [
@@ -1340,31 +1507,21 @@
             }
           },
           "401": {
-            "description": "Unauthenticated",
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                  "$ref": "#/components/schemas/GenericErrorDto"
                 }
               }
             }
           },
           "default": {
-            "description": "Default Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
@@ -1392,7 +1549,7 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
         "x-required-scopes": [
@@ -1447,31 +1604,21 @@
             }
           },
           "413": {
-            "description": "Payload Too Large",
+            "description": "Content Too Large",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
           },
           "default": {
-            "description": "Default Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
@@ -1515,52 +1662,22 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
           "422": {
-            "description": "Unprocessable Entity",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
           },
           "default": {
-            "description": "Default Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
@@ -1568,319 +1685,49 @@
         }
       }
     },
-    "/Authors/{username}": {
+    "/Packages/Search": {
       "get": {
         "tags": [
-          "Authors"
+          "Packages"
         ],
         "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthorDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NotFoundErrorDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Authors"
-        ],
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteAuthorDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationErrorsDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "x-any-of-required-scopes": [
-          [
-            "author:delete:self",
-            "author:delete:*"
-          ]
-        ]
-      }
-    },
-    "/Authors/{username}/Packages/Dart": {
-      "get": {
-        "tags": [
-          "Authors"
-        ],
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "q",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": null
-            }
-          },
-          {
-            "name": "skip",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          },
-          {
-            "name": "take",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DartPackageListDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "461": {
-            "description": "Invalid role",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "x-any-of-required-scopes": [
-          [
-            "packages:dart:search",
-            "packages:search"
-          ]
-        ]
-      }
-    },
-    "/Authors/{username}/Packages": {
-      "get": {
-        "tags": [
-          "Authors"
-        ],
-        "parameters": [
-          {
-            "name": "username",
-            "in": "path",
-            "required": true,
-            "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "skipDart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "takeDart",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "skipNuget",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "takeNuget",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -1895,18 +1742,8 @@
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -1915,12 +1752,12 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated",
+          "default": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
@@ -1948,48 +1785,18 @@
         },
         "security": [
           {
-            "Bearer": []
+            "Bearer": [ ]
           }
         ],
-        "x-any-of-required-scopes": [
-          [
-            "packages:search"
-          ]
+        "x-required-scopes": [
+          "packages:search"
         ]
       }
     },
-    "/Authors/Search": {
+    "/Setup/Status": {
       "get": {
         "tags": [
-          "Authors"
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": null
-            }
-          },
-          {
-            "name": "skip",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          },
-          {
-            "name": "take",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": null
-            }
-          }
+          "Setup"
         ],
         "responses": {
           "200": {
@@ -1997,12 +1804,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthorListDto"
+                  "$ref": "#/components/schemas/SetupStatusDto"
                 }
               }
             }
           },
-          "500": {
+          "default": {
             "description": "Internal Server Error",
             "content": {
               "application/json": {
@@ -2011,9 +1818,37 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/Setup/RootAdmin": {
+      "post": {
+        "tags": [
+          "Setup"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCreatedDto"
+                }
+              }
+            }
           },
-          "default": {
-            "description": "Default Error",
+          "409": {
+            "description": "Conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -2022,148 +1857,32 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated",
+          "400": {
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
                 }
               }
             }
           },
-          "461": {
-            "description": "Invalid role",
+          "default": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
-                }
-              }
-            }
-          },
-          "460": {
-            "description": "Missing required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MissingScopeErrorDto"
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
                 }
               }
             }
           }
-        },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "x-required-scopes": [
-          "author:search"
-        ]
+        }
       }
     }
   },
   "components": {
     "schemas": {
-      "InternalServerErrorDto": {
-        "required": [
-          "stackTrace",
-          "error"
-        ],
-        "type": "object",
-        "properties": {
-          "stackTrace": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "error": {
-            "required": [
-              "code",
-              "message"
-            ],
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "InvalidRoleErrorDto": {
-        "required": [
-          "requiredRole",
-          "givenRole",
-          "error"
-        ],
-        "type": "object",
-        "properties": {
-          "requiredRole": {
-            "type": "string"
-          },
-          "givenRole": {
-            "type": "string"
-          },
-          "error": {
-            "required": [
-              "code",
-              "message"
-            ],
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "MissingScopeErrorDto": {
-        "required": [
-          "requiredScopes",
-          "givenScopes",
-          "error"
-        ],
-        "type": "object",
-        "properties": {
-          "requiredScopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "givenScopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "error": {
-            "required": [
-              "code",
-              "message"
-            ],
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
       "AccountCreatedDto": {
         "required": [
           "email",
@@ -2172,29 +1891,40 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "userName": {
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "AuthErrorDto": {
         "required": [
-          "error"
+          "error",
+          "message"
         ],
         "type": "object",
         "properties": {
           "error": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+            "minLength": 1,
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "AuthorDto": {
         "required": [
           "id",
-          "userName",
-          "registeredAtUtc"
+          "registeredAtUtc",
+          "userName"
         ],
         "type": "object",
         "properties": {
@@ -2203,18 +1933,20 @@
             "format": "uuid"
           },
           "userName": {
+            "minLength": 1,
             "type": "string"
           },
           "registeredAtUtc": {
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "AuthorListDto": {
         "required": [
-          "totalHits",
-          "authors"
+          "authors",
+          "totalHits"
         ],
         "type": "object",
         "properties": {
@@ -2228,41 +1960,60 @@
               "$ref": "#/components/schemas/AuthorDto"
             }
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "CodeMessageDto": {
-        "required": [
-          "code",
-          "message"
-        ],
+      "BigInteger": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string"
+          "isPowerOfTwo": {
+            "type": "boolean",
+            "readOnly": true
           },
-          "message": {
-            "type": "string"
+          "isZero": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isOne": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isEven": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "sign": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateAccountDto": {
         "required": [
-          "userName",
           "email",
-          "password"
+          "password",
+          "userName"
         ],
         "type": "object",
         "properties": {
           "userName": {
+            "minLength": 1,
             "type": "string"
           },
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "password": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "password"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreateLoginTokenDto": {
         "required": [
@@ -2272,22 +2023,28 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
           },
           "password": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "password"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "CreatePersonalAccessTokenDto": {
         "required": [
+          "lifetimeInDays",
           "name",
-          "scopes",
-          "lifetimeInDays"
+          "scopes"
         ],
         "type": "object",
         "properties": {
           "name": {
+            "minLength": 1,
             "type": "string"
           },
           "scopes": {
@@ -2298,51 +2055,62 @@
           },
           "lifetimeInDays": {
             "type": "integer",
-            "format": "int32"
+            "format": "duration"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "DartArchiveUploadInformationDto": {
         "required": [
-          "url",
-          "fields"
+          "fields",
+          "url"
         ],
         "type": "object",
         "properties": {
           "url": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "fields": {
             "type": "object",
             "additionalProperties": {
               "type": "string"
-            }
+            },
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "DartMessageDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "DartPackageDto": {
         "required": [
-          "name",
           "author",
-          "type",
           "latest",
+          "name",
+          "type",
           "versions"
         ],
         "type": "object",
         "properties": {
-          "isDiscontinued": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "replacedBy": {
+          "name": {
             "type": "string",
             "nullable": true
           },
-          "name": {
-            "type": "string"
-          },
           "author": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "type": {
             "$ref": "#/components/schemas/PackageType"
@@ -2356,13 +2124,22 @@
               "$ref": "#/components/schemas/DartPackageVersionDto"
             },
             "nullable": true
+          },
+          "isDiscontinued": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "replacedBy": {
+            "type": "string",
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "DartPackageListDto": {
         "required": [
-          "totalHits",
-          "packages"
+          "packages",
+          "totalHits"
         ],
         "type": "object",
         "properties": {
@@ -2374,9 +2151,11 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DartPackageDto"
-            }
+            },
+            "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "DartPackageVersionAnalysisDto": {
         "type": "object",
@@ -2402,41 +2181,45 @@
             "format": "date-time",
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "DartPackageVersionDto": {
         "required": [
-          "archiveUrl",
           "archiveSha256",
+          "archiveUrl",
+          "publishedAt",
           "pubspec",
-          "version",
-          "publishedAt"
+          "version"
         ],
         "type": "object",
         "properties": {
+          "version": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "retracted": {
             "type": "boolean",
             "nullable": true
           },
           "archiveUrl": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "nullable": true
           },
           "archiveSha256": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "pubspec": {
             "$ref": "#/components/schemas/PubSpec"
-          },
-          "version": {
-            "type": "string"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
           }
         },
-        "nullable": true
+        "additionalProperties": false
       },
       "DartSuccessDto": {
         "required": [
@@ -2445,9 +2228,10 @@
         "type": "object",
         "properties": {
           "success": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+            "$ref": "#/components/schemas/DartMessageDto"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "DeleteAuthorDto": {
         "required": [
@@ -2456,24 +2240,61 @@
         "type": "object",
         "properties": {
           "password": {
-            "type": "string"
+            "minLength": 1,
+            "type": "string",
+            "format": "password"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "DependencyMap": {
-        "nullable": true
+      "Dependency": {
+        "type": "object",
+        "additionalProperties": false
       },
       "Environment": {
         "type": "object",
         "properties": {
           "sdk": {
-            "$ref": "#/components/schemas/SemVersionRange"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
+            },
+            "nullable": true
           },
           "flutter": {
-            "$ref": "#/components/schemas/SemVersionRange"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
+            },
+            "nullable": true
           }
         },
-        "nullable": true
+        "additionalProperties": false
+      },
+      "GenericErrorContentDto": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "stackTrace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "GenericErrorDto": {
         "required": [
@@ -2481,17 +2302,94 @@
         ],
         "type": "object",
         "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericErrorContentDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InternalServerErrorDto": {
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
+          },
           "stackTrace": {
             "type": "array",
             "items": {
               "type": "string"
             },
             "nullable": true
-          },
-          "error": {
-            "$ref": "#/components/schemas/CodeMessageDto"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "InvalidRoleErrorDto": {
+        "required": [
+          "claimedRole",
+          "requiredRole"
+        ],
+        "type": "object",
+        "properties": {
+          "requiredRole": {
+            "type": "string",
+            "nullable": true
+          },
+          "claimedRole": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetadataIdentifier": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MissingScopeErrorDto": {
+        "required": [
+          "givenScopes",
+          "requiredScopes"
+        ],
+        "type": "object",
+        "properties": {
+          "requiredScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "givenScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "NotFoundErrorDto": {
         "required": [
@@ -2499,17 +2397,11 @@
         ],
         "type": "object",
         "properties": {
-          "stackTrace": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
           "error": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+            "$ref": "#/components/schemas/GenericErrorContentDto"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "PackageListCollectionDto": {
         "required": [
@@ -2520,13 +2412,53 @@
           "dart": {
             "$ref": "#/components/schemas/DartPackageListDto"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "PackageType": {
-        "type": "integer"
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "Platforms": {
-        "nullable": true
+        "type": "object",
+        "properties": {
+          "android": {
+            "type": "boolean"
+          },
+          "iOS": {
+            "type": "boolean"
+          },
+          "linux": {
+            "type": "boolean"
+          },
+          "macOS": {
+            "type": "boolean"
+          },
+          "windows": {
+            "type": "boolean"
+          },
+          "web": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrereleaseIdentifier": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "numericValue": {
+            "$ref": "#/components/schemas/BigInteger"
+          }
+        },
+        "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
@@ -2552,7 +2484,8 @@
             "type": "string",
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": { }
       },
       "PubSpec": {
         "required": [
@@ -2561,6 +2494,7 @@
         "type": "object",
         "properties": {
           "name": {
+            "minLength": 1,
             "type": "string"
           },
           "version": {
@@ -2591,10 +2525,18 @@
             "nullable": true
           },
           "dependencies": {
-            "$ref": "#/components/schemas/DependencyMap"
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Dependency"
+            },
+            "nullable": true
           },
           "devDependencies": {
-            "$ref": "#/components/schemas/DependencyMap"
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Dependency"
+            },
+            "nullable": true
           },
           "executables": {
             "type": "object",
@@ -2649,7 +2591,8 @@
           "environment": {
             "$ref": "#/components/schemas/Environment"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "Screenshot": {
         "required": [
@@ -2659,18 +2602,80 @@
         "type": "object",
         "properties": {
           "description": {
+            "minLength": 1,
             "type": "string"
           },
           "path": {
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "SemVersion": {
-        "nullable": true
+        "type": "object",
+        "properties": {
+          "major": {
+            "$ref": "#/components/schemas/BigInteger"
+          },
+          "minor": {
+            "$ref": "#/components/schemas/BigInteger"
+          },
+          "patch": {
+            "$ref": "#/components/schemas/BigInteger"
+          },
+          "prerelease": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "prereleaseIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrereleaseIdentifier"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "isPrerelease": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isRelease": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "metadata": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "metadataIdentifiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetadataIdentifier"
+            },
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
       },
-      "SemVersionRange": {
-        "nullable": true
+      "SetupStatusDto": {
+        "required": [
+          "registrationsOpen",
+          "setupComplete"
+        ],
+        "type": "object",
+        "properties": {
+          "registrationsOpen": {
+            "type": "boolean"
+          },
+          "setupComplete": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
       },
       "TokenCollectionDto": {
         "required": [
@@ -2689,36 +2694,39 @@
             "format": "uuid",
             "nullable": true
           }
-        }
+        },
+        "additionalProperties": false
       },
       "TokenCreatedDto": {
         "required": [
-          "value",
-          "token"
+          "token",
+          "value"
         ],
         "type": "object",
         "properties": {
           "value": {
+            "minLength": 1,
             "type": "string"
           },
           "token": {
             "$ref": "#/components/schemas/TokenDto"
           }
-        }
+        },
+        "additionalProperties": false
       },
       "TokenDto": {
         "required": [
-          "id",
-          "name",
-          "ipAddress",
-          "userAgent",
-          "deviceType",
           "browser",
-          "platform",
-          "scopes",
           "createdAtUtc",
+          "deviceType",
           "expiresAtUtc",
-          "revokedAtUtc"
+          "id",
+          "ipAddress",
+          "name",
+          "platform",
+          "revokedAtUtc",
+          "scopes",
+          "userAgent"
         ],
         "type": "object",
         "properties": {
@@ -2727,21 +2735,27 @@
             "format": "uuid"
           },
           "name": {
+            "minLength": 1,
             "type": "string"
           },
           "ipAddress": {
+            "minLength": 1,
             "type": "string"
           },
           "userAgent": {
+            "minLength": 1,
             "type": "string"
           },
           "deviceType": {
+            "minLength": 1,
             "type": "string"
           },
           "browser": {
+            "minLength": 1,
             "type": "string"
           },
           "platform": {
+            "minLength": 1,
             "type": "string"
           },
           "scopes": {
@@ -2760,10 +2774,34 @@
           },
           "revokedAtUtc": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "UnbrokenSemVersionRange": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "startInclusive": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "end": {
+            "$ref": "#/components/schemas/SemVersion"
+          },
+          "endInclusive": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "includeAllPrerelease": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
       },
       "ValidationErrorsDto": {
         "required": [
@@ -2782,9 +2820,11 @@
             }
           },
           "title": {
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -2794,24 +2834,5 @@
         "scheme": "Bearer"
       }
     }
-  },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "Authentication"
-    },
-    {
-      "name": "Packages"
-    },
-    {
-      "name": "Dart"
-    },
-    {
-      "name": "Authors"
-    }
-  ]
+  }
 }

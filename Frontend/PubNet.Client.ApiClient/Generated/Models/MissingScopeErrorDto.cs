@@ -32,7 +32,15 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public List<string> GivenScopes { get; set; }
 #endif
         /// <summary>The primary error message.</summary>
-        public override string Message { get => base.Message; }
+        public override string Message { get => MessageEscaped ?? string.Empty; }
+        /// <summary>The message property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? MessageEscaped { get; set; }
+#nullable restore
+#else
+        public string MessageEscaped { get; set; }
+#endif
         /// <summary>The requiredScopes property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -68,6 +76,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             {
                 { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error>(global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error.CreateFromDiscriminatorValue); } },
                 { "givenScopes", n => { GivenScopes = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "message", n => { MessageEscaped = n.GetStringValue(); } },
                 { "requiredScopes", n => { RequiredScopes = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
         }
@@ -80,6 +89,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error>("error", Error);
             writer.WriteCollectionOfPrimitiveValues<string>("givenScopes", GivenScopes);
+            writer.WriteStringValue("message", MessageEscaped);
             writer.WriteCollectionOfPrimitiveValues<string>("requiredScopes", RequiredScopes);
             writer.WriteAdditionalData(AdditionalData);
         }

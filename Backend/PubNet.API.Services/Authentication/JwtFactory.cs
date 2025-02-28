@@ -58,7 +58,7 @@ public class JwtFactory : IJwtFactory
 
 		var roleClaim = token.Identity.Role.ToClaimValue();
 		if (roleClaim != null)
-			claims.Add(new(JwtClaims.Roles, roleClaim));
+			claims.Add(new(JwtClaims.Role, roleClaim));
 
 		var jst = new JwtSecurityToken(
 			jwtHeader,

@@ -22,7 +22,7 @@ public class ClaimsPrincipalGuardThrowsBuilder(IGuard guard, ClaimsPrincipal use
 	{
 		get
 		{
-			var roleClaimValue = user.FindFirstValue(JwtClaims.Roles);
+			var roleClaimValue = user.FindFirstValue(JwtClaims.Role);
 
 			return roleClaimValue?.ToRole() ?? Role.Unspecified;
 		}

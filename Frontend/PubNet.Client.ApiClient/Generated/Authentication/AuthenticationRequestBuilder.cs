@@ -5,7 +5,6 @@ using Microsoft.Kiota.Abstractions;
 using PubNet.Client.ApiClient.Generated.Authentication.Account;
 using PubNet.Client.ApiClient.Generated.Authentication.LoginToken;
 using PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken;
-using PubNet.Client.ApiClient.Generated.Authentication.RegistrationsOpen;
 using PubNet.Client.ApiClient.Generated.Authentication.Self;
 using System.Collections.Generic;
 using System.IO;
@@ -33,11 +32,6 @@ namespace PubNet.Client.ApiClient.Generated.Authentication
         public global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder PersonalAccessToken
         {
             get => new global::PubNet.Client.ApiClient.Generated.Authentication.PersonalAccessToken.PersonalAccessTokenRequestBuilder(PathParameters, RequestAdapter);
-        }
-        /// <summary>The RegistrationsOpen property</summary>
-        public global::PubNet.Client.ApiClient.Generated.Authentication.RegistrationsOpen.RegistrationsOpenRequestBuilder RegistrationsOpen
-        {
-            get => new global::PubNet.Client.ApiClient.Generated.Authentication.RegistrationsOpen.RegistrationsOpenRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Self property</summary>
         public global::PubNet.Client.ApiClient.Generated.Authentication.Self.SelfRequestBuilder Self
