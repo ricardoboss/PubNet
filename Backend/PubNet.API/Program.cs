@@ -109,6 +109,8 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 	ConfigureDatabase(builder);
 
+	ConfigureAdministration(builder);
+
 	ConfigureAuthentication(builder);
 
 	ConfigureDataServices(builder);
@@ -256,6 +258,12 @@ void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)
 	builder.Services.AddScoped<IActionTemplateGenerator, ActionTemplateGenerator>();
 }
 
+void ConfigureAdministration(WebApplicationBuilder builder)
+{
+	builder.Services.AddScoped<ISetupService, DefaultSetupService>();
+	builder.Services.AddSingleton<ISiteConfigurationProvider, AppSettingsSiteConfigurationProvider>();
+}
+
 void ConfigureAuthentication(WebApplicationBuilder builder)
 {
 	builder.Services.AddSingleton<BearerEventsHandler>();
@@ -281,15 +289,17 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 			};
 
 			o.EventsType = typeof(BearerEventsHandler);
+
+			o.MapInboundClaims = false;
 		});
 
 	builder.Services.AddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
 	builder.Services.AddSingleton<ISecureTokenGenerator, SecureTokenGenerator>();
 	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 	builder.Services.AddSingleton<IGuard, Guard>();
-	builder.Services.AddScoped<IRegistrationsService, SeedingAndConfiguredRegistrationsService>();
 
 	builder.Services.AddSingleton<ScopeGuardMiddleware>();
+	builder.Services.AddSingleton<RoleGuardMiddleware>();
 }
 
 void ConfigureDataServices(IHostApplicationBuilder builder)
@@ -362,6 +372,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseAuthentication();
 	app.UseAuthorization();
 
+	app.UseMiddleware<RoleGuardMiddleware>();
 	app.UseMiddleware<ScopeGuardMiddleware>();
 
 	app.UseResponseCaching();

@@ -13,16 +13,24 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class InvalidRoleErrorDto : ApiException, IParsable
     #pragma warning restore CS1591
     {
-        /// <summary>The givenRole property</summary>
+        /// <summary>The claimedRole property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? GivenRole { get; set; }
+        public string? ClaimedRole { get; set; }
 #nullable restore
 #else
-        public string GivenRole { get; set; }
+        public string ClaimedRole { get; set; }
 #endif
         /// <summary>The primary error message.</summary>
-        public override string Message { get => base.Message; }
+        public override string Message { get => MessageEscaped ?? string.Empty; }
+        /// <summary>The message property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? MessageEscaped { get; set; }
+#nullable restore
+#else
+        public string MessageEscaped { get; set; }
+#endif
         /// <summary>The requiredRole property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -49,7 +57,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "givenRole", n => { GivenRole = n.GetStringValue(); } },
+                { "claimedRole", n => { ClaimedRole = n.GetStringValue(); } },
+                { "message", n => { MessageEscaped = n.GetStringValue(); } },
                 { "requiredRole", n => { RequiredRole = n.GetStringValue(); } },
             };
         }
@@ -60,7 +69,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("givenRole", GivenRole);
+            writer.WriteStringValue("claimedRole", ClaimedRole);
+            writer.WriteStringValue("message", MessageEscaped);
             writer.WriteStringValue("requiredRole", RequiredRole);
         }
     }

@@ -13,12 +13,11 @@ public class ApiRegisterService(PubNetApiClient apiClient) : IRegisterService
 	{
 		try
 		{
-			var result =
-				await apiClient.Authentication.RegistrationsOpen.GetAsync(cancellationToken: cancellationToken);
+			var result = await apiClient.Setup.Status.GetAsync(cancellationToken: cancellationToken);
 			if (result is null)
 				throw new InvalidResponseException("No response could be deserialized");
 
-			return result.Value;
+			return result.RegistrationsOpen ?? false;
 		}
 		catch (ApiException e)
 		{

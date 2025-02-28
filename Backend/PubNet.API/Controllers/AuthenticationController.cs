@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.Abstractions;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Attributes;
@@ -23,7 +24,7 @@ public class AuthenticationController(
 	IAccountService accountService,
 	IAuthProvider authProvider,
 	IJwtFactory jwtFactory,
-	IRegistrationsService registrationsService,
+	ISiteConfigurationProvider siteConfigurationProvider,
 	IGuard guard) : PubNetControllerBase
 {
 	[HttpPost("LoginToken")]
@@ -100,7 +101,7 @@ public class AuthenticationController(
 		if (token.Identity.Id != identity.Id)
 			guard.ThrowIf(User).DoesntHaveRole(Role.Admin);
 
-		Debug.Assert(token.Identity.Id == identity.Id || User.IsInRole(Role.Admin.ToClaimValue()));
+		Debug.Assert(token.Identity.Id == identity.Id || User.IsInRole(Role.Admin.ToClaimValue()!));
 
 		await accessTokenService.DeleteTokenAsync(token, cancellationToken);
 
@@ -115,22 +116,16 @@ public class AuthenticationController(
 	public async Task<AccountCreatedDto> CreateAccountAsync(CreateAccountDto dto,
 		CancellationToken cancellationToken = default)
 	{
-		if (!await AreRegistrationsOpen())
+		var siteConfiguration = await siteConfigurationProvider.GetAsync(cancellationToken);
+		if (!siteConfiguration.RegistrationsOpen)
 			throw new RegistrationsClosedException();
 
-		var identity = await accountService.CreateAccountAsync(dto, cancellationToken);
+		var identity = await accountService.CreateAccountAsync(dto, Role.Default, cancellationToken);
 
 		var accountCreatedDto = AccountCreatedDto.MapFrom(identity);
 
 		Response.StatusCode = StatusCodes.Status201Created;
 		return accountCreatedDto;
-	}
-
-	[HttpGet("RegistrationsOpen")]
-	[AllowAnonymous]
-	public async Task<bool> AreRegistrationsOpen()
-	{
-		return await registrationsService.AreRegistrationsOpenAsync();
 	}
 
 	[HttpGet("Self")]
