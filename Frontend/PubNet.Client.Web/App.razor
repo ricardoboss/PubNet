@@ -1,6 +1,56 @@
-﻿<!-- TODO(rbo): migrate back to services.AddCascadingAuthenticationState() in .NET 9 or when dotnet/aspnetcore#57288 is merged -->
+﻿@using NavigationContext = Microsoft.AspNetCore.Components.Routing.NavigationContext
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IOnboardingService OnboardingService
+@inject NavigationManager NavigationManager
+@inject ILogger<App> Logger
+
+@code {
+
+	private bool isSetupComplete;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (!firstRender)
+			return;
+
+		isSetupComplete = await OnboardingService.IsSetupCompleteAsync();
+	}
+
+	private async Task OnNavigateAsync(NavigationContext context)
+	{
+		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+		if (isSetupComplete)
+			return;
+
+		if (authState.User.Identity is { IsAuthenticated: true })
+		{
+			if (!context.Path.StartsWith("Setup"))
+			{
+				Logger.LogDebug("Redirecting to setup because it is not complete");
+
+				NavigationManager.NavigateTo("/Setup");
+			}
+		}
+		else
+		{
+			if (!context.Path.StartsWith("Onboarding"))
+			{
+				Logger.LogDebug("Redirecting to onboarding because setup is not complete and user is not authenticated");
+
+				NavigationManager.NavigateTo("/Onboarding");
+			}
+		}
+	}
+
+}
+
+<!-- TODO(rbo): migrate back to services.AddCascadingAuthenticationState() in .NET 9 or when dotnet/aspnetcore#57288 is merged -->
 <CascadingAuthenticationState>
-	<Router AppAssembly="@typeof(App).Assembly">
+	<Router AppAssembly="@typeof(App).Assembly" OnNavigateAsync="@OnNavigateAsync">
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 				<NotAuthorized>

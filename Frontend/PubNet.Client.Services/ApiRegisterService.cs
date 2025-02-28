@@ -25,6 +25,39 @@ public class ApiRegisterService(PubNetApiClient apiClient) : IRegisterService
 		}
 	}
 
+	public async Task RegisterRootAdminAsync(CreateAccountDto request, CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			var result =
+				await apiClient.Setup.RootAdmin.PostAsync(request, cancellationToken: cancellationToken);
+			if (result is null)
+				throw new InvalidResponseException("No response could be deserialized");
+		}
+		catch (ValidationErrorsDto e)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine(e.Title!);
+
+			foreach (var (field, errorsObj) in e.Errors!.AdditionalData)
+			{
+				var errors = (errorsObj as UntypedArray)?.GetValue()
+					.Select(node => (node as UntypedString)?.GetValue())
+					.OfType<string>();
+
+				sb.AppendLine($"{field}:");
+				foreach (var error in errors ?? ["Unknown error"])
+					sb.AppendLine($"{error}");
+			}
+
+			throw new RegisterException(sb.ToString());
+		}
+		catch (ApiException e)
+		{
+			throw InvalidResponseException.UnexpectedResponse(e);
+		}
+	}
+
 	public async Task RegisterAsync(CreateAccountDto request, CancellationToken cancellationToken = default)
 	{
 		try
