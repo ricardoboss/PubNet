@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Admin;
 using PubNet.API.Abstractions.Archives;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.CQRS.Commands;

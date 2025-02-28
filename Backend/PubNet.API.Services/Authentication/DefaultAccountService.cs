@@ -9,7 +9,7 @@ namespace PubNet.API.Services.Authentication;
 
 public class DefaultAccountService(IAuthorDao authorDao, IIdentityDao identityDao, IAuthorDmo authorDmo, IIdentityDmo identityDmo) : IAccountService
 {
-	public async Task<Identity> CreateAccountAsync(CreateAccountDto dto, Role role, CancellationToken cancellationToken = default)
+	public async Task<Identity> CreateAccountAsync(CreateAccountDto dto, CancellationToken cancellationToken = default)
 	{
 		var existingAuthor = await authorDao.TryFindByUsernameAsync(dto.UserName, cancellationToken);
 		if (existingAuthor is not null)
@@ -18,6 +18,8 @@ public class DefaultAccountService(IAuthorDao authorDao, IIdentityDao identityDa
 		var existingIdentity = await identityDao.TryFindByEmailAsync(dto.Email, cancellationToken);
 		if (existingIdentity is not null)
 			throw new EmailAlreadyExistsException(dto.Email);
+
+		var role = dto.Role ?? Role.Default;
 
 		var author = await authorDmo.CreateAuthorAsync(dto.UserName, cancellationToken);
 		var identity = await identityDmo.CreateIdentityAsync(author, dto.Email, dto.Password, role, cancellationToken);
