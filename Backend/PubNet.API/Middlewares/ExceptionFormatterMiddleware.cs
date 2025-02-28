@@ -42,6 +42,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				{
 					GivenScopes = missingScopeException.AvailableScopes.Select(s => s.Value).ToArray(),
 					RequiredScopes = missingScopeException.MissingScopes.Select(s => s.Value).ToArray(),
+					Message = missingScopeException.Message,
 				};
 
 				break;
@@ -51,8 +52,9 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				info = DtoGenerationContext.Default.InvalidRoleErrorDto;
 				dto = new InvalidRoleErrorDto
 				{
-					GivenRole = invalidRoleException.GivenRole.ToClaimValue(),
+					ClaimedRole = invalidRoleException.ClaimedRole.ToClaimValue(),
 					RequiredRole = invalidRoleException.RequiredRole.ToClaimValue(),
+					Message = invalidRoleException.Message,
 				};
 
 				break;

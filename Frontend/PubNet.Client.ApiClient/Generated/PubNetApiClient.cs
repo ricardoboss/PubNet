@@ -3,9 +3,11 @@
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Serialization.Json;
+using PubNet.Client.ApiClient.Generated.Admin;
 using PubNet.Client.ApiClient.Generated.Authentication;
 using PubNet.Client.ApiClient.Generated.Authors;
 using PubNet.Client.ApiClient.Generated.Packages;
+using PubNet.Client.ApiClient.Generated.Setup;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -18,6 +20,11 @@ namespace PubNet.Client.ApiClient.Generated
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PubNetApiClient : BaseRequestBuilder
     {
+        /// <summary>The Admin property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Admin.AdminRequestBuilder Admin
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Admin.AdminRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The Authentication property</summary>
         public global::PubNet.Client.ApiClient.Generated.Authentication.AuthenticationRequestBuilder Authentication
         {
@@ -32,6 +39,11 @@ namespace PubNet.Client.ApiClient.Generated
         public global::PubNet.Client.ApiClient.Generated.Packages.PackagesRequestBuilder Packages
         {
             get => new global::PubNet.Client.ApiClient.Generated.Packages.PackagesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The Setup property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Setup.SetupRequestBuilder Setup
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Setup.SetupRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.PubNetApiClient"/> and sets the default values.
