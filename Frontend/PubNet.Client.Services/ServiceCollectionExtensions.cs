@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
 		services.TryAddSingleton<IPersonalAccessTokenService, ApiPersonalAccessTokenService>();
 		services.TryAddSingleton<IDartPackagesService, ApiDartPackagesService>();
 		services.TryAddSingleton<IAuthorsService, ApiAuthorsService>();
+		services.TryAddSingleton<IOnboardingService, ApiOnboardingService>();
 
 		return services;
 	}

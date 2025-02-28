@@ -7,6 +7,9 @@
 
 @code {
 
+	[Parameter]
+	public bool ForRootAdmin { get; set; }
+
 	private EditContext? editContext;
 
 	private ValidationMessageStore? validationMessageStore;
@@ -75,7 +78,10 @@
 
 		try
 		{
-			await RegisterService.RegisterAsync(Model);
+			if (ForRootAdmin)
+				await RegisterService.RegisterRootAdminAsync(Model);
+			else
+				await RegisterService.RegisterAsync(Model);
 
 			success = "Successfully registered. You can now log in using the same credentials.";
 		}
@@ -94,7 +100,9 @@
 <EditForm Model="@Model" OnValidSubmit="Submit">
 	<MudCard Class="pa-1">
 		<MudCardContent>
-			<MudText Typo="Typo.h5">Register</MudText>
+			<MudText Typo="Typo.h5">
+				@(ForRootAdmin ? "Root Admin Registration" : "Register")
+			</MudText>
 
 			<MudTextField
 				T="string?"
