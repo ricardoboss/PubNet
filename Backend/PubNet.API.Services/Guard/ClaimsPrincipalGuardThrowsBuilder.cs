@@ -47,7 +47,7 @@ public class ClaimsPrincipalGuardThrowsBuilder(IGuard guard, ClaimsPrincipal use
 
 	public void DoesntHaveRole(Role role, string? message = null)
 	{
-		if (!guard.Allows(UserRoleClaim, toActAs: role))
+		if (guard.Allows(UserRoleClaim, toActAs: role))
 			return;
 
 		throw new InvalidRoleException(UserRoleClaim, role, message);
