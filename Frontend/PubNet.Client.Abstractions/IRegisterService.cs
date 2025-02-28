@@ -8,4 +8,6 @@ public interface IRegisterService
 
 	/// <exception cref="RegisterException">In case username or email are already taken.</exception>
 	Task RegisterAsync(CreateAccountDto request, CancellationToken cancellationToken = default);
+
+	Task RegisterRootAdminAsync(CreateAccountDto request, CancellationToken cancellationToken = default);
 }

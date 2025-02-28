@@ -1,0 +1,19 @@
+﻿@page "/onboarding"
+
+<PageTitle>Onboarding | PubNet</PageTitle>
+
+<MudStack Spacing="4">
+	<MudText Typo="Typo.h3">Onboarding</MudText>
+
+	<MudText Typo="Typo.body1">
+		Welcome to PubNet! To get started, please create the root administrator account:
+	</MudText>
+
+	<RegisterForm ForRootAdmin="true" />
+
+	<MudText Typo="Typo.body1">
+		Afterwards, please log in:
+	</MudText>
+
+	<LoginForm PostLoginRedirect="/Setup"/>
+</MudStack>
