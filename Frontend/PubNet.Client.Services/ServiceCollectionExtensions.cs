@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
 		services.TryAddSingleton<IDartPackagesService, ApiDartPackagesService>();
 		services.TryAddSingleton<IAuthorsService, ApiAuthorsService>();
 		services.TryAddSingleton<IOnboardingService, ApiOnboardingService>();
+		services.TryAddSingleton<IAdminService, ApiAdminService>();
 
 		return services;
 	}

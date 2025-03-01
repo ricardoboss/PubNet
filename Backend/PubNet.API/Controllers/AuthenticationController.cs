@@ -112,7 +112,6 @@ public class AuthenticationController(
 	[AllowAnonymous]
 	[ProducesResponseType<AccountCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status409Conflict)]
-	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> CreateAccountAsync(CreateAccountDto dto,
 		CancellationToken cancellationToken = default)
 	{
