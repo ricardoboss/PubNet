@@ -14,7 +14,7 @@ namespace PubNet.API.Controllers.Admin;
 [Authorize, RequireRole(Role.Admin)]
 public class AdminController(IAccountService accountService) : PubNetControllerBase
 {
-	[HttpPost("Account")]
+	[HttpPost("Identity")]
 	[ProducesResponseType<IdentityDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status409Conflict)]
 	public async Task<IdentityDto> CreateAccountAsync(CreateAccountDto data,
@@ -23,5 +23,14 @@ public class AdminController(IAccountService accountService) : PubNetControllerB
 		var identity = await accountService.CreateAccountAsync(data, cancellationToken);
 
 		return IdentityDto.MapFrom(identity);
+	}
+
+	[HttpGet("Identities")]
+	[ProducesResponseType<IEnumerable<IdentityDto>>(StatusCodes.Status200OK)]
+	public async Task<IEnumerable<IdentityDto>> GetAccountsAsync(CancellationToken cancellationToken = default)
+	{
+		var identities = await accountService.GetAccountsAsync(cancellationToken);
+
+		return identities.Select(IdentityDto.MapFrom);
 	}
 }

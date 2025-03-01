@@ -2,7 +2,8 @@
 #pragma warning disable CS0618
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
-using PubNet.Client.ApiClient.Generated.Admin.Account;
+using PubNet.Client.ApiClient.Generated.Admin.Identities;
+using PubNet.Client.ApiClient.Generated.Admin.Identity;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,10 +16,15 @@ namespace PubNet.Client.ApiClient.Generated.Admin
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AdminRequestBuilder : BaseRequestBuilder
     {
-        /// <summary>The Account property</summary>
-        public global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder Account
+        /// <summary>The Identities property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Admin.Identities.IdentitiesRequestBuilder Identities
         {
-            get => new global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::PubNet.Client.ApiClient.Generated.Admin.Identities.IdentitiesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The Identity property</summary>
+        public global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder Identity
+        {
+            get => new global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Admin.AdminRequestBuilder"/> and sets the default values.

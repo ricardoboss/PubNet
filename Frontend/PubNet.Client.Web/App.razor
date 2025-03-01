@@ -42,20 +42,20 @@
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 		if (authState.User.Identity is { IsAuthenticated: true })
 		{
-			if (!context.Path.StartsWith("Setup"))
+			if (!context.Path.StartsWith("Admin/Setup"))
 			{
 				Logger.LogDebug("Redirecting to setup because it is not complete");
 
-				NavigationManager.NavigateTo("/Setup");
+				NavigationManager.NavigateTo("/Admin/Setup");
 			}
 		}
 		else
 		{
-			if (!context.Path.StartsWith("Onboarding"))
+			if (!context.Path.StartsWith("Admin/Onboarding"))
 			{
 				Logger.LogDebug("Redirecting to onboarding because setup is not complete and user is not authenticated");
 
-				NavigationManager.NavigateTo("/Onboarding");
+				NavigationManager.NavigateTo("/Admin/Onboarding");
 			}
 		}
 	}

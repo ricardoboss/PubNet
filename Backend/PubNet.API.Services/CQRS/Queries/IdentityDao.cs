@@ -26,4 +26,9 @@ public class IdentityDao(PubNet2Context context) : IIdentityDao
 	{
 		return context.Identities.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
 	}
+
+	public async Task<IEnumerable<Identity>> GetAllAsync(CancellationToken cancellationToken = default)
+	{
+		return await context.Identities.ToListAsync(cancellationToken);
+	}
 }

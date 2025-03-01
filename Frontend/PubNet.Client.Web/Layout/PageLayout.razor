@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using PubNet.Auth.Models
+@inherits LayoutComponentBase
 
 <MudLayout>
 	<MudAppBar Dense Elevation="0">
@@ -8,6 +9,11 @@
 		</MudNavLink>
 		<AuthorizeView>
 			<Authorized>
+				@if (context.User.IsInRole("admin"))
+				{
+					<MudNavLink Href="/Admin/Identities">Identities</MudNavLink>
+				}
+
 				<MudNavLink Href="/dart">Dart</MudNavLink>
 			</Authorized>
 			<NotAuthorized />

@@ -3,6 +3,7 @@
 @using PasswordRulesSharp.Validator
 @using PubNet.Auth.Models
 @using PubNet.Client.Web.Extensions
+@using Role = PubNet.Client.ApiClient.Generated.Models.Role
 @inject IRegisterService RegisterService
 @inject ILogger<RegisterForm> Logger
 
@@ -45,7 +46,7 @@
 	{
 		base.OnParametersSet();
 
-		Model.Role = (int)(ForRootAdmin ? Role.Admin : Role.Default);
+		Model.Role = ForRootAdmin ? Role.Admin : Role.Default;
 	}
 
 	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)

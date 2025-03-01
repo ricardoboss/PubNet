@@ -14,7 +14,7 @@
     "version": "2.0.0.0"
   },
   "paths": {
-    "/Admin/Account": {
+    "/Admin/Identity": {
       "post": {
         "tags": [
           "Admin"
@@ -55,6 +55,63 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/Admin/Identities": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentityDto"
+                  }
                 }
               }
             }
@@ -2473,11 +2530,10 @@
       },
       "PackageType": {
         "enum": [
-          0,
-          1
+          "Nuget",
+          "Dart"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Platforms": {
         "type": "object",
@@ -2652,12 +2708,11 @@
       },
       "Role": {
         "enum": [
-          0,
-          1337,
-          -1
+          "Default",
+          "Admin",
+          "Unspecified"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Screenshot": {
         "required": [

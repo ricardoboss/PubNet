@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -209,6 +210,7 @@ void ConfigureControllers(IHostApplicationBuilder builder)
 			options.JsonSerializerOptions.AddDtoSourceGenerators();
 
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+			options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		});
 }
 
