@@ -1,0 +1,116 @@
+﻿@inject IAdminService AdminService
+@inject ILogger<AddIdentityDialog> Logger
+
+@code {
+
+	[CascadingParameter]
+	public required MudDialogInstance Dialog { get; set; }
+
+	private bool isSubmitting;
+
+	private bool IsSubmitDisabled => isSubmitting;
+
+	private bool FormDisabled => isSubmitting;
+
+	private readonly CreateAccountDto model = new();
+
+	private async Task Submit()
+	{
+		try
+		{
+			isSubmitting = true;
+
+			await AdminService.CreateAccountAsync(model);
+		}
+		catch (Exception e)
+		{
+			Logger.LogError(e, "Failed to create identity");
+		}
+		finally
+		{
+			isSubmitting = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private void Cancel() => Dialog.Cancel();
+
+}
+
+<EditForm Model="@model" OnValidSubmit="Submit">
+	<MudDialog>
+		<TitleContent>
+			<MudText Typo="Typo.h6">Add Identity</MudText>
+		</TitleContent>
+		<DialogContent>
+			<MudGrid>
+				<MudItem xs="12" sm="6">
+					<MudText Typo="Typo.subtitle1">Details</MudText>
+
+					<MudTextField
+						T="string?"
+						Class="mt-3"
+						Label="Username"
+						Immediate
+						Required
+						@bind-Value="model.UserName"
+						For="() => model.UserName"
+						Variant="Variant.Outlined"
+						InputType="InputType.Text"
+						Disabled="@FormDisabled"/>
+
+					<MudTextField
+						T="string?"
+						Class="mt-3"
+						Label="E-Mail Address"
+						Immediate
+						Required
+						@bind-Value="model.Email"
+						For="() => model.Email"
+						Variant="Variant.Outlined"
+						InputType="InputType.Email"
+						Disabled="@FormDisabled"/>
+
+					<MudTextField
+						T="string?"
+						Class="mt-3"
+						Label="Password"
+						Immediate
+						Required
+						@bind-Value="model.Password"
+						For="() => model.Password"
+						Variant="Variant.Outlined"
+						InputType="InputType.Password"
+						Disabled="@FormDisabled"/>
+				</MudItem>
+				<MudItem xs="12" sm="6">
+					<MudText Typo="Typo.subtitle1">Role</MudText>
+
+					<MudRadioGroup
+						T="Role"
+						Class="mt-3"
+						@bind-SelectedOption="model.Role"
+						For="() => (Role)model.Role!"
+						Disabled="@FormDisabled">
+						<MudRadio Option="Role.Default"/>
+						<MudRadio Option="Role.Admin"/>
+					</MudRadioGroup>
+				</MudItem>
+			</MudGrid>
+		</DialogContent>
+		<DialogActions>
+			<MudButton OnClick="@Cancel">Cancel</MudButton>
+			@if (isSubmitting)
+			{
+				<MudProgressCircular
+					Indeterminate
+					Size="Size.Small"
+					Color="Color.Primary"
+					Class="mx-2"/>
+			}
+
+			<MudButton Color="Color.Primary" ButtonType="ButtonType.Submit" Disabled="IsSubmitDisabled">Submit</MudButton>
+		</DialogActions>
+	</MudDialog>
+</EditForm>

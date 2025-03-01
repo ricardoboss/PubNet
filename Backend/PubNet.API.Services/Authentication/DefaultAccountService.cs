@@ -26,4 +26,11 @@ public class DefaultAccountService(IAuthorDao authorDao, IIdentityDao identityDa
 
 		return identity;
 	}
+
+	public async Task<IEnumerable<Identity>> GetAccountsAsync(CancellationToken cancellationToken = default)
+	{
+		var identities = await identityDao.GetAllAsync(cancellationToken);
+
+		return identities;
+	}
 }
