@@ -31,7 +31,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
         /// <summary>The role property</summary>
-        public int? Role { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.Role? Role { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -53,7 +53,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "author", n => { Author = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.AuthorDto>(global::PubNet.Client.ApiClient.Generated.Models.AuthorDto.CreateFromDiscriminatorValue); } },
                 { "email", n => { Email = n.GetStringValue(); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
-                { "role", n => { Role = n.GetIntValue(); } },
+                { "role", n => { Role = n.GetEnumValue<global::PubNet.Client.ApiClient.Generated.Models.Role>(); } },
             };
         }
         /// <summary>
@@ -66,7 +66,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.AuthorDto>("author", Author);
             writer.WriteStringValue("email", Email);
             writer.WriteGuidValue("id", Id);
-            writer.WriteIntValue("role", Role);
+            writer.WriteEnumValue<global::PubNet.Client.ApiClient.Generated.Models.Role>("role", Role);
         }
     }
 }

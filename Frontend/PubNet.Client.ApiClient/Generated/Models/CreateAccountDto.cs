@@ -31,7 +31,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string Password { get; set; }
 #endif
         /// <summary>The role property</summary>
-        public int? Role { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.Role? Role { get; set; }
         /// <summary>The userName property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -67,7 +67,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             {
                 { "email", n => { Email = n.GetStringValue(); } },
                 { "password", n => { Password = n.GetStringValue(); } },
-                { "role", n => { Role = n.GetIntValue(); } },
+                { "role", n => { Role = n.GetEnumValue<global::PubNet.Client.ApiClient.Generated.Models.Role>(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
             };
         }
@@ -80,7 +80,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("email", Email);
             writer.WriteStringValue("password", Password);
-            writer.WriteIntValue("role", Role);
+            writer.WriteEnumValue<global::PubNet.Client.ApiClient.Generated.Models.Role>("role", Role);
             writer.WriteStringValue("userName", UserName);
             writer.WriteAdditionalData(AdditionalData);
         }

@@ -1,0 +1,122 @@
+﻿@inject IAdminService AdminService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@code {
+
+	private List<IdentityDto>? identities;
+
+	private bool isLoading = true;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+			await LoadIdentities();
+	}
+
+	private async Task LoadIdentities()
+	{
+		isLoading = true;
+
+		try
+		{
+			var result = await AdminService.GetAccountsAsync();
+
+			identities = result.ToList();
+
+			StateHasChanged();
+
+			await Task.Delay(1000);
+		}
+		finally
+		{
+			isLoading = false;
+
+			StateHasChanged();
+		}
+	}
+
+	private async Task AddIdentity()
+	{
+		var options = new DialogOptions
+		{
+			CloseOnEscapeKey = true,
+			Position = DialogPosition.TopRight,
+		};
+
+		var dialog = await DialogService.ShowAsync<AddIdentityDialog>("Add Identity", options);
+
+		var result = await dialog.Result;
+		if (result is { Canceled: false, Data: IdentityDto identity } && identities is not null)
+		{
+			identities.Add(identity);
+
+			StateHasChanged();
+
+			Snackbar.Add("Identity created", Severity.Success);
+		}
+	}
+
+	private async Task OnDeleteIdentity(Guid identityId)
+	{
+		try
+		{
+			await AdminService.DeleteIdentityAsync(identityId);
+
+			identities?.RemoveAll(t => t.Id!.Value == identityId);
+
+			StateHasChanged();
+
+			Snackbar.Add("Identity deleted", Severity.Success);
+		}
+		catch
+		{
+			Snackbar.Add("Failed to delete identity", Severity.Error);
+		}
+	}
+
+}
+
+<MudStack>
+	<MudStack Row AlignItems="AlignItems.End">
+		<MudText Typo="Typo.h5">Identities</MudText>
+
+		<MudSpacer/>
+
+		@if (isLoading)
+		{
+			<MudProgressCircular
+				Indeterminate
+				Size="Size.Small"
+				Color="Color.Primary"/>
+		}
+		else
+		{
+			<MudIconButton
+				Icon="@Icons.Material.TwoTone.Refresh"
+				Color="Color.Primary"
+				Size="Size.Small"
+				OnClick="@LoadIdentities"/>
+		}
+
+		<MudIconButton
+			Icon="@Icons.Material.TwoTone.Add"
+			Color="Color.Primary"
+			Size="Size.Small"
+			OnClick="@AddIdentity"/>
+	</MudStack>
+
+	@switch (identities)
+	{
+		case { Count: 0 }:
+			<MudText Align="Align.Center">No identities found</MudText>
+			break;
+		case { Count: > 0 }:
+			<IdentitiesTable
+				Identities="identities"
+				OnDeleteIdentity="OnDeleteIdentity"/>
+			break;
+	}
+</MudStack>

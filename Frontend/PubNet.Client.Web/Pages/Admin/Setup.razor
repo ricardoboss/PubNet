@@ -1,9 +1,5 @@
-﻿@attribute [Authorize]
-@page "/Setup"
-
-@code {
-
-}
+﻿@attribute [Authorize(Roles = "admin")]
+@page "/Admin/Setup"
 
 <PageTitle>Setup | PubNet</PageTitle>
 

@@ -9,28 +9,28 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-namespace PubNet.Client.ApiClient.Generated.Admin.Account
+namespace PubNet.Client.ApiClient.Generated.Admin.Identity
 {
     /// <summary>
-    /// Builds and executes requests for operations under \Admin\Account
+    /// Builds and executes requests for operations under \Admin\Identity
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class AccountRequestBuilder : BaseRequestBuilder
+    public partial class IdentityRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AccountRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Admin/Account", pathParameters)
+        public IdentityRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Admin/Identity", pathParameters)
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public AccountRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Admin/Account", rawUrl)
+        public IdentityRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/Admin/Identity", rawUrl)
         {
         }
         /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.IdentityDto"/></returns>
@@ -85,11 +85,11 @@ namespace PubNet.Client.ApiClient.Generated.Admin.Account
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder WithUrl(string rawUrl)
+        public global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::PubNet.Client.ApiClient.Generated.Admin.Account.AccountRequestBuilder(rawUrl, RequestAdapter);
+            return new global::PubNet.Client.ApiClient.Generated.Admin.Identity.IdentityRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }

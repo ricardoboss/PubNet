@@ -14,6 +14,7 @@ public static class JsonSerializerOptionsExtensions
 	public static void ApplyCommonOptions(this JsonSerializerOptions options)
 	{
 		options.Converters.Add(new JsonDateTimeConverter());
+		options.Converters.Add(new JsonStringEnumConverter());
 
 		// add custom converters from DartLang.PubSpec
 		options.Converters.Add(new SemVersionJsonConverter());
