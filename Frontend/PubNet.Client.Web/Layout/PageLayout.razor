@@ -1,0 +1,24 @@
+﻿@inherits LayoutComponentBase
+
+<MudLayout>
+	<MudAppBar Dense Elevation="0">
+		<PubNetLogo Size="40" class="mr-1" style="display: inline-block;"/>
+		<MudNavLink Href="/">
+			<MudText Typo="Typo.h5">PubNet</MudText>
+		</MudNavLink>
+		<AuthorizeView>
+			<Authorized>
+				<MudNavLink Href="/dart">Dart</MudNavLink>
+			</Authorized>
+			<NotAuthorized />
+		</AuthorizeView>
+		<MudSpacer/>
+		<AccountButton/>
+	</MudAppBar>
+	<MudMainContent>
+		<MudContainer Class="py-4">
+			@Body
+		</MudContainer>
+	</MudMainContent>
+	<PubNetFooter/>
+</MudLayout>
