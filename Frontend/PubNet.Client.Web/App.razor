@@ -4,6 +4,7 @@
 @inject IOnboardingService OnboardingService
 @inject NavigationManager NavigationManager
 @inject ILogger<App> Logger
+@inject IJSRuntime Js
 
 @code {
 
@@ -60,6 +61,8 @@
 		}
 	}
 
+	private async Task OnReload() => await Js.InvokeVoidAsync("location.reload", true);
+
 }
 
 <!-- TODO(rbo): migrate back to services.AddCascadingAuthenticationState() in .NET 9 or when dotnet/aspnetcore#57288 is merged -->
@@ -89,6 +92,8 @@
 							<li>Is the API running?</li>
 							<li>Is the API reachable from this machine? (Ports)</li>
 						</ul>
+						<br/>
+						<MudButton OnClick="@OnReload" Variant="Variant.Outlined" Color="Color.Error">Reload</MudButton>
 					</MudAlert>
 
 					<ExceptionDetails Exception="@loadException"/>
