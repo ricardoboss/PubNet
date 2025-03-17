@@ -1,11 +1,16 @@
 ﻿@using PasswordRulesSharp.Builder
 @using PasswordRulesSharp.Rules
 @using PasswordRulesSharp.Validator
+@using PubNet.Auth.Models
 @using PubNet.Client.Web.Extensions
+@using Role = PubNet.Client.ApiClient.Generated.Models.Role
 @inject IRegisterService RegisterService
 @inject ILogger<RegisterForm> Logger
 
 @code {
+
+	[Parameter]
+	public bool ForRootAdmin { get; set; }
 
 	private EditContext? editContext;
 
@@ -35,6 +40,13 @@
 		editContext.OnValidationRequested += ValidateModel;
 
 		validationMessageStore = new(editContext);
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		Model.Role = ForRootAdmin ? Role.Admin : Role.Default;
 	}
 
 	private void ValidateModel(object? sender, ValidationRequestedEventArgs e)
@@ -94,7 +106,9 @@
 <EditForm Model="@Model" OnValidSubmit="Submit">
 	<MudCard Class="pa-1">
 		<MudCardContent>
-			<MudText Typo="Typo.h5">Register</MudText>
+			<MudText Typo="Typo.h5">
+				@(ForRootAdmin ? "Root Admin Registration" : "Register")
+			</MudText>
 
 			<MudTextField
 				T="string?"

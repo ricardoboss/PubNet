@@ -1,0 +1,39 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required IReadOnlyCollection<IdentityDto> Identities { get; set; }
+
+	[Parameter]
+	public EventCallback<Guid> OnDeleteIdentity { get; set; }
+
+}
+
+<MudSimpleTable>
+	<thead>
+	<tr>
+		<th>Username</th>
+		<th>Email</th>
+		<th>Role</th>
+		<th>Registered</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var identity in Identities)
+	{
+		<tr @key="identity.Id">
+			<td>@identity.Author!.UserName</td>
+			<td>@identity.Email</td>
+			<td>@identity.Role</td>
+			<td>@identity.Author!.RegisteredAtUtc</td>
+			<td>
+				<MudIconButton
+					Icon="@Icons.Material.TwoTone.Delete"
+					Color="Color.Error"
+					Size="Size.Small"
+					OnClick="@(() => OnDeleteIdentity.InvokeAsync(identity.Id!.Value))"/>
+			</td>
+		</tr>
+	}
+	</tbody>
+</MudSimpleTable>

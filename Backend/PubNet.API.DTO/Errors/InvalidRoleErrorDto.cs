@@ -4,5 +4,7 @@ public class InvalidRoleErrorDto
 {
 	public required string? RequiredRole { get; init; }
 
-	public required string? GivenRole { get; init; }
+	public required string? ClaimedRole { get; init; }
+
+	public string? Message { get; init; }
 }

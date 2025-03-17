@@ -5,11 +5,11 @@ namespace PubNet.API.Services.Extensions;
 
 public static class RoleExtensions
 {
-	public static string ToClaimValue(this Role role)
+	public static string? ToClaimValue(this Role role)
 	{
 		return role switch
 		{
-			Role.Unspecified => "",
+			Role.Unspecified => null,
 			Role.Default => "default",
 			Role.Admin => "admin",
 			_ => throw new NotSupportedException($"Role {role} is not supported"),

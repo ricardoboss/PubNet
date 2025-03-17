@@ -30,22 +30,29 @@ public class LoginTokenAuthenticationProvider(ILoginTokenStorage loginTokenStora
 	private readonly (Method method, string path)[] unauthenticatedEndpoints =
 	[
 		(Method.POST, "/Authentication/LoginToken"),
-		(Method.GET, "/Authentication/RegistrationsOpen"),
 		(Method.POST, "/Authentication/Account"),
+		(Method.GET, "/Setup/Status"),
+		(Method.POST, "/Setup/RootAdmin"),
 	];
 
 	private bool ShouldAuthenticate(RequestInformation request)
 	{
-		logger.LogTrace("Checking if request {Request} should be authenticated", request.URI);
+		if (request.Headers.ContainsKey("Authorization"))
+		{
+			logger.LogTrace("Request to {Request} already has an Authorization header", request.URI);
+
+			return false;
+		}
 
 		var path = request.URI.AbsolutePath;
-
-		return !unauthenticatedEndpoints.Any(exemption =>
+		var hasExemption = unauthenticatedEndpoints.Any(exemption =>
 		{
 			if (!path.EndsWith(exemption.path, StringComparison.OrdinalIgnoreCase))
 				return false;
 
 			return exemption.method == request.HttpMethod;
 		});
+
+		return !hasExemption;
 	}
 }

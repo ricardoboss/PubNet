@@ -47,7 +47,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string ReplacedBy { get; set; }
 #endif
         /// <summary>The type property</summary>
-        public int? Type { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.PackageType? Type { get; set; }
         /// <summary>The versions property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -79,7 +79,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "latest", n => { Latest = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto.CreateFromDiscriminatorValue); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "replacedBy", n => { ReplacedBy = n.GetStringValue(); } },
-                { "type", n => { Type = n.GetIntValue(); } },
+                { "type", n => { Type = n.GetEnumValue<global::PubNet.Client.ApiClient.Generated.Models.PackageType>(); } },
                 { "versions", n => { Versions = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>(global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
@@ -95,7 +95,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>("latest", Latest);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("replacedBy", ReplacedBy);
-            writer.WriteIntValue("type", Type);
+            writer.WriteEnumValue<global::PubNet.Client.ApiClient.Generated.Models.PackageType>("type", Type);
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.DartPackageVersionDto>("versions", Versions);
         }
     }
