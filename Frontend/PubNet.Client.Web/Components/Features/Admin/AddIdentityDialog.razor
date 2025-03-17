@@ -93,8 +93,8 @@
 						@bind-SelectedOption="model.Role"
 						For="() => (Role)model.Role!"
 						Disabled="@FormDisabled">
-						<MudRadio Option="Role.Default"/>
-						<MudRadio Option="Role.Admin"/>
+						<MudRadio T="Role" Option="@Role.Default"/>
+						<MudRadio T="Role" Option="@Role.Admin"/>
 					</MudRadioGroup>
 				</MudItem>
 			</MudGrid>
