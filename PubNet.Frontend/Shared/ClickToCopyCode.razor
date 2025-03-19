@@ -1,18 +1,9 @@
 ﻿@inject ClipboardService Clipboard
 
 <Tooltip Text="@Tooltip" Display="Display.Inline" Placement="TooltipPlacement.Right">
-    @if (Masked)
-    {
-        <Code @onclick="() => Clipboard.WriteText(TextContent)" Style="cursor: pointer">
-            @MaskedText
-        </Code>
-    }
-    else
-    {
-        <Code CopyToClipboard Style="cursor: pointer">
-            @RenderContent
-        </Code>
-    }
+    <Code CopyToClipboard Style="cursor: pointer">
+        @RenderContent
+    </Code>
 </Tooltip>
 
 @code {
@@ -24,12 +15,7 @@
     public string? Tooltip { get; set; } = "Click to copy";
 
     [Parameter]
-    public bool Masked { get; set; }
-
-    [Parameter]
     public string TextContent { get; set; } = string.Empty;
-
-    private string MaskedText => TextContent[..Math.Min(10, TextContent.Length / 2)] + "...";
 
     private RenderFragment RenderContent => builder =>
     {
