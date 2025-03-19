@@ -17,7 +17,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
         /// <summary>The registeredAtUtc property</summary>
-        public DateTimeOffset? RegisteredAtUtc { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public UntypedNode? RegisteredAtUtc { get; set; }
+#nullable restore
+#else
+        public UntypedNode RegisteredAtUtc { get; set; }
+#endif
         /// <summary>The userName property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -52,7 +58,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "id", n => { Id = n.GetGuidValue(); } },
-                { "registeredAtUtc", n => { RegisteredAtUtc = n.GetDateTimeOffsetValue(); } },
+                { "registeredAtUtc", n => { RegisteredAtUtc = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
             };
         }
@@ -64,7 +70,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteGuidValue("id", Id);
-            writer.WriteDateTimeOffsetValue("registeredAtUtc", RegisteredAtUtc);
+            writer.WriteObjectValue<UntypedNode>("registeredAtUtc", RegisteredAtUtc);
             writer.WriteStringValue("userName", UserName);
             writer.WriteAdditionalData(AdditionalData);
         }

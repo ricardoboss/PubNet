@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace PubNet.API.OpenApi;
 
@@ -10,8 +11,8 @@ public class SecurityRequirementsDocumentTransformer : IOpenApiDocumentTransform
 		CancellationToken cancellationToken)
 	{
 		document.Components ??= new();
-		document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
-		document.Components.SecuritySchemes[JwtBearerDefaults.AuthenticationScheme] = new()
+		document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+		document.Components.SecuritySchemes[JwtBearerDefaults.AuthenticationScheme] = new OpenApiSecurityScheme
 		{
 			Name = JwtBearerDefaults.AuthenticationScheme,
 			Description = "The bearer token used to authenticate requests.",
@@ -25,14 +26,7 @@ public class SecurityRequirementsDocumentTransformer : IOpenApiDocumentTransform
 			new()
 			{
 				{
-					new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.SecurityScheme,
-							Id = JwtBearerDefaults.AuthenticationScheme,
-						},
-					},
+					new(JwtBearerDefaults.AuthenticationScheme),
 					[]
 				},
 			}

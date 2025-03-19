@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace PubNet.API.OpenApi;
 
@@ -12,7 +13,7 @@ public static class OpenApiDocumentExtension
 		T>(this OpenApiDocument document)
 	{
 		document.Components ??= new();
-		document.Components.Schemas ??= new Dictionary<string, OpenApiSchema>();
+		document.Components.Schemas ??= new Dictionary<string, IOpenApiSchema>();
 
 		if (document.Components.Schemas.ContainsKey(typeof(T).Name))
 			return;
@@ -25,28 +26,28 @@ public static class OpenApiDocumentExtension
 		Type type)
 	{
 		var primitive = type.MapTypeToOpenApiPrimitiveType();
-		if (primitive is { Type: not "string" and not "object" and not "array" })
+		if (primitive is { Type: not JsonSchemaType.String and not JsonSchemaType.Object and not JsonSchemaType.Array })
 			return primitive;
 
 		if (type == typeof(string))
-			return new() { Type = "string" };
+			return new() { Type = JsonSchemaType.String };
 
 		if (type.IsArray || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
 		{
 			var itemType = type.IsArray ? type.GetElementType()! : type.GetGenericArguments()[0];
 			return new()
 			{
-				Type = "array",
+				Type = JsonSchemaType.Array,
 				Items = GetOpenApiSchema(itemType),
 			};
 		}
 
 		return new()
 		{
-			Type = "object",
+			Type = JsonSchemaType.Object,
 			Properties = type.GetProperties().ToDictionary(
 				p => TransformName(p.Name),
-				p => GetOpenApiSchema(p.PropertyType)
+				IOpenApiSchema (p) => GetOpenApiSchema(p.PropertyType)
 			),
 			Required = type.GetProperties().Where(p => Nullable.GetUnderlyingType(p.PropertyType) is null)
 				.Select(p => p.Name).Select(TransformName).ToHashSet(),

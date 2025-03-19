@@ -67,8 +67,4 @@
 		<PackageReference Include="Microsoft.Kiota.Serialization.Text"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="$(GeneratedClientDirectory)" />
-	</ItemGroup>
-
 </Project>

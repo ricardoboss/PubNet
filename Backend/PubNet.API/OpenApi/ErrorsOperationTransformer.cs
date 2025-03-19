@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.OpenApi;
@@ -13,14 +14,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 		{
 			["application/json"] = new()
 			{
-				Schema = new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.Schema,
-						Id = nameof(InternalServerErrorDto),
-					},
-				},
+				Schema = new OpenApiSchemaReference(nameof(InternalServerErrorDto)),
 			},
 		},
 	};
@@ -32,14 +26,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 		{
 			["application/json"] = new()
 			{
-				Schema = new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.Schema,
-						Id = nameof(GenericErrorDto),
-					},
-				},
+				Schema = new OpenApiSchemaReference(nameof(GenericErrorDto)),
 			},
 		},
 	};
@@ -51,14 +38,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 		{
 			["application/json"] = new()
 			{
-				Schema = new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.Schema,
-						Id = nameof(ValidationErrorsDto),
-					},
-				},
+				Schema = new OpenApiSchemaReference(nameof(ValidationErrorsDto)),
 			},
 		},
 	};

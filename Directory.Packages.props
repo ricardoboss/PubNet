@@ -11,6 +11,7 @@
     <PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="3.0.1" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="3.0.1" />
 		<PackageVersion Include="Markdig" Version="0.42.0" />
+		<PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.0-preview.2.25163.2" />
 		<PackageVersion Include="Nerdbank.GitVersioning" Version="3.8.118" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0-preview.2.25164.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0-preview.2.25164.1" />
@@ -32,10 +33,8 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0-preview.2.25163.2" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.2.25163.2" />
-    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.0-preview.2.25163.2" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="10.0.0-preview.2.25163.2" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0-preview.2.25163.2" />
-    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="10.0.0-preview.2.25164.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0-preview.2.25163.2" />
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.1" />

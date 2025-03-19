@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.1",
   "info": {
     "title": "PubNet API",
     "description": "An API for Dart and NuGet package hosting",
@@ -171,9 +171,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "pat:create"
@@ -256,9 +254,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-any-of-required-scopes": [
           [
@@ -345,9 +341,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "pat:delete"
@@ -425,9 +419,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "pat:create"
@@ -600,9 +592,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ]
       }
     },
@@ -616,8 +606,7 @@
             "name": "q",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             }
           },
           {
@@ -625,8 +614,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -634,8 +622,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -643,8 +630,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -652,8 +638,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           }
         ],
@@ -720,9 +705,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "packages:search"
@@ -1085,9 +1068,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "packages:dart:retract"
@@ -1225,8 +1206,7 @@
             "name": "q",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             }
           },
           {
@@ -1234,8 +1214,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -1243,8 +1222,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           }
         ],
@@ -1311,9 +1289,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-any-of-required-scopes": [
           [
@@ -1391,9 +1367,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "packages:dart:new"
@@ -1515,26 +1489,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorDto"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          },
           "422": {
             "description": "Unprocessable Entity",
             "content": {
@@ -1646,9 +1600,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ]
       },
       "delete": {
@@ -1741,9 +1693,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-any-of-required-scopes": [
           [
@@ -1771,8 +1721,7 @@
             "name": "q",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             }
           },
           {
@@ -1780,8 +1729,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -1789,8 +1737,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           }
         ],
@@ -1857,9 +1804,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-any-of-required-scopes": [
           [
@@ -1947,9 +1892,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-any-of-required-scopes": [
           [
@@ -1968,8 +1911,7 @@
             "name": "q",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             }
           },
           {
@@ -1977,8 +1919,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           },
           {
@@ -1986,8 +1927,7 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": null
+              "format": "int32"
             }
           }
         ],
@@ -2054,9 +1994,7 @@
           }
         },
         "security": [
-          {
-            "Bearer": []
-          }
+          { }
         ],
         "x-required-scopes": [
           "author:search"
@@ -2066,104 +2004,6 @@
   },
   "components": {
     "schemas": {
-      "InternalServerErrorDto": {
-        "required": [
-          "stackTrace",
-          "error"
-        ],
-        "type": "object",
-        "properties": {
-          "stackTrace": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "error": {
-            "required": [
-              "code",
-              "message"
-            ],
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "InvalidRoleErrorDto": {
-        "required": [
-          "requiredRole",
-          "givenRole",
-          "error"
-        ],
-        "type": "object",
-        "properties": {
-          "requiredRole": {
-            "type": "string"
-          },
-          "givenRole": {
-            "type": "string"
-          },
-          "error": {
-            "required": [
-              "code",
-              "message"
-            ],
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "MissingScopeErrorDto": {
-        "required": [
-          "requiredScopes",
-          "givenScopes",
-          "error"
-        ],
-        "type": "object",
-        "properties": {
-          "requiredScopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "givenScopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "error": {
-            "required": [
-              "code",
-              "message"
-            ],
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
       "AccountCreatedDto": {
         "required": [
           "email",
@@ -2181,12 +2021,16 @@
       },
       "AuthErrorDto": {
         "required": [
-          "error"
+          "error",
+          "message"
         ],
         "type": "object",
         "properties": {
           "error": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
           }
         }
       },
@@ -2206,7 +2050,6 @@
             "type": "string"
           },
           "registeredAtUtc": {
-            "type": "string",
             "format": "date-time"
           }
         }
@@ -2227,21 +2070,6 @@
             "items": {
               "$ref": "#/components/schemas/AuthorDto"
             }
-          }
-        }
-      },
-      "CodeMessageDto": {
-        "required": [
-          "code",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
           }
         }
       },
@@ -2320,6 +2148,17 @@
           }
         }
       },
+      "DartMessageDto": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
       "DartPackageDto": {
         "required": [
           "name",
@@ -2331,12 +2170,16 @@
         "type": "object",
         "properties": {
           "isDiscontinued": {
-            "type": "boolean",
-            "nullable": true
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "replacedBy": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "name": {
             "type": "string"
@@ -2351,11 +2194,13 @@
             "$ref": "#/components/schemas/DartPackageVersionDto"
           },
           "versions": {
-            "type": "array",
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "$ref": "#/components/schemas/DartPackageVersionDto"
-            },
-            "nullable": true
+            }
           }
         }
       },
@@ -2382,25 +2227,31 @@
         "type": "object",
         "properties": {
           "formatted": {
-            "type": "boolean",
-            "nullable": true
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "documentationGenerated": {
-            "type": "boolean",
-            "nullable": true
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "readmeText": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "spdxLicenseIdentifier": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "completedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           }
         }
       },
@@ -2415,8 +2266,10 @@
         "type": "object",
         "properties": {
           "retracted": {
-            "type": "boolean",
-            "nullable": true
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "archiveUrl": {
             "type": "string",
@@ -2432,11 +2285,9 @@
             "type": "string"
           },
           "publishedAt": {
-            "type": "string",
             "format": "date-time"
           }
-        },
-        "nullable": true
+        }
       },
       "DartSuccessDto": {
         "required": [
@@ -2445,7 +2296,7 @@
         "type": "object",
         "properties": {
           "success": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+            "$ref": "#/components/schemas/DartMessageDto"
           }
         }
       },
@@ -2460,11 +2311,12 @@
           }
         }
       },
-      "DependencyMap": {
-        "nullable": true
-      },
+      "DependencyMap": { },
       "Environment": {
-        "type": "object",
+        "type": [
+          "null",
+          "object"
+        ],
         "properties": {
           "sdk": {
             "$ref": "#/components/schemas/SemVersionRange"
@@ -2472,8 +2324,31 @@
           "flutter": {
             "$ref": "#/components/schemas/SemVersionRange"
           }
-        },
-        "nullable": true
+        }
+      },
+      "GenericErrorContentDto": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stackTrace": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "GenericErrorDto": {
         "required": [
@@ -2481,15 +2356,66 @@
         ],
         "type": "object",
         "properties": {
+          "error": {
+            "$ref": "#/components/schemas/GenericErrorContentDto"
+          }
+        }
+      },
+      "InternalServerErrorDto": {
+        "required": [
+          "error",
+          "message",
+          "stackTrace"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
           "stackTrace": {
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "nullable": true
+            }
+          }
+        }
+      },
+      "InvalidRoleErrorDto": {
+        "required": [
+          "requiredRole",
+          "givenRole"
+        ],
+        "type": "object",
+        "properties": {
+          "requiredRole": {
+            "type": "string"
           },
-          "error": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+          "givenRole": {
+            "type": "string"
+          }
+        }
+      },
+      "MissingScopeErrorDto": {
+        "required": [
+          "requiredScopes",
+          "givenScopes"
+        ],
+        "type": "object",
+        "properties": {
+          "requiredScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "givenScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -2499,15 +2425,8 @@
         ],
         "type": "object",
         "properties": {
-          "stackTrace": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
           "error": {
-            "$ref": "#/components/schemas/CodeMessageDto"
+            "$ref": "#/components/schemas/GenericErrorContentDto"
           }
         }
       },
@@ -2525,132 +2444,44 @@
       "PackageType": {
         "type": "integer"
       },
-      "Platforms": {
-        "nullable": true
-      },
+      "Platforms": { },
       "ProblemDetails": {
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
           },
           "detail": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "instance": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
-      "PubSpec": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "version": {
-            "$ref": "#/components/schemas/SemVersion"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "homepage": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "repository": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "issueTracker": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "documentation": {
-            "type": "string",
-            "format": "uri",
-            "nullable": true
-          },
-          "dependencies": {
-            "$ref": "#/components/schemas/DependencyMap"
-          },
-          "devDependencies": {
-            "$ref": "#/components/schemas/DependencyMap"
-          },
-          "executables": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "platforms": {
-            "$ref": "#/components/schemas/Platforms"
-          },
-          "publishTo": {
-            "type": "string",
-            "nullable": true
-          },
-          "funding": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uri"
-            },
-            "nullable": true
-          },
-          "falseSecrets": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "screenshots": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Screenshot"
-            },
-            "nullable": true
-          },
-          "topics": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "ignoredAdvisories": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "environment": {
-            "$ref": "#/components/schemas/Environment"
-          }
-        }
-      },
+      "PubSpec": { },
       "Screenshot": {
         "required": [
           "description",
@@ -2666,12 +2497,8 @@
           }
         }
       },
-      "SemVersion": {
-        "nullable": true
-      },
-      "SemVersionRange": {
-        "nullable": true
-      },
+      "SemVersion": { },
+      "SemVersionRange": { },
       "TokenCollectionDto": {
         "required": [
           "tokens"
@@ -2685,9 +2512,11 @@
             }
           },
           "currentTokenId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -2751,17 +2580,13 @@
             }
           },
           "createdAtUtc": {
-            "type": "string",
             "format": "date-time"
           },
           "expiresAtUtc": {
-            "type": "string",
             "format": "date-time"
           },
           "revokedAtUtc": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           }
         }
       },
@@ -2796,9 +2621,7 @@
     }
   },
   "security": [
-    {
-      "Bearer": []
-    }
+    { }
   ],
   "tags": [
     {

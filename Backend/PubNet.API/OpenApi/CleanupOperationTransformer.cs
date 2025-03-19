@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace PubNet.API.OpenApi;
 
@@ -14,7 +15,7 @@ public class CleanupOperationTransformer : IOpenApiOperationTransformer
 		if (operation.RequestBody?.Content.ContainsKey("application/*+json") ?? false)
 			operation.RequestBody.Content.Remove("application/*+json");
 
-		foreach (var response in operation.Responses?.Values ?? Enumerable.Empty<OpenApiResponse>())
+		foreach (var response in operation.Responses?.Values ?? Enumerable.Empty<IOpenApiResponse>())
 		{
 			response.Content.Remove("text/plain");
 			response.Content.Remove("text/json");

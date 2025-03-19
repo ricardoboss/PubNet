@@ -15,7 +15,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The completedAt property</summary>
-        public DateTimeOffset? CompletedAt { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public UntypedNode? CompletedAt { get; set; }
+#nullable restore
+#else
+        public UntypedNode CompletedAt { get; set; }
+#endif
         /// <summary>The documentationGenerated property</summary>
         public bool? DocumentationGenerated { get; set; }
         /// <summary>The formatted property</summary>
@@ -61,7 +67,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "completedAt", n => { CompletedAt = n.GetDateTimeOffsetValue(); } },
+                { "completedAt", n => { CompletedAt = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "documentationGenerated", n => { DocumentationGenerated = n.GetBoolValue(); } },
                 { "formatted", n => { Formatted = n.GetBoolValue(); } },
                 { "readmeText", n => { ReadmeText = n.GetStringValue(); } },
@@ -75,7 +81,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteDateTimeOffsetValue("completedAt", CompletedAt);
+            writer.WriteObjectValue<UntypedNode>("completedAt", CompletedAt);
             writer.WriteBoolValue("documentationGenerated", DocumentationGenerated);
             writer.WriteBoolValue("formatted", Formatted);
             writer.WriteStringValue("readmeText", ReadmeText);

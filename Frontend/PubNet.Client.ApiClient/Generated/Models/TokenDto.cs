@@ -23,7 +23,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string Browser { get; set; }
 #endif
         /// <summary>The createdAtUtc property</summary>
-        public DateTimeOffset? CreatedAtUtc { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public UntypedNode? CreatedAtUtc { get; set; }
+#nullable restore
+#else
+        public UntypedNode CreatedAtUtc { get; set; }
+#endif
         /// <summary>The deviceType property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -33,7 +39,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string DeviceType { get; set; }
 #endif
         /// <summary>The expiresAtUtc property</summary>
-        public DateTimeOffset? ExpiresAtUtc { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public UntypedNode? ExpiresAtUtc { get; set; }
+#nullable restore
+#else
+        public UntypedNode ExpiresAtUtc { get; set; }
+#endif
         /// <summary>The id property</summary>
         public Guid? Id { get; set; }
         /// <summary>The ipAddress property</summary>
@@ -61,7 +73,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string Platform { get; set; }
 #endif
         /// <summary>The revokedAtUtc property</summary>
-        public DateTimeOffset? RevokedAtUtc { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public UntypedNode? RevokedAtUtc { get; set; }
+#nullable restore
+#else
+        public UntypedNode RevokedAtUtc { get; set; }
+#endif
         /// <summary>The scopes property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -104,14 +122,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "browser", n => { Browser = n.GetStringValue(); } },
-                { "createdAtUtc", n => { CreatedAtUtc = n.GetDateTimeOffsetValue(); } },
+                { "createdAtUtc", n => { CreatedAtUtc = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "deviceType", n => { DeviceType = n.GetStringValue(); } },
-                { "expiresAtUtc", n => { ExpiresAtUtc = n.GetDateTimeOffsetValue(); } },
+                { "expiresAtUtc", n => { ExpiresAtUtc = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "id", n => { Id = n.GetGuidValue(); } },
                 { "ipAddress", n => { IpAddress = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "platform", n => { Platform = n.GetStringValue(); } },
-                { "revokedAtUtc", n => { RevokedAtUtc = n.GetDateTimeOffsetValue(); } },
+                { "revokedAtUtc", n => { RevokedAtUtc = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "scopes", n => { Scopes = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "userAgent", n => { UserAgent = n.GetStringValue(); } },
             };
@@ -124,14 +142,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("browser", Browser);
-            writer.WriteDateTimeOffsetValue("createdAtUtc", CreatedAtUtc);
+            writer.WriteObjectValue<UntypedNode>("createdAtUtc", CreatedAtUtc);
             writer.WriteStringValue("deviceType", DeviceType);
-            writer.WriteDateTimeOffsetValue("expiresAtUtc", ExpiresAtUtc);
+            writer.WriteObjectValue<UntypedNode>("expiresAtUtc", ExpiresAtUtc);
             writer.WriteGuidValue("id", Id);
             writer.WriteStringValue("ipAddress", IpAddress);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("platform", Platform);
-            writer.WriteDateTimeOffsetValue("revokedAtUtc", RevokedAtUtc);
+            writer.WriteObjectValue<UntypedNode>("revokedAtUtc", RevokedAtUtc);
             writer.WriteCollectionOfPrimitiveValues<string>("scopes", Scopes);
             writer.WriteStringValue("userAgent", UserAgent);
             writer.WriteAdditionalData(AdditionalData);

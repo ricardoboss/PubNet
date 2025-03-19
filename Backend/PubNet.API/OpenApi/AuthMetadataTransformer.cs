@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using Microsoft.OpenApi.Writers;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Errors;
@@ -47,14 +48,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			new()
 			{
 				{
-					new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.SecurityScheme,
-							Id = requiredScheme,
-						},
-					},
+					new(requiredScheme),
 					[]
 				},
 			}
@@ -70,14 +64,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			{
 				["application/json"] = new()
 				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(AuthErrorDto),
-						},
-					},
+					Schema = new OpenApiSchemaReference(nameof(AuthErrorDto)),
 				},
 			},
 		};
@@ -132,14 +119,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			{
 				["application/json"] = new()
 				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(MissingScopeErrorDto),
-						},
-					},
+					Schema = new OpenApiSchemaReference(nameof(MissingScopeErrorDto)),
 				},
 			},
 		};
@@ -157,14 +137,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			{
 				["application/json"] = new()
 				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(InvalidRoleErrorDto),
-						},
-					},
+					Schema = new OpenApiSchemaReference(nameof(InvalidRoleErrorDto)),
 				},
 			},
 		};
