@@ -12,7 +12,7 @@ public class PubNetDocumentTransformer : IOpenApiDocumentTransformer
 		{
 			Title = "PubNet API",
 			Description = "An API for Dart and NuGet package hosting",
-			Version = GitVersionInformation.MajorMinorPatch,
+			Version = ThisAssembly.MajorMinorPatch,
 			Contact = new()
 			{
 				Name = "GitHub",
