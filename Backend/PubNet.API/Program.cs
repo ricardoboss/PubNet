@@ -1,3 +1,6 @@
+using System.Text.Json;
+using DartLang.PubSpec;
+using DartLang.PubSpec.Serialization.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
@@ -18,8 +22,7 @@ using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
-using PubNet.API.Converter;
-using PubNet.API.DTO;
+using PubNet.API.Extensions;
 using PubNet.API.Helpers;
 using PubNet.API.Middlewares;
 using PubNet.API.OpenApi;
@@ -43,6 +46,8 @@ using PubNet.PackageStorage.BlobStorage;
 using Scalar.AspNetCore;
 using Serilog;
 using SignedUrl.Extensions;
+using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
+using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
 const string openApiDocumentName = "openapi";
 
@@ -66,6 +71,9 @@ try
 	ConfigureServices(builder);
 
 	var app = builder.Build();
+
+	// var c = app.Services.GetRequiredService<IOptions<HttpJsonOptions>>().Value;
+	// var t = c.SerializerOptions.TypeInfoResolver!.GetTypeInfo(typeof(PubSpec), c.SerializerOptions)!;
 
 	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
 	app.Logger.LogInformation("Version: {Version}", ThisAssembly.AssemblyInformationalVersion);
@@ -121,7 +129,9 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 	ConfigureCommonServices(builder);
 
-	ConfigureControllers(builder);
+	ConfigureJson(builder);
+
+	builder.Services.AddControllers();
 
 	ConfigureOpenApi(builder);
 
@@ -174,16 +184,13 @@ void ConfigureOpenApi(IHostApplicationBuilder builder)
 	});
 }
 
-void ConfigureControllers(IHostApplicationBuilder builder)
+void ConfigureJson(IHostApplicationBuilder builder)
 {
-	builder.Services
-		.AddControllers()
-		.AddJsonOptions(options =>
-		{
-			options.JsonSerializerOptions.AddDtoSourceGenerators();
+	// For OpenAPI spec
+	builder.Services.Configure<HttpJsonOptions>(options => options.SerializerOptions.ApplyCommonOptions());
 
-			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-		});
+	// For controllers & model de/ser
+	builder.Services.Configure<MvcJsonOptions>(options => options.JsonSerializerOptions.ApplyCommonOptions());
 }
 
 void ConfigureDartServices(IHostApplicationBuilder builder)

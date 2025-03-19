@@ -6,73 +6,73 @@ namespace PubNet.API.OpenApi;
 
 public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApiDocumentTransformer
 {
+	private static readonly OpenApiResponse InternalServerErrorResponse = new()
+	{
+		Description = "Internal Server Error",
+		Content = new Dictionary<string, OpenApiMediaType>
+		{
+			["application/json"] = new()
+			{
+				Schema = new()
+				{
+					Reference = new()
+					{
+						Type = ReferenceType.Schema,
+						Id = nameof(InternalServerErrorDto),
+					},
+				},
+			},
+		},
+	};
+
+	private static readonly OpenApiResponse DefaultErrorResponse = new()
+	{
+		Description = "Default Error",
+		Content = new Dictionary<string, OpenApiMediaType>
+		{
+			["application/json"] = new()
+			{
+				Schema = new()
+				{
+					Reference = new()
+					{
+						Type = ReferenceType.Schema,
+						Id = nameof(GenericErrorDto),
+					},
+				},
+			},
+		},
+	};
+
+	private static readonly OpenApiResponse ValidationErrorsResponse = new()
+	{
+		Description = "Bad Request",
+		Content = new Dictionary<string, OpenApiMediaType>
+		{
+			["application/json"] = new()
+			{
+				Schema = new()
+				{
+					Reference = new()
+					{
+						Type = ReferenceType.Schema,
+						Id = nameof(ValidationErrorsDto),
+					},
+				},
+			},
+		},
+	};
+
 	public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken)
 	{
+		operation.Responses ??= [];
+
 		if (operation.RequestBody != null)
-		{
-			operation.Responses["400"] = new()
-			{
-				Description = "Bad Request",
-				Content = new Dictionary<string, OpenApiMediaType>
-				{
-					["application/json"] = new()
-					{
-						Schema = new()
-						{
-							Reference = new()
-							{
-								Type = ReferenceType.Schema,
-								Id = nameof(ValidationErrorsDto),
-							},
-						},
-					},
-				},
-			};
-		}
+			_ = operation.Responses.TryAdd("400", ValidationErrorsResponse);
 
-		// TODO: add InternalServerErrorDto schema to schemas collection if not exists
-		var internalServerErrorResponse = new OpenApiResponse
-		{
-			Description = "Internal Server Error",
-			Content = new Dictionary<string, OpenApiMediaType>
-			{
-				["application/json"] = new()
-				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(InternalServerErrorDto),
-						},
-					},
-				},
-			},
-		};
-
-		_ = operation.Responses.TryAdd("500", internalServerErrorResponse);
-
-		var defaultErrorResponse = new OpenApiResponse
-		{
-			Description = "Default Error",
-			Content = new Dictionary<string, OpenApiMediaType>
-			{
-				["application/json"] = new()
-				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(GenericErrorDto),
-						},
-					},
-				},
-			},
-		};
-
-		_ = operation.Responses.TryAdd("default", defaultErrorResponse);
+		_ = operation.Responses.TryAdd("500", InternalServerErrorResponse);
+		_ = operation.Responses.TryAdd("default", DefaultErrorResponse);
 
 		return Task.CompletedTask;
 	}

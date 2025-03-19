@@ -14,7 +14,7 @@ public class CleanupOperationTransformer : IOpenApiOperationTransformer
 		if (operation.RequestBody?.Content.ContainsKey("application/*+json") ?? false)
 			operation.RequestBody.Content.Remove("application/*+json");
 
-		foreach (var response in operation.Responses.Values)
+		foreach (var response in operation.Responses?.Values ?? Enumerable.Empty<OpenApiResponse>())
 		{
 			response.Content.Remove("text/plain");
 			response.Content.Remove("text/json");

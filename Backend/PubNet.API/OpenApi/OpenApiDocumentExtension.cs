@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 
 namespace PubNet.API.OpenApi;
@@ -23,17 +24,12 @@ public static class OpenApiDocumentExtension
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
 		Type type)
 	{
+		var primitive = type.MapTypeToOpenApiPrimitiveType();
+		if (primitive is { Type: not "string" and not "object" and not "array" })
+			return primitive;
+
 		if (type == typeof(string))
 			return new() { Type = "string" };
-
-		if (type == typeof(int) || type == typeof(long))
-			return new() { Type = "integer" };
-
-		if (type == typeof(double) || type == typeof(decimal))
-			return new() { Type = "number" };
-
-		if (type == typeof(bool))
-			return new() { Type = "boolean" };
 
 		if (type.IsArray || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
 		{
@@ -41,7 +37,7 @@ public static class OpenApiDocumentExtension
 			return new()
 			{
 				Type = "array",
-				Items = GetOpenApiSchema(itemType)
+				Items = GetOpenApiSchema(itemType),
 			};
 		}
 
