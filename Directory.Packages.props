@@ -10,33 +10,33 @@
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="3.0.1" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="3.0.1" />
-    <PackageVersion Include="Markdig" Version="0.42.0" />
-    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.8.118" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
+		<PackageVersion Include="Markdig" Version="0.42.0" />
+		<PackageVersion Include="Nerdbank.GitVersioning" Version="3.8.118" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0-preview.2.25163.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0-preview.2.25163.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.3">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.0-preview.2.25163.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0-preview.2.25163.8" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.0-preview.2.25164.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0-preview.2.25163.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.2.25163.2" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.0-preview.2.25163.2" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="10.0.0-preview.2.25163.2" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0-preview.2.25163.2" />
+    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="10.0.0-preview.2.25164.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0-preview.2.25163.2" />
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.17.1" />
@@ -44,7 +44,7 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.17.1" />
     <PackageVersion Include="MudBlazor" Version="8.13.0" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-preview.1" />
     <PackageVersion Include="PasswordRulesSharp" Version="2.0.0" />
     <PackageVersion Include="Riok.Mapperly" Version="4.1.1" />
     <PackageVersion Include="Rive.Blazor.Wasm" Version="1.0.1" />
