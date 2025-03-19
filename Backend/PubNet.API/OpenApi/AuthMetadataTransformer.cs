@@ -42,6 +42,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 
 		var requiredScheme = authorizeAttribute.AuthenticationSchemes ?? JwtBearerDefaults.AuthenticationScheme;
 
+		operation.Security ??= [];
 		operation.Security.Add(
 			new()
 			{
@@ -81,6 +82,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			},
 		};
 
+		operation.Responses ??= [];
 		_ = operation.Responses.TryAdd("401", unauthenticatedResponse);
 	}
 
@@ -102,12 +104,13 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 		if (requiredScopes.Length == 0 && anyOfRequiredScopes.Length == 0)
 			return;
 
-		AddMissingRequiredScopeResponse(operation, context);
+		AddMissingRequiredScopeResponse(operation);
 
 		if (requiredScopes.Length > 0)
 		{
 			var requiredScopesExtension = new RequiredScopesExtension(requiredScopes);
 
+			operation.Extensions ??= new Dictionary<string, IOpenApiExtension>();
 			operation.Extensions.Add("x-required-scopes", requiredScopesExtension);
 		}
 
@@ -115,11 +118,12 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 		{
 			var anyOfRequiredScopesExtension = new AnyOfRequiredScopesExtension(anyOfRequiredScopes);
 
+			operation.Extensions ??= new Dictionary<string, IOpenApiExtension>();
 			operation.Extensions.Add("x-any-of-required-scopes", anyOfRequiredScopesExtension);
 		}
 	}
 
-	private static void AddMissingRequiredScopeResponse(OpenApiOperation operation, OpenApiOperationTransformerContext context)
+	private static void AddMissingRequiredScopeResponse(OpenApiOperation operation)
 	{
 		var requiredScopesResponse = new OpenApiResponse
 		{
@@ -140,6 +144,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			},
 		};
 
+		operation.Responses ??= [];
 		_ = operation.Responses.TryAdd(PubNetHttpStatusCodes.Status460MissingScope.ToString(), requiredScopesResponse);
 	}
 
@@ -164,6 +169,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			},
 		};
 
+		operation.Responses ??= [];
 		_ = operation.Responses.TryAdd(PubNetHttpStatusCodes.Status461InvalidRole.ToString(), invalidRoleResponse);
 	}
 
