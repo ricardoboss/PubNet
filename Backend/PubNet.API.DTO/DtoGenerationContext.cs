@@ -16,11 +16,13 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(TokenCollectionDto))]
 [JsonSerializable(typeof(TokenCreatedDto))]
 [JsonSerializable(typeof(TokenDto))]
+[JsonSerializable(typeof(AccountCreatedDto))]
 #endregion
 
 #region Authors
 [JsonSerializable(typeof(AuthorDto))]
 [JsonSerializable(typeof(AuthorListDto))]
+[JsonSerializable(typeof(DeleteAuthorDto))]
 #endregion
 
 #region Packages
@@ -48,6 +50,7 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(InvalidRoleErrorDto))]
 [JsonSerializable(typeof(MissingScopeErrorDto))]
 [JsonSerializable(typeof(ValidationErrorsDto))]
+[JsonSerializable(typeof(NotFoundErrorDto))]
 
 #endregion
 

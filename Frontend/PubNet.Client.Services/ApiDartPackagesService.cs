@@ -77,8 +77,12 @@ public class ApiDartPackagesService(PubNetApiClient apiClient, ILogger<ApiDartPa
 			var result = await apiClient.Packages.Dart.Search.GetAsync(r =>
 			{
 				r.QueryParameters.Q = query;
-				r.QueryParameters.Skip = page * perPage;
-				r.QueryParameters.Take = perPage;
+
+				if (page is not null && perPage is not null)
+					r.QueryParameters.Skip = page * perPage;
+
+				if (perPage is not null)
+					r.QueryParameters.Take = perPage;
 			}, cancellationToken: cancellationToken);
 
 			if (result is null)
@@ -107,8 +111,12 @@ public class ApiDartPackagesService(PubNetApiClient apiClient, ILogger<ApiDartPa
 			var result = await apiClient.Authors[author].Packages.Dart.GetAsync(r =>
 			{
 				r.QueryParameters.Q = query;
-				r.QueryParameters.Skip = page * perPage;
-				r.QueryParameters.Take = perPage;
+
+				if (page is not null && perPage is not null)
+					r.QueryParameters.Skip = page * perPage;
+
+				if (perPage is not null)
+					r.QueryParameters.Take = perPage;
 			}, cancellationToken: cancellationToken);
 
 			if (result is null)

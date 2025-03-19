@@ -2174,27 +2174,6 @@
           }
         }
       },
-      "BigInteger": {
-        "type": "object",
-        "properties": {
-          "isPowerOfTwo": {
-            "type": "boolean"
-          },
-          "isZero": {
-            "type": "boolean"
-          },
-          "isOne": {
-            "type": "boolean"
-          },
-          "isEven": {
-            "type": "boolean"
-          },
-          "sign": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
       "CreateAccountDto": {
         "required": [
           "userName",
@@ -2421,25 +2400,17 @@
           }
         }
       },
-      "Dependency": {
-        "type": "object"
+      "DependencyMap": {
+        "nullable": true
       },
       "Environment": {
         "type": "object",
         "properties": {
           "sdk": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
-            },
-            "nullable": true
+            "$ref": "#/components/schemas/SemVersionRange"
           },
           "flutter": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UnbrokenSemVersionRange"
-            },
-            "nullable": true
+            "$ref": "#/components/schemas/SemVersionRange"
           }
         },
         "nullable": true
@@ -2477,15 +2448,6 @@
           }
         }
       },
-      "MetadataIdentifier": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
       "NotFoundErrorDto": {
         "required": [
           "error"
@@ -2496,28 +2458,6 @@
             "$ref": "#/components/schemas/GenericErrorContentDto"
           }
         }
-      },
-      "NullableOfBigInteger": {
-        "type": "object",
-        "properties": {
-          "isPowerOfTwo": {
-            "type": "boolean"
-          },
-          "isZero": {
-            "type": "boolean"
-          },
-          "isOne": {
-            "type": "boolean"
-          },
-          "isEven": {
-            "type": "boolean"
-          },
-          "sign": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "nullable": true
       },
       "PackageListCollectionDto": {
         "required": [
@@ -2534,46 +2474,7 @@
         "type": "integer"
       },
       "Platforms": {
-        "type": "object",
-        "properties": {
-          "android": {
-            "type": "boolean",
-            "default": false
-          },
-          "iOS": {
-            "type": "boolean",
-            "default": false
-          },
-          "linux": {
-            "type": "boolean",
-            "default": false
-          },
-          "macOS": {
-            "type": "boolean",
-            "default": false
-          },
-          "windows": {
-            "type": "boolean",
-            "default": false
-          },
-          "web": {
-            "type": "boolean",
-            "default": false
-          }
-        },
         "nullable": true
-      },
-      "PrereleaseIdentifier": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "nullable": true
-          },
-          "numericValue": {
-            "$ref": "#/components/schemas/NullableOfBigInteger"
-          }
-        }
       },
       "ProblemDetails": {
         "type": "object",
@@ -2638,18 +2539,10 @@
             "nullable": true
           },
           "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/Dependency"
-            },
-            "nullable": true
+            "$ref": "#/components/schemas/DependencyMap"
           },
           "devDependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/Dependency"
-            },
-            "nullable": true
+            "$ref": "#/components/schemas/DependencyMap"
           },
           "executables": {
             "type": "object",
@@ -2722,46 +2615,9 @@
         }
       },
       "SemVersion": {
-        "type": "object",
-        "properties": {
-          "major": {
-            "$ref": "#/components/schemas/BigInteger"
-          },
-          "minor": {
-            "$ref": "#/components/schemas/BigInteger"
-          },
-          "patch": {
-            "$ref": "#/components/schemas/BigInteger"
-          },
-          "prerelease": {
-            "type": "string",
-            "nullable": true
-          },
-          "prereleaseIdentifiers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PrereleaseIdentifier"
-            },
-            "nullable": true
-          },
-          "isPrerelease": {
-            "type": "boolean"
-          },
-          "isRelease": {
-            "type": "boolean"
-          },
-          "metadata": {
-            "type": "string",
-            "nullable": true
-          },
-          "metadataIdentifiers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MetadataIdentifier"
-            },
-            "nullable": true
-          }
-        },
+        "nullable": true
+      },
+      "SemVersionRange": {
         "nullable": true
       },
       "TokenCollectionDto": {
@@ -2854,26 +2710,6 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          }
-        }
-      },
-      "UnbrokenSemVersionRange": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "$ref": "#/components/schemas/SemVersion"
-          },
-          "startInclusive": {
-            "type": "boolean"
-          },
-          "end": {
-            "$ref": "#/components/schemas/SemVersion"
-          },
-          "endInclusive": {
-            "type": "boolean"
-          },
-          "includeAllPrerelease": {
-            "type": "boolean"
           }
         }
       },
