@@ -7,7 +7,7 @@ public abstract class PubNetControllerBase : ControllerBase
 {
 	protected NotFoundObjectResult NotFoundDto(string code, string message) => NotFound(new NotFoundErrorDto
 	{
-		Error = new GenericErrorContentDto
+		Error = new()
 		{
 			Code = code,
 			Message = message,

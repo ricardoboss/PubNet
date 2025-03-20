@@ -1,3 +1,6 @@
+using System.Text.Json;
+using DartLang.PubSpec;
+using DartLang.PubSpec.Serialization.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
@@ -19,10 +22,10 @@ using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Abstractions.Packages.Dart;
 using PubNet.API.Abstractions.Packages.Dart.Docs;
-using PubNet.API.Converter;
-using PubNet.API.DTO;
+using PubNet.API.Extensions;
 using PubNet.API.Helpers;
 using PubNet.API.Middlewares;
+using PubNet.API.OpenApi;
 using PubNet.API.Services;
 using PubNet.API.Services.Archives;
 using PubNet.API.Services.Authentication;
@@ -32,7 +35,6 @@ using PubNet.API.Services.CQRS.Queries;
 using PubNet.API.Services.CQRS.Queries.Packages;
 using PubNet.API.Services.Guard;
 using PubNet.API.Services.Packages.Dart;
-using PubNet.API.Swagger;
 using PubNet.BlobStorage.Abstractions;
 using PubNet.BlobStorage.LocalFileBlobStorage;
 using PubNet.Database.Context;
@@ -41,8 +43,11 @@ using PubNet.DocsStorage.Abstractions;
 using PubNet.DocsStorage.LocalFileDocsStorage;
 using PubNet.PackageStorage.Abstractions;
 using PubNet.PackageStorage.BlobStorage;
+using Scalar.AspNetCore;
 using Serilog;
 using SignedUrl.Extensions;
+using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
+using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
 const string openApiDocumentName = "openapi";
 
@@ -57,7 +62,7 @@ Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
 	.MinimumLevel.Verbose()
 	.Enrich.FromLogContext()
-	.CreateBootstrapLogger()!;
+	.CreateBootstrapLogger();
 
 try
 {
@@ -66,6 +71,9 @@ try
 	ConfigureServices(builder);
 
 	var app = builder.Build();
+
+	// var c = app.Services.GetRequiredService<IOptions<HttpJsonOptions>>().Value;
+	// var t = c.SerializerOptions.TypeInfoResolver!.GetTypeInfo(typeof(PubSpec), c.SerializerOptions)!;
 
 	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
 	app.Logger.LogInformation("Version: {Version}", ThisAssembly.AssemblyInformationalVersion);
@@ -121,9 +129,11 @@ void ConfigureServices(WebApplicationBuilder builder)
 
 	ConfigureCommonServices(builder);
 
-	ConfigureControllers(builder);
+	ConfigureJson(builder);
 
-	ConfigureSwagger(builder);
+	builder.Services.AddControllers();
+
+	ConfigureOpenApi(builder);
 
 	ConfigureCors(builder);
 
@@ -159,54 +169,28 @@ void ConfigureCors(WebApplicationBuilder builder)
 	});
 }
 
-void ConfigureSwagger(IHostApplicationBuilder builder)
+void ConfigureOpenApi(IHostApplicationBuilder builder)
 {
-	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwaggerGen(o =>
+	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
-		o.SwaggerDoc(openApiDocumentName, new OpenApiInfo
-		{
-			Title = "PubNet API",
-			Description = "An API for Dart and NuGet package hosting",
-			Version = ThisAssembly.AssemblyVersion,
-			Contact = new OpenApiContact
-			{
-				Name = "GitHub",
-				Url = new Uri("https://github.com/ricardoboss/PubNet/issues"),
-			},
-			License = new OpenApiLicense
-			{
-				Name = "AGPL-3.0",
-				Url = new Uri("https://www.gnu.org/licenses/agpl-3.0.en.html"),
-			},
-		});
+		o.AddDocumentTransformer<PubNetDocumentTransformer>();
+		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
+		o.AddDocumentTransformer<ErrorsOperationTransformer>();
+		o.AddDocumentTransformer<AuthMetadataTransformer>();
 
-		var bearerTokenScheme = new OpenApiSecurityScheme
-		{
-			Name = JwtBearerDefaults.AuthenticationScheme,
-			Description = "The bearer token used to authenticate requests.",
-			Scheme = JwtBearerDefaults.AuthenticationScheme,
-			Type = SecuritySchemeType.Http,
-			In = ParameterLocation.Header,
-		};
-
-		o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, bearerTokenScheme);
-
-		o.OperationFilter<CommonErrorsOperationFilter>();
-		o.OperationFilter<SecurityRequirementsOperationFilter>();
+		o.AddOperationTransformer<CleanupOperationTransformer>();
+		o.AddOperationTransformer<ErrorsOperationTransformer>();
+		o.AddOperationTransformer<AuthMetadataTransformer>();
 	});
 }
 
-void ConfigureControllers(IHostApplicationBuilder builder)
+void ConfigureJson(IHostApplicationBuilder builder)
 {
-	builder.Services
-		.AddControllers()
-		.AddJsonOptions(options =>
-		{
-			options.JsonSerializerOptions.AddDtoSourceGenerators();
+	// For OpenAPI spec
+	builder.Services.Configure<HttpJsonOptions>(options => options.SerializerOptions.ApplyCommonOptions());
 
-			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-		});
+	// For controllers & model de/ser
+	builder.Services.Configure<MvcJsonOptions>(options => options.JsonSerializerOptions.ApplyCommonOptions());
 }
 
 void ConfigureDartServices(IHostApplicationBuilder builder)
@@ -328,7 +312,7 @@ void ConfigureLogging(WebApplicationBuilder builder)
 {
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
-			.ReadFrom.Services(services)!
+			.ReadFrom.Services(services)
 			.Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
 			.Enrich.FromLogContext()
 			.WriteTo.Console()
@@ -345,7 +329,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	{
 		options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
 		{
-			diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+			diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value ?? string.Empty);
 			diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
 			diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent);
 		};
@@ -368,15 +352,14 @@ void ConfigureHttpPipeline(WebApplication app)
 
 	app.MapControllers();
 
-	app.MapSwagger("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
+	app.MapOpenApi("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
 
 	if (!app.Environment.IsDevelopment())
 		return;
 
-	app.UseSwaggerUI(c =>
+	app.MapScalarApiReference(c =>
 	{
-		c.EnableTryItOutByDefault();
-		c.EnablePersistAuthorization();
-		c.SwaggerEndpoint($"/.well-known/{openApiDocumentName}.json", $"PubNet API {ThisAssembly.AssemblyVersion}");
+		c.Theme = ScalarTheme.DeepSpace;
+		c.OpenApiRoutePattern = $"/.well-known/{openApiDocumentName}.json";
 	});
 }

@@ -9,9 +9,11 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class GenericErrorContentDto : IParsable
+    public partial class GenericErrorContentDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The code property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -36,6 +38,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public List<string> StackTrace { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto"/> and sets the default values.
+        /// </summary>
+        public GenericErrorContentDto()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -69,6 +78,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteStringValue("code", Code);
             writer.WriteStringValue("message", Message);
             writer.WriteCollectionOfPrimitiveValues<string>("stackTrace", StackTrace);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }

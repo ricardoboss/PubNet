@@ -38,7 +38,7 @@ void ConfigureServices(IServiceCollection services)
 		var baseAddress = builder.Configuration["BaseAddress"];
 		baseAddress ??= builder.HostEnvironment.BaseAddress + "/api/";
 
-		c.BaseAddress = new Uri(baseAddress);
+		c.BaseAddress = new(baseAddress);
 	});
 
 	services.AddMudServices(c =>
