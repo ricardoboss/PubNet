@@ -3,14 +3,14 @@
   "isRoot": true,
   "tools": {
     "microsoft.openapi.kiota": {
-      "version": "1.23.0",
+      "version": "1.24.1",
       "commands": [
         "kiota"
       ],
       "rollForward": false
     },
     "dotnet-ef": {
-      "version": "9.0.2",
+      "version": "9.0.3",
       "commands": [
         "dotnet-ef"
       ],
