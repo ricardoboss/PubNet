@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
+using PubNet.API.Abstractions.Admin;
 using PubNet.API.Abstractions.Archives;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.CQRS.Commands;
@@ -24,6 +26,7 @@ using PubNet.API.DTO;
 using PubNet.API.Helpers;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
+using PubNet.API.Services.Admin;
 using PubNet.API.Services.Archives;
 using PubNet.API.Services.Authentication;
 using PubNet.API.Services.CQRS.Commands;
@@ -108,6 +111,8 @@ void ConfigureServices(WebApplicationBuilder builder)
 	ConfigureLogging(builder);
 
 	ConfigureDatabase(builder);
+
+	ConfigureAdministration(builder);
 
 	ConfigureAuthentication(builder);
 
@@ -206,6 +211,7 @@ void ConfigureControllers(IHostApplicationBuilder builder)
 			options.JsonSerializerOptions.AddDtoSourceGenerators();
 
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+			options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		});
 }
 
@@ -256,6 +262,12 @@ void ConfigureDynamicUrlGeneration(IHostApplicationBuilder builder)
 	builder.Services.AddScoped<IActionTemplateGenerator, ActionTemplateGenerator>();
 }
 
+void ConfigureAdministration(WebApplicationBuilder builder)
+{
+	builder.Services.AddScoped<ISetupService, DefaultSetupService>();
+	builder.Services.AddSingleton<ISiteConfigurationProvider, AppSettingsSiteConfigurationProvider>();
+}
+
 void ConfigureAuthentication(WebApplicationBuilder builder)
 {
 	builder.Services.AddSingleton<BearerEventsHandler>();
@@ -281,15 +293,17 @@ void ConfigureAuthentication(WebApplicationBuilder builder)
 			};
 
 			o.EventsType = typeof(BearerEventsHandler);
+
+			o.MapInboundClaims = false;
 		});
 
 	builder.Services.AddSingleton<IPasswordHasher<Identity>, PasswordHasher<Identity>>();
 	builder.Services.AddSingleton<ISecureTokenGenerator, SecureTokenGenerator>();
 	builder.Services.AddSingleton<IJwtFactory, JwtFactory>();
 	builder.Services.AddSingleton<IGuard, Guard>();
-	builder.Services.AddScoped<IRegistrationsService, SeedingAndConfiguredRegistrationsService>();
 
 	builder.Services.AddSingleton<ScopeGuardMiddleware>();
+	builder.Services.AddSingleton<RoleGuardMiddleware>();
 }
 
 void ConfigureDataServices(IHostApplicationBuilder builder)
@@ -362,6 +376,7 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseAuthentication();
 	app.UseAuthorization();
 
+	app.UseMiddleware<RoleGuardMiddleware>();
 	app.UseMiddleware<ScopeGuardMiddleware>();
 
 	app.UseResponseCaching();

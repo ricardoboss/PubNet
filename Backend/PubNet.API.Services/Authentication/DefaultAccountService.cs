@@ -2,6 +2,7 @@
 using PubNet.API.Abstractions.CQRS.Commands;
 using PubNet.API.Abstractions.CQRS.Queries;
 using PubNet.API.DTO.Authentication;
+using PubNet.Auth.Models;
 using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services.Authentication;
@@ -18,9 +19,18 @@ public class DefaultAccountService(IAuthorDao authorDao, IIdentityDao identityDa
 		if (existingIdentity is not null)
 			throw new EmailAlreadyExistsException(dto.Email);
 
+		var role = dto.Role ?? Role.Default;
+
 		var author = await authorDmo.CreateAuthorAsync(dto.UserName, cancellationToken);
-		var identity = await identityDmo.CreateIdentityAsync(author, dto.Email, dto.Password, cancellationToken);
+		var identity = await identityDmo.CreateIdentityAsync(author, dto.Email, dto.Password, role, cancellationToken);
 
 		return identity;
+	}
+
+	public async Task<IEnumerable<Identity>> GetAccountsAsync(CancellationToken cancellationToken = default)
+	{
+		var identities = await identityDao.GetAllAsync(cancellationToken);
+
+		return identities;
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.Abstractions.Admin;
 using PubNet.API.Abstractions.Authentication;
 using PubNet.API.Abstractions.Guard;
 using PubNet.API.Attributes;
@@ -23,7 +24,7 @@ public class AuthenticationController(
 	IAccountService accountService,
 	IAuthProvider authProvider,
 	IJwtFactory jwtFactory,
-	IRegistrationsService registrationsService,
+	ISiteConfigurationProvider siteConfigurationProvider,
 	IGuard guard) : PubNetControllerBase
 {
 	[HttpPost("LoginToken")]
@@ -100,7 +101,7 @@ public class AuthenticationController(
 		if (token.Identity.Id != identity.Id)
 			guard.ThrowIf(User).DoesntHaveRole(Role.Admin);
 
-		Debug.Assert(token.Identity.Id == identity.Id || User.IsInRole(Role.Admin.ToClaimValue()));
+		Debug.Assert(token.Identity.Id == identity.Id || User.IsInRole(Role.Admin.ToClaimValue()!));
 
 		await accessTokenService.DeleteTokenAsync(token, cancellationToken);
 
@@ -111,26 +112,28 @@ public class AuthenticationController(
 	[AllowAnonymous]
 	[ProducesResponseType<AccountCreatedDto>(StatusCodes.Status201Created)]
 	[ProducesResponseType<GenericErrorDto>(StatusCodes.Status409Conflict)]
-	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
-	public async Task<AccountCreatedDto> CreateAccountAsync(CreateAccountDto dto,
+	public async Task<IActionResult> CreateAccountAsync(CreateAccountDto dto,
 		CancellationToken cancellationToken = default)
 	{
-		if (!await AreRegistrationsOpen())
+		var siteConfiguration = await siteConfigurationProvider.GetAsync(cancellationToken);
+		if (!siteConfiguration.RegistrationsOpen)
 			throw new RegistrationsClosedException();
+
+		if (dto.Role is not Role.Default)
+			return BadRequest(new ValidationErrorsDto
+			{
+				Title = "Invalid role",
+				Errors = new()
+				{
+					{ "role", ["The role must be 'default'."] },
+				},
+			});
 
 		var identity = await accountService.CreateAccountAsync(dto, cancellationToken);
 
 		var accountCreatedDto = AccountCreatedDto.MapFrom(identity);
 
-		Response.StatusCode = StatusCodes.Status201Created;
-		return accountCreatedDto;
-	}
-
-	[HttpGet("RegistrationsOpen")]
-	[AllowAnonymous]
-	public async Task<bool> AreRegistrationsOpen()
-	{
-		return await registrationsService.AreRegistrationsOpenAsync();
+		return StatusCode(StatusCodes.Status201Created, accountCreatedDto);
 	}
 
 	[HttpGet("Self")]
