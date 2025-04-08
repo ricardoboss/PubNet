@@ -9,16 +9,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class PubSpec : IParsable
+    public partial class PubSpec : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
+        public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The dependencies property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.PubSpec_dependencies? Dependencies { get; set; }
+        public UntypedNode? Dependencies { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.PubSpec_dependencies Dependencies { get; set; }
+        public UntypedNode Dependencies { get; set; }
 #endif
         /// <summary>The description property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -31,10 +33,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The devDependencies property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.PubSpec_devDependencies? DevDependencies { get; set; }
+        public UntypedNode? DevDependencies { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.PubSpec_devDependencies DevDependencies { get; set; }
+        public UntypedNode DevDependencies { get; set; }
 #endif
         /// <summary>The documentation property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -111,10 +113,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The platforms property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.Platforms? Platforms { get; set; }
+        public UntypedNode? Platforms { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.Platforms Platforms { get; set; }
+        public UntypedNode Platforms { get; set; }
 #endif
         /// <summary>The publishTo property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -151,11 +153,18 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion? Version { get; set; }
+        public UntypedNode? Version { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.SemVersion Version { get; set; }
+        public UntypedNode Version { get; set; }
 #endif
+        /// <summary>
+        /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.PubSpec"/> and sets the default values.
+        /// </summary>
+        public PubSpec()
+        {
+            AdditionalData = new Dictionary<string, object>();
+        }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -174,9 +183,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "dependencies", n => { Dependencies = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec_dependencies>(global::PubNet.Client.ApiClient.Generated.Models.PubSpec_dependencies.CreateFromDiscriminatorValue); } },
+                { "dependencies", n => { Dependencies = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "description", n => { Description = n.GetStringValue(); } },
-                { "devDependencies", n => { DevDependencies = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec_devDependencies>(global::PubNet.Client.ApiClient.Generated.Models.PubSpec_devDependencies.CreateFromDiscriminatorValue); } },
+                { "devDependencies", n => { DevDependencies = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "documentation", n => { Documentation = n.GetStringValue(); } },
                 { "environment", n => { Environment = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.EnvironmentObject>(global::PubNet.Client.ApiClient.Generated.Models.EnvironmentObject.CreateFromDiscriminatorValue); } },
                 { "executables", n => { Executables = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec_executables>(global::PubNet.Client.ApiClient.Generated.Models.PubSpec_executables.CreateFromDiscriminatorValue); } },
@@ -186,12 +195,12 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "ignoredAdvisories", n => { IgnoredAdvisories = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "issueTracker", n => { IssueTracker = n.GetStringValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "platforms", n => { Platforms = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.Platforms>(global::PubNet.Client.ApiClient.Generated.Models.Platforms.CreateFromDiscriminatorValue); } },
+                { "platforms", n => { Platforms = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "publishTo", n => { PublishTo = n.GetStringValue(); } },
                 { "repository", n => { Repository = n.GetStringValue(); } },
                 { "screenshots", n => { Screenshots = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.Screenshot>(global::PubNet.Client.ApiClient.Generated.Models.Screenshot.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "topics", n => { Topics = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
-                { "version", n => { Version = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>(global::PubNet.Client.ApiClient.Generated.Models.SemVersion.CreateFromDiscriminatorValue); } },
+                { "version", n => { Version = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -201,9 +210,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec_dependencies>("dependencies", Dependencies);
+            writer.WriteObjectValue<UntypedNode>("dependencies", Dependencies);
             writer.WriteStringValue("description", Description);
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec_devDependencies>("devDependencies", DevDependencies);
+            writer.WriteObjectValue<UntypedNode>("devDependencies", DevDependencies);
             writer.WriteStringValue("documentation", Documentation);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.EnvironmentObject>("environment", Environment);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec_executables>("executables", Executables);
@@ -213,12 +222,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteCollectionOfPrimitiveValues<string>("ignoredAdvisories", IgnoredAdvisories);
             writer.WriteStringValue("issueTracker", IssueTracker);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.Platforms>("platforms", Platforms);
+            writer.WriteObjectValue<UntypedNode>("platforms", Platforms);
             writer.WriteStringValue("publishTo", PublishTo);
             writer.WriteStringValue("repository", Repository);
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.Screenshot>("screenshots", Screenshots);
             writer.WriteCollectionOfPrimitiveValues<string>("topics", Topics);
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.SemVersion>("version", Version);
+            writer.WriteObjectValue<UntypedNode>("version", Version);
+            writer.WriteAdditionalData(AdditionalData);
         }
     }
 }
