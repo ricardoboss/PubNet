@@ -186,7 +186,9 @@ public class DartStorageController(
 			"DartStorage",
 			new { pendingId = pendingArchive.Id },
 			protocol: forwardedScheme,
-			host: $"{forwardedHost}:{forwardedPort}"
+			host: forwardedHost is not null && forwardedPort is not null
+				? $"{forwardedHost}:{forwardedPort}"
+				: forwardedHost
 		);
 
 		if (finalizeUrl is null)
