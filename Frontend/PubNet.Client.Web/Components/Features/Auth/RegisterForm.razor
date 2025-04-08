@@ -1,7 +1,6 @@
 ﻿@using PasswordRulesSharp.Builder
 @using PasswordRulesSharp.Rules
 @using PasswordRulesSharp.Validator
-@using PubNet.Auth.Models
 @using PubNet.Client.Web.Extensions
 @using Role = PubNet.Client.ApiClient.Generated.Models.Role
 @inject IRegisterService RegisterService
@@ -87,7 +86,10 @@
 
 		try
 		{
-			await RegisterService.RegisterAsync(Model);
+			if (ForRootAdmin)
+				await RegisterService.RegisterRootAdminAsync(Model);
+			else
+				await RegisterService.RegisterAsync(Model);
 
 			success = "Successfully registered. You can now log in using the same credentials.";
 		}
@@ -119,7 +121,7 @@
 				Required
 				Disabled="@AreInputsDisabled"
 				For="() => Model.UserName"
-				HelperText="This should match your username on pub.dev/nuget.org in case you want to map packages from there to your account."
+				HelperText="This should match your username on pub.dev in case you want to map packages from there to your account."
 				Variant="Variant.Outlined"
 				InputType="InputType.Text"
 				autocomplete="name nickname"/>
@@ -132,7 +134,7 @@
 				Required
 				Disabled="@AreInputsDisabled"
 				For="() => Model.Email"
-				HelperText="Only used for authentication. Will not be displayed publicly."
+				HelperText="Only used for authentication. Will not be displayed to other users."
 				Variant="Variant.Outlined"
 				InputType="InputType.Email"
 				autocomplete="username email"/>
