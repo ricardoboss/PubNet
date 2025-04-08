@@ -25,6 +25,7 @@ using PubNet.API.Helpers;
 using PubNet.API.Middlewares;
 using PubNet.API.OpenApi;
 using PubNet.API.Services;
+using PubNet.API.Services.Admin;
 using PubNet.API.Services.Archives;
 using PubNet.API.Services.Authentication;
 using PubNet.API.Services.CQRS.Commands;

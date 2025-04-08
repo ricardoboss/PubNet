@@ -56,8 +56,6 @@ internal class
 
 	public async Task<TPackageList> RunAsync(CancellationToken cancellationToken = default)
 	{
-		Console.WriteLine($"Author: {currentAuthor ?? "(null)"}");
-
 		if (currentAuthor is not null)
 			return await service.ByAuthorAsync(currentAuthor, currentQuery, currentPage, currentPerPage,
 				cancellationToken);
