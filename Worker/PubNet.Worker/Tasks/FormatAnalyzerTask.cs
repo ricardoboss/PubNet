@@ -16,7 +16,7 @@ public class FormatAnalyzerTask : BaseWorkerTask
 	private ILogger<FormatAnalyzerTask>? logger;
 	private IArchiveStorage? archiveStorage;
 	private DartCli? dart;
-	private PubNetContext? db;
+	private PubNet2Context? db;
 
 	public FormatAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(FormatAnalyzerTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
@@ -31,7 +31,7 @@ public class FormatAnalyzerTask : BaseWorkerTask
 		logger ??= services.GetRequiredService<ILogger<FormatAnalyzerTask>>();
 		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
 		dart ??= services.GetRequiredService<DartCli>();
-		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNet2Context>();
 
 		await db.Entry(analysis).ReloadAsync(cancellationToken);
 

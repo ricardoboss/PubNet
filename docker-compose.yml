@@ -10,8 +10,8 @@ services:
     image: postgres:latest
     restart: unless-stopped
     environment:
-      POSTGRES_USER: "pubnet"
-      POSTGRES_PASSWORD: "pubnet"
+      POSTGRES_USER: "pubnet2"
+      POSTGRES_PASSWORD: "pubnet2"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

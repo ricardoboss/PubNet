@@ -6,7 +6,7 @@ using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services.CQRS.Queries;
 
-public class IdentityDao(PubNetContext context) : IIdentityDao
+public class IdentityDao(PubNet2Context context) : IIdentityDao
 {
 	public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)
 	{

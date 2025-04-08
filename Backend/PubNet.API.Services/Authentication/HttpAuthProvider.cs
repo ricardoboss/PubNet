@@ -8,7 +8,7 @@ using PubNet.Auth;
 
 namespace PubNet.API.Services.Authentication;
 
-public class HttpAuthProvider(IHttpContextAccessor contextAccessor, PubNetContext dbContext) : IAuthProvider
+public class HttpAuthProvider(IHttpContextAccessor contextAccessor, PubNet2Context dbContext) : IAuthProvider
 {
 	private string? TryGetTokenValue()
 	{

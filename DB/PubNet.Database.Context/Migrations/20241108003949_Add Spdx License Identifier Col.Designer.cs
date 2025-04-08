@@ -12,7 +12,7 @@ using PubNet.Database.Context;
 
 namespace PubNet.Database.Context.Migrations
 {
-    [DbContext(typeof(PubNetContext))]
+    [DbContext(typeof(PubNet2Context))]
     [Migration("20241108003949_Add Spdx License Identifier Col")]
     partial class AddSpdxLicenseIdentifierCol
     {

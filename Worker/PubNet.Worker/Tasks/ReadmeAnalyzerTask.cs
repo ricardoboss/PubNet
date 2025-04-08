@@ -14,7 +14,7 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 
 	private ILogger<ReadmeAnalyzerTask>? logger;
 	private IArchiveStorage? archiveStorage;
-	private PubNetContext? db;
+	private PubNet2Context? db;
 
 	public ReadmeAnalyzerTask(DartPackageVersionAnalysis analysis) : base($"{nameof(ReadmeAnalyzerTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
@@ -28,7 +28,7 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 	{
 		logger ??= services.GetRequiredService<ILogger<ReadmeAnalyzerTask>>();
 		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
-		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNet2Context>();
 
 		await db.Entry(analysis).ReloadAsync(cancellationToken);
 

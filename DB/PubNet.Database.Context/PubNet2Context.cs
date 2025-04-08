@@ -9,7 +9,7 @@ using PubNet.Database.Entities.Packages;
 
 namespace PubNet.Database.Context;
 
-public class PubNetContext(DbContextOptions<PubNetContext> options) : DbContext(options)
+public class PubNet2Context(DbContextOptions<PubNet2Context> options) : DbContext(options)
 {
 	public DbSet<Author> Authors { get; init; } = null!;
 
@@ -53,10 +53,10 @@ public class PubNetContext(DbContextOptions<PubNetContext> options) : DbContext(
 
 	public static async Task RunMigrations(IServiceProvider serviceProvider)
 	{
-		serviceProvider.GetRequiredService<ILogger<PubNetContext>>().LogInformation("Migrating database");
+		serviceProvider.GetRequiredService<ILogger<PubNet2Context>>().LogInformation("Migrating database");
 
 		using var startupScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-		await startupScope.ServiceProvider.GetRequiredService<PubNetContext>().Database.MigrateAsync();
+		await startupScope.ServiceProvider.GetRequiredService<PubNet2Context>().Database.MigrateAsync();
 	}
 }

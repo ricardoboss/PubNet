@@ -8,7 +8,7 @@ namespace PubNet.Worker.Tasks;
 
 public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 {
-	private PubNetContext? db;
+	private PubNet2Context? db;
 	private ILogger<MissingPackageVersionAnalysisQueuingTask>? logger;
 	private WorkerTaskQueue? taskQueue;
 
@@ -22,7 +22,7 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 		CancellationToken cancellationToken = default)
 	{
 		logger ??= services.GetRequiredService<ILogger<MissingPackageVersionAnalysisQueuingTask>>();
-		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNet2Context>();
 		taskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
 		var anyFailed = false;
@@ -49,7 +49,7 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 		return anyFailed ? WorkerTaskResult.FailedRecoverable : WorkerTaskResult.Requeue;
 	}
 
-	private static async Task EnqueueMissingAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
+	private static async Task EnqueueMissingAnalyses(PubNet2Context db, ILogger logger, WorkerTaskQueue taskQueue,
 		CancellationToken cancellationToken = default)
 	{
 		var versionsWithoutAnalysis = (await db.DartPackageVersions
@@ -70,7 +70,7 @@ public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
 		foreach (var packageVersion in versionsWithoutAnalysis) taskQueue.Enqueue(CreateTaskFor(packageVersion));
 	}
 
-	private static async Task EnqueueIncompleteAnalyses(PubNetContext db, ILogger logger, WorkerTaskQueue taskQueue,
+	private static async Task EnqueueIncompleteAnalyses(PubNet2Context db, ILogger logger, WorkerTaskQueue taskQueue,
 		CancellationToken cancellationToken = default)
 	{
 		var incompleteAnalyses = (await db.DartPackageVersionAnalyses

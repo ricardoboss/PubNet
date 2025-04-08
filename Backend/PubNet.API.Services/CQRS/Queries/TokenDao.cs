@@ -5,7 +5,7 @@ using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services.CQRS.Queries;
 
-public class TokenDao(PubNetContext context) : ITokenDao
+public class TokenDao(PubNet2Context context) : ITokenDao
 {
 	public async ValueTask<Token> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{

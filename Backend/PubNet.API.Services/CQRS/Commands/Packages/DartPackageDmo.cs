@@ -8,7 +8,7 @@ using Semver;
 
 namespace PubNet.API.Services.CQRS.Commands.Packages;
 
-public class DartPackageDmo(PubNetContext context, ILogger<DartPackageDmo> logger) : IDartPackageDmo
+public class DartPackageDmo(PubNet2Context context, ILogger<DartPackageDmo> logger) : IDartPackageDmo
 {
 	public async Task<DartPackageVersion> CreateAsync(string name, Author author, SemVersion initialVersion, PubSpec pubSpec, CancellationToken cancellationToken = default)
 	{

@@ -9,7 +9,7 @@ namespace PubNet.Worker.Tasks;
 public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 {
 	private IConfiguration? configuration;
-	private PubNetContext? db;
+	private PubNet2Context? db;
 	private ILogger<CleanupOldPendingArchivesTask>? logger;
 
 	/// <inheritdoc />
@@ -21,7 +21,7 @@ public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
 	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,
 		CancellationToken cancellationToken = default)
 	{
-		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNet2Context>();
 		logger ??= services.GetRequiredService<ILogger<CleanupOldPendingArchivesTask>>();
 		configuration ??= services.GetRequiredService<IConfiguration>();
 

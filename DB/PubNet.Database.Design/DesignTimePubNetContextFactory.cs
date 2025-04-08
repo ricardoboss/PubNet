@@ -4,16 +4,16 @@ using PubNet.Database.Context;
 
 namespace PubNet.Database.Design;
 
-public class DesignTimePubNetContextFactory : IDesignTimeDbContextFactory<PubNetContext>
+public class DesignTimePubNetContextFactory : IDesignTimeDbContextFactory<PubNet2Context>
 {
 	/// <inheritdoc />
-	public PubNetContext CreateDbContext(string[] args)
+	public PubNet2Context CreateDbContext(string[] args)
 	{
-		var optionsBuilder = new DbContextOptionsBuilder<PubNetContext>();
+		var optionsBuilder = new DbContextOptionsBuilder<PubNet2Context>();
 
 		// TODO: consider using IConfiguration to get the connection string
 		optionsBuilder
-			.UseNpgsql("Host=localhost;Database=pubnet;Username=pubnet;Password=pubnet")
+			.UseNpgsql("Host=localhost;Database=pubnet2;Username=pubnet2;Password=pubnet2")
 			// .ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))
 			;
 

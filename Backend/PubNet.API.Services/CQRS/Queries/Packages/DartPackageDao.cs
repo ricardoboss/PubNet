@@ -8,7 +8,7 @@ using PubNet.Database.Entities.Dart;
 
 namespace PubNet.API.Services.CQRS.Queries.Packages;
 
-public class DartPackageDao(PubNetContext context, IDartPackageArchiveProvider archiveProvider) : IDartPackageDao
+public class DartPackageDao(PubNet2Context context, IDartPackageArchiveProvider archiveProvider) : IDartPackageDao
 {
 	public async Task<DartPackage?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
 	{

@@ -11,7 +11,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 	public readonly string Package;
 	public readonly string Version;
 
-	private PubNetContext? maybeDb;
+	private PubNet2Context? maybeDb;
 	private ILogger<PackageVersionAnalyzerTask>? maybeLogger;
 	private WorkerTaskQueue? maybeTaskQueue;
 
@@ -23,7 +23,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{
-		maybeDb ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		maybeDb ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNet2Context>();
 		maybeLogger ??= services.GetRequiredService<ILogger<PackageVersionAnalyzerTask>>();
 		maybeTaskQueue ??= services.GetRequiredService<WorkerTaskQueue>();
 
@@ -54,7 +54,7 @@ public class PackageVersionAnalyzerTask : BaseWorkerTask
 		return await UpdateAnalysis(analysis, maybeDb, maybeTaskQueue, maybeLogger, cancellationToken);
 	}
 
-	private async Task<WorkerTaskResult> CreateAnalysis(DartPackageVersion version, PubNetContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
+	private async Task<WorkerTaskResult> CreateAnalysis(DartPackageVersion version, PubNet2Context db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
 	{
 		try
 		{

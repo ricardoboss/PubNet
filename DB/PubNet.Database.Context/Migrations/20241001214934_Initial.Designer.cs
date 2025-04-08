@@ -13,7 +13,7 @@ using PubNet.Database.Context;
 
 namespace PubNet.Database.Context.Migrations
 {
-    [DbContext(typeof(PubNetContext))]
+    [DbContext(typeof(PubNet2Context))]
     [Migration("20241001214934_Initial")]
     partial class Initial
     {

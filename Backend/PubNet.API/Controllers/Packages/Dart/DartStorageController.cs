@@ -14,7 +14,7 @@ namespace PubNet.API.Controllers.Packages.Dart;
 [Route("Packages/Dart/Storage")]
 [Tags("Dart")]
 public class DartStorageController(
-	PubNetContext context,
+	PubNet2Context context,
 	IBlobStorage blobStorage,
 	IUrlSigner urlSigner,
 	IDartPackageUploadService uploadService,

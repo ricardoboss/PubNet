@@ -4,7 +4,7 @@ using PubNet.Database.Entities;
 
 namespace PubNet.API.Services.CQRS.Commands;
 
-public class AuthorDmo(PubNetContext context) : IAuthorDmo
+public class AuthorDmo(PubNet2Context context) : IAuthorDmo
 {
 	public async Task<Author> CreateAuthorAsync(string userName, CancellationToken cancellationToken = default)
 	{

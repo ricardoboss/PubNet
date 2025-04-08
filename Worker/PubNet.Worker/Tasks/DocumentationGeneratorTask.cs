@@ -19,7 +19,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 	private IArchiveStorage? archiveStorage;
 	private IDocsStorage? docsStorage;
 	private DartCli? dart;
-	private PubNetContext? db;
+	private PubNet2Context? db;
 
 	public DocumentationGeneratorTask(DartPackageVersionAnalysis analysis) : base($"{nameof(DocumentationGeneratorTask)} for {analysis.PackageVersion.Package.Name} {analysis.PackageVersion.Version}")
 	{
@@ -34,7 +34,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 		archiveStorage ??= services.GetRequiredService<IArchiveStorage>();
 		docsStorage ??= services.GetRequiredService<IDocsStorage>();
 		dart ??= services.GetRequiredService<DartCli>();
-		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNetContext>();
+		db ??= services.CreateAsyncScope().ServiceProvider.GetRequiredService<PubNet2Context>();
 
 		await db.Entry(analysis).ReloadAsync(cancellationToken);
 

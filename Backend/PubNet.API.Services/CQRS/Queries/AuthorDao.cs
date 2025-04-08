@@ -6,7 +6,7 @@ using PubNet.Database.Entities;
 
 namespace PubNet.API.Services.CQRS.Queries;
 
-public class AuthorDao(PubNetContext context) : IAuthorDao
+public class AuthorDao(PubNet2Context context) : IAuthorDao
 {
 	public Task<Author?> TryFindByUsernameAsync(string userName, CancellationToken cancellationToken = default)
 	{

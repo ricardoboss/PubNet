@@ -34,7 +34,7 @@ try
 			NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 #pragma warning restore CS0618 // Type or member is obsolete
 
-			services.AddDbContext<PubNetContext>(
+			services.AddDbContext<PubNet2Context>(
 				options => options
 					.UseLazyLoadingProxies()
 					.UseNpgsql(context.Configuration.GetConnectionString("PubNet"))
@@ -58,7 +58,7 @@ try
 
 	var app = builder.Build();
 
-	await PubNetContext.RunMigrations(app.Services);
+	await PubNet2Context.RunMigrations(app.Services);
 
 	await app.RunAsync();
 }

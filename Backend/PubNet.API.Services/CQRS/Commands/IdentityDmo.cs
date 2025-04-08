@@ -6,7 +6,7 @@ using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services.CQRS.Commands;
 
-public class IdentityDmo(PubNetContext context, IPasswordHasher<Identity> passwordHasher) : IIdentityDmo
+public class IdentityDmo(PubNet2Context context, IPasswordHasher<Identity> passwordHasher) : IIdentityDmo
 {
 	public async Task<Identity> CreateIdentityAsync(Author author, string email, string password, CancellationToken cancellationToken = default)
 	{

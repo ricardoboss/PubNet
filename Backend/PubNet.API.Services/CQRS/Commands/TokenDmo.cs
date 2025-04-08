@@ -6,7 +6,7 @@ using PubNet.Database.Entities.Auth;
 
 namespace PubNet.API.Services.CQRS.Commands;
 
-public class TokenDmo(PubNetContext context, ISecureTokenGenerator tokenGenerator, IClientInformationProvider clientInformationProvider) : ITokenDmo
+public class TokenDmo(PubNet2Context context, ISecureTokenGenerator tokenGenerator, IClientInformationProvider clientInformationProvider) : ITokenDmo
 {
 	public async Task<Token> CreateTokenAsync(
 		Identity owner,

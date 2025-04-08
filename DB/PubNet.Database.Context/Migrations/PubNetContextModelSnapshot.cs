@@ -11,7 +11,7 @@ using PubNet.Database.Context;
 
 namespace PubNet.Database.Context.Migrations
 {
-    [DbContext(typeof(PubNetContext))]
+    [DbContext(typeof(PubNet2Context))]
     partial class PubNetContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -72,7 +72,7 @@ try
 
 	ConfigureHttpPipeline(app);
 
-	await PubNetContext.RunMigrations(app.Services);
+	await PubNet2Context.RunMigrations(app.Services);
 
 	app.Logger.LogInformation("Application started");
 
@@ -317,7 +317,7 @@ void ConfigureDatabase(WebApplicationBuilder builder)
 	NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 #pragma warning restore CS0618 // Type or member is obsolete
 
-	builder.Services.AddDbContext<PubNetContext>(
+	builder.Services.AddDbContext<PubNet2Context>(
 		options => options
 			.UseLazyLoadingProxies()
 			.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
