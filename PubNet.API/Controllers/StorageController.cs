@@ -265,6 +265,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 		var pubSpecText = await System.IO.File.ReadAllTextAsync(pubSpecPath, cancellationToken);
 		var yamlDeser = new DeserializerBuilder()
 			.WithNamingConvention(UnderscoredNamingConvention.Instance)
+			.IgnoreUnmatchedProperties()
 			.Build();
 
 		return yamlDeser.Deserialize<PubSpec>(pubSpecText);
