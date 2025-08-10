@@ -142,7 +142,7 @@ else if (package is not null && packageVersion is not null)
 
 			<MudText Typo="Typo.subtitle1">Dependencies</MudText>
 
-			@if (packageVersion.Pubspec?.Dependencies?.AdditionalData is { } dependencies)
+			@if (packageVersion.Pubspec?.Dependencies?.GetValue() is IEnumerable<KeyValuePair<string, string>> dependencies)
 			{
 				<MudText>
 					<ul>
