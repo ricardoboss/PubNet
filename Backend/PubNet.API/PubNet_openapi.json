@@ -669,11 +669,11 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthenticated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/AuthErrorDto"
                 }
               }
             }
@@ -1260,11 +1260,11 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthenticated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/AuthErrorDto"
                 }
               }
             }
@@ -1340,11 +1340,11 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Unauthenticated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
+                  "$ref": "#/components/schemas/AuthErrorDto"
                 }
               }
             }

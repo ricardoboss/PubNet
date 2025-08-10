@@ -83,7 +83,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 		};
 
 		operation.Responses ??= [];
-		_ = operation.Responses.TryAdd("401", unauthenticatedResponse);
+		_ = operation.Responses["401"] = unauthenticatedResponse;
 	}
 
 	private static void HandleScopeRequirementAndResponse(OpenApiOperation operation, OpenApiOperationTransformerContext context)
@@ -145,7 +145,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 		};
 
 		operation.Responses ??= [];
-		_ = operation.Responses.TryAdd(PubNetHttpStatusCodes.Status460MissingScope.ToString(), requiredScopesResponse);
+		_ = operation.Responses[PubNetHttpStatusCodes.Status460MissingScope.ToString()] = requiredScopesResponse;
 	}
 
 	private static void AddInvalidRoleResponse(OpenApiOperation operation)
@@ -170,7 +170,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 		};
 
 		operation.Responses ??= [];
-		_ = operation.Responses.TryAdd(PubNetHttpStatusCodes.Status461InvalidRole.ToString(), invalidRoleResponse);
+		_ = operation.Responses[PubNetHttpStatusCodes.Status461InvalidRole.ToString()] = invalidRoleResponse;
 	}
 
 	private static IEnumerable<Attribute> GetOrderedAttributes(MethodInfo methodInfo, params Type[] attributeTypes)
