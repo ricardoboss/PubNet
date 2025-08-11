@@ -34,6 +34,7 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 			Scopes.PersonalAccessTokens.Delete,
 			Scopes.Packages.Search,
 			Scopes.Authors.Delete.Self,
+			Scopes.Authors.Search,
 		];
 
 		var token = await tokenDmo.CreateTokenAsync(
