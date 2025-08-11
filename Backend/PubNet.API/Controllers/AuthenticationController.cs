@@ -47,7 +47,6 @@ public class AuthenticationController(
 	[HttpPost("PersonalAccessToken")]
 	[RequireScope(Scopes.PersonalAccessTokens.Create)]
 	[ProducesResponseType(StatusCodes.Status201Created)]
-	[ProducesResponseType<ValidationErrorsDto>(StatusCodes.Status400BadRequest)]
 	public async Task<TokenCreatedDto> CreatePersonalAccessTokenAsync(CreatePersonalAccessTokenDto dto,
 		CancellationToken cancellationToken = default)
 	{
