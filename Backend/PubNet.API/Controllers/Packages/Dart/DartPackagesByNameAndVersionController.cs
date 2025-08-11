@@ -104,6 +104,7 @@ public class DartPackagesByNameAndVersionController(
 	{
 		await dartPackageDmo.RetractAsync(name, version, cancellationToken);
 
-		return DartSuccessDto.WithMessage($"Package '{name}' version '{version}' has been retracted");
+		return DartSuccessDto.WithMessage("package_version_retracted",
+			$"Package '{name}' version '{version}' has been retracted");
 	}
 }

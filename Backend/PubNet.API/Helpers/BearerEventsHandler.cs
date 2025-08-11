@@ -28,8 +28,11 @@ internal sealed class BearerEventsHandler : JwtBearerEvents
 	{
 		var dto = new AuthErrorDto
 		{
-			Error = "unauthorized",
-			Message = "You are not authorized to perform this action.",
+			Error = new()
+			{
+				Code = "unauthorized",
+				Message = "You are not authorized to perform this action.",
+			},
 		};
 
 		context.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -38,14 +41,19 @@ internal sealed class BearerEventsHandler : JwtBearerEvents
 	}
 
 	private const string FallbackUnauthenticatedError = "unauthenticated";
-	private const string FallbackUnauthenticatedMessage = "Authentication is required for this request but your token is missing or invalid.";
+
+	private const string FallbackUnauthenticatedMessage =
+		"Authentication is required for this request, but your token is missing or invalid.";
 
 	private static async Task SendUnauthenticated(JwtBearerChallengeContext context)
 	{
 		var dto = new AuthErrorDto
 		{
-			Error = context.Error ?? FallbackUnauthenticatedError,
-			Message = context.ErrorDescription ?? FallbackUnauthenticatedMessage,
+			Error = new()
+			{
+				Code = context.Error ?? FallbackUnauthenticatedError,
+				Message = context.ErrorDescription ?? FallbackUnauthenticatedMessage,
+			},
 		};
 
 		context.Response.StatusCode = StatusCodes.Status401Unauthorized;

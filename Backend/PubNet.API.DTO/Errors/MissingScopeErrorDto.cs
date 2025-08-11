@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PubNet.API.DTO.Errors;
 
-public class MissingScopeErrorDto
+public class MissingScopeErrorDto : ErrorDto
 {
 	[Required]
 	public required string[] RequiredScopes { get; init; }

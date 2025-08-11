@@ -1,6 +1,6 @@
 namespace PubNet.API.DTO.Errors;
 
-public class InvalidRoleErrorDto
+public class InvalidRoleErrorDto : ErrorDto
 {
 	public required string? RequiredRole { get; init; }
 

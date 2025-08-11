@@ -1,4 +1,5 @@
 using System.Security.Authentication;
+using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using PubNet.API.Abstractions;
 using PubNet.API.DTO;
@@ -25,7 +26,6 @@ public class ExceptionFormatterMiddleware : IMiddleware
 
 	private static async Task Handle(HttpContext context, Exception e)
 	{
-		string? code = null;
 		object dto;
 		JsonTypeInfo info;
 		switch (e)
@@ -40,6 +40,11 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				info = DtoGenerationContext.Default.MissingScopeErrorDto;
 				dto = new MissingScopeErrorDto
 				{
+					Error = new()
+					{
+						Code = "missing_scope",
+						Message = "One or more additional scopes is required to perform this action.",
+					},
 					GivenScopes = missingScopeException.AvailableScopes.Select(s => s.Value).ToArray(),
 					RequiredScopes = missingScopeException.MissingScopes.Select(s => s.Value).ToArray(),
 				};
@@ -51,6 +56,11 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				info = DtoGenerationContext.Default.InvalidRoleErrorDto;
 				dto = new InvalidRoleErrorDto
 				{
+					Error = new()
+					{
+						Code = "invalid_role",
+						Message = "A different role is required to perform this action.",
+					},
 					GivenRole = invalidRoleException.GivenRole.ToClaimValue(),
 					RequiredRole = invalidRoleException.RequiredRole.ToClaimValue(),
 				};
@@ -62,8 +72,11 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				info = DtoGenerationContext.Default.AuthErrorDto;
 				dto = new AuthErrorDto
 				{
-					Error = "unauthorized",
-					Message = e.Message,
+					Error = new()
+					{
+						Code = "unauthorized",
+						Message = e.Message,
+					},
 				};
 
 				break;
@@ -77,8 +90,11 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				info = DtoGenerationContext.Default.AuthErrorDto;
 				dto = new AuthErrorDto
 				{
-					Error = "authentication_failed",
-					Message = e.Message,
+					Error = new()
+					{
+						Code = "authentication_failed",
+						Message = e.Message,
+					},
 				};
 
 				break;
@@ -93,6 +109,11 @@ public class ExceptionFormatterMiddleware : IMiddleware
 						Code = apiException.Code,
 						Message = apiException.Message,
 					},
+#if DEBUG
+					StackTrace = apiException.StackTrace?.Split("\r\n")
+						.SelectMany(x => x.Split("\n"))
+						.ToArray(),
+#endif
 				};
 
 				break;
@@ -101,8 +122,11 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				info = DtoGenerationContext.Default.InternalServerErrorDto;
 				dto = new InternalServerErrorDto
 				{
-					Error = code ?? e.GetType().Name,
-					Message = e.Message,
+					Error = new()
+					{
+						Code = JsonNamingPolicy.SnakeCaseLower.ConvertName(e.GetType().Name),
+						Message = e.Message,
+					},
 #if DEBUG
 					StackTrace = e.StackTrace?.Split("\r\n")
 						.SelectMany(x => x.Split("\n"))

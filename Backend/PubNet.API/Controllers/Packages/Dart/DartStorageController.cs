@@ -202,6 +202,8 @@ public class DartStorageController(
 	[HttpGet("{pendingId}")]
 	[ProducesResponseType<DartSuccessDto>(200)]
 	[ProducesResponseType<GenericErrorDto>(400)]
+	[ProducesResponseType<AuthErrorDto>(401)]
+	[ProducesResponseType<GenericErrorDto>(409)]
 	[ProducesResponseType<GenericErrorDto>(422)]
 	public async Task<IActionResult> FinalizeAsync(string pendingId, CancellationToken cancellationToken = default)
 	{
@@ -211,7 +213,7 @@ public class DartStorageController(
 			{
 				Error = new()
 				{
-					Code = "invalid-signature",
+					Code = "invalid_signature",
 					Message = "URL signature is invalid",
 				},
 			});
@@ -221,7 +223,7 @@ public class DartStorageController(
 			{
 				Error = new()
 				{
-					Code = "invalid-guid",
+					Code = "invalid_guid",
 					Message = "Pending ID is not a valid GUID",
 				},
 			});
@@ -232,7 +234,7 @@ public class DartStorageController(
 			{
 				Error = new()
 				{
-					Code = "pending-not-found",
+					Code = "pending_not_found",
 					Message = "Pending archive not found",
 				},
 			});
@@ -247,6 +249,7 @@ public class DartStorageController(
 			{
 				Success = new()
 				{
+					Code = "successfully_uploaded",
 					Message = $"Successfully uploaded package version {finalizedVersion}",
 				},
 			});
@@ -257,7 +260,7 @@ public class DartStorageController(
 			{
 				Error = new()
 				{
-					Code = "package-version-already-exists",
+					Code = "package_version_already_exists",
 					Message = e.Message,
 				},
 			});
@@ -268,7 +271,7 @@ public class DartStorageController(
 			{
 				Error = new()
 				{
-					Code = "package-version-outdated",
+					Code = "package_version_outdated",
 					Message = e.Message,
 				},
 			});
@@ -277,11 +280,11 @@ public class DartStorageController(
 		{
 			logger.LogWarning(e, "Caught author trying to upload a package when it wasn't allowed");
 
-			return Conflict(new GenericErrorDto
+			return Unauthorized(new AuthErrorDto
 			{
 				Error = new()
 				{
-					Code = "unauthorized-access",
+					Code = "unauthorized_access",
 					Message = e.Message,
 				},
 			});
@@ -294,7 +297,7 @@ public class DartStorageController(
 			{
 				Error = new()
 				{
-					Code = "internal-server-error",
+					Code = "internal_server_error",
 					Message = $"Failed to finalize package: {e.Message}",
 				},
 			});

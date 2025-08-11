@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Abstractions.CQRS.Commands.Packages;
 using PubNet.API.Abstractions.CQRS.Queries.Packages;
 using PubNet.API.Abstractions.Packages.Dart;
@@ -24,7 +23,7 @@ public class DartPackagesByNameController(
 	{
 		await dartPackageDmo.DiscontinueAsync(name, cancellationToken);
 
-		return DartSuccessDto.WithMessage($"Package '{name}' has been discontinued");
+		return DartSuccessDto.WithMessage("package_discontinued", $"Package '{name}' has been discontinued");
 	}
 
 	[HttpGet]
