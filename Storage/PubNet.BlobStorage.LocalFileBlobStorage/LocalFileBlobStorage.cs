@@ -140,7 +140,7 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 
 			using var sha = SHA256.Create();
 			var hash = await sha.ComputeHashAsync(seekableStream, cancellationToken);
-			contentSha256 = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+			contentSha256 = Convert.ToHexStringLower(hash);
 		}
 
 		var blobMetadataPath = GetBlobMetadataPath(args.BucketName, args.BlobName);
