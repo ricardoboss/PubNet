@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Vogen;
 
 namespace PubNet.Auth.Models;
@@ -42,10 +43,14 @@ public readonly partial struct JsonWebToken
 		var claimsPadded = claimsEncoded.PadRight(claimsEncoded.Length + (4 - claimsEncoded.Length % 4) % 4, '=');
 
 		var claimsDecoded = Encoding.UTF8.GetString(Convert.FromBase64String(claimsPadded));
-		var claims = JsonSerializer.Deserialize<Dictionary<string, object>>(claimsDecoded);
+		var claims =
+			JsonSerializer.Deserialize(claimsDecoded, JsonWebTokenSerializerContext.Default.DictionaryStringObject);
 		if (claims is null)
 			throw new FormatException("JWT claims are invalid.");
 
 		return claims.Select(c => new Claim(c.Key, c.Value.ToString() ?? string.Empty));
 	}
 }
+
+[JsonSerializable(typeof(Dictionary<string, object>))]
+public partial class JsonWebTokenSerializerContext : JsonSerializerContext;

@@ -15,7 +15,9 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 	/// <inheritdoc />
 	public string Name => configuration["Name"] ?? ServiceKey;
 
-	private string RootPath => configuration["RootPath"] ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PubNet.BlobStorage.LocalFileBlobStorage");
+	private string RootPath => configuration["RootPath"] ??
+		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+			"PubNet.BlobStorage.LocalFileBlobStorage");
 
 	private string GetBucketPath(string bucketName)
 	{
@@ -33,9 +35,11 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 		return Path.Combine(GetBucketPath(bucketName), blobName);
 	}
 
-	private string GetBlobContentPath(string bucketName, string blobName) => Path.Combine(GetBlobPath(bucketName, blobName), "content.bin");
+	private string GetBlobContentPath(string bucketName, string blobName) =>
+		Path.Combine(GetBlobPath(bucketName, blobName), "content.bin");
 
-	private string GetBlobMetadataPath(string bucketName, string blobName) => Path.Combine(GetBlobPath(bucketName, blobName), "metadata.json");
+	private string GetBlobMetadataPath(string bucketName, string blobName) =>
+		Path.Combine(GetBlobPath(bucketName, blobName), "metadata.json");
 
 	/// <inheritdoc />
 	public Task<bool> BucketExistsAsync(IBucketExistsArgs args, CancellationToken cancellationToken = default)
@@ -90,7 +94,8 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 	}
 
 	/// <inheritdoc />
-	public async IAsyncEnumerable<IBucketItem> ListBucketsAsync(IListBucketsArgs args, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	public async IAsyncEnumerable<IBucketItem> ListBucketsAsync(IListBucketsArgs args,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		foreach (var directoryInfo in new DirectoryInfo(RootPath).EnumerateDirectories())
 		{
@@ -142,7 +147,8 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 
 		var metadata = new FileBlobMetadata(args.ContentType, contentSha256);
 
-		var metadataJson = JsonSerializer.Serialize(metadata);
+		var metadataJson =
+			JsonSerializer.Serialize(metadata, FileBlobMetadataJsonSerializerContext.Default.FileBlobMetadata);
 		var metadataBytes = Encoding.UTF8.GetBytes(metadataJson);
 		var metadataStream = new MemoryStream(metadataBytes);
 
@@ -177,15 +183,19 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 
 		var blobMetadata = await File.ReadAllTextAsync(blobMetadataPath, cancellationToken);
 
-		var metadata = JsonSerializer.Deserialize<FileBlobMetadata>(blobMetadata);
+		var metadata =
+			JsonSerializer.Deserialize(blobMetadata, FileBlobMetadataJsonSerializerContext.Default.FileBlobMetadata);
 		if (metadata is null)
-			throw new BlobMetadataDeserializationFailureException("The deserialized metadata was null.", args.BucketName, args.BlobName);
+			throw new BlobMetadataDeserializationFailureException("The deserialized metadata was null.",
+				args.BucketName, args.BlobName);
 
-		return new FileBlobItem(args.BucketName, args.BlobName, metadata.ContentType, metadata.ContentSha256, new(blobContentPath));
+		return new FileBlobItem(args.BucketName, args.BlobName, metadata.ContentType, metadata.ContentSha256,
+			new(blobContentPath));
 	}
 
 	/// <inheritdoc />
-	public async IAsyncEnumerable<IBlobItem> ListBlobsAsync(IListBlobsArgs args, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	public async IAsyncEnumerable<IBlobItem> ListBlobsAsync(IListBlobsArgs args,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		foreach (var fileInfo in new DirectoryInfo(GetBucketPath(args.BucketName)).EnumerateFiles())
 		{
@@ -193,11 +203,14 @@ public class LocalFileBlobStorage(IConfiguration configuration) : IBlobStorage
 
 			var blobMetadata = await File.ReadAllTextAsync(blobMetadataPath, cancellationToken);
 
-			var metadata = JsonSerializer.Deserialize<FileBlobMetadata>(blobMetadata);
+			var metadata = JsonSerializer.Deserialize(blobMetadata,
+				FileBlobMetadataJsonSerializerContext.Default.FileBlobMetadata);
 			if (metadata is null)
-				throw new BlobMetadataDeserializationFailureException("The deserialized metadata was null.", args.BucketName, fileInfo.Name);
+				throw new BlobMetadataDeserializationFailureException("The deserialized metadata was null.",
+					args.BucketName, fileInfo.Name);
 
-			yield return new FileBlobItem(args.BucketName, fileInfo.Name, metadata.ContentType, metadata.ContentSha256, fileInfo);
+			yield return new FileBlobItem(args.BucketName, fileInfo.Name, metadata.ContentType, metadata.ContentSha256,
+				fileInfo);
 		}
 	}
 }
