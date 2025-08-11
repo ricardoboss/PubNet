@@ -13,6 +13,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
     public partial class InvalidRoleErrorDto : ApiException, IParsable
     #pragma warning restore CS1591
     {
+        /// <summary>The error property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto? Error { get; set; }
+#nullable restore
+#else
+        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto Error { get; set; }
+#endif
         /// <summary>The givenRole property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -49,6 +57,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>(global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto.CreateFromDiscriminatorValue); } },
                 { "givenRole", n => { GivenRole = n.GetStringValue(); } },
                 { "requiredRole", n => { RequiredRole = n.GetStringValue(); } },
             };
@@ -60,6 +69,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>("error", Error);
             writer.WriteStringValue("givenRole", GivenRole);
             writer.WriteStringValue("requiredRole", RequiredRole);
         }

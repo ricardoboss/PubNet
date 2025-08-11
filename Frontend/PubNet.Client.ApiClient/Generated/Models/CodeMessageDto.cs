@@ -9,7 +9,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class GenericErrorContentDto : IParsable
+    public partial class CodeMessageDto : IParsable
     #pragma warning restore CS1591
     {
         /// <summary>The code property</summary>
@@ -28,23 +28,15 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public string Message { get; set; }
 #endif
-        /// <summary>The stackTrace property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public List<string>? StackTrace { get; set; }
-#nullable restore
-#else
-        public List<string> StackTrace { get; set; }
-#endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto"/></returns>
+        /// <returns>A <see cref="global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto();
+            return new global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -56,7 +48,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
             {
                 { "code", n => { Code = n.GetStringValue(); } },
                 { "message", n => { Message = n.GetStringValue(); } },
-                { "stackTrace", n => { StackTrace = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
         }
         /// <summary>
@@ -68,7 +59,6 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("code", Code);
             writer.WriteStringValue("message", Message);
-            writer.WriteCollectionOfPrimitiveValues<string>("stackTrace", StackTrace);
         }
     }
 }

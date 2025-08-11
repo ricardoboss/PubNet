@@ -15,10 +15,10 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The success property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto? Success { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto? Success { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto Success { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto Success { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -38,7 +38,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "success", n => { Success = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto>(global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto.CreateFromDiscriminatorValue); } },
+                { "success", n => { Success = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>(global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -48,7 +48,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.DartMessageDto>("success", Success);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>("success", Success);
         }
     }
 }
