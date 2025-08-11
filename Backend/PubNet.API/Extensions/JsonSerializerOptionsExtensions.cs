@@ -47,6 +47,7 @@ public static class JsonSerializerOptionsExtensions
 #region Microsoft
 
 [JsonSerializable(typeof(ProblemDetails))]
+[JsonSerializable(typeof(ValidationProblemDetails))]
 
 #endregion
 
