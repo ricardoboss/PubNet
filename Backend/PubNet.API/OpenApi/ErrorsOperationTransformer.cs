@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.References;
+using Microsoft.OpenApi;
 using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.OpenApi;

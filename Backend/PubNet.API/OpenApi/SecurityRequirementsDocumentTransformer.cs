@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 
 namespace PubNet.API.OpenApi;
 
@@ -21,8 +20,8 @@ public class SecurityRequirementsDocumentTransformer : IOpenApiDocumentTransform
 			Scheme = JwtBearerDefaults.AuthenticationScheme,
 		};
 
-		document.SecurityRequirements ??= [];
-		document.SecurityRequirements.Add(
+		document.Security ??= [];
+		document.Security.Add(
 			new()
 			{
 				{
