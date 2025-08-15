@@ -345,7 +345,7 @@ void ConfigureHttpPipeline(WebApplication app)
 
 	app.MapControllers();
 
-	app.MapOpenApi("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
+	app.MapOpenApi("/.well-known/{documentName}.json");
 
 	if (!app.Environment.IsDevelopment())
 		return;
