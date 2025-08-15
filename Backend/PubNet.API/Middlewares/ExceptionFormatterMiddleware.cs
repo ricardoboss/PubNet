@@ -37,7 +37,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case MissingScopeException missingScopeException:
 				context.Response.StatusCode = PubNetHttpStatusCodes.Status460MissingScope;
 
-				info = DtoGenerationContext.Default.MissingScopeErrorDto;
+				info = DtoSerializerContext.Default.MissingScopeErrorDto;
 				dto = new MissingScopeErrorDto
 				{
 					Error = new()
@@ -53,7 +53,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case InvalidRoleException invalidRoleException:
 				context.Response.StatusCode = PubNetHttpStatusCodes.Status461InvalidRole;
 
-				info = DtoGenerationContext.Default.InvalidRoleErrorDto;
+				info = DtoSerializerContext.Default.InvalidRoleErrorDto;
 				dto = new InvalidRoleErrorDto
 				{
 					Error = new()
@@ -69,7 +69,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case UnauthorizedAccessException:
 				context.Response.StatusCode = StatusCodes.Status403Forbidden;
 
-				info = DtoGenerationContext.Default.AuthErrorDto;
+				info = DtoSerializerContext.Default.AuthErrorDto;
 				dto = new AuthErrorDto
 				{
 					Error = new()
@@ -87,7 +87,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 					$"Bearer realm=\"pubnet\", message=\"{e.Message}\"",
 				};
 
-				info = DtoGenerationContext.Default.AuthErrorDto;
+				info = DtoSerializerContext.Default.AuthErrorDto;
 				dto = new AuthErrorDto
 				{
 					Error = new()
@@ -101,7 +101,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 			case ApiException apiException:
 				context.Response.StatusCode = apiException.StatusCode;
 
-				info = DtoGenerationContext.Default.GenericErrorDto;
+				info = DtoSerializerContext.Default.GenericErrorDto;
 				dto = new GenericErrorDto
 				{
 					Error = new()
@@ -119,7 +119,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 				break;
 			default:
 				context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-				info = DtoGenerationContext.Default.InternalServerErrorDto;
+				info = DtoSerializerContext.Default.InternalServerErrorDto;
 				dto = new InternalServerErrorDto
 				{
 					Error = new()
