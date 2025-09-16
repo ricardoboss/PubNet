@@ -19,5 +19,5 @@ resharper_place_field_attribute_on_same_line = false
 indent_style = tab
 indent_size = tab
 
-[{*.ya?ml,*.json}]
+[{*.ya?ml,*.json,*.xml,NuGet.Config}]
 indent_size = 2
