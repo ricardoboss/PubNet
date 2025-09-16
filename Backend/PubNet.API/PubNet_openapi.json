@@ -2211,7 +2211,14 @@
             "$ref": "#/components/schemas/PackageType"
           },
           "latest": {
-            "$ref": "#/components/schemas/DartPackageVersionDto"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DartPackageVersionDto"
+              }
+            ]
           },
           "versions": {
             "type": [
@@ -2333,16 +2340,27 @@
       },
       "DependencyMap": { },
       "Environment": {
-        "type": [
-          "null",
-          "object"
-        ],
+        "type": "object",
         "properties": {
           "sdk": {
-            "$ref": "#/components/schemas/SemVersionRange"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SemVersionRange"
+              }
+            ]
           },
           "flutter": {
-            "$ref": "#/components/schemas/SemVersionRange"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SemVersionRange"
+              }
+            ]
           }
         }
       },
@@ -2535,7 +2553,171 @@
           }
         }
       },
-      "PubSpec": { },
+      "PubSpec": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SemVersion"
+              }
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "homepage": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uri"
+          },
+          "repository": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uri"
+          },
+          "issueTracker": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uri"
+          },
+          "documentation": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uri"
+          },
+          "dependencies": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DependencyMap"
+              }
+            ]
+          },
+          "devDependencies": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DependencyMap"
+              }
+            ]
+          },
+          "executables": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "platforms": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Platforms"
+              }
+            ]
+          },
+          "publishTo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "funding": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "falseSecrets": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "screenshots": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/Screenshot"
+            }
+          },
+          "topics": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "ignoredAdvisories": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "environment": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Environment"
+              }
+            ]
+          },
+          "workspace": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "Screenshot": {
         "required": [
           "description",
