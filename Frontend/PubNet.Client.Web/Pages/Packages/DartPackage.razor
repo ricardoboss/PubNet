@@ -38,7 +38,7 @@
 
 			if (package is not null)
 				packageVersion = Version is null
-					? package.Latest
+					? package.Latest?.DartPackageVersionDto
 					: package.Versions?.FirstOrDefault(v => v.Version == Version);
 		}
 		finally
@@ -100,7 +100,8 @@ else if (package is not null && packageVersion is not null)
 	<MudText Typo="Typo.h3">@package.Name @packageVersion.Version</MudText>
 
 	<MudText Typo="Typo.subtitle1">
-		created by <LinkToAuthor Name="@package.Author"/>
+		created by
+		<LinkToAuthor Name="@package.Author"/>
 		at <em>@packageVersion.PublishedAt</em>
 	</MudText>
 
@@ -142,7 +143,7 @@ else if (package is not null && packageVersion is not null)
 
 			<MudText Typo="Typo.subtitle1">Dependencies</MudText>
 
-			@if (packageVersion.Pubspec?.Dependencies?.GetValue() is IEnumerable<KeyValuePair<string, string>> dependencies)
+			@if (packageVersion.Pubspec?.Dependencies?.DependencyMap?.AdditionalData is { } dependencies)
 			{
 				<MudText>
 					<ul>
