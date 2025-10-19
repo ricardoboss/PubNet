@@ -4,19 +4,19 @@
     <NuGetAuditMode>all</NuGetAuditMode>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Blism.Language.Bash" Version="1.3.2" />
-    <PackageVersion Include="Blism.Language.Yaml" Version="1.3.2" />
+    <PackageVersion Include="Blism.Language.Bash" Version="1.3.3" />
+    <PackageVersion Include="Blism.Language.Yaml" Version="1.3.3" />
     <PackageVersion Include="CliWrap" Version="3.8.2" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Json" Version="3.0.1" />
     <PackageVersion Include="DartLang.PubSpec.Serialization.Yaml" Version="3.0.1" />
-    <PackageVersion Include="Markdig" Version="0.40.0" />
-    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.7.115" />
+    <PackageVersion Include="Markdig" Version="0.42.0" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.8.118" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
@@ -43,7 +43,7 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.17.1" />
-    <PackageVersion Include="MudBlazor" Version="8.4.0" />
+    <PackageVersion Include="MudBlazor" Version="8.13.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="PasswordRulesSharp" Version="2.0.0" />
     <PackageVersion Include="Riok.Mapperly" Version="4.1.1" />
