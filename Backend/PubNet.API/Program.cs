@@ -1,6 +1,3 @@
-using System.Text.Json;
-using DartLang.PubSpec;
-using DartLang.PubSpec.Serialization.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Npgsql;
 using PubNet.API;
 using PubNet.API.Abstractions;
@@ -71,9 +67,6 @@ try
 	ConfigureServices(builder);
 
 	var app = builder.Build();
-
-	// var c = app.Services.GetRequiredService<IOptions<HttpJsonOptions>>().Value;
-	// var t = c.SerializerOptions.TypeInfoResolver!.GetTypeInfo(typeof(PubSpec), c.SerializerOptions)!;
 
 	app.Logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
 	app.Logger.LogInformation("Version: {Version}", ThisAssembly.AssemblyInformationalVersion);
