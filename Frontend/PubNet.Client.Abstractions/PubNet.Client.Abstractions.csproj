@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+  	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" VersionOverride="9.0.10" />
 		<ProjectReference Include="..\..\PubNet.Auth\PubNet.Auth.csproj"/>
 		<ProjectReference Include="..\PubNet.Client.ApiClient\PubNet.Client.ApiClient.csproj"/>
 	</ItemGroup>
