@@ -13,7 +13,7 @@
     <PackageVersion Include="Markdig" Version="0.42.0" />
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.8.118" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.10" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.10" />
