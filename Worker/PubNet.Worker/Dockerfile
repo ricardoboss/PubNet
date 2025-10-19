@@ -1,4 +1,4 @@
-﻿ARG SDK_VERSION=9.0
+﻿ARG SDK_VERSION=10.0
 
 FROM mcr.microsoft.com/dotnet/runtime:${SDK_VERSION} AS base
 USER $APP_UID

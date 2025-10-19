@@ -31,7 +31,13 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public string ArchiveUrl { get; set; }
 #endif
         /// <summary>The publishedAt property</summary>
-        public DateTimeOffset? PublishedAt { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public UntypedNode? PublishedAt { get; set; }
+#nullable restore
+#else
+        public UntypedNode PublishedAt { get; set; }
+#endif
         /// <summary>The pubspec property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -77,7 +83,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             {
                 { "archiveSha256", n => { ArchiveSha256 = n.GetStringValue(); } },
                 { "archiveUrl", n => { ArchiveUrl = n.GetStringValue(); } },
-                { "publishedAt", n => { PublishedAt = n.GetDateTimeOffsetValue(); } },
+                { "publishedAt", n => { PublishedAt = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
                 { "pubspec", n => { Pubspec = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec>(global::PubNet.Client.ApiClient.Generated.Models.PubSpec.CreateFromDiscriminatorValue); } },
                 { "retracted", n => { Retracted = n.GetBoolValue(); } },
                 { "version", n => { Version = n.GetStringValue(); } },
@@ -92,7 +98,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("archiveSha256", ArchiveSha256);
             writer.WriteStringValue("archiveUrl", ArchiveUrl);
-            writer.WriteDateTimeOffsetValue("publishedAt", PublishedAt);
+            writer.WriteObjectValue<UntypedNode>("publishedAt", PublishedAt);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.PubSpec>("pubspec", Pubspec);
             writer.WriteBoolValue("retracted", Retracted);
             writer.WriteStringValue("version", Version);

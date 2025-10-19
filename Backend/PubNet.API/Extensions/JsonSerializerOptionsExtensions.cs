@@ -23,7 +23,7 @@ public static class JsonSerializerOptionsExtensions
 
 		options.TypeInfoResolver = JsonTypeInfoResolver.Combine(
 			ApiSerializerContext.Default,
-			DtoGenerationContext.Default,
+			DtoSerializerContext.Default,
 			PubSpecJsonSerializerContext.Default
 		);
 

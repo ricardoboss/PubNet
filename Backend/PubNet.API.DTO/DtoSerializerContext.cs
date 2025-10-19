@@ -55,4 +55,4 @@ namespace PubNet.API.DTO;
 #endregion
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-public partial class DtoGenerationContext : JsonSerializerContext;
+public partial class DtoSerializerContext : JsonSerializerContext;

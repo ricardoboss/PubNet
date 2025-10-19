@@ -1,18 +1,17 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Interfaces;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
 using PubNet.API.Attributes;
 using PubNet.API.DTO.Errors;
 using PubNet.Auth;
 
 namespace PubNet.API.OpenApi;
 
+[RequiresDynamicCode("Recursively accesses public properties of the given type")]
 public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDocumentTransformer
 {
 	public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,
@@ -47,14 +46,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			new()
 			{
 				{
-					new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.SecurityScheme,
-							Id = requiredScheme,
-						},
-					},
+					new(requiredScheme),
 					[]
 				},
 			}
@@ -70,14 +62,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			{
 				["application/json"] = new()
 				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(AuthErrorDto),
-						},
-					},
+					Schema = new OpenApiSchemaReference(nameof(AuthErrorDto)),
 				},
 			},
 		};
@@ -132,14 +117,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			{
 				["application/json"] = new()
 				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(MissingScopeErrorDto),
-						},
-					},
+					Schema = new OpenApiSchemaReference(nameof(MissingScopeErrorDto)),
 				},
 			},
 		};
@@ -157,14 +135,7 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDoc
 			{
 				["application/json"] = new()
 				{
-					Schema = new()
-					{
-						Reference = new()
-						{
-							Type = ReferenceType.Schema,
-							Id = nameof(InvalidRoleErrorDto),
-						},
-					},
+					Schema = new OpenApiSchemaReference(nameof(InvalidRoleErrorDto)),
 				},
 			},
 		};

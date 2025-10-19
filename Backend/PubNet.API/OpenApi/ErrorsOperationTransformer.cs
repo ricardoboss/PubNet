@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi;
 using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.OpenApi;
 
+[RequiresDynamicCode("Recursively accesses public properties of the given type")]
 public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApiDocumentTransformer
 {
 	private static readonly OpenApiResponse InternalServerErrorResponse = new()
@@ -13,14 +15,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 		{
 			["application/json"] = new()
 			{
-				Schema = new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.Schema,
-						Id = nameof(InternalServerErrorDto),
-					},
-				},
+				Schema = new OpenApiSchemaReference(nameof(InternalServerErrorDto)),
 			},
 		},
 	};
@@ -32,14 +27,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 		{
 			["application/json"] = new()
 			{
-				Schema = new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.Schema,
-						Id = nameof(GenericErrorDto),
-					},
-				},
+				Schema = new OpenApiSchemaReference(nameof(GenericErrorDto)),
 			},
 		},
 	};
@@ -51,14 +39,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApi
 		{
 			["application/json"] = new()
 			{
-				Schema = new()
-				{
-					Reference = new()
-					{
-						Type = ReferenceType.Schema,
-						Id = nameof(ValidationErrorsDto),
-					},
-				},
+				Schema = new OpenApiSchemaReference(nameof(ValidationErrorsDto)),
 			},
 		},
 	};

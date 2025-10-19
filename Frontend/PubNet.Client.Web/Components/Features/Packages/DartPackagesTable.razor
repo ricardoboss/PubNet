@@ -34,9 +34,9 @@
 				<LinkToPackage Name="@context.Name"/>
 			</MudTh>
 			<MudTd>
-				<LinkToPackage Name="@context.Name" Version="@context.Latest!.Version"/>
+				<LinkToPackage Name="@context.Name" Version="@context.Latest!.DartPackageVersionDto!.Version"/>
 			</MudTd>
-			<MudTd>@context.Latest?.PublishedAt</MudTd>
+			<MudTd>@context.Latest?.DartPackageVersionDto?.PublishedAt</MudTd>
 
 			@if (ShowAuthorColumn)
 			{
