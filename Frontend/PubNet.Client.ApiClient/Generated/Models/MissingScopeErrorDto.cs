@@ -15,6 +15,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The error property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error? Error { get; set; }
+#nullable restore
+#else
+        public global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error Error { get; set; }
+#endif
         /// <summary>The givenScopes property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -58,6 +66,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error>(global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error.CreateFromDiscriminatorValue); } },
                 { "givenScopes", n => { GivenScopes = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "requiredScopes", n => { RequiredScopes = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
@@ -69,6 +78,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.MissingScopeErrorDto_error>("error", Error);
             writer.WriteCollectionOfPrimitiveValues<string>("givenScopes", GivenScopes);
             writer.WriteCollectionOfPrimitiveValues<string>("requiredScopes", RequiredScopes);
             writer.WriteAdditionalData(AdditionalData);
