@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PubNet.Database.Entities.Dart;
-using PubNet.Database.Entities.Nuget;
 
 namespace PubNet.Database.Entities.Packages;
 
@@ -17,7 +16,6 @@ public class PackageArchiveConfiguration : IEntityTypeConfiguration<PackageArchi
 			.IsUnique();
 
 		builder.HasDiscriminator(a => a.PackageTypeDiscriminator)
-			.HasValue<DartPackageVersionArchive>("dart")
-			.HasValue<NugetPackageVersionArchive>("nuget");
+			.HasValue<DartPackageVersionArchive>("dart");
 	}
 }

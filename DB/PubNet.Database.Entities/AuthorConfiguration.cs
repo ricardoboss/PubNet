@@ -20,10 +20,5 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
 			.WithOne(p => p.Author)
 			.HasForeignKey(p => p.AuthorId)
 			.OnDelete(DeleteBehavior.Cascade);
-
-		builder.HasMany(a => a.NugetPackages)
-			.WithOne(p => p.Author)
-			.HasForeignKey(p => p.AuthorId)
-			.OnDelete(DeleteBehavior.Cascade);
 	}
 }
