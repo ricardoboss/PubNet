@@ -6,6 +6,8 @@ using DartLang.PubSpec.Serialization.Json.Converters;
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.Converter;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Packages;
+using PubNet.Auth.Models;
 
 namespace PubNet.API.Extensions;
 
@@ -14,7 +16,8 @@ public static class JsonSerializerOptionsExtensions
 	public static void ApplyCommonOptions(this JsonSerializerOptions options)
 	{
 		options.Converters.Add(new JsonDateTimeConverter());
-		options.Converters.Add(new JsonStringEnumConverter());
+		options.Converters.Add(new JsonStringEnumConverter<Role>());
+		options.Converters.Add(new JsonStringEnumConverter<PackageType>());
 
 		// add custom converters from DartLang.PubSpec
 		options.Converters.Add(new SemVersionJsonConverter());
