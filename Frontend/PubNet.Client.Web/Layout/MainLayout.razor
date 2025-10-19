@@ -11,9 +11,9 @@
 	{
 		if (firstRender)
 		{
-			isDarkMode = await themeProvider!.GetSystemPreference();
+			isDarkMode = await themeProvider!.GetSystemDarkModeAsync();
 
-			await themeProvider!.WatchSystemPreference(OnSystemPreferenceChanged);
+			await themeProvider!.WatchSystemDarkModeAsync(OnSystemPreferenceChanged);
 
 			StateHasChanged();
 		}
