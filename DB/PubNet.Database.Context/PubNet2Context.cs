@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using PubNet.Database.Entities;
 using PubNet.Database.Entities.Auth;
 using PubNet.Database.Entities.Dart;
-using PubNet.Database.Entities.Nuget;
 using PubNet.Database.Entities.Packages;
 
 namespace PubNet.Database.Context;
@@ -32,16 +31,6 @@ public class PubNet2Context(DbContextOptions<PubNet2Context> options) : DbContex
 	public DbSet<DartPendingArchive> DartPendingArchives { get; init; } = null!;
 
 	public DbSet<DartPackageVersionAnalysis> DartPackageVersionAnalyses { get; init; } = null!;
-
-	#endregion
-
-	#region Nuget Packages
-
-	public DbSet<NugetPackage> NugetPackages { get; init; } = null!;
-
-	public DbSet<NugetPackageVersion> NugetPackageVersions { get; init; } = null!;
-
-	public DbSet<NugetPackageVersionArchive> NugetPackageArchives { get; init; } = null!;
 
 	#endregion
 

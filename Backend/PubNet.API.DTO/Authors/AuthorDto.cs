@@ -9,7 +9,6 @@ public partial class AuthorDto
 {
 	[MapperIgnoreSource(nameof(Author.Identity))]
 	[MapperIgnoreSource(nameof(Author.DartPackages))]
-	[MapperIgnoreSource(nameof(Author.NugetPackages))]
 	public static partial AuthorDto MapFrom(Author author);
 
 	[Required]

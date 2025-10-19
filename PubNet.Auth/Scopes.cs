@@ -38,19 +38,6 @@ public static class Scopes
 
 			public const string Any = Prefix + "*";
 		}
-
-		public static class Nuget
-		{
-			private const string Prefix = Packages.Prefix + "nuget:";
-
-			public const string New = Prefix + "new";
-
-			public const string Delete = Prefix + "delete";
-
-			public const string Search = Prefix + "search";
-
-			public const string Any = Prefix + "*";
-		}
 	}
 
 	public static class Authors

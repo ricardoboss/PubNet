@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PubNet.Database.Entities.Auth;
 using PubNet.Database.Entities.Dart;
-using PubNet.Database.Entities.Nuget;
 
 namespace PubNet.Database.Entities;
 
@@ -20,6 +19,4 @@ public class Author
 	public virtual Identity? Identity { get; init; }
 
 	public virtual ICollection<DartPackage> DartPackages { get; init; } = null!;
-
-	public virtual ICollection<NugetPackage> NugetPackages { get; init; } = null!;
 }

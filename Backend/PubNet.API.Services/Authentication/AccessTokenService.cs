@@ -92,10 +92,6 @@ public class AccessTokenService(IPasswordVerifier passwordVerifier, ITokenDmo to
 		Scopes.Packages.Dart.Retract,
 		Scopes.Packages.Dart.Search,
 		Scopes.Packages.Dart.Any,
-		Scopes.Packages.Nuget.New,
-		Scopes.Packages.Nuget.Delete,
-		Scopes.Packages.Nuget.Search,
-		Scopes.Packages.Nuget.Any,
 		Scopes.Authors.Search,
 		Scopes.Authors.Delete.Self,
 	];
