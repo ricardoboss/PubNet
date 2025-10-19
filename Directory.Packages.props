@@ -34,9 +34,9 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.3" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.17.1" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.17.1" />
