@@ -158,6 +158,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public UntypedNode Version { get; set; }
 #endif
+        /// <summary>The workspace property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<string>? Workspace { get; set; }
+#nullable restore
+#else
+        public List<string> Workspace { get; set; }
+#endif
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.PubSpec"/> and sets the default values.
         /// </summary>
@@ -201,6 +209,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
                 { "screenshots", n => { Screenshots = n.GetCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.Screenshot>(global::PubNet.Client.ApiClient.Generated.Models.Screenshot.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "topics", n => { Topics = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "version", n => { Version = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "workspace", n => { Workspace = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
         }
         /// <summary>
@@ -228,6 +237,7 @@ namespace PubNet.Client.ApiClient.Generated.Models
             writer.WriteCollectionOfObjectValues<global::PubNet.Client.ApiClient.Generated.Models.Screenshot>("screenshots", Screenshots);
             writer.WriteCollectionOfPrimitiveValues<string>("topics", Topics);
             writer.WriteObjectValue<UntypedNode>("version", Version);
+            writer.WriteCollectionOfPrimitiveValues<string>("workspace", Workspace);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

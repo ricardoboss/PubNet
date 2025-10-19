@@ -503,45 +503,6 @@
         }
       }
     },
-    "/Authentication/RegistrationsOpen": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InternalServerErrorDto"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Default Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericErrorDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/Authentication/Self": {
       "get": {
         "tags": [
@@ -2062,6 +2023,265 @@
           "author:search"
         ]
       }
+    },
+    "/Admin/Identity": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/Admin/Identities": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentityDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "461": {
+            "description": "Invalid role",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidRoleErrorDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/Setup/Status": {
+      "get": {
+        "tags": [
+          "Setup"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetupStatusDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Setup/RootAdmin": {
+      "post": {
+        "tags": [
+          "Setup"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCreatedDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerErrorDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2099,7 +2319,8 @@
       "InvalidRoleErrorDto": {
         "required": [
           "requiredRole",
-          "givenRole",
+          "claimedRole",
+          "message",
           "error"
         ],
         "type": "object",
@@ -2107,7 +2328,10 @@
           "requiredRole": {
             "type": "string"
           },
-          "givenRole": {
+          "claimedRole": {
+            "type": "string"
+          },
+          "message": {
             "type": "string"
           },
           "error": {
@@ -2131,6 +2355,7 @@
         "required": [
           "requiredScopes",
           "givenScopes",
+          "message",
           "error"
         ],
         "type": "object",
@@ -2146,6 +2371,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "message": {
+            "type": "string"
           },
           "error": {
             "required": [
@@ -2261,6 +2489,9 @@
           },
           "password": {
             "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/NullableOfRole"
           }
         }
       },
@@ -2493,6 +2724,30 @@
           }
         }
       },
+      "IdentityDto": {
+        "required": [
+          "id",
+          "author",
+          "email",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "author": {
+            "$ref": "#/components/schemas/AuthorDto"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          }
+        }
+      },
       "NotFoundErrorDto": {
         "required": [
           "error"
@@ -2511,6 +2766,15 @@
           }
         }
       },
+      "NullableOfRole": {
+        "enum": [
+          "Default",
+          "Admin",
+          "Unspecified",
+          null
+        ],
+        "nullable": true
+      },
       "PackageListCollectionDto": {
         "required": [
           "dart"
@@ -2523,7 +2787,10 @@
         }
       },
       "PackageType": {
-        "type": "integer"
+        "enum": [
+          "Nuget",
+          "Dart"
+        ]
       },
       "Platforms": {
         "nullable": true
@@ -2648,8 +2915,22 @@
           },
           "environment": {
             "$ref": "#/components/schemas/Environment"
+          },
+          "workspace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           }
         }
+      },
+      "Role": {
+        "enum": [
+          "Default",
+          "Admin",
+          "Unspecified"
+        ]
       },
       "Screenshot": {
         "required": [
@@ -2671,6 +2952,21 @@
       },
       "SemVersionRange": {
         "nullable": true
+      },
+      "SetupStatusDto": {
+        "required": [
+          "registrationsOpen",
+          "setupComplete"
+        ],
+        "type": "object",
+        "properties": {
+          "registrationsOpen": {
+            "type": "boolean"
+          },
+          "setupComplete": {
+            "type": "boolean"
+          }
+        }
       },
       "TokenCollectionDto": {
         "required": [
@@ -2812,6 +3108,12 @@
     },
     {
       "name": "Authors"
+    },
+    {
+      "name": "Admin"
+    },
+    {
+      "name": "Setup"
     }
   ]
 }

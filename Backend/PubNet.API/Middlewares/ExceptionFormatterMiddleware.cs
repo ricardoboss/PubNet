@@ -43,7 +43,7 @@ public class ExceptionFormatterMiddleware : IMiddleware
 					Error = new()
 					{
 						Code = "missing_scope",
-						Message = "One or more additional scopes is required to perform this action.",
+						Message = missingScopeException.Message,
 					},
 					GivenScopes = missingScopeException.AvailableScopes.Select(s => s.Value).ToArray(),
 					RequiredScopes = missingScopeException.MissingScopes.Select(s => s.Value).ToArray(),
@@ -59,9 +59,9 @@ public class ExceptionFormatterMiddleware : IMiddleware
 					Error = new()
 					{
 						Code = "invalid_role",
-						Message = "A different role is required to perform this action.",
+						Message = invalidRoleException.Message,
 					},
-					GivenRole = invalidRoleException.GivenRole.ToClaimValue(),
+					ClaimedRole = invalidRoleException.ClaimedRole.ToClaimValue(),
 					RequiredRole = invalidRoleException.RequiredRole.ToClaimValue(),
 				};
 

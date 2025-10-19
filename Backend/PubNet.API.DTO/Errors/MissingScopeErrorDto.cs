@@ -9,4 +9,6 @@ public class MissingScopeErrorDto : ErrorDto
 
 	[Required]
 	public required string[] GivenScopes { get; init; } = [];
+
+	public string? Message { get; init; }
 }

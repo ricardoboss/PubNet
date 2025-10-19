@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using PubNet.API.DTO.Admin;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
 using PubNet.API.DTO.Errors;
@@ -17,6 +18,14 @@ namespace PubNet.API.DTO;
 [JsonSerializable(typeof(TokenCreatedDto))]
 [JsonSerializable(typeof(TokenDto))]
 [JsonSerializable(typeof(AccountCreatedDto))]
+#endregion
+
+#region Admin
+
+[JsonSerializable(typeof(IdentityDto))]
+[JsonSerializable(typeof(IEnumerable<IdentityDto>))]
+[JsonSerializable(typeof(SetupStatusDto))]
+
 #endregion
 
 #region Authors

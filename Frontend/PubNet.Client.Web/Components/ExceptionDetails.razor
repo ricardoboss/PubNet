@@ -1,0 +1,12 @@
+﻿@code {
+
+	[Parameter, EditorRequired]
+	public required Exception Exception { get; set; }
+
+	private string ExceptionSummary => Exception.GetType().Name + ": " + Exception.Message + Environment.NewLine + Exception.StackTrace;
+}
+
+<details>
+	<summary>Exception Details</summary>
+	<pre style="overflow-x: auto">@ExceptionSummary</pre>
+</details>

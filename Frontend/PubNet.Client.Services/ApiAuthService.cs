@@ -6,7 +6,7 @@ using PubNet.Auth.Models;
 
 namespace PubNet.Client.Services;
 
-public class ApiLoginService(PubNetApiClient apiClient) : ILoginService
+public class ApiAuthService(PubNetApiClient apiClient) : ILoginService, IAuthenticationService
 {
 	public async Task<LoginSuccessResult> LoginAsync(CreateLoginTokenDto request, CancellationToken cancellationToken = default)
 	{
@@ -22,6 +22,30 @@ public class ApiLoginService(PubNetApiClient apiClient) : ILoginService
 			var jwt = JsonWebToken.From(tokenValue);
 
 			return new(jwt);
+		}
+		catch (AuthErrorDto e)
+		{
+			throw new UnauthorizedAccessException(e.Message);
+		}
+		catch (ApiException e)
+		{
+			throw InvalidResponseException.UnexpectedResponse(e);
+		}
+	}
+
+	public async Task<AuthorDto> GetSelfAsync(JsonWebToken? token = null, CancellationToken cancellationToken = default)
+	{
+		try
+		{
+			var result = await apiClient.Authentication.Self.GetAsync(r =>
+			{
+				if (token is { } jwt)
+					r.Headers["Authorization"] = ["Bearer " + jwt.Value];
+			}, cancellationToken: cancellationToken);
+			if (result is null)
+				throw new InvalidResponseException("No response could be deserialized");
+
+			return result;
 		}
 		catch (AuthErrorDto e)
 		{

@@ -22,7 +22,7 @@ public class ClaimsPrincipalGuardThrowsBuilder(IGuard guard, ClaimsPrincipal use
 	{
 		get
 		{
-			var roleClaimValue = user.FindFirstValue(JwtClaims.Roles);
+			var roleClaimValue = user.FindFirstValue(JwtClaims.Role);
 
 			return roleClaimValue?.ToRole() ?? Role.Unspecified;
 		}
@@ -47,7 +47,7 @@ public class ClaimsPrincipalGuardThrowsBuilder(IGuard guard, ClaimsPrincipal use
 
 	public void DoesntHaveRole(Role role, string? message = null)
 	{
-		if (!guard.Allows(UserRoleClaim, toActAs: role))
+		if (guard.Allows(UserRoleClaim, toActAs: role))
 			return;
 
 		throw new InvalidRoleException(UserRoleClaim, role, message);

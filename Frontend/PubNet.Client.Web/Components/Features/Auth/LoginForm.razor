@@ -1,9 +1,13 @@
+@using System.Diagnostics.CodeAnalysis
 @inject ILoginService LoginService
 @inject ILoginTokenStorage LoginTokenStorage
 @inject ILogger<LoginForm> Logger
 @inject NavigationManager NavigationManager
 
 @code {
+
+	[Parameter, StringSyntax(StringSyntaxAttribute.Uri)]
+	public string PostLoginRedirect { get; set; } = "/";
 
 	private EditContext? editContext;
 
@@ -50,7 +54,7 @@
 
 			await LoginTokenStorage.StoreTokenAsync(result.Token);
 
-			NavigationManager.NavigateTo("/");
+			NavigationManager.NavigateTo(PostLoginRedirect);
 		}
 		catch (UnauthorizedAccessException e)
 		{

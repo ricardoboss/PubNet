@@ -15,6 +15,14 @@ namespace PubNet.Client.ApiClient.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The claimedRole property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? ClaimedRole { get; set; }
+#nullable restore
+#else
+        public string ClaimedRole { get; set; }
+#endif
         /// <summary>The error property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -23,16 +31,16 @@ namespace PubNet.Client.ApiClient.Generated.Models
 #else
         public global::PubNet.Client.ApiClient.Generated.Models.InvalidRoleErrorDto_error Error { get; set; }
 #endif
-        /// <summary>The givenRole property</summary>
+        /// <summary>The primary error message.</summary>
+        public override string Message { get => MessageEscaped ?? string.Empty; }
+        /// <summary>The message property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public string? GivenRole { get; set; }
+        public string? MessageEscaped { get; set; }
 #nullable restore
 #else
-        public string GivenRole { get; set; }
+        public string MessageEscaped { get; set; }
 #endif
-        /// <summary>The primary error message.</summary>
-        public override string Message { get => base.Message; }
         /// <summary>The requiredRole property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -66,8 +74,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "claimedRole", n => { ClaimedRole = n.GetStringValue(); } },
                 { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.InvalidRoleErrorDto_error>(global::PubNet.Client.ApiClient.Generated.Models.InvalidRoleErrorDto_error.CreateFromDiscriminatorValue); } },
-                { "givenRole", n => { GivenRole = n.GetStringValue(); } },
+                { "message", n => { MessageEscaped = n.GetStringValue(); } },
                 { "requiredRole", n => { RequiredRole = n.GetStringValue(); } },
             };
         }
@@ -78,8 +87,9 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("claimedRole", ClaimedRole);
             writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.InvalidRoleErrorDto_error>("error", Error);
-            writer.WriteStringValue("givenRole", GivenRole);
+            writer.WriteStringValue("message", MessageEscaped);
             writer.WriteStringValue("requiredRole", RequiredRole);
             writer.WriteAdditionalData(AdditionalData);
         }
