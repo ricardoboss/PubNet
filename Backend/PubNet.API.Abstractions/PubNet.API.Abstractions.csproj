@@ -12,6 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+  	<PackageReference Include="DartLang.PubSpec.Serialization.Json" />
 		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
 	</ItemGroup>
 

@@ -6,6 +6,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+  	<PackageReference Include="DartLang.PubSpec.Serialization.Json" VersionOverride="3.1.0" />
 		<PackageReference Include="Riok.Mapperly"/>
 	</ItemGroup>
 
