@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -10,6 +11,7 @@ using PubNet.Auth;
 
 namespace PubNet.API.OpenApi;
 
+[RequiresDynamicCode("Recursively accesses public properties of the given type")]
 public class AuthMetadataTransformer : IOpenApiOperationTransformer, IOpenApiDocumentTransformer
 {
 	public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,

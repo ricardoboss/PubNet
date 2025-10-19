@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.OpenApi;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.OpenApi;
 
+[RequiresDynamicCode("Recursively accesses public properties of the given type")]
 public class ErrorsOperationTransformer : IOpenApiOperationTransformer, IOpenApiDocumentTransformer
 {
 	private static readonly OpenApiResponse InternalServerErrorResponse = new()
