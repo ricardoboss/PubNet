@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PubNet.Database.Context;
@@ -12,9 +13,11 @@ using PubNet.Database.Context;
 namespace PubNet.Database.Context.Migrations
 {
     [DbContext(typeof(PubNet2Context))]
-    partial class PubNetContextModelSnapshot : ModelSnapshot
+    [Migration("20251019131229_RemoveNuGet")]
+    partial class RemoveNuGet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
