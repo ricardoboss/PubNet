@@ -8,10 +8,10 @@
 	{
 		await base.OnInitializedAsync();
 
-		await LoadAuthor(default);
+		await LoadAuthor();
 	}
 
-	private async Task LoadAuthor(CancellationToken cancellationToken)
+	private async Task LoadAuthor()
 	{
 		var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 
