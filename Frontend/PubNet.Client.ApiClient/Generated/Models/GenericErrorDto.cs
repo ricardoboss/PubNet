@@ -18,13 +18,21 @@ namespace PubNet.Client.ApiClient.Generated.Models
         /// <summary>The error property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto? Error { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto? Error { get; set; }
 #nullable restore
 #else
-        public global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto Error { get; set; }
+        public global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto Error { get; set; }
 #endif
         /// <summary>The primary error message.</summary>
         public override string Message { get => base.Message; }
+        /// <summary>The stackTrace property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<string>? StackTraceEscaped { get; set; }
+#nullable restore
+#else
+        public List<string> StackTraceEscaped { get; set; }
+#endif
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.Client.ApiClient.Generated.Models.GenericErrorDto"/> and sets the default values.
         /// </summary>
@@ -50,7 +58,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto>(global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto.CreateFromDiscriminatorValue); } },
+                { "error", n => { Error = n.GetObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>(global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto.CreateFromDiscriminatorValue); } },
+                { "stackTrace", n => { StackTraceEscaped = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
             };
         }
         /// <summary>
@@ -60,7 +69,8 @@ namespace PubNet.Client.ApiClient.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.GenericErrorContentDto>("error", Error);
+            writer.WriteObjectValue<global::PubNet.Client.ApiClient.Generated.Models.CodeMessageDto>("error", Error);
+            writer.WriteCollectionOfPrimitiveValues<string>("stackTrace", StackTraceEscaped);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

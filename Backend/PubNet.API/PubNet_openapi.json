@@ -1515,6 +1515,26 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthErrorDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorDto"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Unprocessable Entity",
             "content": {
@@ -2048,22 +2068,30 @@
     "schemas": {
       "InternalServerErrorDto": {
         "required": [
-          "error",
-          "message",
-          "stackTrace"
+          "stackTrace",
+          "error"
         ],
         "type": "object",
         "properties": {
-          "error": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          },
           "stackTrace": {
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "error": {
+            "required": [
+              "code",
+              "message"
+            ],
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
             }
           }
         }
@@ -2071,7 +2099,8 @@
       "InvalidRoleErrorDto": {
         "required": [
           "requiredRole",
-          "givenRole"
+          "givenRole",
+          "error"
         ],
         "type": "object",
         "properties": {
@@ -2080,13 +2109,29 @@
           },
           "givenRole": {
             "type": "string"
+          },
+          "error": {
+            "required": [
+              "code",
+              "message"
+            ],
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
           }
         }
       },
       "MissingScopeErrorDto": {
         "required": [
           "requiredScopes",
-          "givenScopes"
+          "givenScopes",
+          "error"
         ],
         "type": "object",
         "properties": {
@@ -2100,6 +2145,21 @@
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "error": {
+            "required": [
+              "code",
+              "message"
+            ],
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
             }
           }
         }
@@ -2121,16 +2181,12 @@
       },
       "AuthErrorDto": {
         "required": [
-          "error",
-          "message"
+          "error"
         ],
         "type": "object",
         "properties": {
           "error": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -2171,6 +2227,21 @@
             "items": {
               "$ref": "#/components/schemas/AuthorDto"
             }
+          }
+        }
+      },
+      "CodeMessageDto": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
           }
         }
       },
@@ -2246,17 +2317,6 @@
             "additionalProperties": {
               "type": "string"
             }
-          }
-        }
-      },
-      "DartMessageDto": {
-        "required": [
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
           }
         }
       },
@@ -2385,7 +2445,7 @@
         "type": "object",
         "properties": {
           "success": {
-            "$ref": "#/components/schemas/DartMessageDto"
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -2415,36 +2475,21 @@
         },
         "nullable": true
       },
-      "GenericErrorContentDto": {
-        "required": [
-          "code",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          },
-          "stackTrace": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        }
-      },
       "GenericErrorDto": {
         "required": [
           "error"
         ],
         "type": "object",
         "properties": {
+          "stackTrace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
           "error": {
-            "$ref": "#/components/schemas/GenericErrorContentDto"
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -2454,8 +2499,15 @@
         ],
         "type": "object",
         "properties": {
+          "stackTrace": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
           "error": {
-            "$ref": "#/components/schemas/GenericErrorContentDto"
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
