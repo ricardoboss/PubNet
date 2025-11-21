@@ -12,10 +12,12 @@ resharper_align_multiline_binary_expressions_chain = false
 resharper_align_multiline_statement_conditions = false
 resharper_csharp_alignment_tab_fill_style = use_tabs_only
 resharper_indent_braces_inside_statement_conditions = false
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_field_attribute_on_same_line = false
 
-[*.cs]
+[{*.cs,*.razor,*.csproj,*.props}]
 indent_style = tab
 indent_size = tab
 
-[{*.ya?ml,*.json}]
+[{*.ya?ml,*.json,*.xml,NuGet.Config}]
 indent_size = 2
