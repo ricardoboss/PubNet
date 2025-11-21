@@ -38,13 +38,14 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var url = _endpointHelper.GenerateFullyQualified(request, "/api/storage/upload");
-		var fields = new Dictionary<string, string>
+		var url = _endpointHelper.GenerateFullyQualified(request, "/api/storage/upload", new Dictionary<string, string?>
 		{
-			{ "author-id", author.Id.ToString() },
-		};
+			{ "authorId", author.Id.ToString() },
+		});
 
-		return Task.FromResult(new UploadEndpointData(url, fields));
+		url = _endpointHelper.SignEndpoint(url);
+
+		return Task.FromResult(new UploadEndpointData(url, new()));
 	}
 
 	[HttpPost("upload")]
@@ -52,8 +53,11 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status411LengthRequired, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status413PayloadTooLarge, Type = typeof(ErrorResponse))]
-	public async Task<IActionResult> Upload()
+	public async Task<IActionResult> Upload([FromQuery] int? authorId)
 	{
+		if (!_endpointHelper.ValidateSignature(Request.QueryString.ToString()))
+			return BadRequest(ErrorResponse.InvalidSignedUrl);
+
 		const long maxUploadSize = 100_000_000; // 100 MB
 
 		var size = Request.Headers.ContentLength;
@@ -70,10 +74,9 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 		if (packageFile is null)
 			return BadRequest(ErrorResponse.MissingPackageFile);
 
-		if (!Request.Form.ContainsKey("author-id"))
+		if (authorId is null)
 			return BadRequest(ErrorResponse.MissingFields);
 
-		var authorId = int.Parse(Request.Form["author-id"].ToString());
 		var author = await _db.Authors.FindAsync(authorId);
 		if (author is null)
 			return BadRequest(ErrorResponse.InvalidAuthorId);
