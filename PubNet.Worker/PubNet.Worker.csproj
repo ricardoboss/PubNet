@@ -1,22 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>dotnet-PubNet.Worker-71A7D29D-AEF8-48AB-8F49-416D4C8255C1</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CliWrap" Version="3.6.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
-		<PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
+		<PackageReference Include="CliWrap"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting"/>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+		<PackageReference Include="Serilog.Extensions.Hosting"/>
+		<PackageReference Include="Serilog.Settings.Configuration"/>
+		<PackageReference Include="Serilog.Sinks.Console"/>
+		<PackageReference Include="Serilog.Sinks.Seq"/>
+		<PackageReference Include="SerilogAnalyzer"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj" />
-		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj" />
+		<ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj"/>
+		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj"/>
 	</ItemGroup>
 </Project>
