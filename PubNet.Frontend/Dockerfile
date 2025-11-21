@@ -5,6 +5,8 @@ EXPOSE 80
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["PubNet.Frontend/PubNet.Frontend.csproj", "PubNet.Frontend/"]
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
 RUN dotnet restore "PubNet.Frontend/PubNet.Frontend.csproj"
 COPY . .
 WORKDIR "/src/PubNet.Frontend"

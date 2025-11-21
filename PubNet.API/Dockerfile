@@ -6,6 +6,8 @@ EXPOSE 443
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["PubNet.API/PubNet.API.csproj", "PubNet.API/"]
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
 RUN dotnet restore "PubNet.API/PubNet.API.csproj"
 COPY . .
 WORKDIR "/src/PubNet.API"
