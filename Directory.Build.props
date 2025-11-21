@@ -5,8 +5,6 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>default</LangVersion>
-
-		<IsAotCompatible>true</IsAotCompatible>
 	</PropertyGroup>
 
 </Project>
