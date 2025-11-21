@@ -85,8 +85,6 @@ This setting can be changed at runtime.
 Create a `docker-compose.yml` with the following contents:
 
 ```yaml
-version: '3.9'
-
 volumes:
   postgres_data:
   pubnet_packages:
@@ -95,7 +93,7 @@ volumes:
 
 services:
   database:
-    image: postgres:latest
+    image: postgres:17
     restart: always
     environment:
       POSTGRES_USER: "pubnet"
