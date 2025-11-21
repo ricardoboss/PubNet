@@ -25,9 +25,8 @@
 		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12"/>
 		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18"/>
 		<PackageVersion Include="Semver" Version="2.3.0"/>
-		<PackageVersion Include="Serilog.AspNetCore" Version="6.1.1-dev-00293"/>
-		<PackageVersion Include="Serilog.Sinks.Seq" Version="5.2.3"/>
 		<PackageVersion Include="SerilogAnalyzer" Version="0.15.0"/>
+		<PackageVersion Include="Serilog.AspNetCore" Version="6.1.1-dev-00293"/>
 		<PackageVersion Include="Serilog.Extensions.Hosting" Version="5.0.1"/>
 		<PackageVersion Include="Serilog.Settings.Configuration" Version="3.4.0"/>
 		<PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0"/>
