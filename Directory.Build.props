@@ -7,4 +7,6 @@
 		<LangVersion>default</LangVersion>
 	</PropertyGroup>
 
+	<Import Project="Directory.Tests.props" Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"/>
+
 </Project>
