@@ -6,7 +6,7 @@ WORKDIR /build
 COPY ["src/PubNet.Worker/PubNet.Worker.csproj", "src/PubNet.Worker/"]
 COPY ["Directory.Build.props", "./"]
 COPY ["Directory.Packages.props", "./"]
-RUN dotnet restore "PubNet.Worker/PubNet.Worker.csproj"
+RUN dotnet restore "src/PubNet.Worker/PubNet.Worker.csproj"
 COPY . .
 WORKDIR "/build/src/PubNet.Worker"
 RUN dotnet build "PubNet.Worker.csproj" -c Release -o /app/build

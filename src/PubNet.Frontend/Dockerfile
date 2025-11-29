@@ -7,7 +7,7 @@ WORKDIR /build
 COPY ["src/PubNet.Frontend/PubNet.Frontend.csproj", "src/PubNet.Frontend/"]
 COPY ["Directory.Build.props", "./"]
 COPY ["Directory.Packages.props", "./"]
-RUN dotnet restore "PubNet.Frontend/PubNet.Frontend.csproj"
+RUN dotnet restore "src/PubNet.Frontend/PubNet.Frontend.csproj"
 COPY . .
 WORKDIR "/build/src/PubNet.Frontend"
 RUN dotnet build "PubNet.Frontend.csproj" -c Release -o /app/build
