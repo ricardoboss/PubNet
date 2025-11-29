@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
+using PubNet.Common.Extensions;
 using PubNet.Common.Interfaces;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -30,8 +31,10 @@ public class PackagesController(
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ResponseCache(VaryByQueryKeys = ["q", "before", "limit"], Location = ResponseCacheLocation.Any, Duration = 60 * 60)]
-	public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
+	[ResponseCache(VaryByQueryKeys = ["q", "before", "limit"], Location = ResponseCacheLocation.Any,
+		Duration = 60 * 60)]
+	public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null,
+		[FromQuery] int? limit = null)
 	{
 		const int maxLimit = 1000;
 
@@ -55,14 +58,17 @@ public class PackagesController(
 			packages = packages.Take(resultLimit);
 		}
 
-		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p => new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version, p.Latest?.PublishedAtUtc))));
+		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p =>
+			new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version,
+				p.Latest?.PublishedAtUtc))));
 	}
 
 	[HttpGet("{name}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(VaryByQueryKeys = ["includeAuthor"], Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
-	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false,
+		CancellationToken cancellationToken = default)
 	{
 		using (logger.BeginScope(new Dictionary<string, object>
 		{
@@ -98,7 +104,8 @@ public class PackagesController(
 	[HttpPatch("{name}/discontinue")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> DiscontinueByName(string name, [FromBody] SetDiscontinuedDto dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> DiscontinueByName(string name, [FromBody] SetDiscontinuedDto dto,
+		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
@@ -129,7 +136,8 @@ public class PackagesController(
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context,
+		CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
@@ -191,7 +199,8 @@ public class PackagesController(
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
-	public async Task<IActionResult> GetVersion(string name, string version, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> GetVersion(string name, string version,
+		CancellationToken cancellationToken = default)
 	{
 		using (logger.BeginScope(new Dictionary<string, object>
 		{
@@ -227,7 +236,8 @@ public class PackagesController(
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionAnalysisDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(VaryByQueryKeys = ["includeReadme"], Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
-	public async Task<IActionResult> GetVersionAnalysis(string name, string version, [FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> GetVersionAnalysis(string name, string version,
+		[FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
 	{
 		using (logger.BeginScope(new Dictionary<string, object>
 		{
@@ -250,7 +260,8 @@ public class PackagesController(
 	[HttpPatch("{name}/versions/{version}/retract")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> RetractVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> RetractVersion(string name, string version,
+		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
@@ -299,7 +310,8 @@ public class PackagesController(
 	[HttpDelete("{name}/versions/{version}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	public async Task<IActionResult> DeleteVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> DeleteVersion(string name, string version,
+		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
@@ -365,13 +377,17 @@ public class PackagesController(
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
-	public async Task<IActionResult> GetVersionArchive(string name, string version, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> GetVersionArchive(string name, string version,
+		CancellationToken cancellationToken = default)
 	{
 		try
 		{
-			var stream = storageProvider.ReadArchiveAsync(name, version);
+			var archiveEntry = await storageProvider.GetArchiveAsync(name, version, cancellationToken);
+			var archiveStream = archiveEntry.OpenRead();
 
-			return new FileStreamResult(stream, "application/octet-stream")
+			Response.RegisterForDisposeAsync(archiveStream);
+
+			return new FileStreamResult(archiveStream, "application/octet-stream")
 			{
 				FileDownloadName = $"{name}-{version}.tar.gz",
 			};
@@ -401,37 +417,44 @@ public class PackagesController(
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
-	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path,
+		CancellationToken cancellationToken = default)
 	{
-		var localPath = await storageProvider.GetDocsPathAsync(name, version, cancellationToken);
+		var docsContainer = await storageProvider.GetDocsAsync(name, version, cancellationToken);
 
-		var notFoundPage = Path.Combine(localPath, "__404error.html");
-		if (!System.IO.File.Exists(notFoundPage))
+		var notFoundEntry = docsContainer.GetChildEntry("__404error.html");
+		if (notFoundEntry is not IFileEntry notFoundFile)
 			return NotFound();
 
-		string content;
+		var requestedFileEntry = docsContainer.GetRelativeEntry(path);
+		Stream? contentStream = null;
+		switch (requestedFileEntry)
+		{
+			case IFileEntry requestedFile:
+				contentStream = requestedFile.OpenRead();
+				break;
+			case IFileContainer requestedDir:
+				var indexFileEntry = requestedDir.GetChildEntry("index.html");
 
-		var requestedFile = Path.Combine(localPath, path);
-		if (!System.IO.File.Exists(requestedFile))
-			content = await System.IO.File.ReadAllTextAsync(notFoundPage, cancellationToken);
-		else
-			content = await System.IO.File.ReadAllTextAsync(requestedFile, cancellationToken);
+				contentStream = indexFileEntry is IFileEntry indexFile ? indexFile.OpenRead() : null;
+				break;
+		}
 
-		if (!_fileTypeProvider.TryGetContentType(requestedFile, out var contentType))
+		contentStream ??= notFoundFile.OpenRead();
+
+		if (!_fileTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType))
 			contentType = "application/octet-stream";
 
-		return new ContentResult
-		{
-			Content = content,
-			ContentType = contentType,
-			StatusCode = StatusCodes.Status200OK,
-		};
+		Response.RegisterForDisposeAsync(contentStream);
+
+		return new FileStreamResult(contentStream, contentType);
 	}
 
 	[HttpGet("versions/new")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator,
+		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 

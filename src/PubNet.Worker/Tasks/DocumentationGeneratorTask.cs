@@ -1,4 +1,5 @@
 using PubNet.Common.Interfaces;
+using PubNet.Common.Services;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -41,7 +42,8 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {TaskName} in {WorkingDirectory}", Name, workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchiveAsync(_package, _version))
+		var archiveFile = await _storageProvider.GetArchiveAsync(_package, _version, cancellationToken);
+		await using (var archiveStream = archiveFile.OpenRead())
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}
@@ -69,7 +71,8 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 			}
 
 			var apiDocPath = Path.Combine(workingDir, "doc", "api");
-			await _storageProvider.StoreDocsAsync(_package, _version, apiDocPath, cancellationToken);
+			var apiDocContainer = DirectoryFileContainer.FromPath(apiDocPath);
+			await _storageProvider.StoreDocsAsync(_package, _version, apiDocContainer, cancellationToken);
 
 			_analysis.DocumentationLink = $"/packages/{_package}/versions/{_version}/docs/";
 

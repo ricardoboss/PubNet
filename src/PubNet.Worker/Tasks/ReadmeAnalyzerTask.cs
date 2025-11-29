@@ -38,7 +38,8 @@ public class ReadmeAnalyzerTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(ReadmeAnalyzerTask), workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchiveAsync(_package, _version))
+		var archiveFile = await _storageProvider.GetArchiveAsync(_package, _version, cancellationToken);
+		await using (var archiveStream = archiveFile.OpenRead())
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}

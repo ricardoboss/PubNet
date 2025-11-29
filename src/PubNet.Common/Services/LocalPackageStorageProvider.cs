@@ -1,8 +1,9 @@
 using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PubNet.Common.Extensions;
 using PubNet.Common.Interfaces;
-using PubNet.Common.Utils;
+using PubNet.Common.Models;
 
 namespace PubNet.Common.Services;
 
@@ -40,7 +41,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 		var path = GetPackageVersionBasePath(name, version);
 
-		_logger.LogInformation("Deleting package version {PackageName} {PackageVersion} at {PackageVersionBasePath}", name, version, path);
+		_logger.LogInformation("Deleting package version {PackageName} {PackageVersion} at {PackageVersionBasePath}",
+			name, version, path);
 
 		Directory.Delete(path, true);
 
@@ -48,7 +50,8 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public async Task<string> StoreArchiveAsync(string name, string version, Stream stream, CancellationToken cancellationToken = default)
+	public async Task<Sha256Hash> StoreArchiveAsync(string name, string version, IFileEntry archiveFile,
+		CancellationToken cancellationToken = default)
 	{
 		var path = GetPackageVersionArchivePath(name, version);
 
@@ -56,66 +59,81 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 		if (!File.Exists(path))
 		{
-			var parent = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Cannot get parent directory for archive path");
+			var parent = Path.GetDirectoryName(path) ??
+				throw new InvalidOperationException("Cannot get parent directory for archive path");
 			Directory.CreateDirectory(parent);
 		}
 
-		await using (var fileStream = File.OpenWrite(path))
+		await using (var outFileStream = File.OpenWrite(path))
+		await using (var inFileStream = archiveFile.OpenRead())
 		{
-			await stream.CopyToAsync(fileStream, cancellationToken);
+			await inFileStream.CopyToAsync(outFileStream, cancellationToken);
 		}
 
 		await using (var fileStream = File.OpenRead(path))
 		using (var hash = SHA256.Create())
 		{
-			return Convert.ToHexString(await hash.ComputeHashAsync(fileStream, cancellationToken));
+			var rawHash = Convert.ToHexString(await hash.ComputeHashAsync(fileStream, cancellationToken));
+
+			return Sha256Hash.From(rawHash);
 		}
 	}
 
 	/// <inheritdoc />
-	public Stream ReadArchiveAsync(string name, string version)
+	public Task<IFileEntry> GetArchiveAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		var path = GetPackageVersionArchivePath(name, version);
+		var info = new FileInfo(path);
 
-		if (!File.Exists(path))
+		if (!info.Exists)
 			throw new FileNotFoundException("Archive file not found.", path);
 
-		return File.OpenRead(path);
+		var entry = new FilesystemFileEntry(info);
+
+		return Task.FromResult<IFileEntry>(entry);
 	}
 
 	/// <inheritdoc />
-	public async Task StoreDocsAsync(string name, string version, string tempFolder, CancellationToken cancellationToken = default)
+	public async Task StoreDocsAsync(string name, string version, IFileContainer docsContainer,
+		CancellationToken cancellationToken = default)
 	{
-		var destination = await GetDocsPathAsync(name, version, cancellationToken);
+		var destinationPath = GetDocsPath(name, version);
+		var destinationInfo = new DirectoryInfo(destinationPath);
 
-		_logger.LogDebug("Storing package documentation for {PackageName} {PackageVersion} at {Path}", name, version, destination);
+		_logger.LogDebug("Storing package documentation for {PackageName} {PackageVersion} at {Path}", name, version,
+			destinationPath);
 
-		if (Directory.Exists(destination))
+		if (destinationInfo.Exists)
 		{
 			_logger.LogDebug("Removing old package documentation");
 
-			Directory.Delete(destination, true);
+			destinationInfo.Delete(recursive: true);
 		}
 
-		DirectoriesHelper.CopyDirectory(tempFolder, destination, true);
-		Directory.Delete(tempFolder, true);
+		await docsContainer.CopyToAsync(destinationInfo, cancellationToken);
 	}
 
 	/// <inheritdoc />
-	public Task<string> GetDocsPathAsync(string name, string version, CancellationToken cancellationToken = default)
+	public Task<IFileContainer> GetDocsAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var path = Path.Combine(GetPackageVersionBasePath(name, version), "docs");
+		var path = GetDocsPath(name, version);
+		var info = new DirectoryInfo(path);
+		var container = new DirectoryFileContainer(info);
 
-		return Task.FromResult(Path.GetFullPath(path));
+		return Task.FromResult<IFileContainer>(container);
 	}
+
+	private string GetDocsPath(string name, string version) =>
+		Path.Combine(GetPackageVersionBasePath(name, version), "docs");
 
 	private string GetStorageBasePath()
 	{
 		var configuredPath = _configuration["PackageStorage:Path"];
 		return configuredPath is null
-			? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet", "packages")
+			? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet",
+				"packages")
 			: Path.GetFullPath(configuredPath);
 	}
 

@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"/>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
 		<PackageReference Include="SerilogAnalyzer"/>
 		<PackageReference Include="SharpCompress"/>
+		<PackageReference Include="Vogen" />
 	</ItemGroup>
 
 </Project>

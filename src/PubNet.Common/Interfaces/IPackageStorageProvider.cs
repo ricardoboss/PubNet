@@ -1,3 +1,5 @@
+using PubNet.Common.Models;
+
 namespace PubNet.Common.Interfaces;
 
 public interface IPackageStorageProvider
@@ -6,11 +8,11 @@ public interface IPackageStorageProvider
 
 	public Task DeletePackageVersionAsync(string name, string version, CancellationToken cancellationToken = default);
 
-	public Task<string> StoreArchiveAsync(string name, string version, Stream stream, CancellationToken cancellationToken = default);
+	public Task<Sha256Hash> StoreArchiveAsync(string name, string version, IFileEntry archiveFile, CancellationToken cancellationToken = default);
 
-	public Stream ReadArchiveAsync(string name, string version);
+	public Task<IFileEntry> GetArchiveAsync(string name, string version, CancellationToken cancellationToken = default);
 
-	public Task StoreDocsAsync(string name, string version, string tempFolder, CancellationToken cancellationToken = default);
+	public Task StoreDocsAsync(string name, string version, IFileContainer docsContainer, CancellationToken cancellationToken = default);
 
-	public Task<string> GetDocsPathAsync(string name, string version, CancellationToken cancellationToken = default);
+	public Task<IFileContainer> GetDocsAsync(string name, string version, CancellationToken cancellationToken = default);
 }

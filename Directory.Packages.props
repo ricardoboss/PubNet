@@ -42,6 +42,7 @@
 		<PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0"/>
 		<PackageVersion Include="SharpCompress" Version="0.42.0"/>
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="10.0.1"/>
+		<PackageVersion Include="Vogen" Version="8.0.3"/>
 		<PackageVersion Include="YamlDotNet" Version="16.3.0"/>
 	</ItemGroup>
 

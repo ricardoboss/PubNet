@@ -4,6 +4,8 @@ using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
+using PubNet.Common.Models;
+using PubNet.Common.Services;
 using PubNet.Common.Utils;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -209,13 +211,9 @@ public class StorageController(
 				}
 			}
 
-			string archiveSha256;
-			await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
-			{
-				archiveSha256 =
-					await storageProvider.StoreArchiveAsync(packageName, packageVersionId, archiveStream,
-						cancellationToken);
-			}
+			var archiveEntry = FilesystemFileEntry.FromPath(pending.ArchivePath);
+			var archiveSha256 =
+				await storageProvider.StoreArchiveAsync(packageName, packageVersionId, archiveEntry, cancellationToken);
 
 			var packageVersion = new PackageVersion
 			{
@@ -224,7 +222,7 @@ public class StorageController(
 				Version = packageVersionId,
 				ArchiveUrl = endpointHelper.GenerateFullyQualified(Request,
 					$"/api/packages/{packageName}/versions/{packageVersionId}.tar.gz"),
-				ArchiveSha256 = archiveSha256,
+				ArchiveSha256 = archiveSha256.Value,
 				PublishedAtUtc = DateTimeOffset.UtcNow,
 			};
 
