@@ -19,8 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v5
-      - name: Update tooling
-        run: dotnet tool update -g dotnet-format
       - name: Restore dependencies
         run: dotnet restore
       - name: Check code style
