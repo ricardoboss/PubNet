@@ -20,12 +20,4 @@
 		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Properties\PublishProfiles\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Properties\PublishProfiles\Release.pubxml" />
-	</ItemGroup>
-
 </Project>
