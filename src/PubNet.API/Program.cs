@@ -78,17 +78,6 @@ try
 	// used to store request-specific data in a single place
 	builder.Services.AddScoped<ApplicationRequestContext>();
 
-	// needed to dynamically generate uris to controller actions
-	builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-	builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-	builder.Services.AddScoped<IUrlHelper>(services =>
-	{
-		var actionContext = services.GetRequiredService<IActionContextAccessor>().ActionContext;
-		var factory = services.GetRequiredService<IUrlHelperFactory>();
-		return factory.GetUrlHelper(actionContext ??
-			throw new InvalidOperationException("Unable to get ActionContext"));
-	});
-
 	// package storage
 	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
 	builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
