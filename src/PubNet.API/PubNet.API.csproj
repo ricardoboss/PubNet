@@ -31,28 +31,12 @@
 		<Content Include="..\.dockerignore">
 			<Link>.dockerignore</Link>
 		</Content>
-		<Content Include="..\.gitignore">
-			<Link>.gitignore</Link>
-		</Content>
-		<Content Remove="packages\**"/>
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj"/>
 		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj"/>
 		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="packages\**"/>
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Remove="packages\**"/>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Remove="packages\**"/>
 	</ItemGroup>
 
 </Project>

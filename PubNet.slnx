@@ -5,23 +5,28 @@
     <File Path=".github/workflows/dotnet.yml" />
   </Folder>
   <Folder Name="/Solution Items/">
-    <File Path=".dockerignore" />
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
-    <File Path="backend-appsettings.json" />
-    <File Path="Caddyfile" />
-    <File Path="Directory.Build.props" />
-    <File Path="Directory.Packages.props" />
-    <File Path="docker-compose.yml" />
+    <File Path="Directory.Build.props"/>
+    <File Path="Directory.Packages.props"/>
     <File Path="LICENSE" />
-    <File Path="NuGet.Config" />
     <File Path="README.md" />
-    <File Path="worker-appsettings.json" />
   </Folder>
-  <Project Path="PubNet.API/PubNet.API.csproj" />
-  <Project Path="PubNet.Common/PubNet.Common.csproj" />
-  <Project Path="PubNet.Database/PubNet.Database.csproj" />
-  <Project Path="PubNet.DTO/PubNet.DTO.csproj" />
-  <Project Path="PubNet.Frontend/PubNet.Frontend.csproj" />
-  <Project Path="PubNet.Worker/PubNet.Worker.csproj" />
+  <Folder Name="/src/">
+    <File Path="src/.dockerignore" />
+    <File Path="src/docker-compose.yml" />
+    <File Path="src/NuGet.Config" />
+    <File Path="src/appsettings-frontend.json" />
+    <File Path="src/appsettings.json" />
+    <File Path="src/backend-appsettings.json" />
+    <File Path="src/Caddyfile" />
+    <File Path="src/frontend-appsettings.json" />
+    <File Path="src/worker-appsettings.json" />
+  </Folder>
+  <Project Path="src/PubNet.API/PubNet.API.csproj" />
+  <Project Path="src/PubNet.Common/PubNet.Common.csproj" />
+  <Project Path="src/PubNet.Database/PubNet.Database.csproj" />
+  <Project Path="src/PubNet.DTO/PubNet.DTO.csproj" />
+  <Project Path="src/PubNet.Frontend/PubNet.Frontend.csproj" />
+  <Project Path="src/PubNet.Worker/PubNet.Worker.csproj" />
 </Solution>
