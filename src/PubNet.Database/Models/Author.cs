@@ -12,7 +12,7 @@ public class Author : IdentityUser<int>
 #pragma warning disable CS8765
 	[Required] public override string UserName { get; set; } = string.Empty;
 
-	[ProtectedPersonalData] [Required] public override string Email { get; set; } = string.Empty;
+	[ProtectedPersonalData, Required] public override string Email { get; set; } = string.Empty;
 #pragma warning restore CS8765
 
 	public string? Website { get; set; }

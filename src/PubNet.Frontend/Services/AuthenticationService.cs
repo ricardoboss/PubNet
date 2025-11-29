@@ -8,7 +8,8 @@ public class AuthenticationService(
 	ILocalStorageService localStorage,
 	ApiClient apiClient,
 	FetchLock<AuthenticationService> fetchLock
-) {
+)
+{
 	private const string TokenStorageName = "authentication.token";
 	private const string SelfStorageName = "authentication.self";
 
