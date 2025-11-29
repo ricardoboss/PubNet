@@ -5,10 +5,6 @@
 
 Self-hosted pub.dev alternative.
 
-> [!NOTE]
-> I am currently in the process of rewriting the entire app.
-> If you want to test it, check out the [`develop` branch](https://github.com/ricardoboss/PubNet/tree/develop).
-
 ## Contents
 
 - [Development](#development)
@@ -27,13 +23,13 @@ Self-hosted pub.dev alternative.
 
 ## Development
 
-The root of this repository contains a `docker-compose.yml`, which contains three services used to aid in debugging `PubNet`:
+The `src` folder of this repository contains a `docker-compose.yml`, which contains three services used to aid in developing `PubNet`:
 
-- `database`: A postgres database (user: 'pubnet', password: 'pubnet')
+- `database`: A postgres database (user: `pubnet`, password: `pubnet`)
 - `adminer`: A webinterface for managing the database
 - `seq`: A useful logging service
 
-The only service you need to start is `database`, though the other services help during development.
+The only service you _need_ to start is `database`, though the other services help a lot.
 
 > **Note**
 >
@@ -49,20 +45,14 @@ The solution consists of a few projects, three of them compose the whole PubNet 
 
 ### Debugging
 
-You can use any IDE you want, as long as it supports debugging .NET 7 or higher.
+You can use any IDE you want, as long as it supports debugging .NET 10 or higher.
 
-The API needs to be hosted using `https`, because the `dart pub` tool refuses to authenticate against `http` APIs.
-
-> **Note**
->
-> As soon as https://github.com/dart-lang/pub/pull/3777 appears in a release of the `pub` tool, the API can be hosted using `http` 🎉
-
-For the `PubNet.Frontend` project, it is recommended to run it using `dotnet-watch`.
+For the `PubNet.Frontend` project, it is recommended to run it using `dotnet watch` to hot-reload changes.
 
 #### Database migrations
 
 This project uses Entity Framework Core with the code-first approach, so migrations are added using `dotnet ef migrations add <name>` and executed using `dotnet ef database update` in the `PubNet.Database` project folder.
-Currently, the database project expects the credentials and database name to all be equal to 'pubnet'.
+Currently, the database project expects the credentials and database name to all be equal to `pubnet`.
 
 ## Contributions
 
