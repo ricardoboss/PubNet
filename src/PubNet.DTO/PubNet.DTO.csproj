@@ -9,4 +9,8 @@
 		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="JetBrains.Annotations" />
+	</ItemGroup>
+
 </Project>

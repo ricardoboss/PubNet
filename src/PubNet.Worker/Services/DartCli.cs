@@ -12,6 +12,17 @@ public class DartCli(ILogger<DartCli> logger)
 		if (_dartBinary is not null)
 			return _dartBinary;
 
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			_dartBinary = await RunProcess("where.exe", "dart.bat");
+		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			_dartBinary = await RunProcess("which", "dart");
+		else
+			throw new NotSupportedException("Your platform is not supported.");
+
+		Debug.Assert(_dartBinary is not null);
+
+		return _dartBinary;
+
 		async Task<string> RunProcess(string findBin, string dartBin)
 		{
 			var process = Process.Start(new ProcessStartInfo
@@ -36,17 +47,6 @@ public class DartCli(ILogger<DartCli> logger)
 
 			return binPath;
 		}
-
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			_dartBinary = await RunProcess("where.exe", "dart.bat");
-		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			_dartBinary = await RunProcess("which", "dart");
-		else
-			throw new NotSupportedException("Your platform is not supported.");
-
-		Debug.Assert(_dartBinary is not null, "_dartBinary is not null");
-
-		return _dartBinary;
 	}
 
 	public async Task<int> Format(string folder, string workingDir, CancellationToken cancellationToken = default)

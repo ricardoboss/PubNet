@@ -25,7 +25,7 @@ public class PackageDto
 
 	public static PackageDto FromPackage(Package package)
 	{
-		var versions = package.Versions.Any()
+		var versions = package.Versions.Count != 0
 			? package.Versions.Select(PackageVersionDto.FromPackageVersion).ToList()
 			: null;
 

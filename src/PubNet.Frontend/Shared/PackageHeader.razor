@@ -1,6 +1,5 @@
 ﻿@using PubNet.API.DTO
 
-@inject PackagesService Packages
 @inject ApiClient Http
 
 <PageTitle>@Title</PageTitle>
@@ -51,8 +50,6 @@
 
 	[Parameter]
 	public PackageVersionDto? Version { get; set; }
-
-	private bool Loading { get; set; }
 
 	private string? PackageName => Package?.Name;
 

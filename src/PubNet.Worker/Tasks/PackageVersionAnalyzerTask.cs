@@ -75,7 +75,7 @@ public class PackageVersionAnalyzerTask(string package, string version)
 		}
 	}
 
-	private async Task<WorkerTaskResult> UpdateAnalysis(PackageVersionAnalysis analysis, DbContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
+	private async Task<WorkerTaskResult> UpdateAnalysis(PackageVersionAnalysis analysis, PubNetContext db, WorkerTaskQueue taskQueue, ILogger logger, CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -102,7 +102,7 @@ public class PackageVersionAnalyzerTask(string package, string version)
 		}
 	}
 
-	private void EnqueueMissingAnalyses(PackageVersionAnalysis analysis, WorkerTaskQueue taskQueue)
+	private static void EnqueueMissingAnalyses(PackageVersionAnalysis analysis, WorkerTaskQueue taskQueue)
 	{
 		if (analysis.ReadmeFound is null)
 			taskQueue.Enqueue(new ReadmeAnalyzerTask(analysis));

@@ -9,13 +9,13 @@ public class AnalysisService(ApiClient http, FetchLock<AnalysisService> fetchLoc
 
 	public void InvalidateAnalysisFor(string name, string? version = null)
 	{
-		if (!_analyses.ContainsKey(name))
+		if (!_analyses.TryGetValue(name, out var analysis))
 			return;
 
 		if (version is not null)
 		{
-			_analyses[name].Remove((version, true));
-			_analyses[name].Remove((version, false));
+			analysis.Remove((version, true));
+			analysis.Remove((version, false));
 		}
 		else
 		{

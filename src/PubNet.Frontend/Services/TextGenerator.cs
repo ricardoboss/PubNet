@@ -7,11 +7,13 @@ public static class TextGenerator
 		if (mirrored)
 			return $"{name}: ^{version}";
 
-		return $@"{name}:
-  hosted:
-    url: {httpBaseAddress}
-    name: {name}
-    version: ^{version}";
+		return $"""
+				{name}:
+				  hosted:
+				    url: {httpBaseAddress}
+				    name: {name}
+				    version: ^{version}
+				""";
 	}
 
 

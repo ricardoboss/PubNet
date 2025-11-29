@@ -20,7 +20,7 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 
 	private static async Task Handle(HttpContext context, Exception e)
 	{
-		if (e is BearerTokenException or InvalidCredentialException)
+		if (e is InvalidCredentialException)
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 			context.Response.Headers.WWWAuthenticate = new[]

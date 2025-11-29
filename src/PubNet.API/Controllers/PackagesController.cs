@@ -30,7 +30,7 @@ public class PackagesController(
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any, Duration = 60 * 60)]
+	[ResponseCache(VaryByQueryKeys = ["q", "before", "limit"], Location = ResponseCacheLocation.Any, Duration = 60 * 60)]
 	public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null, [FromQuery] int? limit = null)
 	{
 		const int maxLimit = 1000;
@@ -61,7 +61,7 @@ public class PackagesController(
 	[HttpGet("{name}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(VaryByQueryKeys = new[] { "includeAuthor" }, Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
+	[ResponseCache(VaryByQueryKeys = ["includeAuthor"], Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
 	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, CancellationToken cancellationToken = default)
 	{
 		using (logger.BeginScope(new Dictionary<string, object>
@@ -226,7 +226,7 @@ public class PackagesController(
 	[HttpGet("{name}/versions/{version}/analysis")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionAnalysisDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
-	[ResponseCache(VaryByQueryKeys = new[] { "includeReadme" }, Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
+	[ResponseCache(VaryByQueryKeys = ["includeReadme"], Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionAnalysis(string name, string version, [FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
 	{
 		using (logger.BeginScope(new Dictionary<string, object>

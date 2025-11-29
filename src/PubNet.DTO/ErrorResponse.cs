@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace PubNet.API.DTO;
 
 public class ErrorResponse(ErrorResponseBody? error = null)
@@ -85,4 +87,5 @@ public class ErrorResponse(ErrorResponseBody? error = null)
 	}
 }
 
+[PublicAPI]
 public record ErrorResponseBody(string Code, string Message);

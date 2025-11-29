@@ -7,9 +7,9 @@ namespace PubNet.API.Services;
 
 public class ApplicationRequestContext
 {
-	public List<string> AcceptedApiVersions { get; } = new();
+	public List<string> AcceptedApiVersions { get; } = [];
 
-	public List<string> AcceptedResponseFormats { get; } = new();
+	public List<string> AcceptedResponseFormats { get; } = [];
 
 	public Author? Author { get; set; }
 
@@ -26,7 +26,7 @@ public class ApplicationRequestContext
 		if (idStr is null || !int.TryParse(idStr, out var id))
 			throw MissingAuthentication;
 
-		var author = await db.Authors.FindAsync(new object?[] { id }, cancellationToken);
+		var author = await db.Authors.FindAsync([id], cancellationToken);
 		if (author is null)
 			throw MissingAuthentication;
 

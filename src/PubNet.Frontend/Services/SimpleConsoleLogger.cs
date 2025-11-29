@@ -18,38 +18,37 @@ public class SimpleConsoleLoggerProvider(IJSRuntime jsRuntime) : ILoggerProvider
 
 public class SimpleConsoleLogger(string name, IJSRuntime jsRuntime) : ILogger
 {
-	public LogLevel Minimum { get; set; } = LogLevel.Information;
-
 	/// <inheritdoc />
-	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+	public async void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
-		if (!IsEnabled(logLevel) || logLevel == LogLevel.None) return;
+		try
+		{
+			if (!IsEnabled(logLevel) || logLevel == LogLevel.None) return;
 
-		_ = jsRuntime.InvokeVoidAsync(
-			logLevel switch
-			{
-				LogLevel.Trace => "console.debug",
-				LogLevel.Debug => "console.debug",
-				LogLevel.Information => "console.log",
-				LogLevel.Warning => "console.warn",
-				LogLevel.Error => "console.error",
-				LogLevel.Critical => "console.error",
-				LogLevel.None => throw new InvalidOperationException(),
-				_ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null),
-			},
-			$"[{name}] {formatter(state, exception)}"
-		);
+			await jsRuntime.InvokeVoidAsync(
+				logLevel switch
+				{
+					LogLevel.Trace => "console.debug",
+					LogLevel.Debug => "console.debug",
+					LogLevel.Information => "console.log",
+					LogLevel.Warning => "console.warn",
+					LogLevel.Error => "console.error",
+					LogLevel.Critical => "console.error",
+					LogLevel.None => throw new InvalidOperationException(),
+					_ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null),
+				},
+				$"[{name}] {formatter(state, exception)}"
+			);
+		}
+		catch (Exception)
+		{
+			// ignored
+		}
 	}
 
 	/// <inheritdoc />
-	public bool IsEnabled(LogLevel logLevel)
-	{
-		return Minimum.CompareTo(logLevel) >= 0;
-	}
+	public bool IsEnabled(LogLevel logLevel) => true;
 
 	/// <inheritdoc />
-	public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-	{
-		return null;
-	}
+	public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 }

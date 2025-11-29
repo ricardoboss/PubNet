@@ -16,7 +16,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ResponseCache(VaryByQueryKeys = new[] { "q", "before", "limit" }, Location = ResponseCacheLocation.Any,
+	[ResponseCache(VaryByQueryKeys = ["q", "before", "limit"], Location = ResponseCacheLocation.Any,
 		Duration = 3600)]
 	public IActionResult GetAll([FromQuery] string? q = null, [FromQuery] long? before = null,
 		[FromQuery] int? limit = null)

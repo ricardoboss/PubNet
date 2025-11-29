@@ -1,9 +1,7 @@
 @inherits BaseComponent
 @using PubNet.API.DTO
 @inject ApiClient Http
-@inject PackagesService Packages
 @inject AnalysisService Analysis
-@inject ILogger<AnalysisBadges> Logger
 
 <Div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (Mirrored)
@@ -36,13 +34,15 @@
 			break;
 	}
 
-	@if (IsLatest == true)
+
+	@switch (IsLatest)
 	{
-		<Badge Color="Color.Success" Pill>Latest Version</Badge>
-	}
-	else if (IsLatest == false && !HideNonVersionSpecificBadges)
-	{
-		<Badge Color="Color.Warning" Pill>Not latest version</Badge>
+		case true:
+			<Badge Color="Color.Success" Pill>Latest Version</Badge>
+			break;
+		case false when !HideNonVersionSpecificBadges:
+			<Badge Color="Color.Warning" Pill>Not latest version</Badge>
+			break;
 	}
 
 	@if (IsDiscontinued && !HideNonVersionSpecificBadges)

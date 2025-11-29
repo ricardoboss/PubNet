@@ -1,5 +1,4 @@
 @inject ClipboardService Clipboard
-@inject IJSRuntime JsRuntime
 
 <Tooltip Text="@Tooltip" Placement="TooltipPlacement.Right">
     <Button Clicked="() => Clipboard.WriteText(Content ?? string.Empty)" Size="Size.ExtraSmall" Padding="Padding.Is1.OnY.Is2.OnX">

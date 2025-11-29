@@ -20,13 +20,13 @@ public class ApiClient(HttpClient httpClient, ILogger<ApiClient> logger)
 	public string? BaseAddress
 	{
 		get => BaseUri?.ToString();
-		set => BaseUri = value is not null ? new(value) : null;
+		init => BaseUri = value is not null ? new(value) : null;
 	}
 
-	public Uri? BaseUri
+	private Uri? BaseUri
 	{
 		get => httpClient.BaseAddress;
-		set => httpClient.BaseAddress = value;
+		init => httpClient.BaseAddress = value;
 	}
 
 	public async Task<HttpResponseMessage> GetAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)

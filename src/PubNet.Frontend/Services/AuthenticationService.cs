@@ -15,10 +15,7 @@ public class AuthenticationService(
 	private AuthorDto? _self;
 	private bool _fetchedSelf;
 
-	public event EventHandler? OnLogout;
-	public event EventHandler? OnLogin;
-
-	public async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
+	private async ValueTask<string?> GetTokenAsync(CancellationToken cancellationToken = default)
 	{
 		return apiClient.Token ??= await localStorage.GetItemAsync<string?>(TokenStorageName, cancellationToken);
 	}
@@ -39,8 +36,6 @@ public class AuthenticationService(
 	{
 		await RemoveTokenAsync(cancellationToken);
 		await RemoveSelfAsync(cancellationToken);
-
-		OnLogout?.Invoke(this, EventArgs.Empty);
 	}
 
 	private async Task RemoveTokenAsync(CancellationToken cancellationToken = default)
@@ -90,8 +85,6 @@ public class AuthenticationService(
 			await localStorage.SetItemAsync(SelfStorageName, _self, cancellationToken);
 
 			_fetchedSelf = true;
-
-			OnLogin?.Invoke(this, EventArgs.Empty);
 
 			return _self;
 		}

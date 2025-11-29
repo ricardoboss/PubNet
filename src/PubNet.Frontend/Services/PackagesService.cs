@@ -163,7 +163,7 @@ public class PackagesService(ApiClient http, AnalysisService analysis, FetchLock
 			if (_packages.TryGetValue(name, out var package))
 			{
 				var dto = package?.Versions?.FirstOrDefault(v => v.Version == version);
-				if (dto is not null) dto.Retracted = true;
+				dto?.Retracted = true;
 			}
 
 			analysis.InvalidateAnalysisFor(name, version);

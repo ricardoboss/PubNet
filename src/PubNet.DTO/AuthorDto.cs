@@ -16,7 +16,9 @@ public class AuthorDto
 			Website = author.Website,
 			Inactive = author.Inactive,
 			RegisteredAt = author.RegisteredAtUtc,
-			Packages = !ignorePackages && author.Packages.Any() ? author.Packages.Select(PackageDto.FromPackage) : null
+			Packages = !ignorePackages && author.Packages.Count != 0
+				? author.Packages.Select(PackageDto.FromPackage)
+				: null,
 		};
 	}
 

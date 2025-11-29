@@ -48,10 +48,11 @@ public class JwtTokenGenerator
 		return configuration["JWT:Audience"] ?? throw new("Key 'JWT:Audience' is missing in configuration");
 	}
 
-	public static int GetLifetimeInSeconds(IConfiguration configuration)
+	private static int GetLifetimeInSeconds(IConfiguration configuration)
 	{
 		var lifetimeInSecondsString = configuration["JWT:LifetimeInSeconds"] ??
 			throw new("Key 'JWT:LifetimeInSeconds' is missing in configuration");
+
 		if (!int.TryParse(lifetimeInSecondsString, out var lifetime))
 			throw new("Key 'JWT:LifetimeInSeconds' does not contain a valid integer");
 
@@ -64,12 +65,11 @@ public class JwtTokenGenerator
 		expireTime = issueTime.AddSeconds(_tokenLifetimeInSeconds);
 
 		var claims = new List<Claim>();
-		claims.AddRange(new Claim[]
-		{
+		claims.AddRange([
 			new("id", author.Id.ToString()),
 			new("name", author.Name),
 			new("username", author.UserName),
-		});
+		]);
 
 		if (additionalClaims != null)
 			claims.AddRange(additionalClaims);
