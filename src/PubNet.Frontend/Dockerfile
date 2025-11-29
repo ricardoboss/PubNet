@@ -1,8 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-WORKDIR /app
-EXPOSE 80
-
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+﻿FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /build
 COPY ["src/PubNet.Frontend/PubNet.Frontend.csproj", "src/PubNet.Frontend/"]
 COPY ["Directory.Build.props", "./"]
