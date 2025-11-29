@@ -18,4 +18,4 @@ RUN dotnet publish "PubNet.Frontend.csproj" -c Release -o /app/publish
 FROM nginx:alpine AS final
 WORKDIR /usr/share/nginx/html
 COPY --from=publish /app/publish/wwwroot .
-COPY ./PubNet.Frontend/nginx.conf /etc/nginx/nginx.conf
+COPY ./src/PubNet.Frontend/nginx.conf /etc/nginx/nginx.conf
