@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
 using PubNet.API.Interfaces;
@@ -117,7 +117,7 @@ try
 	{
 		const string definitionName = "Bearer";
 
-		o.AddSecurityDefinition(definitionName, new()
+		o.AddSecurityDefinition(definitionName, new OpenApiSecurityScheme
 		{
 			Type = SecuritySchemeType.Http,
 			BearerFormat = "JWT",
@@ -125,11 +125,11 @@ try
 			Scheme = "Bearer",
 		});
 
-		o.AddSecurityRequirement(new()
+		o.AddSecurityRequirement(d => new()
 		{
 			{
-				new() { Reference = new() { Type = ReferenceType.SecurityScheme, Id = definitionName } },
-				new List<string>()
+				new(definitionName, d),
+				[]
 			},
 		});
 	});

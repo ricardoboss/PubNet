@@ -1,7 +1,7 @@
-﻿@using Markdig.Renderers
-@using Markdig.Parsers
-@using Markdig
+﻿@using Markdig
 @using Markdig.Extensions.AutoIdentifiers
+@using Markdig.Parsers
+@using MarkdigHtmlRenderer = Markdig.Renderers.HtmlRenderer
 
 @inject ILogger<Markdown> Logger
 
@@ -52,7 +52,7 @@
             return null;
 
         var writer = new StringWriter();
-        var renderer = new HtmlRenderer(writer)
+        var renderer = new MarkdigHtmlRenderer(writer)
         {
             LinkRewriter = RewriteRelativeUrl,
         };
