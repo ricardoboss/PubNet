@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/docker-publish.yml" />
+    <File Path=".github/workflows/dotnet.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="backend-appsettings.json" />
+    <File Path="Caddyfile" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="docker-compose.yml" />
+    <File Path="LICENSE" />
+    <File Path="NuGet.Config" />
+    <File Path="README.md" />
+    <File Path="worker-appsettings.json" />
+  </Folder>
+  <Project Path="PubNet.API/PubNet.API.csproj" />
+  <Project Path="PubNet.Common/PubNet.Common.csproj" />
+  <Project Path="PubNet.Database/PubNet.Database.csproj" />
+  <Project Path="PubNet.DTO/PubNet.DTO.csproj" />
+  <Project Path="PubNet.Frontend/PubNet.Frontend.csproj" />
+  <Project Path="PubNet.Worker/PubNet.Worker.csproj" />
+</Solution>
