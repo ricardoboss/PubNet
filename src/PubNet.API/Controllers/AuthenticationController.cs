@@ -10,21 +10,13 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("authentication")]
-public class AuthenticationController : BaseController
+public class AuthenticationController(
+	JwtTokenGenerator tokenGenerator,
+	PubNetContext db,
+	PasswordManager passwordManager,
+	IConfiguration configuration
+) : BaseController
 {
-	private readonly PubNetContext _db;
-	private readonly PasswordManager _passwordManager;
-	private readonly JwtTokenGenerator _tokenGenerator;
-	private readonly IConfiguration _configuration;
-
-	public AuthenticationController(JwtTokenGenerator tokenGenerator, PubNetContext db, PasswordManager passwordManager, IConfiguration configuration)
-	{
-		_tokenGenerator = tokenGenerator;
-		_db = db;
-		_passwordManager = passwordManager;
-		_configuration = configuration;
-	}
-
 	private static InvalidCredentialException EmailNotFound => new("E-Mail address not registered");
 
 	[HttpPost("login")]
@@ -35,13 +27,13 @@ public class AuthenticationController : BaseController
 		if (string.IsNullOrWhiteSpace(dto.Email))
 			throw EmailNotFound;
 
-		var author = await _db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
+		var author = await db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
 		if (author is null)
 			throw EmailNotFound;
 
-		await _passwordManager.ThrowForInvalid(_db, author, dto.Password, cancellationToken);
+		await passwordManager.ThrowForInvalid(db, author, dto.Password, cancellationToken);
 
-		var token = _tokenGenerator.Generate(author, out var expiresAt);
+		var token = tokenGenerator.Generate(author, out var expiresAt);
 		return Ok(new JwtTokenResponse(token, expiresAt));
 	}
 
@@ -59,10 +51,10 @@ public class AuthenticationController : BaseController
 		if (dto.Username is null || dto.Name is null || dto.Password is null || dto.Email is null)
 			return UnprocessableEntity(ErrorResponse.MissingValues);
 
-		if (_db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
+		if (db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
 			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
 
-		if (_db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
+		if (db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
 			return UnprocessableEntity(ErrorResponse.EmailAlreadyInUse);
 
 		var author = new Author
@@ -76,10 +68,10 @@ public class AuthenticationController : BaseController
 			Packages = new List<Package>(),
 		};
 
-		author.PasswordHash = await _passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);
+		author.PasswordHash = await passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);
 
-		_db.Authors.Add(author);
-		await _db.SaveChangesAsync(cancellationToken);
+		db.Authors.Add(author);
+		await db.SaveChangesAsync(cancellationToken);
 
 		return CreatedAtAction("Get", "Authors", new { username = author.UserName }, author);
 	}
@@ -90,7 +82,7 @@ public class AuthenticationController : BaseController
 	public async Task<IActionResult> Self(ApplicationRequestContext context,
 		CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
 		return Ok(AuthorDto.FromAuthor(author, true));
 	}
@@ -99,6 +91,6 @@ public class AuthenticationController : BaseController
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
 	public bool RegistrationsEnabled()
 	{
-		return _configuration.GetValue<bool?>("OpenRegistration") ?? false;
+		return configuration.GetValue<bool?>("OpenRegistration") ?? false;
 	}
 }

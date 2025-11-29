@@ -4,19 +4,9 @@ using PubNet.API.DTO;
 
 namespace PubNet.Frontend.Services;
 
-public class PackagesService
+public class PackagesService(ApiClient http, AnalysisService analysis, FetchLock<PackagesService> fetchLock)
 {
-	private readonly ApiClient _http;
-	private readonly AnalysisService _analysis;
 	private readonly Dictionary<string, PackageDto?> _packages = new();
-	private readonly FetchLock<PackagesService> _fetchLock;
-
-	public PackagesService(ApiClient http, AnalysisService analysis, FetchLock<PackagesService> fetchLock)
-	{
-		_http = http;
-		_analysis = analysis;
-		_fetchLock = fetchLock;
-	}
 
 	private static UnauthorizedAccessException Unauthorized(string message) => new(message);
 	private static PackageNotFoundException NotFound(string? message = null) => new(message ?? "The package you are looking for does not exist");
@@ -25,15 +15,15 @@ public class PackagesService
 
 	public async Task<PackageDto?> GetPackage(string name, bool includeAuthor, bool forceFetch = false, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.UntilFreed(taskName: $"GetPackage({name}, {includeAuthor})");
+		await fetchLock.UntilFreed(taskName: $"GetPackage({name}, {includeAuthor})");
 
 		if (!forceFetch && _packages.TryGetValue(name, out var package))
 			return package ?? throw NotFound();
 
-		_fetchLock.Lock($"GetPackage({name}, {includeAuthor})");
+		fetchLock.Lock($"GetPackage({name}, {includeAuthor})");
 		try
 		{
-			var response = await _http.GetAsync($"packages/{name}?includeAuthor={includeAuthor}", cancellationToken);
+			var response = await http.GetAsync($"packages/{name}?includeAuthor={includeAuthor}", cancellationToken);
 			if (response.IsSuccessStatusCode)
 			{
 				package = await response.Content.ReadFromJsonAsync<PackageDto>(cancellationToken: cancellationToken);
@@ -54,16 +44,16 @@ public class PackagesService
 		}
 		finally
 		{
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 
 	public async Task DeletePackage(string name, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.LockAfterFreed(taskName: $"DeletePackage({name})");
+		await fetchLock.LockAfterFreed(taskName: $"DeletePackage({name})");
 		try
 		{
-			var response = await _http.DeleteAsync($"packages/{name}", cancellationToken);
+			var response = await http.DeleteAsync($"packages/{name}", cancellationToken);
 			if (response.IsSuccessStatusCode) return;
 
 			throw response.StatusCode switch
@@ -79,18 +69,18 @@ public class PackagesService
 			// delete package from cache, regardless of API call result, so it has to be re-fetched
 			_packages.Remove(name);
 
-			_analysis.InvalidateAnalysisFor(name);
+			analysis.InvalidateAnalysisFor(name);
 
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 
 	public async Task DeletePackageVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.LockAfterFreed(taskName: $"DeletePackageVersion({name}, {version})");
+		await fetchLock.LockAfterFreed(taskName: $"DeletePackageVersion({name}, {version})");
 		try
 		{
-			var response = await _http.DeleteAsync($"packages/{name}/versions/{version}", cancellationToken);
+			var response = await http.DeleteAsync($"packages/{name}/versions/{version}", cancellationToken);
 			if (response.IsSuccessStatusCode) return;
 
 			throw response.StatusCode switch
@@ -110,9 +100,9 @@ public class PackagesService
 				package.Versions.RemoveAt(versionIdx);
 			}
 
-			_analysis.InvalidateAnalysisFor(name, version);
+			analysis.InvalidateAnalysisFor(name, version);
 
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 
@@ -123,12 +113,12 @@ public class PackagesService
 
 	public async Task DiscontinuePackage(string name, string? replacement, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.LockAfterFreed(taskName: $"DiscontinuePackage({name}, {replacement})");
+		await fetchLock.LockAfterFreed(taskName: $"DiscontinuePackage({name}, {replacement})");
 		try
 		{
 			var dto = new SetDiscontinuedDto(string.IsNullOrWhiteSpace(replacement) ? null : replacement);
 
-			var response = await _http.PatchAsync($"packages/{name}/discontinue", dto, cancellationToken);
+			var response = await http.PatchAsync($"packages/{name}/discontinue", dto, cancellationToken);
 			if (response.IsSuccessStatusCode) return;
 
 			throw response.StatusCode switch
@@ -146,18 +136,18 @@ public class PackagesService
 				package.IsDiscontinued = true;
 			}
 
-			_analysis.InvalidateAnalysisFor(name);
+			analysis.InvalidateAnalysisFor(name);
 
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 
 	public async Task RetractVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.LockAfterFreed(taskName: $"RetractVersion({name}, {version})");
+		await fetchLock.LockAfterFreed(taskName: $"RetractVersion({name}, {version})");
 		try
 		{
-			var response = await _http.PatchAsync($"packages/{name}/versions/{version}/retract", cancellationToken);
+			var response = await http.PatchAsync($"packages/{name}/versions/{version}/retract", cancellationToken);
 			if (response.IsSuccessStatusCode) return;
 
 			throw response.StatusCode switch
@@ -176,9 +166,9 @@ public class PackagesService
 				if (dto is not null) dto.Retracted = true;
 			}
 
-			_analysis.InvalidateAnalysisFor(name, version);
+			analysis.InvalidateAnalysisFor(name, version);
 
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 }

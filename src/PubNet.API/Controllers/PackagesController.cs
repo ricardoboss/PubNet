@@ -12,28 +12,20 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("packages")]
-public class PackagesController : BaseController
+public class PackagesController(
+	ILogger<PackagesController> logger,
+	PubNetContext db,
+	IPackageStorageProvider storageProvider,
+	PubDevPackageProvider pubDevPackageProvider
+) : BaseController
 {
-	private readonly PubNetContext _db;
-	private readonly FileExtensionContentTypeProvider _fileTypeProvider;
-	private readonly ILogger<PackagesController> _logger;
-	private readonly PubDevPackageProvider _pubDevPackageProvider;
-	private readonly IPackageStorageProvider _storageProvider;
-
-	public PackagesController(ILogger<PackagesController> logger, PubNetContext db, IPackageStorageProvider storageProvider, PubDevPackageProvider pubDevPackageProvider)
+	private readonly FileExtensionContentTypeProvider _fileTypeProvider = new()
 	{
-		_logger = logger;
-		_db = db;
-		_storageProvider = storageProvider;
-		_fileTypeProvider = new()
+		Mappings =
 		{
-			Mappings =
-			{
-				["dart"] = "text/plain",
-			},
-		};
-		_pubDevPackageProvider = pubDevPackageProvider;
-	}
+			["dart"] = "text/plain",
+		},
+	};
 
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
@@ -43,7 +35,7 @@ public class PackagesController : BaseController
 	{
 		const int maxLimit = 1000;
 
-		IQueryable<Package> packages = _db.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc);
+		IQueryable<Package> packages = db.Packages.OrderByDescending(p => p.Latest!.PublishedAtUtc);
 
 		if (q != null) packages = packages.Where(p => p.Name.StartsWith(q));
 
@@ -72,12 +64,12 @@ public class PackagesController : BaseController
 	[ResponseCache(VaryByQueryKeys = new[] { "includeAuthor" }, Location = ResponseCacheLocation.Any, Duration = 60 * 10)]
 	public async Task<IActionResult> GetByName(string name, [FromQuery] bool includeAuthor = false, CancellationToken cancellationToken = default)
 	{
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 		}))
 		{
-			var packageQuery = _db.Packages
+			var packageQuery = db.Packages
 				.Include(p => p.Versions)
 				.Where(p => p.Name == name);
 
@@ -93,7 +85,7 @@ public class PackagesController : BaseController
 			}
 			else
 			{
-				var pubDevPackage = await _pubDevPackageProvider.TryGetPackage(name, cancellationToken);
+				var pubDevPackage = await pubDevPackageProvider.TryGetPackage(name, cancellationToken);
 				if (pubDevPackage is null) return NotFound();
 
 				dto = pubDevPackage;
@@ -108,15 +100,15 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DiscontinueByName(string name, [FromBody] SetDiscontinuedDto dto, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
@@ -127,7 +119,7 @@ public class PackagesController : BaseController
 
 			package.IsDiscontinued = true;
 			package.ReplacedBy = dto.Replacement;
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			return NoContent();
 		}
@@ -139,15 +131,15 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
@@ -157,38 +149,38 @@ public class PackagesController : BaseController
 			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
 
 			// decouple analyses from versions
-			await _db.PackageVersions
+			await db.PackageVersions
 				.Where(v => v.PackageName == name)
 				.ForEachAsync(v => v.Analysis = null, cancellationToken);
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			// remove decoupled analyses
-			_db.PackageVersionAnalyses.RemoveRange(
-				_db.PackageVersionAnalyses
+			db.PackageVersionAnalyses.RemoveRange(
+				db.PackageVersionAnalyses
 					.Include(a => a.Version)
 					.Where(a => package.Versions.Any(v => v == a.Version))
 			);
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			// remove reference to latest version
 			package.Latest = null;
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			// remove package versions
-			_db.PackageVersions.RemoveRange(package.Versions);
-			await _db.SaveChangesAsync(cancellationToken);
+			db.PackageVersions.RemoveRange(package.Versions);
+			await db.SaveChangesAsync(cancellationToken);
 
 			// finally, delete the package itself
-			_db.Packages.Remove(package);
-			await _db.SaveChangesAsync(cancellationToken);
+			db.Packages.Remove(package);
+			await db.SaveChangesAsync(cancellationToken);
 
 			try
 			{
-				await _storageProvider.DeletePackage(name, cancellationToken);
+				await storageProvider.DeletePackage(name, cancellationToken);
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Failed to delete package from storage");
+				logger.LogError(e, "Failed to delete package from storage");
 			}
 
 			return NoContent();
@@ -201,12 +193,12 @@ public class PackagesController : BaseController
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersion(string name, string version, CancellationToken cancellationToken = default)
 	{
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
@@ -220,7 +212,7 @@ public class PackagesController : BaseController
 			}
 			else
 			{
-				var pubDevPackageVersion = await _pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
+				var pubDevPackageVersion = await pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
 				if (pubDevPackageVersion is null) return NotFound();
 
 				dto = pubDevPackageVersion;
@@ -237,12 +229,12 @@ public class PackagesController : BaseController
 	[ResponseCache(VaryByQueryKeys = new[] { "includeReadme" }, Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionAnalysis(string name, string version, [FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
 	{
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
@@ -260,15 +252,15 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> RetractVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
@@ -294,11 +286,11 @@ public class PackagesController : BaseController
 					package.Latest = null;
 				}
 
-				await _db.SaveChangesAsync(cancellationToken);
+				await db.SaveChangesAsync(cancellationToken);
 			}
 
 			packageVersion.Retracted = true;
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			return NoContent();
 		}
@@ -309,15 +301,15 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteVersion(string name, string version, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["PackageName"] = name,
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			var package = await _db.Packages
+			var package = await db.Packages
 				.Where(p => p.Name == name)
 				.Include(p => p.Versions)
 				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
@@ -344,25 +336,25 @@ public class PackagesController : BaseController
 					package.Latest = null;
 				}
 
-				await _db.SaveChangesAsync(cancellationToken);
+				await db.SaveChangesAsync(cancellationToken);
 			}
 
 			if (packageVersion.Analysis is { } analysis)
 			{
-				_db.PackageVersionAnalyses.Remove(analysis);
-				await _db.SaveChangesAsync(cancellationToken);
+				db.PackageVersionAnalyses.Remove(analysis);
+				await db.SaveChangesAsync(cancellationToken);
 			}
 
-			_db.PackageVersions.Remove(packageVersion);
-			await _db.SaveChangesAsync(cancellationToken);
+			db.PackageVersions.Remove(packageVersion);
+			await db.SaveChangesAsync(cancellationToken);
 
 			try
 			{
-				await _storageProvider.DeletePackageVersion(name, version, cancellationToken);
+				await storageProvider.DeletePackageVersion(name, version, cancellationToken);
 			}
 			catch (Exception e)
 			{
-				_logger.LogError(e, "Failed to delete package version from storage");
+				logger.LogError(e, "Failed to delete package version from storage");
 			}
 
 			return NoContent();
@@ -377,7 +369,7 @@ public class PackagesController : BaseController
 	{
 		try
 		{
-			var stream = _storageProvider.ReadArchive(name, version);
+			var stream = storageProvider.ReadArchive(name, version);
 
 			return new FileStreamResult(stream, "application/octet-stream")
 			{
@@ -388,12 +380,12 @@ public class PackagesController : BaseController
 		{
 			if (ex is FileNotFoundException)
 			{
-				var pubDevPackageVersion = await _pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
+				var pubDevPackageVersion = await pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
 				if (pubDevPackageVersion is not null)
 					return Redirect(pubDevPackageVersion.ArchiveUrl);
 			}
 
-			_logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name, version);
+			logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name, version);
 
 			return NotFound();
 		}
@@ -411,7 +403,7 @@ public class PackagesController : BaseController
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path, CancellationToken cancellationToken = default)
 	{
-		var localPath = await _storageProvider.GetDocsPath(name, version, cancellationToken);
+		var localPath = await storageProvider.GetDocsPath(name, version, cancellationToken);
 
 		var notFoundPage = Path.Combine(localPath, "__404error.html");
 		if (!System.IO.File.Exists(notFoundPage))
@@ -441,9 +433,9 @@ public class PackagesController : BaseController
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator, [FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["AuthorUsername"] = author.UserName,
 		}))

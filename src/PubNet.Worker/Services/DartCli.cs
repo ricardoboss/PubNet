@@ -3,15 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace PubNet.Worker.Services;
 
-public class DartCli
+public class DartCli(ILogger<DartCli> logger)
 {
-	private readonly ILogger<DartCli> _logger;
 	private string? _dartBinary;
-
-	public DartCli(ILogger<DartCli> logger)
-	{
-		_logger = logger;
-	}
 
 	private async Task<string> FindDartBinaryAsync(CancellationToken cancellationToken = default)
 	{
@@ -76,7 +70,7 @@ public class DartCli
 			UseShellExecute = true,
 		};
 
-		_logger.LogTrace("Invoking dart binary with {Command} in {WorkingDirectory}", command, workingDirectory);
+		logger.LogTrace("Invoking dart binary with {Command} in {WorkingDirectory}", command, workingDirectory);
 
 		using var proc = Process.Start(psi);
 		if (proc is null) throw new("Unable to start dart process");

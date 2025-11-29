@@ -6,15 +6,12 @@ using PubNet.Worker.Services;
 
 namespace PubNet.Worker.Tasks;
 
-public class MissingPackageVersionAnalysisQueuingTask : BaseScheduledWorkerTask
+public class MissingPackageVersionAnalysisQueuingTask(TimeSpan interval)
+	: BaseScheduledWorkerTask(interval, DateTime.Now)
 {
 	private PubNetContext? _db;
 	private ILogger<MissingPackageVersionAnalysisQueuingTask>? _logger;
 	private WorkerTaskQueue? _taskQueue;
-
-	public MissingPackageVersionAnalysisQueuingTask(TimeSpan interval) : base(interval, DateTime.Now)
-	{
-	}
 
 	public override bool RequeueOnException => true;
 

@@ -3,26 +3,17 @@ using System.Net.Http.Json;
 
 namespace PubNet.Frontend.Services;
 
-public class ApiClient
+public class ApiClient(HttpClient httpClient, ILogger<ApiClient> logger)
 {
-	private readonly HttpClient _httpClient;
-	private readonly ILogger<ApiClient> _logger;
-
-	public ApiClient(HttpClient httpClient, ILogger<ApiClient> logger)
-	{
-		_httpClient = httpClient;
-		_logger = logger;
-	}
-
 	public string? Token
 	{
-		get => _httpClient.DefaultRequestHeaders.Authorization?.Parameter;
+		get => httpClient.DefaultRequestHeaders.Authorization?.Parameter;
 		set
 		{
 			if (value is null)
-				_httpClient.DefaultRequestHeaders.Authorization = null;
+				httpClient.DefaultRequestHeaders.Authorization = null;
 			else
-				_httpClient.DefaultRequestHeaders.Authorization = new("Bearer", value);
+				httpClient.DefaultRequestHeaders.Authorization = new("Bearer", value);
 		}
 	}
 
@@ -34,49 +25,49 @@ public class ApiClient
 
 	public Uri? BaseUri
 	{
-		get => _httpClient.BaseAddress;
-		set => _httpClient.BaseAddress = value;
+		get => httpClient.BaseAddress;
+		set => httpClient.BaseAddress = value;
 	}
 
 	public async Task<HttpResponseMessage> GetAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
 	{
-		_logger.LogTrace("[GET] {Uri}", uri);
+		logger.LogTrace("[GET] {Uri}", uri);
 
-		return await _httpClient.GetAsync(uri, cancellationToken);
+		return await httpClient.GetAsync(uri, cancellationToken);
 	}
 
 	public async Task<T?> GetAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
 	{
-		_logger.LogDebug("[GET] {Uri}", uri);
+		logger.LogDebug("[GET] {Uri}", uri);
 
-		return await _httpClient.GetFromJsonAsync<T>(uri, cancellationToken);
+		return await httpClient.GetFromJsonAsync<T>(uri, cancellationToken);
 	}
 
 	public async Task<HttpResponseMessage> PostAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body, CancellationToken cancellationToken = default)
 	{
-		_logger.LogDebug("[POST] {Uri}", uri);
+		logger.LogDebug("[POST] {Uri}", uri);
 
-		return await _httpClient.PostAsJsonAsync(uri, body, cancellationToken);
+		return await httpClient.PostAsJsonAsync(uri, body, cancellationToken);
 	}
 
 	public async Task<HttpResponseMessage> PatchAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
 	{
-		_logger.LogDebug("[PATCH] {Uri}", uri);
+		logger.LogDebug("[PATCH] {Uri}", uri);
 
-		return await _httpClient.PatchAsync(uri, null, cancellationToken);
+		return await httpClient.PatchAsync(uri, null, cancellationToken);
 	}
 
 	public async Task<HttpResponseMessage> PatchAsync<T>([StringSyntax(StringSyntaxAttribute.Uri)] string uri, T body, CancellationToken cancellationToken = default)
 	{
-		_logger.LogDebug("[PATCH] {Uri}", uri);
+		logger.LogDebug("[PATCH] {Uri}", uri);
 
-		return await _httpClient.PatchAsJsonAsync(uri, body, cancellationToken);
+		return await httpClient.PatchAsJsonAsync(uri, body, cancellationToken);
 	}
 
 	public async Task<HttpResponseMessage> DeleteAsync([StringSyntax(StringSyntaxAttribute.Uri)] string uri, CancellationToken cancellationToken = default)
 	{
-		_logger.LogDebug("[DELETE] {Uri}", uri);
+		logger.LogDebug("[DELETE] {Uri}", uri);
 
-		return await _httpClient.DeleteAsync(uri, cancellationToken);
+		return await httpClient.DeleteAsync(uri, cancellationToken);
 	}
 }

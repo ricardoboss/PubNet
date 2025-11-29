@@ -5,18 +5,11 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace PubNet.API.Services;
 
-public class EndpointHelper
+public class EndpointHelper(IDataProtectionProvider dataProtectionProvider)
 {
 	private const string DefaultDigestKey = "d";
 
-	private readonly IDataProtectionProvider _dataProtectionProvider;
-
-	public EndpointHelper(IDataProtectionProvider dataProtectionProvider)
-	{
-		_dataProtectionProvider = dataProtectionProvider;
-	}
-
-	private IDataProtector Protector => _dataProtectionProvider.CreateProtector(nameof(EndpointHelper));
+	private IDataProtector Protector => dataProtectionProvider.CreateProtector(nameof(EndpointHelper));
 
 	public string GenerateFullyQualified(HttpRequest request, string endpoint,
 		IDictionary<string, string?>? queryParams = null)

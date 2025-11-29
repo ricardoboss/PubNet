@@ -4,21 +4,14 @@ using PubNet.API.Services;
 
 namespace PubNet.API.Middlewares;
 
-public class ApplicationRequestContextEnricherMiddleware
+public class ApplicationRequestContextEnricherMiddleware(RequestDelegate next)
 {
-	private readonly RequestDelegate _next;
-
-	public ApplicationRequestContextEnricherMiddleware(RequestDelegate next)
-	{
-		_next = next;
-	}
-
 	public async Task Invoke(HttpContext httpContext, ApplicationRequestContext requestContext)
 	{
 		if (httpContext.Request.Headers.Accept.Count > 0)
 			EnrichAcceptContext(httpContext.Request.Headers.Accept, requestContext);
 
-		await _next.Invoke(httpContext);
+		await next.Invoke(httpContext);
 	}
 
 	private static void EnrichAcceptContext(StringValues acceptValues, ApplicationRequestContext context)

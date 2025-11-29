@@ -1,13 +1,8 @@
 namespace PubNet.API.DTO;
 
-public class ErrorResponse
+public class ErrorResponse(ErrorResponseBody? error = null)
 {
-	public ErrorResponseBody? Error { get; }
-
-	public ErrorResponse(ErrorResponseBody? error = null)
-	{
-		Error = error;
-	}
+	public ErrorResponseBody? Error { get; } = error;
 
 	public static ErrorResponse UsernameMismatch =>
 		new(new("author-username-mismatch",

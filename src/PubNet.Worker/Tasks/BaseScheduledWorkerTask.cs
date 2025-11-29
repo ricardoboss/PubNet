@@ -2,28 +2,24 @@ using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
 
-public abstract class BaseScheduledWorkerTask : BaseWorkerTask, IScheduledWorkerTask
+public abstract class BaseScheduledWorkerTask(
+	TimeSpan interval,
+	DateTime scheduledAt,
+	string? name = null,
+	bool? requeueOnException = null
+) : BaseWorkerTask(name, requeueOnException), IScheduledWorkerTask
 {
-	protected BaseScheduledWorkerTask(TimeSpan interval, DateTime scheduledAt, string? name = null,
-		bool? requeueOnException = null) : base(name, requeueOnException)
-	{
-		Interval = interval;
-		ScheduledAt = scheduledAt;
-		LastRun = null;
-		NextRun = scheduledAt;
-	}
+	/// <inheritdoc />
+	public TimeSpan Interval { get; protected set; } = interval;
 
 	/// <inheritdoc />
-	public TimeSpan Interval { get; protected set; }
-
-	/// <inheritdoc />
-	public DateTime ScheduledAt { get; }
+	public DateTime ScheduledAt { get; } = scheduledAt;
 
 	/// <inheritdoc />
 	public DateTime? LastRun { get; private set; }
 
 	/// <inheritdoc />
-	public DateTime NextRun { get; private set; }
+	public DateTime NextRun { get; private set; } = scheduledAt;
 
 	/// <inheritdoc />
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services,

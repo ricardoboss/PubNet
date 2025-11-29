@@ -4,19 +4,13 @@ using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Services;
 
-public class WorkerTaskQueue : IDisposable
+public class WorkerTaskQueue(ILogger<WorkerTaskQueue> logger) : IDisposable
 {
-	private readonly ILogger<WorkerTaskQueue> _logger;
 	private readonly ConcurrentQueue<IWorkerTask> _queue = new();
 	private readonly PriorityQueue<IScheduledWorkerTask, DateTime> _scheduledQueue = new();
 	private CancellationTokenSource _sleepCancellation = new();
 
 	public CancellationToken SleepCancellation => _sleepCancellation.Token;
-
-	public WorkerTaskQueue(ILogger<WorkerTaskQueue> logger)
-	{
-		_logger = logger;
-	}
 
 	public void Enqueue(IWorkerTask item)
 	{
@@ -24,13 +18,13 @@ public class WorkerTaskQueue : IDisposable
 		{
 			_scheduledQueue.Enqueue(scheduled, scheduled.NextRun);
 
-			_logger.LogTrace("Scheduled task queued: {TaskName} (due at {NextScheduled})", item.Name, scheduled.NextRun);
+			logger.LogTrace("Scheduled task queued: {TaskName} (due at {NextScheduled})", item.Name, scheduled.NextRun);
 		}
 		else
 		{
 			_queue.Enqueue(item);
 
-			_logger.LogTrace("Task queued: {TaskName}", item.Name);
+			logger.LogTrace("Task queued: {TaskName}", item.Name);
 
 			_sleepCancellation.Cancel();
 			if (_sleepCancellation.TryReset()) return;

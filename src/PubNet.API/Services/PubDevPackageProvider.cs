@@ -2,24 +2,18 @@ using PubNet.API.DTO;
 
 namespace PubNet.API.Services;
 
-public class PubDevPackageProvider
+public class PubDevPackageProvider(IHttpClientFactory clientFactory)
 {
 	public const string ClientName = "PubDev";
 
-	private readonly IHttpClientFactory _clientFactory;
 	private readonly Dictionary<string, PackageDto> _packageCache = new();
-
-	public PubDevPackageProvider(IHttpClientFactory clientFactory)
-	{
-		_clientFactory = clientFactory;
-	}
 
 	public async Task<PackageVersionDto?> TryGetVersion(string name, string version,
 		CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		using var client = _clientFactory.CreateClient(ClientName);
+		using var client = clientFactory.CreateClient(ClientName);
 
 		try
 		{
@@ -43,7 +37,7 @@ public class PubDevPackageProvider
 
 		if (_packageCache.TryGetValue(name, out var existingDto)) return existingDto;
 
-		using var client = _clientFactory.CreateClient(ClientName);
+		using var client = clientFactory.CreateClient(ClientName);
 
 		try
 		{

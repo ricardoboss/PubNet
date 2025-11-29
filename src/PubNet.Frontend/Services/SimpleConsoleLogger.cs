@@ -2,15 +2,8 @@ using Microsoft.JSInterop;
 
 namespace PubNet.Frontend.Services;
 
-public class SimpleConsoleLoggerProvider : ILoggerProvider
+public class SimpleConsoleLoggerProvider(IJSRuntime jsRuntime) : ILoggerProvider
 {
-	private readonly IJSRuntime _jsRuntime;
-
-	public SimpleConsoleLoggerProvider(IJSRuntime jsRuntime)
-	{
-		_jsRuntime = jsRuntime;
-	}
-
 	/// <inheritdoc />
 	public void Dispose()
 	{
@@ -19,29 +12,20 @@ public class SimpleConsoleLoggerProvider : ILoggerProvider
 	/// <inheritdoc />
 	public ILogger CreateLogger(string categoryName)
 	{
-		return new SimpleConsoleLogger(categoryName, _jsRuntime);
+		return new SimpleConsoleLogger(categoryName, jsRuntime);
 	}
 }
 
-public class SimpleConsoleLogger : ILogger
+public class SimpleConsoleLogger(string name, IJSRuntime jsRuntime) : ILogger
 {
-	private readonly string _name;
-	private readonly IJSRuntime _jsRuntime;
-
 	public LogLevel Minimum { get; set; } = LogLevel.Information;
-
-	public SimpleConsoleLogger(string name, IJSRuntime jsRuntime)
-	{
-		_name = name;
-		_jsRuntime = jsRuntime;
-	}
 
 	/// <inheritdoc />
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
 	{
 		if (!IsEnabled(logLevel) || logLevel == LogLevel.None) return;
 
-		_ = _jsRuntime.InvokeVoidAsync(
+		_ = jsRuntime.InvokeVoidAsync(
 			logLevel switch
 			{
 				LogLevel.Trace => "console.debug",
@@ -53,7 +37,7 @@ public class SimpleConsoleLogger : ILogger
 				LogLevel.None => throw new InvalidOperationException(),
 				_ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null),
 			},
-			$"[{_name}] {formatter(state, exception)}"
+			$"[{name}] {formatter(state, exception)}"
 		);
 	}
 

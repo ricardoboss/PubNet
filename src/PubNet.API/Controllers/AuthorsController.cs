@@ -10,19 +10,9 @@ namespace PubNet.API.Controllers;
 [ApiController]
 [Route("authors")]
 [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
-public class AuthorsController : BaseController
+public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext db, PasswordManager passwordManager)
+	: BaseController
 {
-	private readonly PubNetContext _db;
-	private readonly ILogger<AuthorsController> _logger;
-	private readonly PasswordManager _passwordManager;
-
-	public AuthorsController(ILogger<AuthorsController> logger, PubNetContext db, PasswordManager passwordManager)
-	{
-		_logger = logger;
-		_db = db;
-		_passwordManager = passwordManager;
-	}
-
 	[HttpGet("")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponse))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
@@ -33,7 +23,7 @@ public class AuthorsController : BaseController
 	{
 		const int maxLimit = 1000;
 
-		IQueryable<Author> packages = _db.Authors
+		IQueryable<Author> packages = db.Authors
 				.Where(a => !a.Inactive)
 				.OrderByDescending(p => p.RegisteredAtUtc)
 			;
@@ -65,12 +55,12 @@ public class AuthorsController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Get(string username, CancellationToken cancellationToken = default)
 	{
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["AuthorUsername"] = username,
 		}))
 		{
-			var author = await _db.Authors.FirstOrDefaultAsync(a => a.UserName == username, cancellationToken);
+			var author = await db.Authors.FirstOrDefaultAsync(a => a.UserName == username, cancellationToken);
 
 			return author is null ? NotFound() : Ok(AuthorDto.FromAuthor(author));
 		}
@@ -84,26 +74,26 @@ public class AuthorsController : BaseController
 	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["AuthorUsername"] = username,
 		}))
 		{
 			if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
 
-			if (!await _passwordManager.IsValid(_db, author, dto.Password, cancellationToken))
+			if (!await passwordManager.IsValid(db, author, dto.Password, cancellationToken))
 				return Unauthorized(ErrorResponse.InvalidPasswordConfirmation);
 
-			foreach (var authorPackage in _db.Packages.Where(p => p.Author == author))
+			foreach (var authorPackage in db.Packages.Where(p => p.Author == author))
 				authorPackage.Author = null;
 
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
-			_db.Authors.Remove(author);
+			db.Authors.Remove(author);
 
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			return Ok(new SuccessResponse(new($"Author '{username}' successfully deleted.")));
 		}
@@ -114,7 +104,7 @@ public class AuthorsController : BaseController
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetPackages(string username, CancellationToken cancellationToken = default)
 	{
-		var author = await _db.Authors
+		var author = await db.Authors
 			.Where(a => a.UserName == username)
 			.Include(a => a.Packages)
 			.FirstOrDefaultAsync(cancellationToken);
@@ -131,9 +121,9 @@ public class AuthorsController : BaseController
 	public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
-		var author = await context.RequireAuthorAsync(User, _db, cancellationToken);
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		using (_logger.BeginScope(new Dictionary<string, object>
+		using (logger.BeginScope(new Dictionary<string, object>
 		{
 			["AuthorUsername"] = author.UserName,
 		}))
@@ -146,7 +136,7 @@ public class AuthorsController : BaseController
 				author.Website = null;
 			else if (author.Website != dto.Website) author.Website = dto.Website;
 
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			return NoContent();
 		}

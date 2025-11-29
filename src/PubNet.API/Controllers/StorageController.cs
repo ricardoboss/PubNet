@@ -15,22 +15,13 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("storage")]
-public class StorageController : BaseController, IUploadEndpointGenerator
+public class StorageController(
+	ILogger<StorageController> logger,
+	PubNetContext db,
+	IPackageStorageProvider storageProvider,
+	EndpointHelper endpointHelper
+) : BaseController, IUploadEndpointGenerator
 {
-	private readonly PubNetContext _db;
-	private readonly EndpointHelper _endpointHelper;
-	private readonly ILogger<StorageController> _logger;
-	private readonly IPackageStorageProvider _storageProvider;
-
-	public StorageController(ILogger<StorageController> logger, PubNetContext db,
-		IPackageStorageProvider storageProvider, EndpointHelper endpointHelper)
-	{
-		_logger = logger;
-		_db = db;
-		_storageProvider = storageProvider;
-		_endpointHelper = endpointHelper;
-	}
-
 	/// <inheritdoc />
 	[NonAction]
 	public Task<UploadEndpointData> GenerateUploadEndpointData(HttpRequest request, Author author,
@@ -38,12 +29,12 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var url = _endpointHelper.GenerateFullyQualified(request, "/api/storage/upload", new Dictionary<string, string?>
+		var url = endpointHelper.GenerateFullyQualified(request, "/api/storage/upload", new Dictionary<string, string?>
 		{
 			{ "authorId", author.Id.ToString() },
 		});
 
-		url = _endpointHelper.SignEndpoint(url);
+		url = endpointHelper.SignEndpoint(url);
 
 		return Task.FromResult(new UploadEndpointData(url, new()));
 	}
@@ -55,7 +46,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	[ProducesResponseType(StatusCodes.Status413PayloadTooLarge, Type = typeof(ErrorResponse))]
 	public async Task<IActionResult> Upload([FromQuery] int? authorId)
 	{
-		if (!_endpointHelper.ValidateSignature(Request.QueryString.ToString()))
+		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
 			return BadRequest(ErrorResponse.InvalidSignedUrl);
 
 		const long maxUploadSize = 100_000_000; // 100 MB
@@ -77,14 +68,14 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 		if (authorId is null)
 			return BadRequest(ErrorResponse.MissingFields);
 
-		var author = await _db.Authors.FindAsync(authorId);
+		var author = await db.Authors.FindAsync(authorId);
 		if (author is null)
 			return BadRequest(ErrorResponse.InvalidAuthorId);
 
 		var pendingId = Guid.NewGuid();
 		var tempFile = Path.GetTempPath() + pendingId + ".tar.gz";
 
-		_logger.LogDebug("Storing package archive for {Author} at {Path}", author.UserName, tempFile);
+		logger.LogDebug("Storing package archive for {Author} at {Path}", author.UserName, tempFile);
 
 		await using (var fileStream = System.IO.File.OpenWrite(tempFile))
 		{
@@ -99,13 +90,13 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			UploadedAtUtc = DateTimeOffset.UtcNow,
 		};
 
-		_db.PendingArchives.Add(pending);
-		await _db.SaveChangesAsync();
+		db.PendingArchives.Add(pending);
+		await db.SaveChangesAsync();
 
-		_logger.LogTrace("Added pending archive {ArchiveId}", pending.Uuid);
+		logger.LogTrace("Added pending archive {ArchiveId}", pending.Uuid);
 
-		var finalizeUrl = _endpointHelper.SignEndpoint(
-			_endpointHelper.GenerateFullyQualified(
+		var finalizeUrl = endpointHelper.SignEndpoint(
+			endpointHelper.GenerateFullyQualified(
 				Request,
 				"/api/storage/finalize",
 				new Dictionary<string, string?>
@@ -115,7 +106,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			)
 		);
 
-		_logger.LogTrace("Generated finalize url for archive {ArchiveId} to {FinalizeUrl}", pending.Uuid, finalizeUrl);
+		logger.LogTrace("Generated finalize url for archive {ArchiveId} to {FinalizeUrl}", pending.Uuid, finalizeUrl);
 
 		Response.Headers.Location = finalizeUrl;
 		return NoContent();
@@ -129,7 +120,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 	public async Task<IActionResult> FinalizeUpload([FromQuery] string? pendingId,
 		CancellationToken cancellationToken = default)
 	{
-		if (!_endpointHelper.ValidateSignature(Request.QueryString.ToString()))
+		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
 			return BadRequest(ErrorResponse.InvalidSignedUrl);
 
 		if (pendingId is null)
@@ -138,7 +129,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 		if (!Guid.TryParse(pendingId, out var uuid))
 			return FailedDependency(ErrorResponse.InvalidPendingId);
 
-		var pending = await _db.PendingArchives
+		var pending = await db.PendingArchives
 			.Include(p => p.Uploader)
 			.FirstOrDefaultAsync(a => a.Uuid == uuid, cancellationToken);
 		if (pending is null)
@@ -180,7 +171,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			if (!SemVersion.TryParse(packageVersionId, SemVersionStyles.Any, out var packageVersionSemver))
 				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The package version could not be parsed"));
 
-			var package = await _db.Packages.Where(p => p.Name == packageName)
+			var package = await db.Packages.Where(p => p.Name == packageName)
 				.Include(p => p.Versions)
 				.FirstOrDefaultAsync(cancellationToken);
 
@@ -196,8 +187,8 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 					Latest = null,
 				};
 
-				_db.Packages.Add(package);
-				await _db.SaveChangesAsync(cancellationToken);
+				db.Packages.Add(package);
+				await db.SaveChangesAsync(cancellationToken);
 			}
 			else
 			{
@@ -222,7 +213,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 			await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
 			{
 				archiveSha256 =
-					await _storageProvider.StoreArchive(packageName, packageVersionId, archiveStream,
+					await storageProvider.StoreArchive(packageName, packageVersionId, archiveStream,
 						cancellationToken);
 			}
 
@@ -231,7 +222,7 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 				PubSpec = pubSpec,
 				PackageName = packageName,
 				Version = packageVersionId,
-				ArchiveUrl = _endpointHelper.GenerateFullyQualified(Request,
+				ArchiveUrl = endpointHelper.GenerateFullyQualified(Request,
 					$"/api/packages/{packageName}/versions/{packageVersionId}.tar.gz"),
 				ArchiveSha256 = archiveSha256,
 				PublishedAtUtc = DateTimeOffset.UtcNow,
@@ -239,15 +230,15 @@ public class StorageController : BaseController, IUploadEndpointGenerator
 
 			package.Versions.Add(packageVersion);
 			package.Latest = packageVersion;
-			_db.PendingArchives.Remove(pending);
+			db.PendingArchives.Remove(pending);
 
-			await _db.SaveChangesAsync(cancellationToken);
+			await db.SaveChangesAsync(cancellationToken);
 
 			System.IO.File.Delete(pending.ArchivePath);
 
 			Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
 			return Ok(new SuccessResponse(new($"Successfully uploaded {packageName} version {packageVersionId}! " +
-				_endpointHelper.GenerateFullyQualified(Request,
+				endpointHelper.GenerateFullyQualified(Request,
 					$"/api/packages/{packageName}/versions/{packageVersionId}"))));
 		}
 		finally

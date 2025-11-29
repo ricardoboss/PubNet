@@ -1,8 +1,3 @@
 namespace PubNet.Frontend.Services;
 
-public class ApiServerException : Exception
-{
-	public ApiServerException(string message) : base(message)
-	{
-	}
-}
+public class ApiServerException(string message) : Exception(message);

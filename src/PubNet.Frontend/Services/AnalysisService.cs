@@ -3,17 +3,9 @@ using PubNet.API.DTO;
 
 namespace PubNet.Frontend.Services;
 
-public class AnalysisService
+public class AnalysisService(ApiClient http, FetchLock<AnalysisService> fetchLock)
 {
-	private readonly ApiClient _http;
 	private readonly Dictionary<string, Dictionary<(string, bool), PackageVersionAnalysisDto?>> _analyses = new();
-	private readonly FetchLock<AnalysisService> _fetchLock;
-
-	public AnalysisService(ApiClient http, FetchLock<AnalysisService> fetchLock)
-	{
-		_http = http;
-		_fetchLock = fetchLock;
-	}
 
 	public void InvalidateAnalysisFor(string name, string? version = null)
 	{
@@ -33,7 +25,7 @@ public class AnalysisService
 
 	public async Task<PackageVersionAnalysisDto?> GetAnalysisForVersion(string name, string version, bool includeReadme, CancellationToken cancellationToken = default)
 	{
-		await _fetchLock.UntilFreed(taskName: $"GetAnalysisForVersion({name}, {version}, {includeReadme})");
+		await fetchLock.UntilFreed(taskName: $"GetAnalysisForVersion({name}, {version}, {includeReadme})");
 
 		if (_analyses.TryGetValue(name, out var versions))
 		{
@@ -45,10 +37,10 @@ public class AnalysisService
 				return value;
 		}
 
-		_fetchLock.Lock($"GetAnalysisForVersion({name}, {version}, {includeReadme})");
+		fetchLock.Lock($"GetAnalysisForVersion({name}, {version}, {includeReadme})");
 		try
 		{
-			var analysisResponse = await _http.GetAsync($"packages/{name}/versions/{version}/analysis?includeReadme={includeReadme}", cancellationToken);
+			var analysisResponse = await http.GetAsync($"packages/{name}/versions/{version}/analysis?includeReadme={includeReadme}", cancellationToken);
 			PackageVersionAnalysisDto? analysis;
 			if (analysisResponse.IsSuccessStatusCode)
 				analysis = await analysisResponse.Content.ReadFromJsonAsync<PackageVersionAnalysisDto>(cancellationToken: cancellationToken);
@@ -64,7 +56,7 @@ public class AnalysisService
 		}
 		finally
 		{
-			_fetchLock.Free();
+			fetchLock.Free();
 		}
 	}
 }

@@ -6,20 +6,15 @@ using PubNet.Worker.Services;
 
 namespace PubNet.Worker.Tasks;
 
-public class PackageVersionAnalyzerTask : BaseWorkerTask
+public class PackageVersionAnalyzerTask(string package, string version)
+	: BaseWorkerTask($"{nameof(PackageVersionAnalyzerTask)} for {package} {version}")
 {
-	public readonly string Package;
-	public readonly string Version;
+	public readonly string Package = package;
+	public readonly string Version = version;
 
 	private PubNetContext? _db;
 	private ILogger<PackageVersionAnalyzerTask>? _logger;
 	private WorkerTaskQueue? _taskQueue;
-
-	public PackageVersionAnalyzerTask(string package, string version) : base($"{nameof(PackageVersionAnalyzerTask)} for {package} {version}")
-	{
-		Package = package;
-		Version = version;
-	}
 
 	protected override async Task<WorkerTaskResult> InvokeInternal(IServiceProvider services, CancellationToken cancellationToken = default)
 	{

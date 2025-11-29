@@ -1,8 +1,3 @@
 namespace PubNet.API.DTO;
 
-public class BearerTokenException : UnauthorizedAccessException
-{
-	public BearerTokenException(string message) : base(message)
-	{
-	}
-}
+public class BearerTokenException(string message) : UnauthorizedAccessException(message);

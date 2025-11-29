@@ -4,20 +4,13 @@ using PubNet.API.DTO;
 
 namespace PubNet.API.Middlewares;
 
-public class ClientExceptionFormatterMiddleware
+public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 {
-	private readonly RequestDelegate _next;
-
-	public ClientExceptionFormatterMiddleware(RequestDelegate next)
-	{
-		_next = next;
-	}
-
 	public async Task Invoke(HttpContext context)
 	{
 		try
 		{
-			await _next.Invoke(context);
+			await next.Invoke(context);
 		}
 		catch (Exception e)
 		{
