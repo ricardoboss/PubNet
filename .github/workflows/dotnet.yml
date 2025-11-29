@@ -11,18 +11,14 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        dotnet: ['7.0.x']
 
-    name: Build & Test using ${{ matrix.dotnet }} on ${{ matrix.os }}
+    name: Build & Test (${{ matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET ${{ matrix.dotnet }}
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ matrix.dotnet }}
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
       - name: Update tooling
         run: dotnet tool update -g dotnet-format
       - name: Restore dependencies
