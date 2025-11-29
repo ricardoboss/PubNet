@@ -15,6 +15,9 @@ resharper_indent_braces_inside_statement_conditions = false
 resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_field_attribute_on_same_line = false
 
+# CA1873: Avoid potentially expensive logging
+dotnet_diagnostic.CA1873.severity = none
+
 [{*.cs,*.razor,*.csproj,*.props,*.targets}]
 indent_style = tab
 indent_size = tab
