@@ -11,6 +11,8 @@ RUN dotnet build "PubNet.Worker.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "PubNet.Worker.csproj" -c Release -o /app/publish
 
+FROM base AS final
+
 RUN apt-get update && apt-get install curl git unzip xz-utils zip libglu1-mesa -y
 WORKDIR /flutter
 RUN git clone https://github.com/flutter/flutter.git -b stable flutter
