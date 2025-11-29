@@ -1,16 +1,16 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["PubNet.API/PubNet.API.csproj", "PubNet.API/"]
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /build
+COPY ["src/PubNet.API/PubNet.API.csproj", "src/PubNet.API/"]
 COPY ["Directory.Build.props", "./"]
 COPY ["Directory.Packages.props", "./"]
-RUN dotnet restore "PubNet.API/PubNet.API.csproj"
+RUN dotnet restore "src/PubNet.API/PubNet.API.csproj"
 COPY . .
-WORKDIR "/src/PubNet.API"
+WORKDIR "/build/src/PubNet.API"
 RUN dotnet build "PubNet.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

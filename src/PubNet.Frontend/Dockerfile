@@ -1,15 +1,15 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
-COPY ["PubNet.Frontend/PubNet.Frontend.csproj", "PubNet.Frontend/"]
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /build
+COPY ["src/PubNet.Frontend/PubNet.Frontend.csproj", "src/PubNet.Frontend/"]
 COPY ["Directory.Build.props", "./"]
 COPY ["Directory.Packages.props", "./"]
 RUN dotnet restore "PubNet.Frontend/PubNet.Frontend.csproj"
 COPY . .
-WORKDIR "/src/PubNet.Frontend"
+WORKDIR "/build/src/PubNet.Frontend"
 RUN dotnet build "PubNet.Frontend.csproj" -c Release -o /app/build
 
 FROM build AS publish
