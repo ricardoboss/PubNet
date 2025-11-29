@@ -1,13 +1,4 @@
-﻿# Default ignored files
-/shelf/
-/workspace.xml
-# Rider ignored files
-/.idea.PubNet.iml
-/modules.xml
-/contentModel.xml
-/projectSettingsUpdater.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
+﻿*
+
+!.gitignore
+!vcs.xml
