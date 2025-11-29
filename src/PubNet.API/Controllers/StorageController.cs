@@ -213,7 +213,7 @@ public class StorageController(
 			await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
 			{
 				archiveSha256 =
-					await storageProvider.StoreArchive(packageName, packageVersionId, archiveStream,
+					await storageProvider.StoreArchiveAsync(packageName, packageVersionId, archiveStream,
 						cancellationToken);
 			}
 

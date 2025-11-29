@@ -176,7 +176,7 @@ public class PackagesController(
 
 			try
 			{
-				await storageProvider.DeletePackage(name, cancellationToken);
+				await storageProvider.DeletePackageAsync(name, cancellationToken);
 			}
 			catch (Exception e)
 			{
@@ -350,7 +350,7 @@ public class PackagesController(
 
 			try
 			{
-				await storageProvider.DeletePackageVersion(name, version, cancellationToken);
+				await storageProvider.DeletePackageVersionAsync(name, version, cancellationToken);
 			}
 			catch (Exception e)
 			{
@@ -369,7 +369,7 @@ public class PackagesController(
 	{
 		try
 		{
-			var stream = storageProvider.ReadArchive(name, version);
+			var stream = storageProvider.ReadArchiveAsync(name, version);
 
 			return new FileStreamResult(stream, "application/octet-stream")
 			{
@@ -403,7 +403,7 @@ public class PackagesController(
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionDocsFile(string name, string version, string path, CancellationToken cancellationToken = default)
 	{
-		var localPath = await storageProvider.GetDocsPath(name, version, cancellationToken);
+		var localPath = await storageProvider.GetDocsPathAsync(name, version, cancellationToken);
 
 		var notFoundPage = Path.Combine(localPath, "__404error.html");
 		if (!System.IO.File.Exists(notFoundPage))

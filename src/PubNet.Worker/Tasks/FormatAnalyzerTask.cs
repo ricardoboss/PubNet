@@ -41,7 +41,7 @@ public class FormatAnalyzerTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {AnalyzerName} analysis in {WorkingDirectory}", nameof(FormatAnalyzerTask), workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchive(_package, _version))
+		await using (var archiveStream = _storageProvider.ReadArchiveAsync(_package, _version))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}

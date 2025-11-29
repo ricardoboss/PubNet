@@ -41,7 +41,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 
 		_logger.LogTrace("Running {TaskName} in {WorkingDirectory}", Name, workingDir);
 
-		await using (var archiveStream = _storageProvider.ReadArchive(_package, _version))
+		await using (var archiveStream = _storageProvider.ReadArchiveAsync(_package, _version))
 		{
 			ArchiveHelper.UnpackInto(archiveStream, workingDir);
 		}
@@ -69,7 +69,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 			}
 
 			var apiDocPath = Path.Combine(workingDir, "doc", "api");
-			await _storageProvider.StoreDocs(_package, _version, apiDocPath, cancellationToken);
+			await _storageProvider.StoreDocsAsync(_package, _version, apiDocPath, cancellationToken);
 
 			_analysis.DocumentationLink = $"/packages/{_package}/versions/{_version}/docs/";
 

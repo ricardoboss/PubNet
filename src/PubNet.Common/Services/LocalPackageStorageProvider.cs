@@ -20,7 +20,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public Task DeletePackage(string name, CancellationToken cancellationToken = default)
+	public Task DeletePackageAsync(string name, CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -34,7 +34,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public Task DeletePackageVersion(string name, string version, CancellationToken cancellationToken = default)
+	public Task DeletePackageVersionAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
@@ -48,7 +48,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public async Task<string> StoreArchive(string name, string version, Stream stream, CancellationToken cancellationToken = default)
+	public async Task<string> StoreArchiveAsync(string name, string version, Stream stream, CancellationToken cancellationToken = default)
 	{
 		var path = GetPackageVersionArchivePath(name, version);
 
@@ -73,7 +73,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public Stream ReadArchive(string name, string version)
+	public Stream ReadArchiveAsync(string name, string version)
 	{
 		var path = GetPackageVersionArchivePath(name, version);
 
@@ -84,9 +84,9 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public async Task StoreDocs(string name, string version, string tempFolder, CancellationToken cancellationToken = default)
+	public async Task StoreDocsAsync(string name, string version, string tempFolder, CancellationToken cancellationToken = default)
 	{
-		var destination = await GetDocsPath(name, version, cancellationToken);
+		var destination = await GetDocsPathAsync(name, version, cancellationToken);
 
 		_logger.LogDebug("Storing package documentation for {PackageName} {PackageVersion} at {Path}", name, version, destination);
 
@@ -102,7 +102,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 	}
 
 	/// <inheritdoc />
-	public Task<string> GetDocsPath(string name, string version, CancellationToken cancellationToken = default)
+	public Task<string> GetDocsPathAsync(string name, string version, CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
 
