@@ -17,13 +17,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\.dockerignore">
-			<Link>.dockerignore</Link>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj"/>
 		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj"/>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\PublishProfiles\Release.pubxml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </None>
+	</ItemGroup>
+
 </Project>

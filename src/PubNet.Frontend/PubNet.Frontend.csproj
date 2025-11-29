@@ -17,13 +17,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\.dockerignore">
-			<Link>.dockerignore</Link>
-		</Content>
+		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
+	  <Folder Include="Properties\PublishProfiles\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Properties\PublishProfiles\Release.pubxml" />
 	</ItemGroup>
 
 </Project>

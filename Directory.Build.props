@@ -7,6 +7,13 @@
 		<LangVersion>default</LangVersion>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+
 	<Import Project="Directory.Tests.props" Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"/>
 
 </Project>
