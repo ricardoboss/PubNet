@@ -1,4 +1,3 @@
-using System.Collections;
 using PubNet.Common.Interfaces;
 
 namespace PubNet.Common.Extensions;
@@ -43,11 +42,14 @@ public static class FilesystemEntryExtensions
 
 		public IFilesystemEntry? GetRelativeEntry(string path)
 		{
-			var segments = new Queue<string>(path.Split(Path.DirectorySeparatorChar));
+			var segments = new Queue<string>(path.TrimEnd('/', '\\').Split('/').SelectMany(s => s.Split('\\')));
 
 			var currentContainer = container;
 			while (segments.TryDequeue(out var segment))
 			{
+				if (segment.Length == 0)
+					continue;
+
 				if (currentContainer.GetChildEntry(segment) is not { } child)
 					return null;
 
@@ -55,9 +57,13 @@ public static class FilesystemEntryExtensions
 				{
 					case IFileEntry file when segments.Count == 0:
 						return file;
+					case IFileEntry when segments.Count > 0:
+						return null; // cannot navigate into file
 					case IFileContainer subContainer when segments.Count > 0:
 						currentContainer = subContainer;
 						continue;
+					case IFileContainer subContainer when segments.Count == 0:
+						return subContainer;
 					default:
 						throw new NotImplementedException("Unknown filesystem entry type: " + child.GetType());
 				}
