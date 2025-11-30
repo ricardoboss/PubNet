@@ -8,9 +8,9 @@ on:
     branches: [ "main", "develop" ]
   pull_request:
     paths:
-      - 'Backend/PubNet.API/Dockerfile'
-      - 'Worker/PubNet.Worker/Dockerfile'
-      - 'Frontend/PubNet.Client.Web/Dockerfile'
+      - 'src/PubNet.API/Dockerfile'
+      - 'src/PubNet.Worker/Dockerfile'
+      - 'src/PubNet.Frontend/Dockerfile'
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -37,12 +37,9 @@ jobs:
 
     steps:
       - name: Checkout target branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Fetch main branch
-        run: git fetch origin main:main
 
       - name: Log in to the Container registry
         if: github.event_name != 'pull_request'
@@ -63,7 +60,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ${{ matrix.project == 'API' && 'Backend/PubNet.API' || matrix.project == 'Worker' && 'Worker/PubNet.Worker' || 'Frontend/PubNet.Client.Web' }}/Dockerfile
+          file: src/${{ matrix.project == 'API' && 'PubNet.API' || matrix.project == 'Worker' && 'PubNet.Worker' || 'PubNet.Frontend' }}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
