@@ -39,7 +39,13 @@ try
 	);
 
 	builder.Services.AddDbContext<PubNetContext>(
-		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"))
+		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"), o =>
+		{
+			o.ConfigureDataSource(ds =>
+			{
+				ds.EnableDynamicJson(jsonClrTypes: [typeof(PubSpec), typeof(PubSpecScreenshot)]);
+			});
+		})
 	);
 
 	builder.Services

@@ -3,6 +3,7 @@ using PubNet.Common.Interfaces;
 using PubNet.Common.Models;
 using PubNet.Common.Services;
 using PubNet.Database;
+using PubNet.Database.Models;
 using PubNet.Worker;
 using PubNet.Worker.Services;
 using Serilog;
@@ -28,7 +29,13 @@ try
 		{
 			services.AddDbContext<PubNetContext>(
 				options => options
-					.UseNpgsql(context.Configuration.GetConnectionString("PubNet"))
+					.UseNpgsql(context.Configuration.GetConnectionString("PubNet"), o =>
+					{
+						o.ConfigureDataSource(ds =>
+						{
+							ds.EnableDynamicJson(jsonClrTypes: [typeof(PubSpec), typeof(PubSpecScreenshot)]);
+						});
+					})
 			);
 
 			// for used to analyze uploaded packages
