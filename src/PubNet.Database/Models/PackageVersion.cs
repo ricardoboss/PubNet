@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PubNet.Database.Models;
@@ -14,6 +15,7 @@ public class PackageVersion
 
 	public string ArchiveUrl { get; set; } = string.Empty;
 
+	[MaxLength(64)]
 	public string ArchiveSha256 { get; set; } = string.Empty;
 
 	public DateTimeOffset PublishedAtUtc { get; set; }
