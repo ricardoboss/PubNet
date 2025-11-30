@@ -1,2 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PubNet.Common\PubNet.Common.csproj" />
+  </ItemGroup>
+
 </Project>

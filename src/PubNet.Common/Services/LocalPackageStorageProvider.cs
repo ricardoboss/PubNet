@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using PubNet.Common.Extensions;
 using PubNet.Common.Interfaces;
 using PubNet.Common.Models;
@@ -10,12 +10,12 @@ namespace PubNet.Common.Services;
 public class LocalPackageStorageProvider : IPackageStorageProvider
 {
 	private readonly ILogger<LocalPackageStorageProvider> _logger;
-	private readonly IConfiguration _configuration;
+	private readonly IOptions<PackageStorageProviderOptions> _options;
 
-	public LocalPackageStorageProvider(ILogger<LocalPackageStorageProvider> logger, IConfiguration configuration)
+	public LocalPackageStorageProvider(ILogger<LocalPackageStorageProvider> logger, IOptions<PackageStorageProviderOptions> options)
 	{
 		_logger = logger;
-		_configuration = configuration;
+		_options = options;
 
 		_logger.LogTrace("Local package storage base path is {StorageBasePath}", GetStorageBasePath());
 	}
@@ -130,7 +130,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 	private string GetStorageBasePath()
 	{
-		var configuredPath = _configuration["PackageStorage:Path"];
+		var configuredPath = _options.Value.Path;
 		return configuredPath is null
 			? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PubNet",
 				"packages")

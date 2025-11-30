@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PubNet.Common.Interfaces;
+using PubNet.Common.Models;
 using PubNet.Common.Services;
 using PubNet.Database;
 using PubNet.Worker;
@@ -37,6 +38,7 @@ try
 			services.AddSingleton<WorkerTaskQueue>();
 
 			// for managing packages stored on the local host
+			services.AddPackageStorageProviderOptions();
 			services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
 
 			services.AddHostedService<Worker>();

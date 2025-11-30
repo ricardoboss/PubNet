@@ -11,13 +11,15 @@ public class DirectoryFileContainer(DirectoryInfo info) : IFileContainer
 		return new(info);
 	}
 
-	public IFileContainer? Parent => info.Parent is { } parentInfo ? new DirectoryFileContainer(parentInfo) : null;
+	public IFileContainer? Parent => Info.Parent is { } parentInfo ? new DirectoryFileContainer(parentInfo) : null;
 
-	public string Name => info.Name;
+	public string Name => Info.Name;
+
+	public DirectoryInfo Info => info;
 
 	public IEnumerable<IFilesystemEntry> GetEntries()
 	{
-		foreach (var systemInfo in info.EnumerateFileSystemInfos())
+		foreach (var systemInfo in Info.EnumerateFileSystemInfos())
 		{
 			yield return systemInfo switch
 			{

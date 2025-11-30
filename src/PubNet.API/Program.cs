@@ -13,6 +13,7 @@ using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
+using PubNet.Common.Models;
 using PubNet.Common.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -80,6 +81,7 @@ try
 
 	// package storage
 	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
+	builder.Services.AddPackageStorageProviderOptions();
 	builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
 	builder.Services.AddSingleton<EndpointHelper>();
 

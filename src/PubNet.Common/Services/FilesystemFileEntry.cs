@@ -12,8 +12,10 @@ public class FilesystemFileEntry(FileInfo info) : IFileEntry
 		return new(info);
 	}
 
-	public string Name => info.Name;
+	public string Name => Info.Name;
+
+	public FileInfo Info => info;
 
 	[MustDisposeResource]
-	public Stream OpenRead() => info.OpenRead();
+	public Stream OpenRead() => Info.OpenRead();
 }
