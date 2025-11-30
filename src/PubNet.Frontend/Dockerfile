@@ -9,6 +9,7 @@ WORKDIR "/build/src/PubNet.Frontend"
 RUN dotnet build "PubNet.Frontend.csproj" -c Release -o /app/build
 
 FROM build AS publish
+RUN dotnet workload install wasm-tools
 RUN dotnet publish "PubNet.Frontend.csproj" -c Release -o /app/publish
 
 FROM nginx:alpine AS final
