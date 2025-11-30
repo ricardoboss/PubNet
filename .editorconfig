@@ -14,6 +14,7 @@ resharper_csharp_alignment_tab_fill_style = use_tabs_only
 resharper_indent_braces_inside_statement_conditions = false
 resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_field_attribute_on_same_line = false
+resharper_place_attribute_on_same_line = false
 
 # CA1873: Avoid potentially expensive logging
 dotnet_diagnostic.CA1873.severity = none
