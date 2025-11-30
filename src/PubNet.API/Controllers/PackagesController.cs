@@ -427,24 +427,28 @@ public class PackagesController(
 			return NotFound();
 
 		var requestedFileEntry = docsContainer.GetRelativeEntry(path);
-		Stream? contentStream = null;
-		switch (requestedFileEntry)
+		IFileEntry? requestedFile = null;
+		if (requestedFileEntry is IFileContainer requestedDir)
 		{
-			case IFileEntry requestedFile:
-				contentStream = requestedFile.OpenRead();
-				break;
-			case IFileContainer requestedDir:
-				var indexFileEntry = requestedDir.GetChildEntry("index.html");
+			var indexFileEntry = requestedDir.GetChildEntry("index.html");
 
-				contentStream = indexFileEntry is IFileEntry indexFile ? indexFile.OpenRead() : null;
-				break;
+			if (indexFileEntry is IFileEntry indexFile)
+				requestedFile = indexFile;
+		}
+		else if (requestedFileEntry is IFileEntry existingFile)
+			requestedFile = existingFile;
+
+		string? contentType = null;
+		if (requestedFile == null)
+		{
+			requestedFile = notFoundFile;
+			contentType = "text/html";
 		}
 
-		contentStream ??= notFoundFile.OpenRead();
-
-		if (!_fileTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType))
+		if (contentType == null && !_fileTypeProvider.TryGetContentType(requestedFile.Name, out contentType))
 			contentType = "application/octet-stream";
 
+		var contentStream = requestedFile.OpenRead();
 		Response.RegisterForDisposeAsync(contentStream);
 
 		return new FileStreamResult(contentStream, contentType);
