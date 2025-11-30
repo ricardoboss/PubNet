@@ -53,20 +53,18 @@ public static class FilesystemEntryExtensions
 				if (currentContainer.GetChildEntry(segment) is not { } child)
 					return null;
 
-				switch (child)
+				if (segments.Count == 0)
+					return child;
+
+				if (child is IFileContainer subContainer)
 				{
-					case IFileEntry file when segments.Count == 0:
-						return file;
-					case IFileEntry when segments.Count > 0:
-						return null; // cannot navigate into file
-					case IFileContainer subContainer when segments.Count > 0:
-						currentContainer = subContainer;
-						continue;
-					case IFileContainer subContainer when segments.Count == 0:
-						return subContainer;
-					default:
-						throw new NotImplementedException("Unknown filesystem entry type: " + child.GetType());
+					currentContainer = subContainer;
+					continue;
 				}
+
+				// cannot navigate into files and we already handled file containers
+				if (segments.Count != 0)
+					return null;
 			}
 
 			return null;
