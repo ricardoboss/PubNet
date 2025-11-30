@@ -3,7 +3,6 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 *.db*
-/PubNet.API/packages/
 **/*.user
 /packages/
 .vs/
