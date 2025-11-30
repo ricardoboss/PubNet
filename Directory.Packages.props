@@ -50,7 +50,7 @@
 
 	<!-- Prevent vulnerable versions from being used -->
 	<ItemGroup>
-		<PackageVersion Include="Microsoft.Build" Version="[17.10.46,)"/>
+		<PackageVersion Include="Microsoft.Build" Version="18.0.2"/>
 		<PackageReference Include="Microsoft.Build" ExcludeAssets="compile;runtime;build;native;contentfiles;analyzers"/>
 	</ItemGroup>
 
