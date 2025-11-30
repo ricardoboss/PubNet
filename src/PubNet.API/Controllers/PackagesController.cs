@@ -422,30 +422,31 @@ public class PackagesController(
 	{
 		var docsContainer = await storageProvider.GetDocsAsync(name, version, cancellationToken);
 
-		var notFoundEntry = docsContainer.GetChildEntry("__404error.html");
-		if (notFoundEntry is not IFileEntry notFoundFile)
-			return NotFound();
-
-		var requestedFileEntry = docsContainer.GetRelativeEntry(path);
-		IFileEntry? requestedFile = null;
-		if (requestedFileEntry is IFileContainer requestedDir)
+		var requestedEntry = docsContainer.GetRelativeEntry(path);
+		if (requestedEntry is IFileContainer)
 		{
-			var indexFileEntry = requestedDir.GetChildEntry("index.html");
-
-			if (indexFileEntry is IFileEntry indexFile)
-				requestedFile = indexFile;
+			return RedirectToAction("GetVersionDocsFile", "Packages", new
+			{
+				name,
+				version,
+				path = path.TrimEnd('/') + "/index.html",
+			});
 		}
-		else if (requestedFileEntry is IFileEntry existingFile)
+
+		IFileEntry? requestedFile = null;
+		if (requestedEntry is IFileEntry existingFile)
 			requestedFile = existingFile;
 
-		string? contentType = null;
 		if (requestedFile == null)
 		{
+			var notFoundEntry = docsContainer.GetChildEntry("__404error.html");
+			if (notFoundEntry is not IFileEntry notFoundFile)
+				return NotFound();
+
 			requestedFile = notFoundFile;
-			contentType = "text/html";
 		}
 
-		if (contentType == null && !_fileTypeProvider.TryGetContentType(requestedFile.Name, out contentType))
+		if (!_fileTypeProvider.TryGetContentType(requestedFile.Name, out var contentType))
 			contentType = "application/octet-stream";
 
 		var contentStream = requestedFile.OpenRead();
