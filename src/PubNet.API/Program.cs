@@ -5,23 +5,26 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi;
 using PubNet.API.Authorization;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
 using PubNet.API.Helpers;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
+using PubNet.API.OpenApi;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
 using PubNet.Common.Models;
 using PubNet.Common.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
+using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using TRENZ.Lib.RazorMail.Extensions;
 using TRENZ.Lib.RazorMail.MailKit.Extensions;
+
+const string openApiDocumentName = "openapi";
 
 if (ApiDescriptionToolDetector.IsToolInvocation())
 {
@@ -175,26 +178,16 @@ void ConfigureServices(WebApplicationBuilder builder)
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 		});
 
-	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwaggerGen(o =>
+
+	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
-		const string definitionName = "Bearer";
+		o.AddDocumentTransformer<PubNetDocumentTransformer>();
+		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
+		o.AddDocumentTransformer<ErrorsOperationTransformer>();
 
-		o.AddSecurityDefinition(definitionName, new OpenApiSecurityScheme
-		{
-			Type = SecuritySchemeType.Http,
-			BearerFormat = "JWT",
-			In = ParameterLocation.Header,
-			Scheme = "Bearer",
-		});
-
-		o.AddSecurityRequirement(d => new()
-		{
-			{
-				new(definitionName, d),
-				[]
-			},
-		});
+		o.AddOperationTransformer<CleanupOperationTransformer>();
+		o.AddOperationTransformer<ErrorsOperationTransformer>();
+		o.AddOperationTransformer<AuthMetadataTransformer>();
 	});
 
 	builder.Services.AddCors(options =>
@@ -226,18 +219,13 @@ void ConfigureHttpPipeline(WebApplication app)
 		};
 	});
 
-	// Configure the HTTP request pipeline.
-	if (app.Environment.IsDevelopment())
-	{
-		app.UseSwagger();
-		app.UseSwaggerUI();
-	}
-
 	app.UseHttpsRedirection();
 
 	app.UseCors();
 
 	app.UseResponseCaching();
+
+	app.MapOpenApi("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
 
 	app.UseMiddleware<ClientExceptionFormatterMiddleware>();
 	app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
@@ -250,4 +238,14 @@ void ConfigureHttpPipeline(WebApplication app)
 	app.UseAuthorization();
 
 	app.MapControllers();
+
+	if (app.Environment.IsDevelopment())
+	{
+		app.MapScalarApiReference(c =>
+		{
+			c.Telemetry = false;
+			c.Theme = ScalarTheme.DeepSpace;
+			c.OpenApiRoutePattern = $"/.well-known/{openApiDocumentName}.json";
+		});
+	}
 }

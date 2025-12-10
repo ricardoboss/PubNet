@@ -1,8 +1,10 @@
 using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 using PubNet.Database.Models;
 
-namespace PubNet.API.DTO;
+namespace PubNet.API.DTO.Packages;
 
+[PublicAPI]
 public class PackageVersionDto
 {
 	public string Version { get; init; } = null!;
