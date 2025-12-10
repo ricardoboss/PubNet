@@ -3,8 +3,8 @@
 @page "/package/{PackageName}/version/{PackageVersionUrl}"
 @page "/packages/{PackageName}/versions/{PackageVersionUrl}"
 
-@inject PackagesService Packages
-@inject AnalysisService Analysis
+@inject IPackagesService PackagesService
+@inject IAnalysisService AnalysisService
 
 @if (Error is not null)
 {
@@ -36,7 +36,7 @@
 		OnInfo="i => Info = i"
 		OnEditing="e => Editing = e"
 		Editing="@Editing"
-		OnPackageChanged="ReloadPackage" />
+		OnPackageChanged="ReloadPackage"/>
 }
 
 @code
@@ -72,7 +72,8 @@
 		await ReloadPackage();
 	}
 
-	private async Task ReloadPackage() {
+	private async Task ReloadPackage()
+	{
 		Error = null;
 		PackageModel = null;
 		Editing = false;
@@ -82,7 +83,7 @@
 
 		try
 		{
-			PackageModel = await Packages.GetPackage(PackageName, true, true);
+			PackageModel = await PackagesService.GetPackageAsync(PackageName);
 		}
 		catch (PackageNotFoundException pnfe)
 		{
@@ -103,7 +104,7 @@
 		{
 			try
 			{
-				PackageVersionModel = await Packages.GetPackageVersion(PackageName, PackageVersion);
+				PackageVersionModel = await PackagesService.GetPackageVersionAsync(PackageName, PackageVersion);
 			}
 			catch (Exception e)
 			{
@@ -117,7 +118,7 @@
 		{
 #pragma warning disable CS4014
 			if (PackageModel?.Versions is not null)
-				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => Analysis.GetAnalysisForVersion(PackageName, v.Version, false))).ContinueWith(_ => StateHasChanged());
+				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => AnalysisService.GetAnalysisForPackageVersionAsync(PackageName, v.Version))).ContinueWith(_ => StateHasChanged());
 #pragma warning restore CS4014
 		}
 	}

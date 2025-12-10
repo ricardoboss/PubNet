@@ -1,6 +1,8 @@
-@page "/authenticate"
+﻿@page "/authenticate"
 @using PubNet.API.DTO
+@using PubNet.API.DTO.Authentication
 @inject ApiClient Http;
+@inject IAuthenticationService Auth
 @inject OnboardingService Onboarding
 @inject NavigationManager Nav
 
@@ -65,7 +67,7 @@ else
             return;
         }
 
-        _showRegistration = await Http.GetAsync<bool>("authentication/registrations-enabled");
+        _showRegistration = await Auth.GetRegistrationsEnabledAsync();
     }
 
     private async Task RegisterAsync()

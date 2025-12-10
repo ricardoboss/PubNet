@@ -1,9 +1,9 @@
-﻿@inject PackagesService PackagesService
-@inject AnalysisService AnalysisService
-@inject AuthenticationService Auth
+﻿@inject IPackagesService PackagesService
+@inject IAnalysisService AnalysisService
+@inject ApiAuthenticationService Auth
 @inject AlertService Alert
 @inject NavigationManager Nav
-@inject ApiClient Http
+@inject TextGenerator TextGen
 
 @if (Version is null)
 {
@@ -215,7 +215,7 @@ else
     {
         return Package?.Name is null
             ? string.Empty
-            : TextGenerator.PubspecVersionText(Package.Name, version, IsMirrored, Http.BaseAddress);
+            : TextGen.PubspecVersionText(Package.Name, version, IsMirrored);
     }
 
     private PackageVersionAnalysisDto? Analysis { get; set; }
@@ -244,11 +244,11 @@ else
         if (Version is null)
             return;
 
-        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelf(Package.Author?.AuthorDto?.UserName);
+        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelfAsync(Package.Author?.AuthorDto?.UserName);
 
         try
         {
-            Analysis = await AnalysisService.GetAnalysisForVersion(Version.Pubspec.Name, Version.Version, true);
+            Analysis = await AnalysisService.GetAnalysisForPackageVersionAsync(Version.Pubspec.Name, Version.Version);
         }
         catch (Exception)
         {
@@ -270,7 +270,7 @@ else
 
         try
         {
-            await PackagesService.DiscontinuePackage(Package.Name, replacement);
+            await PackagesService.DiscontinuePackageAsync(Package.Name, replacement);
 
             await OnInfo.InvokeAsync($"Package {Package.Name} has been marked as discontinued.");
 
@@ -300,7 +300,7 @@ else
 
         try
         {
-            await PackagesService.DeletePackage(Package.Name);
+            await PackagesService.DeletePackageAsync(Package.Name);
 
             Nav.NavigateTo("/?message=package-deleted");
         }
@@ -328,7 +328,7 @@ else
 
         try
         {
-            await PackagesService.DeletePackageVersion(Package.Name, version);
+            await PackagesService.DeletePackageVersionAsync(Package.Name, version);
 
             await OnInfo.InvokeAsync($"Version {version} has been deleted.");
 
@@ -358,7 +358,7 @@ else
 
         try
         {
-            await PackagesService.RetractVersion(Package.Name, version);
+            await PackagesService.RetractPackageVersionAsync(Package.Name, version);
 
             await OnInfo.InvokeAsync($"Package version {version} has been marked as retracted.");
 
