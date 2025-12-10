@@ -3,8 +3,6 @@
 @page "/package/{PackageName}/version/{PackageVersionUrl}"
 @page "/packages/{PackageName}/versions/{PackageVersionUrl}"
 
-@using PubNet.API.DTO
-
 @inject PackagesService Packages
 @inject AnalysisService Analysis
 
@@ -100,7 +98,7 @@
 			return;
 		}
 
-		PackageVersion ??= PackageModel?.Latest?.Version;
+		PackageVersion ??= PackageModel?.Latest?.PackageVersionDto?.Version;
 		if (PackageVersion is not null)
 		{
 			try

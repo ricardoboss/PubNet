@@ -1,6 +1,4 @@
-﻿@using PubNet.API.DTO
-
-@inject ApiClient Http
+﻿@inject ApiClient Http
 
 <PageTitle>@Title</PageTitle>
 
@@ -59,6 +57,6 @@
 
 	private string Title => PackageName + (Version is null ? string.Empty : $": {Version.Version}");
 
-	private string? AuthorUserName => Package?.Author?.UserName;
+	private string? AuthorUserName => Package?.Author?.AuthorDto?.UserName;
 
 }

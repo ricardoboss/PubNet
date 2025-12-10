@@ -16,4 +16,8 @@
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\PubNet.SDK\PubNet.SDK.csproj" />
+	</ItemGroup>
+
 </Project>
