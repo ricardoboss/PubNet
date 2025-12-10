@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Packages;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
@@ -115,7 +116,7 @@ public class StorageController(
 	}
 
 	[HttpGet("finalize")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status424FailedDependency, Type = typeof(ErrorResponse))]
@@ -235,7 +236,7 @@ public class StorageController(
 			System.IO.File.Delete(pending.ArchivePath);
 
 			Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
-			return Ok(new SuccessResponse(new($"Successfully uploaded {packageName} version {packageVersionId}! " +
+			return Ok(new SuccessResponseDto(new($"Successfully uploaded {packageName} version {packageVersionId}! " +
 				endpointHelper.GenerateFullyQualified(Request,
 					$"/api/packages/{packageName}/versions/{packageVersionId}"))));
 		}

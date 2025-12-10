@@ -17,11 +17,11 @@
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
 		<PackageReference Include="Microsoft.EntityFrameworkCore"/>
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+		<PackageReference Include="Scalar.AspNetCore" />
 		<PackageReference Include="Semver"/>
 		<PackageReference Include="Serilog.AspNetCore"/>
 		<PackageReference Include="Serilog.Sinks.Seq"/>
 		<PackageReference Include="SerilogAnalyzer"/>
-		<PackageReference Include="Swashbuckle.AspNetCore"/>
 		<PackageReference Include="TRENZ.Lib.RazorMail.MailKit" />
 		<PackageReference Include="YamlDotNet"/>
 	</ItemGroup>
@@ -29,7 +29,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\PubNet.Common\PubNet.Common.csproj"/>
 		<ProjectReference Include="..\PubNet.Database\PubNet.Database.csproj"/>
-		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
 	</ItemGroup>
 
 </Project>

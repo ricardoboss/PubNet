@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Packages;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Extensions;

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
 using PubNet.API.Interfaces;
+using PubNet.API.DTO.Authentication;
+using PubNet.API.DTO.Authors;
 using PubNet.API.Services;
 using PubNet.Database;
 using PubNet.Database.Models;

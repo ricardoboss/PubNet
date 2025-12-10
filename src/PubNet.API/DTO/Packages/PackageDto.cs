@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
+using JetBrains.Annotations;
+using PubNet.API.DTO.Authors;
 using PubNet.Database.Models;
 
-namespace PubNet.API.DTO;
+namespace PubNet.API.DTO.Packages;
 
+[PublicAPI]
 public class PackageDto
 {
 	public string Name { get; init; } = null!;
