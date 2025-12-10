@@ -9,6 +9,7 @@ using Microsoft.OpenApi;
 using PubNet.API.Authorization;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
+using PubNet.API.Helpers;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
 using PubNet.API.Services;
@@ -22,6 +23,13 @@ using Serilog.Events;
 using TRENZ.Lib.RazorMail.Extensions;
 using TRENZ.Lib.RazorMail.MailKit.Extensions;
 
+if (ApiDescriptionToolDetector.IsToolInvocation())
+{
+	HandleApiDescriptionToolInvocation();
+
+	return;
+}
+
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
 	.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -32,6 +40,43 @@ try
 {
 	var builder = WebApplication.CreateBuilder(args);
 
+	ConfigureServices(builder);
+
+	var app = builder.Build();
+
+	ConfigureHttpPipeline(app);
+
+	await PubNetContext.RunMigrations(app.Services);
+
+	await app.RunAsync();
+}
+catch (Exception e) when (e is HostAbortedException or OperationCanceledException or TaskCanceledException ||
+e.GetType().Name is "StopTheHostException")
+{
+	Log.Information("Application terminated gracefully");
+}
+catch (Exception e)
+{
+	Log.Fatal(e, "Application terminated unexpectedly");
+}
+finally
+{
+	Log.CloseAndFlush();
+}
+
+return;
+
+void HandleApiDescriptionToolInvocation()
+{
+	var builder = WebApplication.CreateBuilder(args);
+
+	ConfigureServices(builder);
+
+	_ = builder.Build();
+}
+
+void ConfigureServices(WebApplicationBuilder builder)
+{
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
 			.ReadFrom.Services(services)
@@ -165,11 +210,10 @@ try
 	});
 
 	builder.Services.AddResponseCaching();
+}
 
-	var app = builder.Build();
-
-	await PubNetContext.RunMigrations(app.Services);
-
+void ConfigureHttpPipeline(WebApplication app)
+{
 	app.UsePathBase("/api");
 
 	app.UseSerilogRequestLogging(options =>
@@ -206,17 +250,4 @@ try
 	app.UseAuthorization();
 
 	app.MapControllers();
-
-	await app.RunAsync();
-}
-catch (Exception ex)
-{
-	if (ex is HostAbortedException)
-		Log.Warning("{Message}", ex.Message);
-	else
-		Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-	Log.CloseAndFlush();
 }
