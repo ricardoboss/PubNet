@@ -1,5 +1,5 @@
 ﻿@page "/browse/authors"
-@inject ApiClient Http
+@inject IAuthorService AuthorService
 
 <PageTitle>Authors</PageTitle>
 
@@ -53,7 +53,6 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
-		_authors = await Http.GetAsync<AuthorsResponse>("authors");
+		_authors = await AuthorService.GetAuthorsAsync();
 	}
-
 }

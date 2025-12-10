@@ -1,5 +1,6 @@
 ﻿@page "/"
-@inject ApiClient Http
+@inject BaseAddressProvider BaseAddressProvider
+@inject ILoginTokenStorage TokenStorage
 
 <PageTitle>PubNet</PageTitle>
 
@@ -55,8 +56,8 @@
 	</OrderedListItem>
 </OrderedList>
 
-@code {
-
+@code
+{
 	[Parameter]
 	[SupplyParameterFromQuery(Name = "message")]
 	public string? Message { get; set; }
@@ -72,7 +73,7 @@
 	{
 		get
 		{
-			var address = Http.BaseAddress ?? "";
+			var address = BaseAddressProvider.BaseAddress;
 
 			address = address.TrimEnd('/');
 
@@ -83,7 +84,12 @@
 		}
 	}
 
-	private string Token => Http.Token ?? "";
+	private string Token = "";
 
 	private string PubAddTokenText => $"dart pub token add {PublishToUrl} --env-var PUBNET_TOKEN";
+
+	protected override async Task OnParametersSetAsync()
+	{
+		Token = await TokenStorage.GetTokenAsync() ?? "";
+	}
 }

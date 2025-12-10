@@ -1,8 +1,8 @@
 namespace PubNet.Frontend.Services;
 
-public static class TextGenerator
+public class TextGenerator(BaseAddressProvider baseAddressProvider)
 {
-	public static string PubspecVersionText(string name, string version, bool mirrored, string? httpBaseAddress)
+	public string PubspecVersionText(string name, string version, bool mirrored)
 	{
 		if (mirrored)
 			return $"{name}: ^{version}";
@@ -10,7 +10,7 @@ public static class TextGenerator
 		return $"""
 				{name}:
 				  hosted:
-				    url: {httpBaseAddress}
+				    url: {baseAddressProvider.BaseUri}
 				    name: {name}
 				    version: ^{version}
 				""";

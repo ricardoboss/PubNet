@@ -1,4 +1,6 @@
-﻿@inject AuthenticationService Auth
+﻿@using PubNet.SDK.Abstractions
+@using PubNet.SDK.Services
+@inject ApiAuthenticationService Auth
 @inject NavigationManager Nav
 
 <Bar Mode="BarMode.Horizontal" Shadow="Shadow.Small" CollapseMode="BarCollapseMode.Hide" Display="Display.Flex" Flex="Flex.AlignItems.Stretch">
@@ -79,9 +81,9 @@
 		{
 			UserName = (await Auth.GetSelfAsync()).UserName;
 		}
-		catch (SessionExpiredException)
+		catch (UnauthenticatedException)
 		{
-			await Auth.Logout();
+			await Auth.LogoutAsync();
 
 			Authenticated = false;
 
