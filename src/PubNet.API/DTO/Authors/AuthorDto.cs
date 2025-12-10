@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
+using JetBrains.Annotations;
+using PubNet.API.DTO.Packages;
 using PubNet.Database.Models;
 
-namespace PubNet.API.DTO;
+namespace PubNet.API.DTO.Authors;
 
+[PublicAPI]
 public class AuthorDto
 {
 	public static AuthorDto? FromAuthor(Author? author, bool ignorePackages = false)

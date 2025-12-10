@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 
 namespace PubNet.API.DTO;
 
+[PublicAPI]
 public class ErrorResponse(ErrorResponseBody? error = null)
 {
 	public ErrorResponseBody? Error { get; } = error;
