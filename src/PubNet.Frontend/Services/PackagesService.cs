@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using PubNet.API.DTO;
+using PubNet.SDK.Generated.Models;
 
 namespace PubNet.Frontend.Services;
 
@@ -116,7 +116,10 @@ public class PackagesService(ApiClient http, AnalysisService analysis, FetchLock
 		await fetchLock.LockAfterFreed(taskName: $"DiscontinuePackage({name}, {replacement})");
 		try
 		{
-			var dto = new SetDiscontinuedDto(string.IsNullOrWhiteSpace(replacement) ? null : replacement);
+			var dto = new SetDiscontinuedDto
+			{
+				Replacement = string.IsNullOrWhiteSpace(replacement) ? null : replacement,
+			};
 
 			var response = await http.PatchAsync($"packages/{name}/discontinue", dto, cancellationToken);
 			if (response.IsSuccessStatusCode) return;

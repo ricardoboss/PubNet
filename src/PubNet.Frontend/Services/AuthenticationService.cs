@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using PubNet.API.DTO;
+using PubNet.SDK.Generated.Models;
 
 namespace PubNet.Frontend.Services;
 
