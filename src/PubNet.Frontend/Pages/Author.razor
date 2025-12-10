@@ -1,7 +1,8 @@
 ﻿@page "/author/{Username}"
 @page "/authors/{Username}"
-@inject ApiClient Http
-@inject AuthenticationService Auth
+@inject IAuthenticationService Auth
+@inject IAuthorService AuthorService
+@inject IPackagesService Packages
 @inject AlertService Alert
 
 <PageTitle>Package author @Username</PageTitle>
@@ -130,7 +131,7 @@
 
 			await FetchAuthorPackages();
 
-			IsSelf = await Auth.IsSelf(Username);
+			IsSelf = await Auth.IsSelfAsync(Username);
 		}
 		catch (Exception e)
 		{
@@ -143,7 +144,7 @@
 		AuthorModel = null;
 		GeneralError = null;
 
-		var author = await Http.GetAsync<AuthorDto>($"authors/{Username}");
+		var author = await AuthorService.GetAuthorAsync(Username);
 		if (author is not null)
 		{
 			AuthorModel = author;
@@ -159,8 +160,8 @@
 		AuthorPackages = null;
 		PackagesError = null;
 
-		var response = await Http.GetAsync<AuthorPackagesResponse>($"authors/{Username}/packages");
-		if (response?.Packages is not null)
+		var response = await Packages.GetPackagesByAuthorAsync(Username);
+		if (response.Packages is not null)
 		{
 			AuthorPackages = response.Packages.Select(dto => new SearchResultPackage
 			{
@@ -202,29 +203,20 @@
 		if (string.IsNullOrWhiteSpace(confirmation))
 			return;
 
-		var response = await Http.PostAsync($"authors/{Username}/delete", new DeleteAuthorRequest
+		try
 		{
-			Password = confirmation,
-		});
-		if (response.IsSuccessStatusCode)
-		{
-			var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
-			if (successResponse is null)
+			await AuthorService.DeleteAuthorAsync(Username, new()
 			{
-				AuthorError = "Unable to deserialize";
+				Password = confirmation,
+			});
 
-				return;
-			}
+			AuthorSuccess = "Success";
 
-			AuthorSuccess = successResponse.Success?.Message;
-
-			await Auth.Logout();
+			await Auth.LogoutAsync();
 		}
-		else
+		catch (Exception e)
 		{
-			var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-			AuthorError = errorResponse?.Error?.Message ?? "Failed to delete author";
+			AuthorError = e.Message;
 		}
 	}
 }

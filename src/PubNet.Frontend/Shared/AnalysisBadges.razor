@@ -1,6 +1,6 @@
 @inherits BaseComponent
-@inject ApiClient Http
-@inject AnalysisService Analysis
+@inject ApiAnalysisService ApiAnalysis
+@inject BaseAddressProvider BaseAddressProvider
 
 <Div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (Mirrored)
@@ -89,7 +89,7 @@
 
 	private static string HrefToReplacement(string name) => "/packages/" + name;
 
-	private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+	private string DocumentationUrl(string uri) => BaseAddressProvider.BaseAddress.TrimEnd('/') + '/' + uri.TrimStart('/');
 
 	/// <inheritdoc />
 	protected override async Task OnInitializedAsync()
@@ -100,7 +100,7 @@
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, false);
+			AnalysisDto = await ApiAnalysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version);
 		}
 	}
 

@@ -1,6 +1,6 @@
 ﻿@page "/browse"
 @page "/browse/packages"
-@inject ApiClient Http
+@inject IPackagesService PackagesService
 
 <PageTitle>Packages</PageTitle>
 
@@ -22,7 +22,6 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
-		_response = await Http.GetAsync<SearchPackagesResponse>("packages");
+		_response = await PackagesService.SearchPackagesAsync();
 	}
-
 }

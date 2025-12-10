@@ -1,5 +1,5 @@
 @using System.Diagnostics
-@inject ApiClient Http
+@inject IAuthorService AuthorService
 
 @if (Error is not null)
 {
@@ -100,24 +100,17 @@
 			Debug.Assert(Author is not null);
 			Debug.Assert(FormModel is not null);
 
-			var response = await Http.PatchAsync($"authors/{Author.UserName}", FormModel);
-			if (response.IsSuccessStatusCode)
+			try
 			{
+				await AuthorService.UpdateAuthorAsync(Author.UserName, FormModel);
+
 				Success = "Your profile was saved!";
 
 				await OnDoneEditing.InvokeAsync(true);
 			}
-			else
+			catch (Exception e)
 			{
-				var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-				if (errorResponse?.Error is null)
-				{
-					Error = "Unable to deserialize";
-
-					return;
-				}
-
-				Error = errorResponse.Error.Message;
+				Error = e.Message;
 			}
 		}
 		finally
@@ -130,5 +123,4 @@
 	{
 		await OnDoneEditing.InvokeAsync(false);
 	}
-
 }

@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PubNet.Frontend;
 using PubNet.Frontend.Services;
+using PubNet.SDK.Abstractions;
+using PubNet.SDK.Extensions;
+using PubNet.SDK.Helpers;
+using PubNet.SDK.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -29,14 +33,20 @@ builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif
 
 // API client services
-builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILogger<ApiClient>>())
-{
+builder.Services.AddSingleton(new BaseAddressProvider(
 #if DEBUG
-	BaseAddress = "https://localhost:7171/api/",
+	"https://localhost:7171/api/"
 #else
-	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
+	builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/"
 #endif
+));
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<ILoginTokenStorage, BrowserLoginTokenStorage>();
+builder.Services.AddPubNetApi((sp, c) =>
+{
+	var bap = sp.GetRequiredService<BaseAddressProvider>();
+
+	c.BaseAddress = bap.BaseUri;
 });
 
 // set up Blazorise
@@ -51,12 +61,10 @@ builder.Services
 
 // set up common services
 builder.Services
-	.AddBlazoredLocalStorage()
-	.AddScoped<AuthenticationService>()
+	.AddSingleton<TextGenerator>()
+	.AddScoped<ApiAuthenticationService>()
 	.AddScoped<ClipboardService>()
 	.AddScoped<AlertService>()
-	.AddScoped<PackagesService>()
-	.AddScoped<AnalysisService>()
 	.AddTransient(typeof(FetchLock<>));
 
 var app = builder.Build();

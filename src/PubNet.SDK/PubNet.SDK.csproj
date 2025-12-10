@@ -60,6 +60,9 @@
 	</Target>
 
 	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
 		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
 		<PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>
 		<PackageReference Include="Microsoft.Kiota.Serialization.Json"/>
