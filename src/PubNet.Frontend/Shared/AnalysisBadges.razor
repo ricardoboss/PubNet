@@ -1,5 +1,4 @@
 @inherits BaseComponent
-@using PubNet.API.DTO
 @inject ApiClient Http
 @inject AnalysisService Analysis
 
@@ -74,11 +73,11 @@
 	[Parameter]
 	public bool HideNonVersionSpecificBadges { get; set; }
 
-	private bool? IsLatest => PackageDto?.Latest?.Version is null ? null : PackageDto?.Latest?.Version == PackageVersionDto?.Version;
+	private bool? IsLatest => PackageDto?.Latest?.PackageVersionDto?.Version is null ? null : PackageDto?.Latest?.PackageVersionDto?.Version == PackageVersionDto?.Version;
 
 	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
 
-	private string? PackageName => PackageDto?.Name ?? PackageVersionDto?.PubSpec.Name;
+	private string? PackageName => PackageDto?.Name ?? PackageVersionDto?.Pubspec?.Name;
 
 	private bool Mirrored => PackageDto?.Mirrored ?? false;
 
@@ -101,7 +100,7 @@
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.PubSpec.Name, PackageVersionDto.Version, false);
+			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, false);
 		}
 	}
 

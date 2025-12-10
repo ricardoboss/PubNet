@@ -1,0 +1,26 @@
+{
+  "descriptionHash": "B177D584EFC90DF65D0081E28FE9C4008A9026092053E31832C78AE758AA3949E3A95738A7F26C0570D909F023BF34016E4FAFEE3F69E8E32646A5942738146C",
+  "descriptionLocation": "../../PubNet.API/PubNet_openapi.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.29.0",
+  "clientClassName": "PubNetApiClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "PubNet.SDK.Generated",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}
