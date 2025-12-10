@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 
-namespace PubNet.Frontend.Services;
+namespace PubNet.SDK.Helpers;
 
 public class FetchLock<T>(ILogger<FetchLock<T>> logger)
 {
@@ -23,7 +25,8 @@ public class FetchLock<T>(ILogger<FetchLock<T>> logger)
 		logger.LogTrace("[{ClassPrefix}] {TaskName} can now acquire the lock", _classPrefix, taskName);
 	}
 
-	public void Lock([CallerMemberName] string taskName = "")
+	[MustDisposeResource]
+	public IDisposable Lock([CallerMemberName] string taskName = "")
 	{
 		if (_locked)
 			throw new InvalidOperationException("Already locked");
@@ -32,19 +35,27 @@ public class FetchLock<T>(ILogger<FetchLock<T>> logger)
 		_lockedBy = taskName;
 
 		logger.LogTrace("[{ClassPrefix}] {TaskName} has acquired the lock", _classPrefix, taskName);
+
+		return new FetchLockObj(Free);
 	}
 
-	public async Task LockAfterFreed(int delay = FetchDelay, [CallerMemberName] string taskName = "")
+	[MustDisposeResource]
+	public async Task<IDisposable> UntilFreedAndLock(int delay = FetchDelay, [CallerMemberName] string taskName = "")
 	{
 		await UntilFreed(delay, taskName);
 
-		Lock(taskName);
+		return Lock(taskName);
 	}
 
-	public void Free()
+	private void Free()
 	{
 		_locked = false;
 
 		logger.LogTrace("[{ClassPrefix}] {TaskName} has freed the lock", _classPrefix, _lockedBy);
 	}
+}
+
+file class FetchLockObj(Action free) : IDisposable
+{
+	public void Dispose() => free();
 }
