@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using PubNet.API.DTO;
+using PubNet.SDK.Generated.Models;
 
 namespace PubNet.Frontend.Services;
 

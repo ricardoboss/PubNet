@@ -1,6 +1,5 @@
 ﻿@page "/author/{Username}"
 @page "/authors/{Username}"
-@using PubNet.API.DTO
 @inject ApiClient Http
 @inject AuthenticationService Auth
 @inject AlertService Alert
@@ -163,7 +162,15 @@
 		var response = await Http.GetAsync<AuthorPackagesResponse>($"authors/{Username}/packages");
 		if (response?.Packages is not null)
 		{
-			AuthorPackages = response.Packages.Select(dto => new SearchResultPackage(dto.Name, dto.ReplacedBy, dto.IsDiscontinued, Username, dto.Latest?.Version, dto.Latest?.Published)).ToList();
+			AuthorPackages = response.Packages.Select(dto => new SearchResultPackage
+			{
+				Name = dto.Name,
+				ReplacedBy = dto.ReplacedBy,
+				IsDiscontinued = dto.IsDiscontinued,
+				AuthorUserName = Username,
+				LatestVersion = dto.Latest?.PackageVersionDto?.Version,
+				LatestPublishedAtUtc = dto.Latest?.PackageVersionDto?.Published,
+			}).ToList();
 		}
 		else
 		{
@@ -195,7 +202,10 @@
 		if (string.IsNullOrWhiteSpace(confirmation))
 			return;
 
-		var response = await Http.PostAsync($"authors/{Username}/delete", new DeleteAuthorRequest(confirmation));
+		var response = await Http.PostAsync($"authors/{Username}/delete", new DeleteAuthorRequest
+		{
+			Password = confirmation,
+		});
 		if (response.IsSuccessStatusCode)
 		{
 			var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
@@ -206,7 +216,7 @@
 				return;
 			}
 
-			AuthorSuccess = successResponse.Success.Message;
+			AuthorSuccess = successResponse.Success?.Message;
 
 			await Auth.Logout();
 		}
