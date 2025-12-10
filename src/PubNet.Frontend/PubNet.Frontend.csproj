@@ -17,8 +17,4 @@
 		<PackageReference Include="NuGet.Packaging" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
-	</ItemGroup>
-
 </Project>

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Authors;
+using PubNet.API.DTO.Packages;
 using PubNet.API.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -67,7 +69,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 	}
 
 	[HttpPost("{username}/delete")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ErrorResponse))]
@@ -107,7 +109,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 
 			await db.SaveChangesAsync(cancellationToken);
 
-			return Ok(new SuccessResponse(new($"Author '{username}' successfully deleted.")));
+			return Ok(new SuccessResponseDto(new($"Author '{username}' successfully deleted.")));
 		}
 	}
 

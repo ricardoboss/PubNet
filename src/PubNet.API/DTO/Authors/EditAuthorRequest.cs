@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using JetBrains.Annotations;
 
-namespace PubNet.API.DTO;
+namespace PubNet.API.DTO.Authors;
 
+[PublicAPI]
 public class EditAuthorRequest
 {
-	[Required]
 	public string? Name { get; set; }
 
 	[DataType(DataType.Url)]
