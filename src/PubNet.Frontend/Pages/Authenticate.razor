@@ -1,5 +1,5 @@
 ﻿@page "/authenticate"
-@inject ApiClient Http;
+@inject IAuthenticationService Auth
 
 <Heading Size="HeadingSize.Is1">Login</Heading>
 
@@ -28,7 +28,7 @@ else
     {
         await base.OnInitializedAsync();
 
-        _showRegistration = await Http.GetAsync<bool>("authentication/registrations-enabled");
+        _showRegistration = await Auth.GetRegistrationsEnabledAsync();
     }
 
 }
