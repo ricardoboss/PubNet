@@ -171,7 +171,14 @@ In case you want a reverse proxy, configure it appropriately (in this case using
   "PackageStorage": {
     "Path": "./packages"
   },
-  "OpenRegistration": true
+  "OpenRegistration": true,
+  "SmtpAccount": {
+    "Host": "localhost",
+    "Port": 1025,
+    "TLS": false,
+    "Login": "myMtaLogin",
+    "Password": "myMtaPassword"
+  }
 }
 
 ```
