@@ -15,18 +15,30 @@ public static class ServiceCollectionExtensions
 	{
 		public IServiceCollection AddPubNetApi(Action<IServiceProvider, HttpClient> configureClient)
 		{
-			services.AddHttpClient<IRequestAdapter, HttpClientRequestAdapter>((sp, c) =>
-			{
-				c.DefaultRequestHeaders.UserAgent.Clear();
-				c.DefaultRequestHeaders.UserAgent.Add(new("PubNet.SDK",
-					typeof(PubNetApiClient).Assembly.GetName().Version!.ToString()));
-
-				configureClient(sp, c);
-			});
 			services.TryAddTransient<IAuthenticationProvider, LoginTokenAuthenticationProvider>();
+			services.AddHttpClient();
+			services.TryAddScoped<IRequestAdapter>(sp =>
+			{
+				var authenticationProvider = sp.GetRequiredService<IAuthenticationProvider>();
+				var client = sp.GetRequiredService<HttpClient>();
+
+				client.DefaultRequestHeaders.UserAgent.Clear();
+				client.DefaultRequestHeaders.UserAgent.Add(new("PubNet.SDK",
+					typeof(PubNetApiClient).Assembly.GetName().Version!.ToString()));
+				configureClient(sp, client);
+
+				var adapter = new HttpClientRequestAdapter(
+					authenticationProvider: authenticationProvider,
+					httpClient: client
+				);
+
+				return adapter;
+			});
 			services.TryAddScoped<PubNetApiClient>();
 			services.TryAddScoped<IPackagesService, ApiPackagesService>();
 			services.TryAddScoped<IAnalysisService, ApiAnalysisService>();
+			services.TryAddScoped<IAuthenticationService, ApiAuthenticationService>();
+			services.TryAddScoped<IAuthorService, ApiAuthorService>();
 
 			return services;
 		}
