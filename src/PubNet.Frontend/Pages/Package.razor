@@ -118,7 +118,7 @@
 		{
 #pragma warning disable CS4014
 			if (PackageModel?.Versions is not null)
-				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => AnalysisService.GetAnalysisForPackageVersionAsync(PackageName, v.Version))).ContinueWith(_ => StateHasChanged());
+				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => AnalysisService.GetAnalysisForPackageVersionAsync(PackageName, v.Version, includeReadme: false))).ContinueWith(_ => StateHasChanged());
 #pragma warning restore CS4014
 		}
 	}
