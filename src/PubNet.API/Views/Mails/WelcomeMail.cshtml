@@ -1,0 +1,16 @@
+@inherits TRENZ.Lib.RazorMail.Core.MailTemplateBase<PubNet.API.Mails.WelcomeMailModel>
+
+@{
+    Subject = "Welcome to PubNet!";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h1>Welcome to PubNet!</h1>
+
+<p>
+    This e-mail address has been registered with the user name <strong>@Model.UserName</strong> at <a href="@Model.FrontendUrl">@Model.FrontendUrl</a>.
+</p>
+</body>
+</html>

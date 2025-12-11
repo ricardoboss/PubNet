@@ -2,6 +2,7 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -14,7 +15,9 @@ public class AuthenticationController(
 	JwtTokenGenerator tokenGenerator,
 	PubNetContext db,
 	PasswordManager passwordManager,
-	IConfiguration configuration
+	IConfiguration configuration,
+	INotificationService notificationService,
+	ILogger<AuthenticationController> logger
 ) : BaseController
 {
 	private static InvalidCredentialException EmailNotFound => new("E-Mail address not registered");
@@ -72,6 +75,16 @@ public class AuthenticationController(
 
 		db.Authors.Add(author);
 		await db.SaveChangesAsync(cancellationToken);
+
+		try
+		{
+			var referer = Request.Headers.Referer.FirstOrDefault() ?? Request.Host.ToString();
+			await notificationService.SendWelcomeNotificationAsync(author, new(referer), cancellationToken);
+		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Failed to send welcome notification");
+		}
 
 		return CreatedAtAction("Get", "Authors", new { username = author.UserName }, author);
 	}
