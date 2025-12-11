@@ -4,7 +4,7 @@ namespace PubNet.SDK.Abstractions;
 
 public interface IAuthorService
 {
-	Task<AuthorsResponse> GetAuthorsAsync(CancellationToken cancellationToken = default);
+	Task<AuthorsResponse?> GetAuthorsAsync(CancellationToken cancellationToken = default);
 
 	Task<AuthorDto?> GetAuthorAsync(string username, CancellationToken cancellationToken = default);
 
