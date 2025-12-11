@@ -4,5 +4,5 @@ namespace PubNet.SDK.Abstractions;
 
 public interface IAnalysisService
 {
-	Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version, CancellationToken cancellationToken = default);
+	Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version, bool includeReadme, CancellationToken cancellationToken = default);
 }

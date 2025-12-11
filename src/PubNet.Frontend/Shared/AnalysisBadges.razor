@@ -100,7 +100,7 @@
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			AnalysisDto = await ApiAnalysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version);
+			AnalysisDto = await ApiAnalysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, includeReadme: true);
 		}
 	}
 
