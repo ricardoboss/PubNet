@@ -6,14 +6,14 @@ namespace PubNet.SDK.Services;
 
 public class ApiAuthorService(PubNetApiClient apiClient) : IAuthorService
 {
-	public Task<AuthorsResponse> GetAuthorsAsync(CancellationToken cancellationToken = default)
+	public async Task<AuthorsResponse?> GetAuthorsAsync(CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		return await apiClient.Authors.GetAsync(cancellationToken: cancellationToken);
 	}
 
-	public Task<AuthorDto?> GetAuthorAsync(string username, CancellationToken cancellationToken = default)
+	public async Task<AuthorDto?> GetAuthorAsync(string username, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		return await apiClient.Authors[username].GetAsync(cancellationToken: cancellationToken);
 	}
 
 	public async Task UpdateAuthorAsync(string username, EditAuthorRequest request, CancellationToken cancellationToken = default)
@@ -21,8 +21,8 @@ public class ApiAuthorService(PubNetApiClient apiClient) : IAuthorService
 		await apiClient.Authors[username].PatchAsync(request, cancellationToken: cancellationToken);
 	}
 
-	public Task DeleteAuthorAsync(string username, DeleteAuthorRequest request, CancellationToken cancellationToken = default)
+	public async Task DeleteAuthorAsync(string username, DeleteAuthorRequest request, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		await apiClient.Authors[username].DeletePath.PostAsync(request, cancellationToken: cancellationToken);
 	}
 }
