@@ -1,9 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi;
@@ -19,6 +16,8 @@ using PubNet.Database;
 using PubNet.Database.Models;
 using Serilog;
 using Serilog.Events;
+using TRENZ.Lib.RazorMail.Extensions;
+using TRENZ.Lib.RazorMail.MailKit.Extensions;
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
@@ -81,6 +80,11 @@ try
 
 	// generates JWT tokens
 	builder.Services.AddSingleton<JwtTokenGenerator>();
+
+	// mails
+	builder.Services.AddRazorMailRenderer();
+	builder.Services.AddMailKitMailClient();
+	builder.Services.AddScoped<INotificationService, MailNotificationService>();
 
 	// used to store request-specific data in a single place
 	builder.Services.AddScoped<ApplicationRequestContext>();

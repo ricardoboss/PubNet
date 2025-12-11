@@ -16,6 +16,7 @@
 		<PackageReference Include="Serilog.Sinks.Seq"/>
 		<PackageReference Include="SerilogAnalyzer"/>
 		<PackageReference Include="Swashbuckle.AspNetCore"/>
+		<PackageReference Include="TRENZ.Lib.RazorMail.MailKit" />
 		<PackageReference Include="YamlDotNet"/>
 	</ItemGroup>
 

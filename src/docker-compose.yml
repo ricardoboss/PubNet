@@ -1,9 +1,7 @@
 volumes:
   postgres_data:
   seq_data:
-  pubnet_packages:
-  caddy_data:
-  caddy_config:
+  mailpit_data:
 
 services:
   database:
@@ -17,14 +15,6 @@ services:
     ports:
       - "5432:5432"
 
-  adminer:
-    image: adminer
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    depends_on:
-      - database
-
   seq:
     image: datalust/seq
     restart: unless-stopped
@@ -37,46 +27,16 @@ services:
       - "5380:80"
       - "5341:5341"
 
-  backend:
-    build:
-      dockerfile: ./PubNet.API/Dockerfile
-      target: final
+  mta:
+    image: axllent/mailpit
     restart: unless-stopped
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH: "mailpit:mailpit"
+      MP_SMTP_AUTH_ALLOW_INSECURE: true
+      TZ: Europe/Berlin
     volumes:
-      - "./backend-appsettings.json:/app/appsettings.Production.json"
-      - "pubnet_packages:/app/packages"
-    depends_on:
-      - database
-      - caddy
-
-  worker:
-    build:
-      dockerfile: ./PubNet.Worker/Dockerfile
-      target: final
-    restart: unless-stopped
-    volumes:
-      - "./worker-appsettings.json:/app/appsettings.Production.json"
-      - "pubnet_packages:/app/packages"
-    depends_on:
-      - database
-
-  frontend:
-    build:
-      dockerfile: ./PubNet.Frontend/Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - backend
-      - caddy
-
-  # you can choose any reverse proxy you want, Caddy is not required
-  caddy:
-    image: caddy
-    restart: unless-stopped
-    volumes:
-      - "./Caddyfile:/etc/caddy/Caddyfile"
-      - "caddy_data:/data"
-      - "caddy_config:/config"
+      - "mailpit_data:/data"
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "1025:1025"
+      - "8025:8025"

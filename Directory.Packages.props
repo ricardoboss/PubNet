@@ -1,10 +1,8 @@
 ﻿<Project>
-
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 		<NuGetAuditMode>all</NuGetAuditMode>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0"/>
 		<PackageVersion Include="Blazorise.Bulma" Version="1.8.7"/>
@@ -44,14 +42,13 @@
 		<PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0"/>
 		<PackageVersion Include="SharpCompress" Version="0.42.0"/>
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="10.0.1"/>
+		<PackageVersion Include="TRENZ.Lib.RazorMail.MailKit" Version="2.3.0"/>
 		<PackageVersion Include="Vogen" Version="8.0.3"/>
 		<PackageVersion Include="YamlDotNet" Version="16.3.0"/>
 	</ItemGroup>
-
 	<!-- Prevent vulnerable versions from being used -->
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.Build" Version="[17.10.46,)"/>
 		<PackageReference Include="Microsoft.Build" ExcludeAssets="compile;runtime;build;native;contentfiles;analyzers"/>
 	</ItemGroup>
-
 </Project>
