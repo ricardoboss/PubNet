@@ -33,13 +33,14 @@ builder.Logging.SetMinimumLevel(LogLevel.None);
 #endif
 
 // API client services
-builder.Services.AddSingleton(new BaseAddressProvider(
+var bap = new BaseAddressProvider(
 #if DEBUG
 	"https://localhost:7171/api/"
 #else
 	builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/"
 #endif
-));
+);
+builder.Services.AddSingleton(bap);
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<ILoginTokenStorage, BrowserLoginTokenStorage>();
 builder.Services.AddPubNetApi((sp, c) =>
@@ -68,4 +69,7 @@ builder.Services
 	.AddTransient(typeof(FetchLock<>));
 
 var app = builder.Build();
+
+app.Services.GetRequiredService<ILogger<Program>>().LogInformation("Using base address {BaseAddress}", bap.BaseUri);
+
 await app.RunAsync();
