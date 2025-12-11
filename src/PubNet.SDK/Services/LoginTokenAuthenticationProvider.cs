@@ -29,9 +29,10 @@ public class LoginTokenAuthenticationProvider(ILoginTokenStorage loginTokenStora
 
 	private readonly (Method method, string path)[] unauthenticatedEndpoints =
 	[
-		(Method.POST, "/Authentication/LoginToken"),
-		(Method.GET, "/Authentication/RegistrationsOpen"),
-		(Method.POST, "/Authentication/Account"),
+		(Method.POST, "/authentication/login"),
+		(Method.POST, "/authentication/register"),
+		(Method.GET, "/authentication/registrations-enabled"),
+		(Method.POST, "/authentication/self"),
 	];
 
 	private bool ShouldAuthenticate(RequestInformation request)
