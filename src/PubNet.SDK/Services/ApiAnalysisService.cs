@@ -9,24 +9,10 @@ public class ApiAnalysisService(PubNetApiClient apiClient, FetchLock<ApiAnalysis
 {
 	private readonly Dictionary<string, Dictionary<string, PackageVersionAnalysisDto?>> _analyses = new();
 
-	public void InvalidateAnalysisFor(string name, string? version = null)
+	public async Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version,
+		bool includeReadme, CancellationToken cancellationToken = default)
 	{
-		if (!_analyses.TryGetValue(name, out var analysis))
-			return;
-
-		if (version is not null)
-		{
-			analysis.Remove(version);
-		}
-		else
-		{
-			_analyses.Remove(name);
-		}
-	}
-
-	public async Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version, CancellationToken cancellationToken = default)
-	{
-		await fetchLock.UntilFreed(taskName: $"GetAnalysisForPackageVersionAsync({name}, {version})");
+		await fetchLock.UntilFreed(taskName: $"GetAnalysisForPackageVersionAsync({name}, {version}, {includeReadme})");
 
 		if (_analyses.TryGetValue(name, out var versions))
 		{
@@ -34,9 +20,10 @@ public class ApiAnalysisService(PubNetApiClient apiClient, FetchLock<ApiAnalysis
 				return value;
 		}
 
-		using var _ = fetchLock.Lock($"GetAnalysisForPackageVersionAsync({name}, {version})");
+		using var _ = fetchLock.Lock($"GetAnalysisForPackageVersionAsync({name}, {version}, {includeReadme})");
 
-		var analysis = await apiClient.Packages[name].Versions[version].Analysis.GetAsync(cancellationToken: cancellationToken);
+		var analysis = await apiClient.Packages[name].Versions[version].Analysis
+			.GetAsync(r => r.QueryParameters.IncludeReadme = includeReadme, cancellationToken: cancellationToken);
 		if (analysis is null)
 			return null;
 

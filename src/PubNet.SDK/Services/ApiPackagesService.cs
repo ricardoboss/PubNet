@@ -164,13 +164,13 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		}
 	}
 
-	public Task<AuthorPackagesResponse> GetPackagesByAuthorAsync(string username, CancellationToken cancellationToken = default)
+	public async Task<AuthorPackagesResponse?> GetPackagesByAuthorAsync(string username, CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		return await apiClient.Authors[username].Packages.GetAsync(cancellationToken: cancellationToken);
 	}
 
-	public Task<SearchPackagesResponse?> SearchPackagesAsync(CancellationToken cancellationToken = default)
+	public async Task<SearchPackagesResponse?> SearchPackagesAsync(CancellationToken cancellationToken = default)
 	{
-		throw new NotImplementedException();
+		return await apiClient.Packages.GetAsync(cancellationToken: cancellationToken);
 	}
 }

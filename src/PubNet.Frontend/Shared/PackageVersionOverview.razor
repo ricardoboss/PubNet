@@ -248,7 +248,7 @@ else
 
         try
         {
-            Analysis = await AnalysisService.GetAnalysisForPackageVersionAsync(Version.Pubspec.Name, Version.Version);
+            Analysis = await AnalysisService.GetAnalysisForPackageVersionAsync(Version.Pubspec.Name, Version.Version, includeReadme: true);
         }
         catch (Exception)
         {
