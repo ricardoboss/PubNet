@@ -19,11 +19,33 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 
 	public static async Task RunMigrations(IServiceProvider serviceProvider)
 	{
-		serviceProvider.GetRequiredService<ILogger<PubNetContext>>().LogInformation("Migrating database");
+		var logger = serviceProvider.GetRequiredService<ILogger<PubNetContext>>();
+
+		logger.LogDebug("Checking for pending database migrations");
 
 		using var startupScope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-		await startupScope.ServiceProvider.GetRequiredService<PubNetContext>().Database.MigrateAsync();
+		var context = startupScope.ServiceProvider.GetRequiredService<PubNetContext>();
+
+		List<string> pending = [.. await context.Database.GetPendingMigrationsAsync()];
+		if (pending.Count == 0)
+		{
+			logger.LogInformation("No pending database migrations.");
+
+			return;
+		}
+
+		logger.LogInformation("Migrating database...");
+
+		if (logger.IsEnabled(LogLevel.Debug))
+		{
+			foreach (var migration in pending)
+				logger.LogDebug("Found pending migration: {MigrationName}", migration);
+		}
+
+		await context.Database.MigrateAsync();
+
+		logger.LogInformation("Done migrating");
 	}
 
 	public DbSet<Package> Packages { get; set; } = null!;
