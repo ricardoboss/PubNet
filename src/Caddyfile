@@ -1,4 +1,0 @@
-*:80, *:443 {
-    reverse_proxy /api/* backend:80
-    reverse_proxy /* frontend:80
-}
