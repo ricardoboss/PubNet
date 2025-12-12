@@ -16,8 +16,8 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 	: BaseController
 {
 	[HttpGet("")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponse))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorsResponseDto))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
 	[ResponseCache(VaryByQueryKeys = ["q", "before", "limit"], Location = ResponseCacheLocation.Any,
 		Duration = 3600)]
 	public IActionResult GetAll([FromQuery] string? q = null, [FromQuery] long? before = null,
@@ -34,7 +34,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 
 		if (before.HasValue)
 		{
-			if (!limit.HasValue) return BadRequest(ErrorResponse.InvalidQuery);
+			if (!limit.HasValue) return BadRequest(ErrorResponseDto.InvalidQuery);
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
@@ -48,8 +48,8 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 			packages = packages.Take(resultLimit);
 		}
 
-		return Ok(new AuthorsResponse(
-			packages.Select(a => new SearchResultAuthor(a.UserName, a.Name, a.Packages.Count, a.RegisteredAtUtc))));
+		return Ok(new AuthorsResponseDto(
+			packages.Select(a => new SearchResultAuthorDto(a.UserName, a.Name, a.Packages.Count, a.RegisteredAtUtc))));
 	}
 
 	[HttpGet("{username}")]
@@ -70,10 +70,10 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 
 	[HttpPost("{username}/delete")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto,
+	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequestDto dto,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
@@ -83,10 +83,10 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 			["AuthorUsername"] = username,
 		}))
 		{
-			if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
+			if (username != author.UserName) return Unauthorized(ErrorResponseDto.UsernameMismatch);
 
 			if (!await passwordManager.IsValid(db, author, dto.Password, cancellationToken))
-				return Unauthorized(ErrorResponse.InvalidPasswordConfirmation);
+				return Unauthorized(ErrorResponseDto.InvalidPasswordConfirmation);
 
 			foreach (var authorPackage in db.Packages.Where(p => p.Author == author))
 				authorPackage.Author = null;
@@ -102,7 +102,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 	}
 
 	[HttpGet("{username}/packages")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorPackagesResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorPackagesResponseDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetPackages(string username, CancellationToken cancellationToken = default)
 	{
@@ -113,14 +113,14 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 
 		return author is null
 			? NotFound()
-			: Ok(new AuthorPackagesResponse(author.Packages.Select(PackageDto.FromPackage)));
+			: Ok(new AuthorPackagesResponseDto(author.Packages.Select(PackageDto.FromPackage)));
 	}
 
 	[HttpPatch("{username}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
 	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-	public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequest dto,
+	public async Task<IActionResult> Edit(string username, [FromBody] EditAuthorRequestDto dto,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
@@ -130,7 +130,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 			["AuthorUsername"] = author.UserName,
 		}))
 		{
-			if (username != author.UserName) return Unauthorized(ErrorResponse.UsernameMismatch);
+			if (username != author.UserName) return Unauthorized(ErrorResponseDto.UsernameMismatch);
 
 			if (dto.Name is not null && author.Name != dto.Name) author.Name = dto.Name;
 

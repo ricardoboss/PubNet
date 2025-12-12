@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace PubNet.API.DTO.Authors;
 
 [PublicAPI]
-public class EditAuthorRequest
+public class EditAuthorRequestDto
 {
 	public string? Name { get; set; }
 
