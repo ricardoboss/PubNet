@@ -1,0 +1,14 @@
+[*.cs]
+
+# Symbol group: all classes
+dotnet_naming_symbols.classes.applicable_kinds = class
+dotnet_naming_symbols.classes.applicable_accessibilities = public
+
+# Desired style: must end with Dto
+dotnet_naming_style.end_with_dto.required_suffix = Dto
+dotnet_naming_style.end_with_dto.capitalization = pascal_case
+
+# Rule: classes → must end with Dto
+dotnet_naming_rule.classes_must_end_with_dto.symbols = classes
+dotnet_naming_rule.classes_must_end_with_dto.style = end_with_dto
+dotnet_naming_rule.classes_must_end_with_dto.severity = error
