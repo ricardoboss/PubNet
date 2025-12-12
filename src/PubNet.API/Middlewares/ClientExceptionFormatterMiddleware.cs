@@ -34,7 +34,7 @@ public class ClientExceptionFormatterMiddleware(RequestDelegate next)
 		}
 
 		await context.Response.WriteAsJsonAsync(
-			ErrorResponse.FromException(e),
+			ErrorResponseDto.FromException(e),
 			options: null,
 			contentType: "application/vnd.pub.v2+json"
 		);
