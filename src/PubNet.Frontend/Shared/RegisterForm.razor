@@ -88,7 +88,7 @@
 @code {
     private Validations? _validations;
 
-    private RegisterRequest RegisterRequest { get; set; } = new();
+    private RegisterRequestDto RegisterRequest { get; set; } = new();
 
     private string? Error { get; set; }
     private string? Success { get; set; }
@@ -104,7 +104,7 @@
 
         if (response.IsSuccessStatusCode)
         {
-            await response.Content.ReadFromJsonAsync<Author>();
+            await response.Content.ReadFromJsonAsync<AuthorDto>();
 
             RegisterRequest = new();
 
@@ -112,7 +112,7 @@
         }
         else
         {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            var message = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
 
             Error = message?.Error?.Message;
         }

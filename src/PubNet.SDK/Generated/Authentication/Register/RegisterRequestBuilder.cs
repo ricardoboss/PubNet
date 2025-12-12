@@ -33,46 +33,46 @@ namespace PubNet.SDK.Generated.Authentication.Register
         public RegisterRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/authentication/register", rawUrl)
         {
         }
-        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.Author"/></returns>
+        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.AuthorDto"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponse">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponse">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponse">When receiving a 422 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 422 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::PubNet.SDK.Generated.Models.Author?> PostAsync(global::PubNet.SDK.Generated.Models.RegisterRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.SDK.Generated.Models.AuthorDto?> PostAsync(global::PubNet.SDK.Generated.Models.RegisterRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::PubNet.SDK.Generated.Models.Author> PostAsync(global::PubNet.SDK.Generated.Models.RegisterRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.SDK.Generated.Models.AuthorDto> PostAsync(global::PubNet.SDK.Generated.Models.RegisterRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ErrorResponse.CreateFromDiscriminatorValue },
-                { "401", global::PubNet.SDK.Generated.Models.ErrorResponse.CreateFromDiscriminatorValue },
-                { "422", global::PubNet.SDK.Generated.Models.ErrorResponse.CreateFromDiscriminatorValue },
+                { "400", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
+                { "422", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
                 { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.Author>(requestInfo, global::PubNet.SDK.Generated.Models.Author.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.AuthorDto>(requestInfo, global::PubNet.SDK.Generated.Models.AuthorDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToPostRequestInformation(global::PubNet.SDK.Generated.Models.RegisterRequest body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::PubNet.SDK.Generated.Models.RegisterRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToPostRequestInformation(global::PubNet.SDK.Generated.Models.RegisterRequest body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToPostRequestInformation(global::PubNet.SDK.Generated.Models.RegisterRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));

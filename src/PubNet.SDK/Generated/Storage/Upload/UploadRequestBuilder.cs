@@ -35,9 +35,9 @@ namespace PubNet.SDK.Generated.Storage.Upload
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponse">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponse">When receiving a 411 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponse">When receiving a 413 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 411 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 413 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -52,9 +52,9 @@ namespace PubNet.SDK.Generated.Storage.Upload
             var requestInfo = ToPostRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ErrorResponse.CreateFromDiscriminatorValue },
-                { "411", global::PubNet.SDK.Generated.Models.ErrorResponse.CreateFromDiscriminatorValue },
-                { "413", global::PubNet.SDK.Generated.Models.ErrorResponse.CreateFromDiscriminatorValue },
+                { "400", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
+                { "411", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
+                { "413", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
                 { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
             };

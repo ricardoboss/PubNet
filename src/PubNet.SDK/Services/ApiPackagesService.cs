@@ -50,7 +50,7 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			throw NotFound("The package you are trying to delete was not found");
 		}
-		catch (ErrorResponse)
+		catch (ErrorResponseDto)
 		{
 			throw Unauthorized("You are not authorized to delete this package");
 		}
@@ -77,7 +77,7 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			throw NotFound("The package version you are trying to delete was not found");
 		}
-		catch (ErrorResponse)
+		catch (ErrorResponseDto)
 		{
 			throw Unauthorized("You are not authorized to delete this package version");
 		}
@@ -118,7 +118,7 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			throw NotFound();
 		}
-		catch (ErrorResponse)
+		catch (ErrorResponseDto)
 		{
 			throw Unauthorized("You are not authorized to discontinue this package");
 		}
@@ -146,7 +146,7 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			throw NotFound("The package version you are trying to retract does not exist");
 		}
-		catch (ErrorResponse)
+		catch (ErrorResponseDto)
 		{
 			throw Unauthorized("You are not authorized to retract this package version");
 		}
@@ -164,12 +164,12 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		}
 	}
 
-	public async Task<AuthorPackagesResponse?> GetPackagesByAuthorAsync(string username, CancellationToken cancellationToken = default)
+	public async Task<AuthorPackagesResponseDto?> GetPackagesByAuthorAsync(string username, CancellationToken cancellationToken = default)
 	{
 		return await apiClient.Authors[username].Packages.GetAsync(cancellationToken: cancellationToken);
 	}
 
-	public async Task<SearchPackagesResponse?> SearchPackagesAsync(CancellationToken cancellationToken = default)
+	public async Task<SearchPackagesResponseDto?> SearchPackagesAsync(CancellationToken cancellationToken = default)
 	{
 		return await apiClient.Packages.GetAsync(cancellationToken: cancellationToken);
 	}
