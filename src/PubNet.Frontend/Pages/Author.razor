@@ -161,7 +161,7 @@
 		PackagesError = null;
 
 		var response = await Packages.GetPackagesByAuthorAsync(Username);
-		if (response.Packages is not null)
+		if (response?.Packages is not null)
 		{
 			AuthorPackages = response.Packages.Select(dto => new SearchResultPackage
 			{
@@ -169,8 +169,8 @@
 				ReplacedBy = dto.ReplacedBy,
 				IsDiscontinued = dto.IsDiscontinued,
 				AuthorUserName = Username,
-				LatestVersion = dto.Latest?.PackageVersionDto?.Version,
-				LatestPublishedAtUtc = dto.Latest?.PackageVersionDto?.Published,
+				LatestVersion = dto.Latest?.Version,
+				LatestPublishedAtUtc = dto.Latest?.Published,
 			}).ToList();
 		}
 		else

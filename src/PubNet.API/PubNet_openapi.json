@@ -1771,22 +1771,22 @@
             ]
           },
           "latest": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/PackageVersionDto"
+              },
+              {
+                "type": "null"
               }
             ]
           },
           "author": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/AuthorDto"
+              },
+              {
+                "type": "null"
               }
             ]
           },
