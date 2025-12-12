@@ -57,5 +57,5 @@
 
 	private string Title => PackageName + (Version is null ? string.Empty : $": {Version.Version}");
 
-	private string? AuthorUserName => Package?.Author?.AuthorDto?.UserName;
+	private string? AuthorUserName => Package?.Author?.UserName;
 }
