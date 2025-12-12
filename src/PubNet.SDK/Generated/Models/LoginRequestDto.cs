@@ -9,35 +9,43 @@ namespace PubNet.SDK.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class SuccessResponse : IAdditionalDataHolder, IParsable
+    public partial class LoginRequestDto : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The success property</summary>
+        /// <summary>The email property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public global::PubNet.SDK.Generated.Models.SuccessResponseBody? Success { get; set; }
+        public string? Email { get; set; }
 #nullable restore
 #else
-        public global::PubNet.SDK.Generated.Models.SuccessResponseBody Success { get; set; }
+        public string Email { get; set; }
+#endif
+        /// <summary>The password property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Password { get; set; }
+#nullable restore
+#else
+        public string Password { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::PubNet.SDK.Generated.Models.SuccessResponse"/> and sets the default values.
+        /// Instantiates a new <see cref="global::PubNet.SDK.Generated.Models.LoginRequestDto"/> and sets the default values.
         /// </summary>
-        public SuccessResponse()
+        public LoginRequestDto()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.SuccessResponse"/></returns>
+        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.LoginRequestDto"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::PubNet.SDK.Generated.Models.SuccessResponse CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::PubNet.SDK.Generated.Models.LoginRequestDto CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::PubNet.SDK.Generated.Models.SuccessResponse();
+            return new global::PubNet.SDK.Generated.Models.LoginRequestDto();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -47,7 +55,8 @@ namespace PubNet.SDK.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "success", n => { Success = n.GetObjectValue<global::PubNet.SDK.Generated.Models.SuccessResponseBody>(global::PubNet.SDK.Generated.Models.SuccessResponseBody.CreateFromDiscriminatorValue); } },
+                { "email", n => { Email = n.GetStringValue(); } },
+                { "password", n => { Password = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -57,7 +66,8 @@ namespace PubNet.SDK.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<global::PubNet.SDK.Generated.Models.SuccessResponseBody>("success", Success);
+            writer.WriteStringValue("email", Email);
+            writer.WriteStringValue("password", Password);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

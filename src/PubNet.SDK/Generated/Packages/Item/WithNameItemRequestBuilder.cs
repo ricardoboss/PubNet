@@ -47,7 +47,7 @@ namespace PubNet.SDK.Generated.Packages.Item
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ProblemDetails">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.ProblemDetails">When receiving a 404 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
@@ -63,7 +63,7 @@ namespace PubNet.SDK.Generated.Packages.Item
             var requestInfo = ToDeleteRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "401", global::PubNet.SDK.Generated.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
                 { "404", global::PubNet.SDK.Generated.Models.ProblemDetails.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
                 { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },

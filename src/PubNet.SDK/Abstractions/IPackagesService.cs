@@ -17,8 +17,8 @@ public interface IPackagesService
 
 	Task RetractPackageVersionAsync(string name, string version, CancellationToken cancellationToken = default);
 
-	Task<AuthorPackagesResponse?> GetPackagesByAuthorAsync(string username,
+	Task<AuthorPackagesResponseDto?> GetPackagesByAuthorAsync(string username,
 		CancellationToken cancellationToken = default);
 
-	Task<SearchPackagesResponse?> SearchPackagesAsync(CancellationToken cancellationToken = default);
+	Task<SearchPackagesResponseDto?> SearchPackagesAsync(CancellationToken cancellationToken = default);
 }
