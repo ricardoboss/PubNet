@@ -4,4 +4,4 @@ using PubNet.API.DTO.Packages;
 namespace PubNet.API.DTO.Authors;
 
 [PublicAPI]
-public record AuthorPackagesResponse(IEnumerable<PackageDto> Packages);
+public record AuthorPackagesResponseDto(IEnumerable<PackageDto> Packages);

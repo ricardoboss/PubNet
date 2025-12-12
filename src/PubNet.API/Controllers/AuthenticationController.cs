@@ -25,9 +25,9 @@ public class AuthenticationController(
 	private static InvalidCredentialException EmailNotFound => new("E-Mail address not registered");
 
 	[HttpPost("login")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JwtTokenResponse))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	public async Task<IActionResult> Login(LoginRequest dto, CancellationToken cancellationToken = default)
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JsonWebTokenResponseDto))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
+	public async Task<IActionResult> Login(LoginRequestDto dto, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(dto.Email))
 			throw EmailNotFound;
@@ -39,28 +39,28 @@ public class AuthenticationController(
 		await passwordManager.ThrowForInvalid(db, author, dto.Password, cancellationToken);
 
 		var token = tokenGenerator.Generate(author, out var expiresAt);
-		return Ok(new JwtTokenResponse(token, expiresAt));
+		return Ok(new JsonWebTokenResponseDto(token, expiresAt));
 	}
 
 	[HttpPost("register")]
-	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
-	public async Task<IActionResult> Register([FromBody] RegisterRequest dto,
+	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AuthorDto))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponseDto))]
+	public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto,
 		CancellationToken cancellationToken = default)
 	{
 		if (!RegistrationsEnabled())
-			return BadRequest(ErrorResponse.RegistrationsDisabled);
+			return BadRequest(ErrorResponseDto.RegistrationsDisabled);
 
 		if (dto.Username is null || dto.Name is null || dto.Password is null || dto.Email is null)
-			return UnprocessableEntity(ErrorResponse.MissingValues);
+			return UnprocessableEntity(ErrorResponseDto.MissingValues);
 
 		if (db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
-			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
+			return UnprocessableEntity(ErrorResponseDto.UsernameAlreadyInUse);
 
 		if (db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
-			return UnprocessableEntity(ErrorResponse.EmailAlreadyInUse);
+			return UnprocessableEntity(ErrorResponseDto.EmailAlreadyInUse);
 
 		var author = new Author
 		{
@@ -93,7 +93,7 @@ public class AuthenticationController(
 
 	[HttpGet("self")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorDto))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
 	public async Task<IActionResult> Self(ApplicationRequestContext context,
 		CancellationToken cancellationToken = default)
 	{

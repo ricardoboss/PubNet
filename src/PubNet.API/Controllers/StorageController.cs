@@ -27,7 +27,7 @@ public class StorageController(
 {
 	/// <inheritdoc />
 	[NonAction]
-	public Task<UploadEndpointData> GenerateUploadEndpointData(HttpRequest request, Author author,
+	public Task<UploadEndpointDataDto> GenerateUploadEndpointData(HttpRequest request, Author author,
 		CancellationToken cancellationToken = default)
 	{
 		cancellationToken.ThrowIfCancellationRequested();
@@ -39,18 +39,18 @@ public class StorageController(
 
 		url = endpointHelper.SignEndpoint(url);
 
-		return Task.FromResult(new UploadEndpointData(url, new()));
+		return Task.FromResult(new UploadEndpointDataDto(url, new()));
 	}
 
 	[HttpPost("upload")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status411LengthRequired, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status413PayloadTooLarge, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status411LengthRequired, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status413PayloadTooLarge, Type = typeof(ErrorResponseDto))]
 	public async Task<IActionResult> Upload([FromQuery] int? authorId)
 	{
 		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
-			return BadRequest(ErrorResponse.InvalidSignedUrl);
+			return BadRequest(ErrorResponseDto.InvalidSignedUrl);
 
 		const long maxUploadSize = 100_000_000; // 100 MB
 
@@ -58,22 +58,22 @@ public class StorageController(
 		switch (size)
 		{
 			case null:
-				return StatusCode(StatusCodes.Status411LengthRequired, ErrorResponse.PackageLengthRequired);
+				return StatusCode(StatusCodes.Status411LengthRequired, ErrorResponseDto.PackageLengthRequired);
 			case > maxUploadSize:
 				return StatusCode(StatusCodes.Status413PayloadTooLarge,
-					ErrorResponse.PackagePayloadTooLarge(maxUploadSize));
+					ErrorResponseDto.PackagePayloadTooLarge(maxUploadSize));
 		}
 
 		var packageFile = Request.Form.Files.FirstOrDefault(f => f.Name == "file");
 		if (packageFile is null)
-			return BadRequest(ErrorResponse.MissingPackageFile);
+			return BadRequest(ErrorResponseDto.MissingPackageFile);
 
 		if (authorId is null)
-			return BadRequest(ErrorResponse.MissingFields);
+			return BadRequest(ErrorResponseDto.MissingFields);
 
 		var author = await db.Authors.FindAsync(authorId);
 		if (author is null)
-			return BadRequest(ErrorResponse.InvalidAuthorId);
+			return BadRequest(ErrorResponseDto.InvalidAuthorId);
 
 		var pendingId = Guid.NewGuid();
 		var tempFile = Path.GetTempPath() + pendingId + ".tar.gz";
@@ -117,26 +117,26 @@ public class StorageController(
 
 	[HttpGet("finalize")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status424FailedDependency, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status424FailedDependency, Type = typeof(ErrorResponseDto))]
 	public async Task<IActionResult> FinalizeUpload([FromQuery] string? pendingId,
 		CancellationToken cancellationToken = default)
 	{
 		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
-			return BadRequest(ErrorResponse.InvalidSignedUrl);
+			return BadRequest(ErrorResponseDto.InvalidSignedUrl);
 
 		if (pendingId is null)
-			return FailedDependency(ErrorResponse.MissingPendingId);
+			return FailedDependency(ErrorResponseDto.MissingPendingId);
 
 		if (!Guid.TryParse(pendingId, out var uuid))
-			return FailedDependency(ErrorResponse.InvalidPendingId);
+			return FailedDependency(ErrorResponseDto.InvalidPendingId);
 
 		var pending = await db.PendingArchives
 			.Include(p => p.Uploader)
 			.FirstOrDefaultAsync(a => a.Uuid == uuid, cancellationToken);
 		if (pending is null)
-			return FailedDependency(ErrorResponse.InvalidPendingId);
+			return FailedDependency(ErrorResponseDto.InvalidPendingId);
 
 		var unpackedArchivePath = pending.UnpackedArchivePath;
 		await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
@@ -153,26 +153,26 @@ public class StorageController(
 			}
 			catch (FileNotFoundException)
 			{
-				return UnprocessableEntity(ErrorResponse.MissingPubspec);
+				return UnprocessableEntity(ErrorResponseDto.MissingPubspec);
 			}
 			catch (Exception ex)
 			{
-				return UnprocessableEntity(ErrorResponse.InvalidPubspec(ex.Message));
+				return UnprocessableEntity(ErrorResponseDto.InvalidPubspec(ex.Message));
 			}
 
 			var packageName = pubSpec.Name;
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageName is null)
-				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package name"));
+				return UnprocessableEntity(ErrorResponseDto.InvalidPubspec("The pubspec.yaml is missing a package name"));
 
 			var packageVersionId = pubSpec.Version;
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageVersionId is null)
 				return UnprocessableEntity(
-					ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package version"));
+					ErrorResponseDto.InvalidPubspec("The pubspec.yaml is missing a package version"));
 
 			if (!SemVersion.TryParse(packageVersionId, SemVersionStyles.Any, out var packageVersionSemver))
-				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The package version could not be parsed"));
+				return UnprocessableEntity(ErrorResponseDto.InvalidPubspec("The package version could not be parsed"));
 
 			var package = await db.Packages.Where(p => p.Name == packageName)
 				.Include(p => p.Versions)
@@ -196,19 +196,19 @@ public class StorageController(
 			else
 			{
 				if (package.Author != pending.Uploader)
-					return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+					return Unauthorized(ErrorResponseDto.PackageAuthorMismatch);
 
 				if (package.IsDiscontinued)
-					return UnprocessableEntity(ErrorResponse.PackageDiscontinued);
+					return UnprocessableEntity(ErrorResponseDto.PackageDiscontinued);
 
 				if (package.Versions.Any(v => v.Version == packageVersionId))
-					return UnprocessableEntity(ErrorResponse.VersionAlreadyExists(packageName, packageVersionId));
+					return UnprocessableEntity(ErrorResponseDto.VersionAlreadyExists(packageName, packageVersionId));
 
 				if (package.Latest is not null)
 				{
 					var latestSemver = SemVersion.Parse(package.Latest.Version, SemVersionStyles.Any);
 					if (packageVersionSemver.ComparePrecedenceTo(latestSemver) != 1)
-						return UnprocessableEntity(ErrorResponse.VersionOlderThanLatest(package.Latest.Version));
+						return UnprocessableEntity(ErrorResponseDto.VersionOlderThanLatest(package.Latest.Version));
 				}
 			}
 
