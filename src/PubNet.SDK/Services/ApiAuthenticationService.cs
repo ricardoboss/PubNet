@@ -24,7 +24,7 @@ public class ApiAuthenticationService(
 		return await loginTokenStorage.GetTokenAsync(cancellationToken) is not null;
 	}
 
-	public async Task<JwtTokenResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
+	public async Task<JsonWebTokenResponseDto?> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default)
 	{
 		return await apiClient.Authentication.Login.PostAsync(request, cancellationToken: cancellationToken);
 	}
