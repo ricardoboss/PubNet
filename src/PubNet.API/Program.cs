@@ -178,7 +178,6 @@ void ConfigureServices(WebApplicationBuilder builder)
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 		});
 
-
 	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
 		o.AddDocumentTransformer<PubNetDocumentTransformer>();
