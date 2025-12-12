@@ -14,18 +14,6 @@ namespace PubNet.SDK.Generated.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The capacity property</summary>
-        public int? Capacity { get; set; }
-        /// <summary>The comparer property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_comparer? Comparer { get; set; }
-#nullable restore
-#else
-        public global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_comparer Comparer { get; set; }
-#endif
-        /// <summary>The count property</summary>
-        public int? Count { get; set; }
         /// <summary>The item property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -75,9 +63,6 @@ namespace PubNet.SDK.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "capacity", n => { Capacity = n.GetIntValue(); } },
-                { "comparer", n => { Comparer = n.GetObjectValue<global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_comparer>(global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_comparer.CreateFromDiscriminatorValue); } },
-                { "count", n => { Count = n.GetIntValue(); } },
                 { "item", n => { Item = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "keys", n => { Keys = n.GetObjectValue<global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_keys>(global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_keys.CreateFromDiscriminatorValue); } },
                 { "values", n => { Values = n.GetObjectValue<global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_values>(global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_values.CreateFromDiscriminatorValue); } },
@@ -90,9 +75,6 @@ namespace PubNet.SDK.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteIntValue("capacity", Capacity);
-            writer.WriteObjectValue<global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_comparer>("comparer", Comparer);
-            writer.WriteIntValue("count", Count);
             writer.WriteCollectionOfPrimitiveValues<string>("item", Item);
             writer.WriteObjectValue<global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_keys>("keys", Keys);
             writer.WriteObjectValue<global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_values>("values", Values);

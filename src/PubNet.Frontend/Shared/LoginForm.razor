@@ -57,7 +57,7 @@
 @code {
 	private Validations? _validations;
 
-	private LoginRequest LoginRequest { get; set; } = new();
+	private LoginRequestDto LoginRequest { get; set; } = new();
 
 	private string? Error { get; set; }
 	private string? Success { get; set; }
@@ -87,7 +87,7 @@
 		{
 			Error = v.Title ?? "Validation errors occurred";
 		}
-		catch (ErrorResponse err)
+		catch (ErrorResponseDto err)
 		{
 			Error = err.Error?.Message ?? "Please check your credentials";
 		}

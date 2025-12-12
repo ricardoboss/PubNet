@@ -8,7 +8,7 @@ public interface IAuthenticationService
 
 	ValueTask<bool> IsAuthenticatedAsync(CancellationToken cancellationToken = default);
 
-	Task<JwtTokenResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
+	Task<JsonWebTokenResponseDto?> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default);
 
 	Task LogoutAsync(CancellationToken cancellationToken = default);
 
