@@ -16,6 +16,8 @@ namespace PubNet.SDK.Generated.Models
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The count property</summary>
         public int? Count { get; set; }
+        /// <summary>The isReadOnly property</summary>
+        public bool? IsReadOnly { get; set; }
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.SDK.Generated.Models.ValidationErrorsDto_errors_keys"/> and sets the default values.
         /// </summary>
@@ -42,6 +44,7 @@ namespace PubNet.SDK.Generated.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "count", n => { Count = n.GetIntValue(); } },
+                { "isReadOnly", n => { IsReadOnly = n.GetBoolValue(); } },
             };
         }
         /// <summary>
@@ -52,6 +55,7 @@ namespace PubNet.SDK.Generated.Models
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("count", Count);
+            writer.WriteBoolValue("isReadOnly", IsReadOnly);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
