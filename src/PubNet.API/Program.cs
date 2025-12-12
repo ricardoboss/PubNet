@@ -166,6 +166,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 		o.AddDocumentTransformer<PubNetDocumentTransformer>();
 		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
 		o.AddDocumentTransformer<ErrorsOperationTransformer>();
+		o.AddDocumentTransformer<NullableRelaxingDocumentTransformer>();
 
 		o.AddOperationTransformer<CleanupOperationTransformer>();
 		o.AddOperationTransformer<ErrorsOperationTransformer>();

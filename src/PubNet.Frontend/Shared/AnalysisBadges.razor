@@ -73,7 +73,7 @@
 	[Parameter]
 	public bool HideNonVersionSpecificBadges { get; set; }
 
-	private bool? IsLatest => PackageDto?.Latest?.PackageVersionDto?.Version is null ? null : PackageDto?.Latest?.PackageVersionDto?.Version == PackageVersionDto?.Version;
+	private bool? IsLatest => PackageDto?.Latest?.Version is null ? null : PackageDto?.Latest?.Version == PackageVersionDto?.Version;
 
 	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
 

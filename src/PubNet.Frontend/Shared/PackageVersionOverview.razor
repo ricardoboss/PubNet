@@ -240,11 +240,11 @@ else
         if (Package is null)
             return;
 
-        Version ??= Package.Latest?.PackageVersionDto;
+        Version ??= Package.Latest;
         if (Version is null)
             return;
 
-        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelfAsync(Package.Author?.AuthorDto?.UserName);
+        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelfAsync(Package.Author?.UserName);
 
         try
         {

@@ -99,7 +99,7 @@
 			return;
 		}
 
-		PackageVersion ??= PackageModel?.Latest?.PackageVersionDto?.Version;
+		PackageVersion ??= PackageModel?.Latest?.Version;
 		if (PackageVersion is not null)
 		{
 			try
