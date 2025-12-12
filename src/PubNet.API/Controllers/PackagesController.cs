@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Packages;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Extensions;
@@ -29,8 +30,8 @@ public class PackagesController(
 	};
 
 	[HttpGet("")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponse))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchPackagesResponseDto))]
+	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
 	[ResponseCache(VaryByQueryKeys = ["q", "before", "limit"], Location = ResponseCacheLocation.Any,
 		Duration = 60 * 60)]
 	public IActionResult Get([FromQuery] string? q = null, [FromQuery] long? before = null,
@@ -44,7 +45,7 @@ public class PackagesController(
 
 		if (before.HasValue)
 		{
-			if (!limit.HasValue) return BadRequest(ErrorResponse.InvalidQuery);
+			if (!limit.HasValue) return BadRequest(ErrorResponseDto.InvalidQuery);
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
@@ -58,7 +59,7 @@ public class PackagesController(
 			packages = packages.Take(resultLimit);
 		}
 
-		return Ok(new SearchPackagesResponse(packages.Include(p => p.Author).ToList().Select(p =>
+		return Ok(new SearchPackagesResponseDto(packages.Include(p => p.Author).ToList().Select(p =>
 			new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version,
 				p.Latest?.PublishedAtUtc))));
 	}
@@ -122,7 +123,7 @@ public class PackagesController(
 
 			if (package is null) return NotFound();
 
-			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponseDto.PackageAuthorMismatch);
 
 			package.IsDiscontinued = true;
 			package.ReplacedBy = dto.Replacement;
@@ -134,7 +135,7 @@ public class PackagesController(
 
 	[HttpDelete("{name}")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> DeleteByName(string name, [FromServices] ApplicationRequestContext context,
 		CancellationToken cancellationToken = default)
@@ -154,7 +155,7 @@ public class PackagesController(
 
 			if (package is null) return NotFound();
 
-			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponseDto.PackageAuthorMismatch);
 
 			// decouple analyses from versions
 			await db.PackageVersions
@@ -277,7 +278,7 @@ public class PackagesController(
 				.FirstOrDefaultAsync(cancellationToken);
 			if (package is null) return NotFound();
 
-			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponseDto.PackageAuthorMismatch);
 
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
 			if (packageVersion is null) return NotFound();
@@ -328,7 +329,7 @@ public class PackagesController(
 				.FirstOrDefaultAsync(cancellationToken);
 			if (package is null) return NotFound();
 
-			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponse.PackageAuthorMismatch);
+			if (author.Id != package.AuthorId) return Unauthorized(ErrorResponseDto.PackageAuthorMismatch);
 
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
 			if (packageVersion is null) return NotFound();
@@ -374,7 +375,7 @@ public class PackagesController(
 	}
 
 	[HttpGet("{name}/versions/{version}.tar.gz")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
+	[ProducesResponseType(StatusCodes.Status302Found)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionArchive(string name, string version,
@@ -456,8 +457,8 @@ public class PackagesController(
 	}
 
 	[HttpGet("versions/new")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointData))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UploadEndpointDataDto))]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
 	public async Task<IActionResult> VersionsNew([FromServices] IUploadEndpointGenerator uploadEndpointGenerator,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
