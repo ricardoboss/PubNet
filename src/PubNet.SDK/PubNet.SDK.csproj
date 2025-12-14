@@ -22,6 +22,10 @@
 		</ProjectReference>
 	</ItemGroup>
 
+	<Target Name="EnsureToolsRestored" BeforeTargets="EnsureClientUpdated">
+		<Exec Command="dotnet tool restore" WorkingDirectory="$(MSBuildThisFileDirectory)" />
+	</Target>
+
 	<Target Name="EnsureClientUpdated" BeforeTargets="CoreCompile;CompileDesignTime">
 		<CallTarget Targets="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')"/>
 		<CallTarget Targets="UpdateClient" Condition="Exists('$(GeneratedClientLockFile)')"/>
