@@ -109,7 +109,7 @@
 	private string? AuthorSuccess { get; set; }
 	private string? AuthorError { get; set; }
 
-	private IEnumerable<SearchResultPackage>? AuthorPackages { get; set; }
+	private IEnumerable<SearchResultPackageDto>? AuthorPackages { get; set; }
 	private string? PackagesError { get; set; }
 
 	protected override async Task OnParametersSetAsync()
@@ -163,7 +163,7 @@
 		var response = await Packages.GetPackagesByAuthorAsync(Username);
 		if (response?.Packages is not null)
 		{
-			AuthorPackages = response.Packages.Select(dto => new SearchResultPackage
+			AuthorPackages = response.Packages.Select(dto => new SearchResultPackageDto
 			{
 				Name = dto.Name,
 				ReplacedBy = dto.ReplacedBy,
