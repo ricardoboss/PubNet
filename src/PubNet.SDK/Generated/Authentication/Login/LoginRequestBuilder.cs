@@ -37,10 +37,12 @@ namespace PubNet.SDK.Generated.Authentication.Login
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ValidationErrorsDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto400Error">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.EmailNotFoundErrorDto">When receiving a 460 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidPasswordErrorDto">When receiving a 461 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.SDK.Generated.Models.JsonWebTokenResponseDto?> PostAsync(global::PubNet.SDK.Generated.Models.LoginRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -54,10 +56,12 @@ namespace PubNet.SDK.Generated.Authentication.Login
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ValidationErrorsDto.CreateFromDiscriminatorValue },
-                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "400", global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto400Error.CreateFromDiscriminatorValue },
+                { "460", global::PubNet.SDK.Generated.Models.EmailNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "461", global::PubNet.SDK.Generated.Models.InvalidPasswordErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Authentication.Login.JsonWebTokenResponseDto5XXError.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.JsonWebTokenResponseDto>(requestInfo, global::PubNet.SDK.Generated.Models.JsonWebTokenResponseDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
