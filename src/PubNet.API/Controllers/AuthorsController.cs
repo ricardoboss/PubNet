@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
@@ -9,6 +10,7 @@ using PubNet.Database.Models;
 
 namespace PubNet.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("authors")]
 [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
