@@ -83,7 +83,7 @@
 
 		try
 		{
-			PackageModel = await PackagesService.GetPackageAsync(PackageName);
+			PackageModel = await PackagesService.GetPackageAsync(PackageName, includeAuthor: true);
 		}
 		catch (PackageNotFoundException pnfe)
 		{
