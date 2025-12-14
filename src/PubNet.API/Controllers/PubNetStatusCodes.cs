@@ -41,21 +41,4 @@ public static class PubNetStatusCodes
 
 		_ => null,
 	};
-
-	public static string? ToErrorMessage(int code) => code switch
-	{
-		Status460EmailNotFound => "E-mail address not found",
-		Status461InvalidPassword => "Invalid password",
-		Status462RegistrationsDisabled => "Registrations are disabled",
-		Status463UsernameAlreadyInUse => "Username already in use",
-		Status464EmailAlreadyInUse => "E-mail address already in use",
-
-		Status470MissingRequiredData => "Missing required data",
-		Status471InvalidUploadData => "Invalid upload data",
-		Status472InvalidPubSpec => "Invalid pubspec.yaml",
-		Status473PackageDiscontinued => "Package discontinued",
-		Status474VersionConflict => "Version conflict",
-
-		_ => null,
-	};
 }
