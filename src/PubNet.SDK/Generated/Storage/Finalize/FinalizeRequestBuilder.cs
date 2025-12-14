@@ -33,33 +33,41 @@ namespace PubNet.SDK.Generated.Storage.Finalize
         public FinalizeRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/storage/finalize{?pendingId*}", rawUrl)
         {
         }
-        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.SuccessResponseDto"/></returns>
+        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.SuccessMessageDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 422 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 424 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ForbiddenErrorDto">When receiving a 403 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.MissingRequiredDataErrorDto">When receiving a 470 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidUploadDataErrorDto">When receiving a 471 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidPubSpecErrorDto">When receiving a 472 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageDiscontinuedErrorDto">When receiving a 473 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.VersionConflictErrorDto">When receiving a 474 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Storage.Finalize.SuccessMessageDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Storage.Finalize.SuccessMessageDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Storage.Finalize.SuccessMessageDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::PubNet.SDK.Generated.Models.SuccessResponseDto?> GetAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Storage.Finalize.FinalizeRequestBuilder.FinalizeRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.SDK.Generated.Models.SuccessMessageDto?> GetAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Storage.Finalize.FinalizeRequestBuilder.FinalizeRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::PubNet.SDK.Generated.Models.SuccessResponseDto> GetAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Storage.Finalize.FinalizeRequestBuilder.FinalizeRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.SDK.Generated.Models.SuccessMessageDto> GetAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Storage.Finalize.FinalizeRequestBuilder.FinalizeRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "422", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "424", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "403", global::PubNet.SDK.Generated.Models.ForbiddenErrorDto.CreateFromDiscriminatorValue },
+                { "470", global::PubNet.SDK.Generated.Models.MissingRequiredDataErrorDto.CreateFromDiscriminatorValue },
+                { "471", global::PubNet.SDK.Generated.Models.InvalidUploadDataErrorDto.CreateFromDiscriminatorValue },
+                { "472", global::PubNet.SDK.Generated.Models.InvalidPubSpecErrorDto.CreateFromDiscriminatorValue },
+                { "473", global::PubNet.SDK.Generated.Models.PackageDiscontinuedErrorDto.CreateFromDiscriminatorValue },
+                { "474", global::PubNet.SDK.Generated.Models.VersionConflictErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Storage.Finalize.SuccessMessageDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Storage.Finalize.SuccessMessageDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Storage.Finalize.SuccessMessageDto5XXError.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.SuccessResponseDto>(requestInfo, global::PubNet.SDK.Generated.Models.SuccessResponseDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.SuccessMessageDto>(requestInfo, global::PubNet.SDK.Generated.Models.SuccessMessageDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

@@ -37,11 +37,13 @@ namespace PubNet.SDK.Generated.Authentication.Register
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 422 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.MissingRegistrationDataErrorDto">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.RegistrationsDisabledErrorDto">When receiving a 462 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.UsernameAlreadyInUseErrorDto">When receiving a 463 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.EmailAlreadyInUseErrorDto">When receiving a 464 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Register.AuthorDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Register.AuthorDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authentication.Register.AuthorDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.SDK.Generated.Models.AuthorDto?> PostAsync(global::PubNet.SDK.Generated.Models.RegisterRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -55,11 +57,13 @@ namespace PubNet.SDK.Generated.Authentication.Register
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "422", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "400", global::PubNet.SDK.Generated.Models.MissingRegistrationDataErrorDto.CreateFromDiscriminatorValue },
+                { "462", global::PubNet.SDK.Generated.Models.RegistrationsDisabledErrorDto.CreateFromDiscriminatorValue },
+                { "463", global::PubNet.SDK.Generated.Models.UsernameAlreadyInUseErrorDto.CreateFromDiscriminatorValue },
+                { "464", global::PubNet.SDK.Generated.Models.EmailAlreadyInUseErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Authentication.Register.AuthorDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Authentication.Register.AuthorDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Authentication.Register.AuthorDto5XXError.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.AuthorDto>(requestInfo, global::PubNet.SDK.Generated.Models.AuthorDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
