@@ -64,7 +64,7 @@ public class PackagesController(
 		}
 
 		return Ok(new SearchPackagesResponseDto(packages.Include(p => p.Author).ToList().Select(p =>
-			new SearchResultPackage(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version,
+			new SearchResultPackageDto(p.Name, p.ReplacedBy, p.IsDiscontinued, p.Author?.UserName, p.Latest?.Version,
 				p.Latest?.PublishedAtUtc))));
 	}
 
