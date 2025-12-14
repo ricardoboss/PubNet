@@ -75,7 +75,7 @@
 		try
 		{
 			var response = await Auth.LoginAsync(LoginRequest);
-			if (response is null)
+			if (response?.Token is null)
 				return;
 
 			await TokenStore.StoreTokenAsync(response.Token);
@@ -83,11 +83,11 @@
 
 			Nav.NavigateTo("/?message=welcome-back", true);
 		}
-		catch (ValidationErrorsDto v)
+		catch (EmailNotFoundErrorDto err)
 		{
-			Error = v.Title ?? "Validation errors occurred";
+			Error = err.Error?.Message ?? "Please check your credentials";
 		}
-		catch (ErrorResponseDto err)
+		catch (InvalidPasswordErrorDto err)
 		{
 			Error = err.Error?.Message ?? "Please check your credentials";
 		}
