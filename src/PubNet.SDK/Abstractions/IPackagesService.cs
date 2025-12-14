@@ -4,7 +4,7 @@ namespace PubNet.SDK.Abstractions;
 
 public interface IPackagesService
 {
-	Task<PackageDto?> GetPackageAsync(string name, CancellationToken cancellationToken = default);
+	Task<PackageDto?> GetPackageAsync(string name, bool includeAuthor, CancellationToken cancellationToken = default);
 
 	Task DeletePackageAsync(string name, CancellationToken cancellationToken = default);
 
