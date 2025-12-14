@@ -10,27 +10,31 @@ namespace PubNet.API.OpenApi;
 
 public class AuthMetadataTransformer : IOpenApiOperationTransformer
 {
-	public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,
+	public async Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken)
-	{
-		HandleAuthRequirementAndResponse(operation, context);
-
-		return Task.CompletedTask;
-	}
-
-	private static void HandleAuthRequirementAndResponse(OpenApiOperation operation, OpenApiOperationTransformerContext context)
 	{
 		if (context.Description.ActionDescriptor is not ControllerActionDescriptor actionDescriptor)
 			return;
 
-		var firstRelevantAttribute = GetOrderedAttributes(actionDescriptor.MethodInfo, typeof(AuthorizeAttribute), typeof(AllowAnonymousAttribute)).FirstOrDefault();
+		var firstRelevantAttribute =
+			GetOrderedAttributes(actionDescriptor.MethodInfo, typeof(AuthorizeAttribute),
+				typeof(AllowAnonymousAttribute)).FirstOrDefault();
 
-		// in case of null or 'Allow Anonymous' attribute, we don't add any security requirements
-		if (firstRelevantAttribute is not AuthorizeAttribute authorizeAttribute)
-			return;
+		switch (firstRelevantAttribute)
+		{
+			case AuthorizeAttribute authorizeAttribute:
+				await AddUnauthenticatedResponseAsync(operation, context, cancellationToken);
+				AddSecurityScheme(operation, authorizeAttribute);
+				break;
+			case AllowAnonymousAttribute:
+				operation.Responses?.Remove("401");
+				operation.Security?.Clear();
+				break;
+		}
+	}
 
-		AddUnauthenticatedResponse(operation);
-
+	private static void AddSecurityScheme(OpenApiOperation operation, AuthorizeAttribute authorizeAttribute)
+	{
 		var requiredScheme = authorizeAttribute.AuthenticationSchemes ?? JwtBearerDefaults.AuthenticationScheme;
 
 		operation.Security ??= [];
@@ -45,7 +49,8 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer
 		);
 	}
 
-	private static void AddUnauthenticatedResponse(OpenApiOperation operation)
+	private static async Task AddUnauthenticatedResponseAsync(OpenApiOperation operation,
+		OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
 	{
 		var unauthenticatedResponse = new OpenApiResponse
 		{
@@ -54,7 +59,8 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer
 			{
 				["application/json"] = new()
 				{
-					Schema = new OpenApiSchemaReference(nameof(AuthErrorDto)),
+					Schema = await context.GetOrCreateSchemaAsync(typeof(MissingAuthenticationErrorDto),
+						cancellationToken: cancellationToken),
 				},
 			},
 		};
