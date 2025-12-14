@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using PubNet.API.DTO.Errors;
+using PubNet.API.DTO.Authentication.Errors;
 
 namespace PubNet.API.OpenApi;
 
