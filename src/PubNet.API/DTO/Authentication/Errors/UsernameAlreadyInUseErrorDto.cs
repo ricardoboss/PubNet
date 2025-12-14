@@ -1,7 +1,9 @@
 using JetBrains.Annotations;
-using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.DTO.Authentication.Errors;
 
 [PublicAPI]
-public class UsernameAlreadyInUseErrorDto : ErrorMessageDto;
+public class UsernameAlreadyInUseErrorDto : ErrorMessageDto, IHaveDefaultMessage
+{
+	public string DefaultMessage => "Username already in use";
+}

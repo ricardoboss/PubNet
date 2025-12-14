@@ -40,7 +40,7 @@ public class AuthorsController(PubNetContext db, PasswordManager passwordManager
 		if (before.HasValue)
 		{
 			if (!limit.HasValue)
-				return Error<InvalidQueryErrorDto>(PubNetStatusCodes.Status400BadRequest);
+				return Error<InvalidQueryErrorDto>(PubNetStatusCodes.Status400BadRequest, "When before is set, a limit must also be set");
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
@@ -81,7 +81,7 @@ public class AuthorsController(PubNetContext db, PasswordManager passwordManager
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
 		if (username != author.UserName)
-			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden);
+			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "Cannot delete another user");
 
 		if (!await passwordManager.IsValid(db, author, dto.Password, cancellationToken))
 			return Error<InvalidPasswordErrorDto>(PubNetStatusCodes.Status461InvalidPassword);
@@ -130,7 +130,7 @@ public class AuthorsController(PubNetContext db, PasswordManager passwordManager
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
 		if (username != author.UserName)
-			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden);
+			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "Cannot modify another user");
 
 		if (dto.Name is not null && author.Name != dto.Name)
 			author.Name = dto.Name;

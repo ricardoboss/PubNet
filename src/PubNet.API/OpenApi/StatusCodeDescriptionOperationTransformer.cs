@@ -17,12 +17,8 @@ public class StatusCodeDescriptionOperationTransformer : IOpenApiOperationTransf
 			)
 				continue;
 
-			response.Description = PubNetStatusCodes.ToErrorMessage(status) ??
+			response.Description = PubNetStatusCodes.ToErrorCode(status) ??
 				throw new NotImplementedException("Missing error message for status code: " + code);
-
-			// to ensure consistent behaviour
-			_ = PubNetStatusCodes.ToErrorCode(status) ??
-				throw new NotImplementedException("Missing error code for status code: " + code);
 		}
 
 		return Task.CompletedTask;
