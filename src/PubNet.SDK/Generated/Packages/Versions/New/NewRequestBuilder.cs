@@ -36,9 +36,10 @@ namespace PubNet.SDK.Generated.Packages.Versions.New
         /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.UploadEndpointDataDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.SDK.Generated.Models.UploadEndpointDataDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -51,9 +52,10 @@ namespace PubNet.SDK.Generated.Packages.Versions.New
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto401Error.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Packages.Versions.New.UploadEndpointDataDto5XXError.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.UploadEndpointDataDto>(requestInfo, global::PubNet.SDK.Generated.Models.UploadEndpointDataDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

@@ -49,9 +49,11 @@ namespace PubNet.SDK.Generated.Authors
         /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.AuthorsResponseDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidQueryErrorDto">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.AuthorsResponseDto401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.AuthorsResponseDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.AuthorsResponseDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.AuthorsResponseDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.SDK.Generated.Models.AuthorsResponseDto?> GetAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Authors.AuthorsRequestBuilder.AuthorsRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -64,9 +66,11 @@ namespace PubNet.SDK.Generated.Authors
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "400", global::PubNet.SDK.Generated.Models.InvalidQueryErrorDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Authors.AuthorsResponseDto401Error.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Authors.AuthorsResponseDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Authors.AuthorsResponseDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Authors.AuthorsResponseDto5XXError.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.AuthorsResponseDto>(requestInfo, global::PubNet.SDK.Generated.Models.AuthorsResponseDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

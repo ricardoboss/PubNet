@@ -36,9 +36,11 @@ namespace PubNet.SDK.Generated.Authors.Item.Packages
         /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.AuthorPackagesResponseDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ProblemDetails">When receiving a 404 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.AuthorNotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.SDK.Generated.Models.AuthorPackagesResponseDto?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -51,9 +53,11 @@ namespace PubNet.SDK.Generated.Authors.Item.Packages
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "404", global::PubNet.SDK.Generated.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto401Error.CreateFromDiscriminatorValue },
+                { "404", global::PubNet.SDK.Generated.Models.AuthorNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Authors.Item.Packages.AuthorPackagesResponseDto5XXError.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.AuthorPackagesResponseDto>(requestInfo, global::PubNet.SDK.Generated.Models.AuthorPackagesResponseDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
