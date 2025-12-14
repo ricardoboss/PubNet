@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 namespace PubNet.API.DTO.Packages;
 
 [PublicAPI]
-public record SearchResultPackage(
+public record SearchResultPackageDto(
 	string Name,
 	string? ReplacedBy,
 	bool IsDiscontinued,
