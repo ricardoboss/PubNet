@@ -1,7 +1,9 @@
 using JetBrains.Annotations;
-using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.DTO.Packages.Errors;
 
 [PublicAPI]
-public class PackageDiscontinuedErrorDto : ErrorMessageDto;
+public class PackageDiscontinuedErrorDto : ErrorMessageDto, IHaveDefaultMessage
+{
+	public string DefaultMessage => "Package discontinued";
+}

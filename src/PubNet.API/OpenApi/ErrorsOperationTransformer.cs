@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using PubNet.API.DTO.Errors;
-using PubNet.API.Extensions;
 
 namespace PubNet.API.OpenApi;
 
