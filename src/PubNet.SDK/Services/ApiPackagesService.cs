@@ -28,7 +28,7 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 
 			return package;
 		}
-		catch (ProblemDetails)
+		catch (PackageNotFoundErrorDto)
 		{
 			throw NotFound();
 		}
@@ -46,11 +46,11 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			await apiClient.Packages[name].DeleteAsync(cancellationToken: cancellationToken);
 		}
-		catch (ProblemDetails)
+		catch (PackageNotFoundErrorDto)
 		{
 			throw NotFound("The package you are trying to delete was not found");
 		}
-		catch (ErrorResponseDto)
+		catch (ForbiddenErrorDto)
 		{
 			throw Unauthorized("You are not authorized to delete this package");
 		}
@@ -73,11 +73,11 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			await apiClient.Packages[name].Versions[version].DeleteAsync(cancellationToken: cancellationToken);
 		}
-		catch (ProblemDetails)
+		catch (PackageNotFoundErrorDto)
 		{
 			throw NotFound("The package version you are trying to delete was not found");
 		}
-		catch (ErrorResponseDto)
+		catch (ForbiddenErrorDto)
 		{
 			throw Unauthorized("You are not authorized to delete this package version");
 		}
@@ -114,11 +114,11 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 
 			_ = await apiClient.Packages[name].Discontinue.PatchAsync(dto, cancellationToken: cancellationToken);
 		}
-		catch (ProblemDetails)
+		catch (PackageNotFoundErrorDto)
 		{
 			throw NotFound();
 		}
-		catch (ErrorResponseDto)
+		catch (ForbiddenErrorDto)
 		{
 			throw Unauthorized("You are not authorized to discontinue this package");
 		}
@@ -142,11 +142,11 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		{
 			await apiClient.Packages[name].Versions[version].Retract.PatchAsync(cancellationToken: cancellationToken);
 		}
-		catch (ProblemDetails)
+		catch (PackageNotFoundErrorDto)
 		{
 			throw NotFound("The package version you are trying to retract does not exist");
 		}
-		catch (ErrorResponseDto)
+		catch (ForbiddenErrorDto)
 		{
 			throw Unauthorized("You are not authorized to retract this package version");
 		}
