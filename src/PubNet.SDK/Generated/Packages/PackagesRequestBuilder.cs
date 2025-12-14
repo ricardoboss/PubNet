@@ -110,24 +110,10 @@ namespace PubNet.SDK.Generated.Packages
         public partial class PackagesRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
             [QueryParameter("before")]
-            public string? Before { get; set; }
-#nullable restore
-#else
-            [QueryParameter("before")]
-            public string Before { get; set; }
-#endif
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
+            public int? Before { get; set; }
             [QueryParameter("limit")]
-            public string? Limit { get; set; }
-#nullable restore
-#else
-            [QueryParameter("limit")]
-            public string Limit { get; set; }
-#endif
+            public int? Limit { get; set; }
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("q")]
