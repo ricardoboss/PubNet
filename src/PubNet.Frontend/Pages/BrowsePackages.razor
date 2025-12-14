@@ -18,7 +18,7 @@ else
 @code {
 	private SearchPackagesResponseDto? _response;
 
-	private IEnumerable<SearchResultPackage>? Packages => _response?.Packages;
+	private IEnumerable<SearchResultPackageDto>? Packages => _response?.Packages;
 
 	protected override async Task OnParametersSetAsync()
 	{
