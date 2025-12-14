@@ -1,7 +1,6 @@
-using JetBrains.Annotations;
-using PubNet.API.DTO.Errors;
-
 namespace PubNet.API.DTO.Authentication.Errors;
 
-[PublicAPI]
-public class OnboardingNotPendingErrorDto : ErrorMessageDto;
+public class OnboardingNotPendingErrorDto : ErrorMessageDto, IHaveDefaultMessage
+{
+	public string DefaultMessage => "This instance has already been set up";
+}

@@ -41,7 +41,7 @@
             }
           },
           "460": {
-            "description": "E-mail address not found",
+            "description": "email-not-found",
             "content": {
               "application/json": {
                 "schema": {
@@ -51,7 +51,7 @@
             }
           },
           "461": {
-            "description": "Invalid password",
+            "description": "invalid-password",
             "content": {
               "application/json": {
                 "schema": {
@@ -206,7 +206,7 @@
             }
           },
           "462": {
-            "description": "Registrations are disabled",
+            "description": "registrations-disabled",
             "content": {
               "application/json": {
                 "schema": {
@@ -216,7 +216,7 @@
             }
           },
           "463": {
-            "description": "Username already in use",
+            "description": "username-in-use",
             "content": {
               "application/json": {
                 "schema": {
@@ -226,7 +226,7 @@
             }
           },
           "464": {
-            "description": "E-mail address already in use",
+            "description": "email-in-use",
             "content": {
               "application/json": {
                 "schema": {
@@ -1089,7 +1089,7 @@
             }
           },
           "461": {
-            "description": "Invalid password",
+            "description": "invalid-password",
             "content": {
               "application/json": {
                 "schema": {
@@ -3282,7 +3282,7 @@
             }
           },
           "470": {
-            "description": "Missing required data",
+            "description": "missing-required-data",
             "content": {
               "application/json": {
                 "schema": {
@@ -3292,7 +3292,7 @@
             }
           },
           "471": {
-            "description": "Invalid upload data",
+            "description": "invalid-upload-data",
             "content": {
               "application/json": {
                 "schema": {
@@ -3418,7 +3418,7 @@
             }
           },
           "470": {
-            "description": "Missing required data",
+            "description": "missing-required-data",
             "content": {
               "application/json": {
                 "schema": {
@@ -3428,7 +3428,7 @@
             }
           },
           "471": {
-            "description": "Invalid upload data",
+            "description": "invalid-upload-data",
             "content": {
               "application/json": {
                 "schema": {
@@ -3438,7 +3438,7 @@
             }
           },
           "472": {
-            "description": "Invalid pubspec.yaml",
+            "description": "invalid-pubspec",
             "content": {
               "application/json": {
                 "schema": {
@@ -3448,7 +3448,7 @@
             }
           },
           "473": {
-            "description": "Package discontinued",
+            "description": "package-discontinued",
             "content": {
               "application/json": {
                 "schema": {
@@ -3458,7 +3458,7 @@
             }
           },
           "474": {
-            "description": "Version conflict",
+            "description": "version-conflict",
             "content": {
               "application/json": {
                 "schema": {
@@ -3672,6 +3672,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -3683,6 +3689,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -3705,6 +3717,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -3765,6 +3783,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -3815,6 +3839,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4143,6 +4173,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4279,6 +4315,12 @@
         ],
         "type": "object",
         "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
