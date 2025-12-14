@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using PubNet.API.Controllers;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Errors;
 using PubNet.API.Services;
 using PubNet.Database.Models;
 
@@ -26,7 +26,7 @@ public class AuthorsControllerTests
 
 		await Assert.MultipleAsync(async () =>
 		{
-			Assert.That(result, Is.InstanceOf<ConflictObjectResult>());
+			Assert.That((result as ObjectResult)?.StatusCode, Is.EqualTo(PubNetStatusCodes.Status480LastAdmin));
 			Assert.That(ErrorCodeOf(result), Is.EqualTo("last-admin"));
 			Assert.That(await env.Db.Authors.AnyAsync(a => a.Id == admin.Id), Is.True);
 		});
@@ -77,7 +77,7 @@ public class AuthorsControllerTests
 
 		var result = await DeleteSelfAsync(env, admin, "not-the-password");
 
-		Assert.That(result, Is.InstanceOf<UnauthorizedObjectResult>());
+		Assert.That((result as ObjectResult)?.StatusCode, Is.EqualTo(PubNetStatusCodes.Status461InvalidPassword));
 	}
 
 	private static Task<IActionResult> DeleteSelfAsync(TestEnvironment env, Author author,
@@ -94,6 +94,6 @@ public class AuthorsControllerTests
 
 	private static string? ErrorCodeOf(IActionResult result)
 	{
-		return ((result as ObjectResult)?.Value as ErrorResponse)?.Error?.Code;
+		return ((result as ObjectResult)?.Value as ErrorMessageDto)?.Error?.Code;
 	}
 }

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication;
 using PubNet.API.Interfaces;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -18,13 +18,13 @@ public class AuthorRegistrationService(PubNetContext db, PasswordManager passwor
 		CancellationToken cancellationToken = default)
 	{
 		if (request.Username is null || request.Name is null || request.Password is null || request.Email is null)
-			throw new AuthorRegistrationException(ErrorResponse.MissingValues);
+			throw AuthorRegistrationException.MissingValues;
 
 		if (await db.Authors.AnyAsync(a => EF.Functions.ILike(a.UserName, request.Username), cancellationToken))
-			throw new AuthorRegistrationException(ErrorResponse.UsernameAlreadyInUse);
+			throw AuthorRegistrationException.UsernameAlreadyInUse;
 
 		if (await db.Authors.AnyAsync(a => EF.Functions.ILike(a.Email, request.Email), cancellationToken))
-			throw new AuthorRegistrationException(ErrorResponse.EmailAlreadyInUse);
+			throw AuthorRegistrationException.EmailAlreadyInUse;
 
 		var author = new Author
 		{

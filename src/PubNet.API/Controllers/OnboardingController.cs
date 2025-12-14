@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication;
+using PubNet.API.DTO.Authentication.Errors;
+using PubNet.API.DTO.Authors;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 
@@ -30,8 +33,10 @@ public class OnboardingController(
 
 	[HttpPost("complete")]
 	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AuthorDto))]
-	[ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ErrorResponse))]
-	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponse))]
+	[ProducesResponseType(PubNetStatusCodes.Status400BadRequest, Type = typeof(MissingRegistrationDataErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status463UsernameAlreadyInUse, Type = typeof(UsernameAlreadyInUseErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status464EmailAlreadyInUse, Type = typeof(EmailAlreadyInUseErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status465OnboardingNotPending, Type = typeof(OnboardingNotPendingErrorDto))]
 	public async Task<IActionResult> CompleteAsync([FromBody] RegisterRequest dto,
 		CancellationToken cancellationToken = default)
 	{
@@ -58,11 +63,12 @@ public class OnboardingController(
 		}
 		catch (OnboardingNotPendingException)
 		{
-			return Rejected("onboarding-not-pending", Conflict(ErrorResponse.OnboardingNotPending));
+			return Rejected("onboarding-not-pending",
+				Error<OnboardingNotPendingErrorDto>(PubNetStatusCodes.Status465OnboardingNotPending));
 		}
 		catch (AuthorRegistrationException e)
 		{
-			return Rejected(e.Code, UnprocessableEntity(e.Response));
+			return Rejected(e.Code, RegistrationError(e));
 		}
 
 		IActionResult Rejected(string reason, IActionResult result)
