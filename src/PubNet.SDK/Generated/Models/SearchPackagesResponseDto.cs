@@ -17,10 +17,10 @@ namespace PubNet.SDK.Generated.Models
         /// <summary>The packages property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::PubNet.SDK.Generated.Models.SearchResultPackage>? Packages { get; set; }
+        public List<global::PubNet.SDK.Generated.Models.SearchResultPackageDto>? Packages { get; set; }
 #nullable restore
 #else
-        public List<global::PubNet.SDK.Generated.Models.SearchResultPackage> Packages { get; set; }
+        public List<global::PubNet.SDK.Generated.Models.SearchResultPackageDto> Packages { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::PubNet.SDK.Generated.Models.SearchPackagesResponseDto"/> and sets the default values.
@@ -47,7 +47,7 @@ namespace PubNet.SDK.Generated.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "packages", n => { Packages = n.GetCollectionOfObjectValues<global::PubNet.SDK.Generated.Models.SearchResultPackage>(global::PubNet.SDK.Generated.Models.SearchResultPackage.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "packages", n => { Packages = n.GetCollectionOfObjectValues<global::PubNet.SDK.Generated.Models.SearchResultPackageDto>(global::PubNet.SDK.Generated.Models.SearchResultPackageDto.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -57,7 +57,7 @@ namespace PubNet.SDK.Generated.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<global::PubNet.SDK.Generated.Models.SearchResultPackage>("packages", Packages);
+            writer.WriteCollectionOfObjectValues<global::PubNet.SDK.Generated.Models.SearchResultPackageDto>("packages", Packages);
             writer.WriteAdditionalData(AdditionalData);
         }
     }
