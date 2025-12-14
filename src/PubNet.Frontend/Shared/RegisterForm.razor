@@ -112,7 +112,8 @@
         }
         else
         {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+            // FIXME: move this to a service and handle all error responses properly
+            var message = await response.Content.ReadFromJsonAsync<EmailAlreadyInUseErrorDto>();
 
             Error = message?.Error?.Message;
         }
