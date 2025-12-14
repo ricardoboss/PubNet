@@ -14,16 +14,8 @@ public abstract class BaseController : ControllerBase
 	protected Uri RefererUri => new(Request.Headers.Referer.FirstOrDefault() ?? Request.Host.ToString());
 
 	[NonAction]
-	protected ObjectResult Error<T>(int status) where T : ErrorMessageDto, new() =>
-		StatusCode(status, StatusToDto<T>(status, null, null));
-
-	[NonAction]
-	protected ObjectResult Error<T>(int status, string? message) where T : ErrorMessageDto, new() =>
-		StatusCode(status, StatusToDto<T>(status, null, message));
-
-	[NonAction]
-	protected ObjectResult Error<T>(int status, string? code, string? message) where T : ErrorMessageDto, new() =>
-		StatusCode(status, StatusToDto<T>(status, code, message));
+	protected ObjectResult Error<T>(int status, string? message = null) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, message));
 
 	/// <summary>
 	/// Translates a rejected registration into the granular DTO for its cause, so that registration and the
@@ -33,16 +25,16 @@ public abstract class BaseController : ControllerBase
 	protected ObjectResult RegistrationError(AuthorRegistrationException e) => e.StatusCode switch
 	{
 		PubNetStatusCodes.Status463UsernameAlreadyInUse =>
-			Error<UsernameAlreadyInUseErrorDto>(e.StatusCode, e.Code, e.Message),
+			Error<UsernameAlreadyInUseErrorDto>(e.StatusCode, e.Message),
 		PubNetStatusCodes.Status464EmailAlreadyInUse =>
-			Error<EmailAlreadyInUseErrorDto>(e.StatusCode, e.Code, e.Message),
-		_ => Error<MissingRegistrationDataErrorDto>(PubNetStatusCodes.Status400BadRequest, e.Code, e.Message),
+			Error<EmailAlreadyInUseErrorDto>(e.StatusCode, e.Message),
+		_ => Error<MissingRegistrationDataErrorDto>(PubNetStatusCodes.Status400BadRequest, e.Message),
 	};
 
 	[NonAction]
-	private static T StatusToDto<T>(int status, string? errorCode, string? errorMessage) where T : ErrorMessageDto, new()
+	private static T StatusToDto<T>(int status, string? errorMessage) where T : ErrorMessageDto, new()
 	{
-		errorCode ??= PubNetStatusCodes.ToErrorCode(status);
+		var errorCode = PubNetStatusCodes.ToErrorCode(status);
 		if (errorCode is null)
 			throw new NotImplementedException("No error code defined for status code: " + status);
 
