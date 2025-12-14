@@ -8,45 +8,45 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 {
 	private static async Task<OpenApiResponse> InternalServerErrorResponse(OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken) => new()
-	{
-		Description = "Internal Server Error",
-		Content = new Dictionary<string, OpenApiMediaType>
 		{
-			["application/json"] = new()
+			Description = "Internal Server Error",
+			Content = new Dictionary<string, OpenApiMediaType>
 			{
-				Schema = await context.GetOrCreateSchemaAsync(typeof(InternalServerErrorDto),
+				["application/json"] = new()
+				{
+					Schema = await context.GetOrCreateSchemaAsync(typeof(InternalServerErrorDto),
 					cancellationToken: cancellationToken),
+				},
 			},
-		},
-	};
+		};
 
 	private static async Task<OpenApiResponse> DefaultErrorResponse(OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken) => new()
-	{
-		Description = "Default Error",
-		Content = new Dictionary<string, OpenApiMediaType>
 		{
-			["application/json"] = new()
+			Description = "Default Error",
+			Content = new Dictionary<string, OpenApiMediaType>
 			{
-				Schema = await context.GetOrCreateSchemaAsync(typeof(StacktraceErrorDto),
+				["application/json"] = new()
+				{
+					Schema = await context.GetOrCreateSchemaAsync(typeof(StacktraceErrorDto),
 					cancellationToken: cancellationToken),
+				},
 			},
-		},
-	};
+		};
 
 	private static async Task<OpenApiResponse> ValidationErrorsResponse(OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken) => new()
-	{
-		Description = "Bad Request",
-		Content = new Dictionary<string, OpenApiMediaType>
 		{
-			["application/json"] = new()
+			Description = "Bad Request",
+			Content = new Dictionary<string, OpenApiMediaType>
 			{
-				Schema = await context.GetOrCreateSchemaAsync(typeof(ValidationErrorsDto),
+				["application/json"] = new()
+				{
+					Schema = await context.GetOrCreateSchemaAsync(typeof(ValidationErrorsDto),
 					cancellationToken: cancellationToken),
+				},
 			},
-		},
-	};
+		};
 
 	public async Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context,
 		CancellationToken cancellationToken)
