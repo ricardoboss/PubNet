@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO;
 using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.Controllers;
@@ -6,24 +7,26 @@ namespace PubNet.API.Controllers;
 public abstract class BaseController : ControllerBase
 {
 	[NonAction]
-	protected ObjectResult FailedDependency(object? result)
-	{
-		return StatusCode(StatusCodes.Status424FailedDependency, result);
-	}
+	protected ObjectResult Error<T>(int status) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, null, null));
 
 	[NonAction]
-	protected ObjectResult Error(int code, string? message = null) =>
-		StatusCode(code, StatusToDto(code, message));
+	protected ObjectResult Error<T>(int status, string? message) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, null, message));
 
 	[NonAction]
-	private static GenericErrorDto StatusToDto(int status, string? message)
+	protected ObjectResult Error<T>(int status, string? code, string? message) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, code, message));
+
+	[NonAction]
+	private static T StatusToDto<T>(int status, string? errorCode, string? errorMessage) where T : ErrorMessageDto, new()
 	{
-		var errorCode = PubNetStatusCodes.ToErrorCode(status);
+		errorCode ??= PubNetStatusCodes.ToErrorCode(status);
 		if (errorCode is null)
 			throw new NotImplementedException("No error code defined for status code: " + status);
 
-		message ??= PubNetStatusCodes.ToErrorMessage(status);
-		if (message is null)
+		errorMessage ??= PubNetStatusCodes.ToErrorMessage(status);
+		if (errorMessage is null)
 			throw new NotImplementedException("No default error message defined for status code: " + status);
 
 		return new()
@@ -31,7 +34,7 @@ public abstract class BaseController : ControllerBase
 			Error = new()
 			{
 				Code = errorCode,
-				Message = message,
+				Message = errorMessage,
 			},
 		};
 	}

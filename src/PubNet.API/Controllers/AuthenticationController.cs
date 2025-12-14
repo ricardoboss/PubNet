@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PubNet.API.DTO;
 using PubNet.API.DTO.Authentication;
+using PubNet.API.DTO.Authentication.Errors;
 using PubNet.API.DTO.Authors;
-using PubNet.API.DTO.Errors;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Database;
@@ -31,15 +30,15 @@ public class AuthenticationController(
 	public async Task<IActionResult> Login(LoginRequestDto dto, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(dto.Email))
-			return Error(PubNetStatusCodes.Status460EmailNotFound);
+			return Error<EmailNotFoundErrorDto>(PubNetStatusCodes.Status460EmailNotFound);
 
 		var author =
 			await db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
 		if (author is null)
-			return Error(PubNetStatusCodes.Status460EmailNotFound);
+			return Error<EmailNotFoundErrorDto>(PubNetStatusCodes.Status460EmailNotFound);
 
 		if (!await passwordManager.IsValid(db, author, dto.Password, cancellationToken))
-			return Error(PubNetStatusCodes.Status461InvalidPassword);
+			return Error<InvalidPasswordErrorDto>(PubNetStatusCodes.Status461InvalidPassword);
 
 		var token = tokenGenerator.Generate(author, out var expiresAt);
 		return Ok(new JsonWebTokenResponseDto(token, expiresAt));
@@ -48,23 +47,24 @@ public class AuthenticationController(
 	[AllowAnonymous]
 	[HttpPost("register")]
 	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AuthorDto))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
-	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status400BadRequest, Type = typeof(MissingRegistrationDataErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status462RegistrationsDisabled, Type = typeof(RegistrationsDisabledErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status463UsernameAlreadyInUse, Type = typeof(UsernameAlreadyInUseErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status464EmailAlreadyInUse, Type = typeof(EmailAlreadyInUseErrorDto))]
 	public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto,
 		CancellationToken cancellationToken = default)
 	{
 		if (!RegistrationsEnabled())
-			return BadRequest(ErrorResponseDto.RegistrationsDisabled);
+			return Error<RegistrationsDisabledErrorDto>(PubNetStatusCodes.Status462RegistrationsDisabled);
 
 		if (dto.Username is null || dto.Name is null || dto.Password is null || dto.Email is null)
-			return UnprocessableEntity(ErrorResponseDto.MissingValues);
+			return Error<MissingRegistrationDataErrorDto>(PubNetStatusCodes.Status400BadRequest, "Missing required values");
 
 		if (db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
-			return UnprocessableEntity(ErrorResponseDto.UsernameAlreadyInUse);
+			return Error<UsernameAlreadyInUseErrorDto>(PubNetStatusCodes.Status463UsernameAlreadyInUse);
 
 		if (db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
-			return UnprocessableEntity(ErrorResponseDto.EmailAlreadyInUse);
+			return Error<EmailAlreadyInUseErrorDto>(PubNetStatusCodes.Status464EmailAlreadyInUse);
 
 		var author = new Author
 		{
@@ -98,7 +98,6 @@ public class AuthenticationController(
 	[Authorize]
 	[HttpGet("self")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorDto))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
 	public async Task<IActionResult> Self(ApplicationRequestContext context,
 		CancellationToken cancellationToken = default)
 	{
