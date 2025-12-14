@@ -1,7 +1,9 @@
 using JetBrains.Annotations;
-using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.DTO.Authentication.Errors;
 
 [PublicAPI]
-public class EmailNotFoundErrorDto : ErrorMessageDto;
+public class EmailNotFoundErrorDto : ErrorMessageDto, IHaveDefaultMessage
+{
+	public string DefaultMessage => "E-mail address not found";
+}

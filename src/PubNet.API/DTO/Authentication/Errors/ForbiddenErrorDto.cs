@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using PubNet.API.DTO.Errors;
 
 namespace PubNet.API.DTO.Authentication.Errors;
 

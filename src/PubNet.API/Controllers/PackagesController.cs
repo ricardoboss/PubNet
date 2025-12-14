@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using PubNet.API.DTO;
 using PubNet.API.DTO.Authentication.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Errors;
@@ -50,7 +49,7 @@ public class PackagesController(
 		if (before.HasValue)
 		{
 			if (!limit.HasValue)
-				return Error<InvalidQueryErrorDto>(PubNetStatusCodes.Status400BadRequest);
+				return Error<InvalidQueryErrorDto>(PubNetStatusCodes.Status400BadRequest, "When before is set, a limit must also be set");
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
