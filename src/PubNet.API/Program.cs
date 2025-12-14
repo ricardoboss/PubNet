@@ -223,7 +223,10 @@ void ConfigureHttpPipeline(WebApplication app)
 		app.MapScalarApiReference(c =>
 		{
 			c.Telemetry = false;
-			c.Theme = ScalarTheme.DeepSpace;
+			c.Theme = ScalarTheme.Saturn;
+			c.DefaultOpenAllTags = true;
+			c.HideClientButton = true;
+			c.ShowDeveloperTools = DeveloperToolsVisibility.Never;
 			c.OpenApiRoutePattern = $"/.well-known/{openApiDocumentName}.json";
 		});
 	}
