@@ -200,17 +200,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/MissingRegistrationDataErrorDto"
                 }
               }
             }
           },
-          "422": {
-            "description": "Unprocessable Entity",
+          "462": {
+            "description": "Registrations are disabled",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/RegistrationsDisabledErrorDto"
+                }
+              }
+            }
+          },
+          "463": {
+            "description": "Username already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsernameAlreadyInUseErrorDto"
+                }
+              }
+            }
+          },
+          "464": {
+            "description": "E-mail address already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailAlreadyInUseErrorDto"
                 }
               }
             }
@@ -312,36 +332,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "required": [
-                        "code",
-                        "message"
-                      ],
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -400,6 +390,36 @@
                         "type": "string"
                       }
                     },
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
                     "error": {
                       "required": [
                         "code",
@@ -577,7 +597,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/InvalidQueryErrorDto"
                 }
               }
             }
@@ -727,7 +747,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/AuthorNotFoundErrorDto"
                 }
               }
             }
@@ -870,35 +890,22 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthenticated",
+          "200": {
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "required": [
-                        "code",
-                        "message"
-                      ],
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/AuthorDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
                 }
               }
             }
@@ -989,6 +996,36 @@
                         "type": "string"
                       }
                     },
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
                     "error": {
                       "required": [
                         "code",
@@ -1046,47 +1083,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponseDto"
+                  "$ref": "#/components/schemas/SuccessMessageDto"
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "required": [
-                        "code",
-                        "message"
-                      ],
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
                 }
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "461": {
+            "description": "Invalid password",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/InvalidPasswordErrorDto"
                 }
               }
             }
@@ -1196,6 +1213,36 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1234,7 +1281,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/AuthorNotFoundErrorDto"
                 }
               }
             }
@@ -1407,7 +1454,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/InvalidQueryErrorDto"
                 }
               }
             }
@@ -1565,7 +1612,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -1701,32 +1748,12 @@
           "204": {
             "description": "No Content"
           },
-          "401": {
-            "description": "Unauthenticated",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "required": [
-                        "code",
-                        "message"
-                      ],
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
                 }
               }
             }
@@ -1736,7 +1763,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -1818,6 +1845,36 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1861,12 +1918,22 @@
               }
             }
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -2052,7 +2119,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -2193,15 +2260,22 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -2367,7 +2441,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -2513,12 +2587,22 @@
           "204": {
             "description": "No Content"
           },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
               }
             }
@@ -2661,17 +2745,27 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/tar+gzip": { }
+            }
+          },
           "302": {
-            "description": "Found"
+            "description": "Found",
+            "content": {
+              "application/tar+gzip": { }
+            }
           },
           "404": {
             "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
                 }
-              }
+              },
+              "application/tar+gzip": { }
             }
           },
           "500": {
@@ -2812,8 +2906,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "302": {
+            "description": "Found"
           },
           "500": {
             "description": "Internal Server Error",
@@ -2929,15 +3023,32 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/html": { },
+              "text/css": { },
+              "application/javascript": { },
+              "application/json": { },
+              "application/octet-stream": { }
+            }
           },
           "404": {
             "description": "Not Found",
             "content": {
+              "text/html": {
+                "schema": { }
+              },
+              "text/css": {
+                "schema": { }
+              },
+              "application/javascript": {
+                "schema": { }
+              },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { }
+              },
+              "application/octet-stream": {
+                "schema": { }
               }
             }
           },
@@ -3038,36 +3149,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "required": [
-                    "error"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "required": [
-                        "code",
-                        "message"
-                      ],
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal Server Error",
             "content": {
@@ -3145,6 +3226,36 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -3175,22 +3286,12 @@
           "204": {
             "description": "No Content"
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
-                }
-              }
-            }
-          },
           "411": {
             "description": "Length Required",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/LengthRequiredErrorDto"
                 }
               }
             }
@@ -3200,7 +3301,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/PayloadTooLargeErrorDto"
+                }
+              }
+            }
+          },
+          "470": {
+            "description": "Missing required data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingRequiredDataErrorDto"
+                }
+              }
+            }
+          },
+          "471": {
+            "description": "Invalid upload data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidUploadDataErrorDto"
                 }
               }
             }
@@ -3306,37 +3427,67 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SuccessResponseDto"
+                  "$ref": "#/components/schemas/SuccessMessageDto"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad Request",
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/ForbiddenErrorDto"
                 }
               }
             }
           },
-          "422": {
-            "description": "Unprocessable Entity",
+          "470": {
+            "description": "Missing required data",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/MissingRequiredDataErrorDto"
                 }
               }
             }
           },
-          "424": {
-            "description": "Failed Dependency",
+          "471": {
+            "description": "Invalid upload data",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorResponseDto"
+                  "$ref": "#/components/schemas/InvalidUploadDataErrorDto"
+                }
+              }
+            }
+          },
+          "472": {
+            "description": "Invalid pubspec.yaml",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidPubSpecErrorDto"
+                }
+              }
+            }
+          },
+          "473": {
+            "description": "Package discontinued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageDiscontinuedErrorDto"
+                }
+              }
+            }
+          },
+          "474": {
+            "description": "Version conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionConflictErrorDto"
                 }
               }
             }
@@ -3458,6 +3609,17 @@
           }
         }
       },
+      "AuthorNotFoundErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
       "AuthorPackagesResponseDto": {
         "required": [
           "packages"
@@ -3529,6 +3691,17 @@
           }
         }
       },
+      "EmailAlreadyInUseErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
       "EmailNotFoundErrorDto": {
         "required": [
           "error"
@@ -3540,30 +3713,51 @@
           }
         }
       },
-      "ErrorResponseBodyDto": {
+      "ForbiddenErrorDto": {
         "required": [
-          "code",
-          "message"
+          "error"
         ],
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      },
-      "ErrorResponseDto": {
-        "type": "object",
-        "properties": {
           "error": {
-            "$ref": "#/components/schemas/ErrorResponseBodyDto"
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
       "InvalidPasswordErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "InvalidPubSpecErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "InvalidQueryErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "InvalidUploadDataErrorDto": {
         "required": [
           "error"
         ],
@@ -3590,6 +3784,17 @@
           }
         }
       },
+      "LengthRequiredErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
       "LoginRequestDto": {
         "type": "object",
         "properties": {
@@ -3604,6 +3809,39 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "MissingRegistrationDataErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "MissingRequiredDataErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "PackageDiscontinuedErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -3653,6 +3891,17 @@
           },
           "mirrored": {
             "type": "boolean"
+          }
+        }
+      },
+      "PackageNotFoundErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -3719,41 +3968,14 @@
           }
         }
       },
-      "ProblemDetails": {
+      "PayloadTooLargeErrorDto": {
+        "required": [
+          "error"
+        ],
         "type": "object",
         "properties": {
-          "type": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "status": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "detail": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "instance": {
-            "type": [
-              "null",
-              "string"
-            ]
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -3940,6 +4162,17 @@
           }
         }
       },
+      "RegistrationsDisabledErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
       "SearchPackagesResponseDto": {
         "required": [
           "packages"
@@ -4041,25 +4274,14 @@
           }
         }
       },
-      "SuccessResponseBody": {
-        "required": [
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        }
-      },
-      "SuccessResponseDto": {
+      "SuccessMessageDto": {
         "required": [
           "success"
         ],
         "type": "object",
         "properties": {
           "success": {
-            "$ref": "#/components/schemas/SuccessResponseBody"
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },
@@ -4078,6 +4300,28 @@
             "additionalProperties": {
               "type": "string"
             }
+          }
+        }
+      },
+      "UsernameAlreadyInUseErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "VersionConflictErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       }

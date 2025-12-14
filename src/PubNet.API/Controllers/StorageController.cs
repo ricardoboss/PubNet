@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication.Errors;
 using PubNet.API.DTO.Packages;
+using PubNet.API.DTO.Packages.Errors;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
@@ -44,13 +46,15 @@ public class StorageController(
 
 	[HttpPost("upload")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
-	[ProducesResponseType(StatusCodes.Status411LengthRequired, Type = typeof(ErrorResponseDto))]
-	[ProducesResponseType(StatusCodes.Status413PayloadTooLarge, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status411LengthRequired, Type = typeof(LengthRequiredErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status413PayloadTooLarge, Type = typeof(PayloadTooLargeErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status470MissingRequiredData, Type = typeof(MissingRequiredDataErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status471InvalidUploadData, Type = typeof(InvalidUploadDataErrorDto))]
 	public async Task<IActionResult> Upload([FromQuery] int? authorId)
 	{
 		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
-			return BadRequest(ErrorResponseDto.InvalidSignedUrl);
+			return Error<InvalidUploadDataErrorDto>(PubNetStatusCodes.Status471InvalidUploadData,
+				"Invalid query signature");
 
 		const long maxUploadSize = 100_000_000; // 100 MB
 
@@ -58,22 +62,25 @@ public class StorageController(
 		switch (size)
 		{
 			case null:
-				return StatusCode(StatusCodes.Status411LengthRequired, ErrorResponseDto.PackageLengthRequired);
+				return Error<LengthRequiredErrorDto>(PubNetStatusCodes.Status411LengthRequired);
 			case > maxUploadSize:
-				return StatusCode(StatusCodes.Status413PayloadTooLarge,
-					ErrorResponseDto.PackagePayloadTooLarge(maxUploadSize));
+				return Error<PayloadTooLargeErrorDto>(PubNetStatusCodes.Status413PayloadTooLarge,
+					$"Maximum payload size is {maxUploadSize} bytes");
 		}
 
 		var packageFile = Request.Form.Files.FirstOrDefault(f => f.Name == "file");
 		if (packageFile is null)
-			return BadRequest(ErrorResponseDto.MissingPackageFile);
+			return Error<MissingRequiredDataErrorDto>(PubNetStatusCodes.Status470MissingRequiredData,
+				"Missing package file");
 
 		if (authorId is null)
-			return BadRequest(ErrorResponseDto.MissingFields);
+			return Error<MissingRequiredDataErrorDto>(PubNetStatusCodes.Status470MissingRequiredData,
+				"Missing author id");
 
 		var author = await db.Authors.FindAsync(authorId);
 		if (author is null)
-			return BadRequest(ErrorResponseDto.InvalidAuthorId);
+			return Error<InvalidUploadDataErrorDto>(PubNetStatusCodes.Status471InvalidUploadData,
+				"Author id not found: " + authorId);
 
 		var pendingId = Guid.NewGuid();
 		var tempFile = Path.GetTempPath() + pendingId + ".tar.gz";
@@ -116,27 +123,33 @@ public class StorageController(
 	}
 
 	[HttpGet("finalize")]
-	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponseDto))]
-	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
-	[ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(ErrorResponseDto))]
-	[ProducesResponseType(StatusCodes.Status424FailedDependency, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessMessageDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status403Forbidden, Type = typeof(ForbiddenErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status470MissingRequiredData, Type = typeof(MissingRequiredDataErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status471InvalidUploadData, Type = typeof(InvalidUploadDataErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status472InvalidPubSpec, Type = typeof(InvalidPubSpecErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status473PackageDiscontinued, Type = typeof(PackageDiscontinuedErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status474VersionConflict, Type = typeof(VersionConflictErrorDto))]
 	public async Task<IActionResult> FinalizeUpload([FromQuery] string? pendingId,
 		CancellationToken cancellationToken = default)
 	{
 		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
-			return BadRequest(ErrorResponseDto.InvalidSignedUrl);
+			return Error<InvalidUploadDataErrorDto>(PubNetStatusCodes.Status471InvalidUploadData,
+				"Invalid query signature");
 
 		if (pendingId is null)
-			return FailedDependency(ErrorResponseDto.MissingPendingId);
+			return Error<MissingRequiredDataErrorDto>(PubNetStatusCodes.Status470MissingRequiredData,
+				"Missing pending id");
 
 		if (!Guid.TryParse(pendingId, out var uuid))
-			return FailedDependency(ErrorResponseDto.InvalidPendingId);
+			return Error<InvalidUploadDataErrorDto>(PubNetStatusCodes.Status471InvalidUploadData, "Invalid pending id");
 
 		var pending = await db.PendingArchives
 			.Include(p => p.Uploader)
 			.FirstOrDefaultAsync(a => a.Uuid == uuid, cancellationToken);
 		if (pending is null)
-			return FailedDependency(ErrorResponseDto.InvalidPendingId);
+			return Error<InvalidUploadDataErrorDto>(PubNetStatusCodes.Status471InvalidUploadData,
+				"Pending id not found: " + pendingId);
 
 		var unpackedArchivePath = pending.UnpackedArchivePath;
 		await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
@@ -153,26 +166,30 @@ public class StorageController(
 			}
 			catch (FileNotFoundException)
 			{
-				return UnprocessableEntity(ErrorResponseDto.MissingPubspec);
+				return Error<MissingRequiredDataErrorDto>(PubNetStatusCodes.Status470MissingRequiredData,
+					"Missing pubspec.yaml");
 			}
 			catch (Exception ex)
 			{
-				return UnprocessableEntity(ErrorResponseDto.InvalidPubspec(ex.Message));
+				return Error<InvalidPubSpecErrorDto>(PubNetStatusCodes.Status472InvalidPubSpec,
+					$"An error occurred while parsing the pubspec.yaml: {ex.Message}");
 			}
 
 			var packageName = pubSpec.Name;
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageName is null)
-				return UnprocessableEntity(ErrorResponseDto.InvalidPubspec("The pubspec.yaml is missing a package name"));
+				return Error<InvalidPubSpecErrorDto>(PubNetStatusCodes.Status472InvalidPubSpec,
+					"The pubspec.yaml is missing a package name");
 
 			var packageVersionId = pubSpec.Version;
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageVersionId is null)
-				return UnprocessableEntity(
-					ErrorResponseDto.InvalidPubspec("The pubspec.yaml is missing a package version"));
+				return Error<InvalidPubSpecErrorDto>(PubNetStatusCodes.Status472InvalidPubSpec,
+					"The pubspec.yaml is missing a package version");
 
 			if (!SemVersion.TryParse(packageVersionId, SemVersionStyles.Any, out var packageVersionSemver))
-				return UnprocessableEntity(ErrorResponseDto.InvalidPubspec("The package version could not be parsed"));
+				return Error<InvalidPubSpecErrorDto>(PubNetStatusCodes.Status472InvalidPubSpec,
+					"The package version could not be parsed");
 
 			var package = await db.Packages.Where(p => p.Name == packageName)
 				.Include(p => p.Versions)
@@ -196,19 +213,21 @@ public class StorageController(
 			else
 			{
 				if (package.Author != pending.Uploader)
-					return Unauthorized(ErrorResponseDto.PackageAuthorMismatch);
+					return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 				if (package.IsDiscontinued)
-					return UnprocessableEntity(ErrorResponseDto.PackageDiscontinued);
+					return Error<PackageDiscontinuedErrorDto>(PubNetStatusCodes.Status473PackageDiscontinued);
 
 				if (package.Versions.Any(v => v.Version == packageVersionId))
-					return UnprocessableEntity(ErrorResponseDto.VersionAlreadyExists(packageName, packageVersionId));
+					return Error<VersionConflictErrorDto>(PubNetStatusCodes.Status474VersionConflict,
+						$"Version {packageVersionId} of {packageName} already exists");
 
 				if (package.Latest is not null)
 				{
 					var latestSemver = SemVersion.Parse(package.Latest.Version, SemVersionStyles.Any);
 					if (packageVersionSemver.ComparePrecedenceTo(latestSemver) != 1)
-						return UnprocessableEntity(ErrorResponseDto.VersionOlderThanLatest(package.Latest.Version));
+						return Error<VersionConflictErrorDto>(PubNetStatusCodes.Status474VersionConflict,
+							$"The version you are trying to upload is older than the latest version ({package.Latest.Version})");
 				}
 			}
 
@@ -235,10 +254,19 @@ public class StorageController(
 
 			System.IO.File.Delete(pending.ArchivePath);
 
-			Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
-			return Ok(new SuccessResponseDto(new($"Successfully uploaded {packageName} version {packageVersionId}! " +
+			var linkToPackage =
 				endpointHelper.GenerateFullyQualified(Request,
-					$"/api/packages/{packageName}/versions/{packageVersionId}"))));
+					$"/api/packages/{packageName}/versions/{packageVersionId}");
+
+			Response.Headers.ContentType = new[] { "application/vnd.pub.v2+json" };
+			return Ok(new SuccessMessageDto
+			{
+				Success = new()
+				{
+					Message = $"Successfully uploaded {packageName} version {packageVersionId}! " + linkToPackage,
+					Code = "upload-successful",
+				},
+			});
 		}
 		finally
 		{
