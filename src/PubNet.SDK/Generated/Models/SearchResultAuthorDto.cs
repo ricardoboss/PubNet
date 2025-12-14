@@ -25,13 +25,7 @@ namespace PubNet.SDK.Generated.Models
         public string Name { get; set; }
 #endif
         /// <summary>The numPackagesUploaded property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public UntypedNode? NumPackagesUploaded { get; set; }
-#nullable restore
-#else
-        public UntypedNode NumPackagesUploaded { get; set; }
-#endif
+        public int? NumPackagesUploaded { get; set; }
         /// <summary>The userName property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -67,7 +61,7 @@ namespace PubNet.SDK.Generated.Models
             {
                 { "joined", n => { Joined = n.GetDateTimeOffsetValue(); } },
                 { "name", n => { Name = n.GetStringValue(); } },
-                { "numPackagesUploaded", n => { NumPackagesUploaded = n.GetObjectValue<UntypedNode>(UntypedNode.CreateFromDiscriminatorValue); } },
+                { "numPackagesUploaded", n => { NumPackagesUploaded = n.GetIntValue(); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
             };
         }
@@ -80,7 +74,7 @@ namespace PubNet.SDK.Generated.Models
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
             writer.WriteDateTimeOffsetValue("joined", Joined);
             writer.WriteStringValue("name", Name);
-            writer.WriteObjectValue<UntypedNode>("numPackagesUploaded", NumPackagesUploaded);
+            writer.WriteIntValue("numPackagesUploaded", NumPackagesUploaded);
             writer.WriteStringValue("userName", UserName);
             writer.WriteAdditionalData(AdditionalData);
         }
