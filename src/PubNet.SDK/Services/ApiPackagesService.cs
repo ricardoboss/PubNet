@@ -11,18 +11,21 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 	private readonly Dictionary<string, PackageDto?> _packages = new();
 
 	private static UnauthorizedAccessException Unauthorized(string message) => new(message);
-	private static PackageNotFoundException NotFound(string? message = null) => new(message ?? "The package you are looking for does not exist");
+
+	private static PackageNotFoundException NotFound(string? message = null) =>
+		new(message ?? "The package you are looking for does not exist");
+
 	private static PackageFetchException Undocumented => new("An undocumented error occurred");
 
-	public async Task<PackageDto?> GetPackageAsync(string name, CancellationToken cancellationToken = default)
+	public async Task<PackageDto?> GetPackageAsync(string name, bool includeAuthor,
+		CancellationToken cancellationToken = default)
 	{
-		await fetchLock.UntilFreed(taskName: $"GetPackage({name})");
-
-		using var _ = fetchLock.Lock($"GetPackage({name})");
+		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"GetPackage({name}, {includeAuthor})");
 
 		try
 		{
-			var package = await apiClient.Packages[name].GetAsync(cancellationToken: cancellationToken);
+			var package = await apiClient.Packages[name]
+				.GetAsync(r => r.QueryParameters.IncludeAuthor = includeAuthor, cancellationToken);
 
 			_packages[name] = package;
 
@@ -65,7 +68,8 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		}
 	}
 
-	public async Task DeletePackageVersionAsync(string name, string version, CancellationToken cancellationToken = default)
+	public async Task DeletePackageVersionAsync(string name, string version,
+		CancellationToken cancellationToken = default)
 	{
 		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"DeletePackageVersion({name}, {version})");
 
@@ -96,12 +100,15 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		}
 	}
 
-	public async Task<PackageVersionDto?> GetPackageVersionAsync(string name, string version, CancellationToken cancellationToken = default)
+	public async Task<PackageVersionDto?> GetPackageVersionAsync(string name, string version,
+		CancellationToken cancellationToken = default)
 	{
-		return (await GetPackageAsync(name, cancellationToken))?.Versions?.FirstOrDefault(v => v.Version == version) ?? throw NotFound("The package version you are looking for does not exist");
+		return (await GetPackageAsync(name, cancellationToken: cancellationToken, includeAuthor: false))?.Versions?.FirstOrDefault(v =>
+			v.Version == version) ?? throw NotFound("The package version you are looking for does not exist");
 	}
 
-	public async Task DiscontinuePackageAsync(string name, string? replacement, CancellationToken cancellationToken = default)
+	public async Task DiscontinuePackageAsync(string name, string? replacement,
+		CancellationToken cancellationToken = default)
 	{
 		using var __ = await fetchLock.UntilFreedAndLock(taskName: $"DiscontinuePackage({name}, {replacement})");
 
@@ -135,7 +142,8 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		}
 	}
 
-	public async Task RetractPackageVersionAsync(string name, string version, CancellationToken cancellationToken = default)
+	public async Task RetractPackageVersionAsync(string name, string version,
+		CancellationToken cancellationToken = default)
 	{
 		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"RetractVersion({name}, {version})");
 		try
@@ -164,7 +172,8 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 		}
 	}
 
-	public async Task<AuthorPackagesResponseDto?> GetPackagesByAuthorAsync(string username, CancellationToken cancellationToken = default)
+	public async Task<AuthorPackagesResponseDto?> GetPackagesByAuthorAsync(string username,
+		CancellationToken cancellationToken = default)
 	{
 		return await apiClient.Authors[username].Packages.GetAsync(cancellationToken: cancellationToken);
 	}
