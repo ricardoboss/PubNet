@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using PubNet.Database.Models;
 
 namespace PubNet.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("packages")]
 public class PackagesController(
@@ -408,12 +410,14 @@ public class PackagesController(
 		}
 	}
 
+	[AllowAnonymous]
 	[HttpGet("{name}/versions/{version}/docs/")]
 	public IActionResult GetVersionDocsIndex(string name, string version)
 	{
 		return RedirectToAction("GetVersionDocsFile", new { name, version, path = "index.html" });
 	}
 
+	[AllowAnonymous]
 	[HttpGet("{name}/versions/{version}/docs/{**path}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]

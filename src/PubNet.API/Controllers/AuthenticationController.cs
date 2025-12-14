@@ -1,10 +1,11 @@
-using System.Security.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
-using PubNet.API.Interfaces;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authors;
+using PubNet.API.DTO.Errors;
+using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -22,26 +23,29 @@ public class AuthenticationController(
 	ILogger<AuthenticationController> logger
 ) : BaseController
 {
-	private static InvalidCredentialException EmailNotFound => new("E-Mail address not registered");
-
+	[AllowAnonymous]
 	[HttpPost("login")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JsonWebTokenResponseDto))]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status460EmailNotFound, Type = typeof(EmailNotFoundErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status461InvalidPassword, Type = typeof(InvalidPasswordErrorDto))]
 	public async Task<IActionResult> Login(LoginRequestDto dto, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(dto.Email))
-			throw EmailNotFound;
+			return Error(PubNetStatusCodes.Status460EmailNotFound);
 
-		var author = await db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
+		var author =
+			await db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
 		if (author is null)
-			throw EmailNotFound;
+			return Error(PubNetStatusCodes.Status460EmailNotFound);
 
-		await passwordManager.ThrowForInvalid(db, author, dto.Password, cancellationToken);
+		if (!await passwordManager.IsValid(db, author, dto.Password, cancellationToken))
+			return Error(PubNetStatusCodes.Status461InvalidPassword);
 
 		var token = tokenGenerator.Generate(author, out var expiresAt);
 		return Ok(new JsonWebTokenResponseDto(token, expiresAt));
 	}
 
+	[AllowAnonymous]
 	[HttpPost("register")]
 	[ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AuthorDto))]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponseDto))]
@@ -91,6 +95,7 @@ public class AuthenticationController(
 		return CreatedAtAction("Get", "Authors", new { username = author.UserName }, author);
 	}
 
+	[Authorize]
 	[HttpGet("self")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthorDto))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponseDto))]
@@ -102,6 +107,7 @@ public class AuthenticationController(
 		return Ok(AuthorDto.FromAuthor(author, true));
 	}
 
+	[AllowAnonymous]
 	[HttpGet("registrations-enabled")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
 	public bool RegistrationsEnabled()
