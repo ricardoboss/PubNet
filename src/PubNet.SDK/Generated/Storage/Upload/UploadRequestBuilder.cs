@@ -35,11 +35,13 @@ namespace PubNet.SDK.Generated.Storage.Upload
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 411 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 413 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.LengthRequiredErrorDto">When receiving a 411 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PayloadTooLargeErrorDto">When receiving a 413 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.MissingRequiredDataErrorDto">When receiving a 470 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidUploadDataErrorDto">When receiving a 471 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Storage.Upload.Upload4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Storage.Upload.Upload500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Storage.Upload.Upload5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task PostAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Storage.Upload.UploadRequestBuilder.UploadRequestBuilderPostQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -52,11 +54,13 @@ namespace PubNet.SDK.Generated.Storage.Upload
             var requestInfo = ToPostRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "411", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "413", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "411", global::PubNet.SDK.Generated.Models.LengthRequiredErrorDto.CreateFromDiscriminatorValue },
+                { "413", global::PubNet.SDK.Generated.Models.PayloadTooLargeErrorDto.CreateFromDiscriminatorValue },
+                { "470", global::PubNet.SDK.Generated.Models.MissingRequiredDataErrorDto.CreateFromDiscriminatorValue },
+                { "471", global::PubNet.SDK.Generated.Models.InvalidUploadDataErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Storage.Upload.Upload4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Storage.Upload.Upload500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Storage.Upload.Upload5XXError.CreateFromDiscriminatorValue },
             };
             await RequestAdapter.SendNoContentAsync(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
