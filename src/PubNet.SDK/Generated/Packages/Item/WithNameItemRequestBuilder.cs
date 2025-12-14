@@ -47,10 +47,12 @@ namespace PubNet.SDK.Generated.Packages.Item
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ProblemDetails">When receiving a 404 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.WithName401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ForbiddenErrorDto">When receiving a 403 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.WithName4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.WithName500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.WithName5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task DeleteAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -63,19 +65,23 @@ namespace PubNet.SDK.Generated.Packages.Item
             var requestInfo = ToDeleteRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "404", global::PubNet.SDK.Generated.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Packages.Item.WithName401Error.CreateFromDiscriminatorValue },
+                { "403", global::PubNet.SDK.Generated.Models.ForbiddenErrorDto.CreateFromDiscriminatorValue },
+                { "404", global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Packages.Item.WithName4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Packages.Item.WithName500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Packages.Item.WithName5XXError.CreateFromDiscriminatorValue },
             };
             await RequestAdapter.SendNoContentAsync(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.PackageDto"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ProblemDetails">When receiving a 404 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.PackageDto401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.PackageDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.PackageDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.PackageDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::PubNet.SDK.Generated.Models.PackageDto?> GetAsync(Action<RequestConfiguration<global::PubNet.SDK.Generated.Packages.Item.WithNameItemRequestBuilder.WithNameItemRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -88,9 +94,11 @@ namespace PubNet.SDK.Generated.Packages.Item
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "404", global::PubNet.SDK.Generated.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Packages.Item.PackageDto401Error.CreateFromDiscriminatorValue },
+                { "404", global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Packages.Item.PackageDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Packages.Item.PackageDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Packages.Item.PackageDto5XXError.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.PackageDto>(requestInfo, global::PubNet.SDK.Generated.Models.PackageDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

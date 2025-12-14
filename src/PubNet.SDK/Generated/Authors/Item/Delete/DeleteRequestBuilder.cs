@@ -33,35 +33,39 @@ namespace PubNet.SDK.Generated.Authors.Item.Delete
         public DeleteRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/authors/{username}/delete", rawUrl)
         {
         }
-        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.SuccessResponseDto"/></returns>
+        /// <returns>A <see cref="global::PubNet.SDK.Generated.Models.SuccessMessageDto"/></returns>
         /// <param name="body">The request body</param>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ValidationErrorsDto">When receiving a 400 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ErrorResponseDto">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.ProblemDetails">When receiving a 404 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.InternalServerErrorDto">When receiving a 500 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.GenericErrorDto">When receiving a 4XX or 5XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto400Error">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto401Error">When receiving a 401 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.ForbiddenErrorDto">When receiving a 403 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidPasswordErrorDto">When receiving a 461 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto4XXError">When receiving a 4XX status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto500Error">When receiving a 500 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto5XXError">When receiving a 5XX status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::PubNet.SDK.Generated.Models.SuccessResponseDto?> PostAsync(global::PubNet.SDK.Generated.Models.DeleteAuthorRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.SDK.Generated.Models.SuccessMessageDto?> PostAsync(global::PubNet.SDK.Generated.Models.DeleteAuthorRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::PubNet.SDK.Generated.Models.SuccessResponseDto> PostAsync(global::PubNet.SDK.Generated.Models.DeleteAuthorRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::PubNet.SDK.Generated.Models.SuccessMessageDto> PostAsync(global::PubNet.SDK.Generated.Models.DeleteAuthorRequestDto body, Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             if(ReferenceEquals(body, null)) throw new ArgumentNullException(nameof(body));
             var requestInfo = ToPostRequestInformation(body, requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "400", global::PubNet.SDK.Generated.Models.ValidationErrorsDto.CreateFromDiscriminatorValue },
-                { "401", global::PubNet.SDK.Generated.Models.ErrorResponseDto.CreateFromDiscriminatorValue },
-                { "404", global::PubNet.SDK.Generated.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "500", global::PubNet.SDK.Generated.Models.InternalServerErrorDto.CreateFromDiscriminatorValue },
-                { "XXX", global::PubNet.SDK.Generated.Models.GenericErrorDto.CreateFromDiscriminatorValue },
+                { "400", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto400Error.CreateFromDiscriminatorValue },
+                { "401", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto401Error.CreateFromDiscriminatorValue },
+                { "403", global::PubNet.SDK.Generated.Models.ForbiddenErrorDto.CreateFromDiscriminatorValue },
+                { "461", global::PubNet.SDK.Generated.Models.InvalidPasswordErrorDto.CreateFromDiscriminatorValue },
+                { "4XX", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto4XXError.CreateFromDiscriminatorValue },
+                { "500", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto500Error.CreateFromDiscriminatorValue },
+                { "5XX", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto5XXError.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.SuccessResponseDto>(requestInfo, global::PubNet.SDK.Generated.Models.SuccessResponseDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::PubNet.SDK.Generated.Models.SuccessMessageDto>(requestInfo, global::PubNet.SDK.Generated.Models.SuccessMessageDto.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="body">The request body</param>
