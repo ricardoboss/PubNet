@@ -29,7 +29,7 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 		{
 			["application/json"] = new()
 			{
-				Schema = await context.GetOrCreateSchemaAsync(typeof(GenericErrorDto),
+				Schema = await context.GetOrCreateSchemaAsync(typeof(StacktraceErrorDto),
 					cancellationToken: cancellationToken),
 			},
 		},

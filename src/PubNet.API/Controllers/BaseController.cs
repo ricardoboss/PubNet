@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication.Errors;
 using PubNet.API.DTO.Errors;
+using PubNet.API.Services;
 
 namespace PubNet.API.Controllers;
 
@@ -11,24 +14,40 @@ public abstract class BaseController : ControllerBase
 	protected Uri RefererUri => new(Request.Headers.Referer.FirstOrDefault() ?? Request.Host.ToString());
 
 	[NonAction]
-	protected ObjectResult FailedDependency(object? result)
-	{
-		return StatusCode(StatusCodes.Status424FailedDependency, result);
-	}
+	protected ObjectResult Error<T>(int status) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, null, null));
 
 	[NonAction]
-	protected ObjectResult Error(int code, string? message = null) =>
-		StatusCode(code, StatusToDto(code, message));
+	protected ObjectResult Error<T>(int status, string? message) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, null, message));
 
 	[NonAction]
-	private static GenericErrorDto StatusToDto(int status, string? message)
+	protected ObjectResult Error<T>(int status, string? code, string? message) where T : ErrorMessageDto, new() =>
+		StatusCode(status, StatusToDto<T>(status, code, message));
+
+	/// <summary>
+	/// Translates a rejected registration into the granular DTO for its cause, so that registration and the
+	/// first-time setup report it identically.
+	/// </summary>
+	[NonAction]
+	protected ObjectResult RegistrationError(AuthorRegistrationException e) => e.StatusCode switch
 	{
-		var errorCode = PubNetStatusCodes.ToErrorCode(status);
+		PubNetStatusCodes.Status463UsernameAlreadyInUse =>
+			Error<UsernameAlreadyInUseErrorDto>(e.StatusCode, e.Code, e.Message),
+		PubNetStatusCodes.Status464EmailAlreadyInUse =>
+			Error<EmailAlreadyInUseErrorDto>(e.StatusCode, e.Code, e.Message),
+		_ => Error<MissingRegistrationDataErrorDto>(PubNetStatusCodes.Status400BadRequest, e.Code, e.Message),
+	};
+
+	[NonAction]
+	private static T StatusToDto<T>(int status, string? errorCode, string? errorMessage) where T : ErrorMessageDto, new()
+	{
+		errorCode ??= PubNetStatusCodes.ToErrorCode(status);
 		if (errorCode is null)
 			throw new NotImplementedException("No error code defined for status code: " + status);
 
-		message ??= PubNetStatusCodes.ToErrorMessage(status);
-		if (message is null)
+		errorMessage ??= PubNetStatusCodes.ToErrorMessage(status);
+		if (errorMessage is null)
 			throw new NotImplementedException("No default error message defined for status code: " + status);
 
 		return new()
@@ -36,7 +55,7 @@ public abstract class BaseController : ControllerBase
 			Error = new()
 			{
 				Code = errorCode,
-				Message = message,
+				Message = errorMessage,
 			},
 		};
 	}
