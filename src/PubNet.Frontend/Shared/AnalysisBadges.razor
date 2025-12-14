@@ -1,5 +1,5 @@
 @inherits BaseComponent
-@inject ApiAnalysisService ApiAnalysis
+@inject IAnalysisService Analysis
 @inject BaseAddressProvider BaseAddressProvider
 
 <Div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
@@ -32,7 +32,6 @@
 			}
 			break;
 	}
-
 
 	@switch (IsLatest)
 	{
@@ -100,7 +99,7 @@
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			AnalysisDto = await ApiAnalysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, includeReadme: true);
+			AnalysisDto = await Analysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, includeReadme: false);
 		}
 	}
 
