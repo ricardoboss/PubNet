@@ -171,6 +171,9 @@ void ConfigureServices(WebApplicationBuilder builder)
 		o.AddOperationTransformer<ErrorsOperationTransformer>();
 		o.AddOperationTransformer<AuthMetadataTransformer>();
 		o.AddOperationTransformer<StatusCodeDescriptionOperationTransformer>();
+
+		o.AddSchemaTransformer<IntSimplifyingTransformer>();
+		o.AddOperationTransformer<IntSimplifyingTransformer>();
 	});
 
 	builder.Services.AddCors(options =>
