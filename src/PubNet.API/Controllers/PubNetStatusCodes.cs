@@ -29,13 +29,21 @@ public static class PubNetStatusCodes
 	{
 		Status460EmailNotFound => "email-not-found",
 		Status461InvalidPassword => "invalid-password",
+		Status462RegistrationsDisabled => "registrations-disabled",
+		Status463UsernameAlreadyInUse => "username-in-use",
+		Status464EmailAlreadyInUse => "email-in-use",
+
+		Status470MissingRequiredData => "missing-required-data",
+		Status471InvalidUploadData => "invalid-upload-data",
+		Status472InvalidPubSpec => "invalid-pubspec",
+		Status473PackageDiscontinued => "package-discontinued",
+		Status474VersionConflict => "version-conflict",
+
 		_ => null,
 	};
 
 	public static string? ToErrorMessage(int code) => code switch
 	{
-		// Status401Unauthenticated => "Unauthenticated",
-
 		Status460EmailNotFound => "E-mail address not found",
 		Status461InvalidPassword => "Invalid password",
 		Status462RegistrationsDisabled => "Registrations are disabled",
