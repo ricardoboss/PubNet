@@ -4193,7 +4193,7 @@
           "packages": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SearchResultPackage"
+              "$ref": "#/components/schemas/SearchResultPackageDto"
             }
           }
         }
@@ -4222,7 +4222,7 @@
           }
         }
       },
-      "SearchResultPackage": {
+      "SearchResultPackageDto": {
         "required": [
           "name",
           "replacedBy",
