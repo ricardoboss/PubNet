@@ -1,5 +1,4 @@
-﻿@using PubNet.SDK.Services
-@inject ApiAuthenticationService Auth
+﻿@inject IAuthenticationService Auth
 
 <Bar Mode="BarMode.Horizontal" Shadow="Shadow.Small" CollapseMode="BarCollapseMode.Hide" Display="Display.Flex" Flex="Flex.AlignItems.Stretch">
 	<BarBrand>
@@ -73,7 +72,7 @@
 		UserName = null;
 		Authenticated = await Auth.IsAuthenticatedAsync();
 		if (Authenticated == true)
-			UserName = (await Auth.GetSelfAsync()).UserName;
+			UserName = (await Auth.GetSelfAsync())?.UserName;
 	}
 
 }
