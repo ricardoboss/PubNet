@@ -1,19 +1,14 @@
 using PubNet.SDK.Abstractions;
 using PubNet.SDK.Generated;
 using PubNet.SDK.Generated.Models;
-using PubNet.SDK.Helpers;
 
 namespace PubNet.SDK.Services;
 
-public class ApiAnalysisService(PubNetApiClient apiClient, FetchLock<ApiAnalysisService> fetchLock) : IAnalysisService
+public class ApiAnalysisService(PubNetApiClient apiClient) : IAnalysisService
 {
 	public async Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version,
 		bool includeReadme, CancellationToken cancellationToken = default)
 	{
-		using var _ =
-			await fetchLock.UntilFreedAndLock(
-				taskName: $"GetAnalysisForPackageVersionAsync({name}, {version}, {includeReadme})");
-
 		return await apiClient.Packages[name].Versions[version].Analysis
 			.GetAsync(r => r.QueryParameters.IncludeReadme = includeReadme, cancellationToken: cancellationToken);
 	}
