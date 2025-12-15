@@ -1,11 +1,10 @@
 using PubNet.SDK.Abstractions;
 using PubNet.SDK.Generated;
 using PubNet.SDK.Generated.Models;
-using PubNet.SDK.Helpers;
 
 namespace PubNet.SDK.Services;
 
-public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackagesService> fetchLock) :
+public class ApiPackagesService(PubNetApiClient apiClient) :
 	IPackagesService
 {
 	private readonly Dictionary<string, PackageDto?> _packages = new();
@@ -20,8 +19,6 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 	public async Task<PackageDto?> GetPackageAsync(string name, bool includeAuthor,
 		CancellationToken cancellationToken = default)
 	{
-		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"GetPackage({name}, {includeAuthor})");
-
 		try
 		{
 			var package = await apiClient.Packages[name]
@@ -43,8 +40,6 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 
 	public async Task DeletePackageAsync(string name, CancellationToken cancellationToken = default)
 	{
-		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"DeletePackage({name})");
-
 		try
 		{
 			await apiClient.Packages[name].DeleteAsync(cancellationToken: cancellationToken);
@@ -71,8 +66,6 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 	public async Task DeletePackageVersionAsync(string name, string version,
 		CancellationToken cancellationToken = default)
 	{
-		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"DeletePackageVersion({name}, {version})");
-
 		try
 		{
 			await apiClient.Packages[name].Versions[version].DeleteAsync(cancellationToken: cancellationToken);
@@ -110,8 +103,6 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 	public async Task DiscontinuePackageAsync(string name, string? replacement,
 		CancellationToken cancellationToken = default)
 	{
-		using var __ = await fetchLock.UntilFreedAndLock(taskName: $"DiscontinuePackage({name}, {replacement})");
-
 		try
 		{
 			var dto = new SetDiscontinuedDto
@@ -145,7 +136,6 @@ public class ApiPackagesService(PubNetApiClient apiClient, FetchLock<ApiPackages
 	public async Task RetractPackageVersionAsync(string name, string version,
 		CancellationToken cancellationToken = default)
 	{
-		using var _ = await fetchLock.UntilFreedAndLock(taskName: $"RetractVersion({name}, {version})");
 		try
 		{
 			await apiClient.Packages[name].Versions[version].Retract.PatchAsync(cancellationToken: cancellationToken);
