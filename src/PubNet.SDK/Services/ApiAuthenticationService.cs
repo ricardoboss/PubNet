@@ -1,14 +1,12 @@
 using PubNet.SDK.Abstractions;
 using PubNet.SDK.Generated;
 using PubNet.SDK.Generated.Models;
-using PubNet.SDK.Helpers;
 
 namespace PubNet.SDK.Services;
 
 public class ApiAuthenticationService(
 	PubNetApiClient apiClient,
-	ILoginTokenStorage loginTokenStorage,
-	FetchLock<ApiAuthenticationService> fetchLock
+	ILoginTokenStorage loginTokenStorage
 ) : IAuthenticationService
 {
 	private AuthorDto? _self;
@@ -40,11 +38,6 @@ public class ApiAuthenticationService(
 	{
 		if (!await IsAuthenticatedAsync(cancellationToken))
 			throw new UnauthenticatedException("Not authenticated");
-
-		if (_self is not null)
-			return _self;
-
-		using var _ = await fetchLock.UntilFreedAndLock();
 
 		if (_self is not null)
 			return _self;
