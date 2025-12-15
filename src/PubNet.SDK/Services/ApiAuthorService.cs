@@ -4,7 +4,7 @@ using PubNet.SDK.Generated.Models;
 
 namespace PubNet.SDK.Services;
 
-public class ApiAuthorService(PubNetApiClient apiClient) : IAuthorService
+internal sealed class ApiAuthorService(PubNetApiClient apiClient) : IAuthorService
 {
 	public async Task<AuthorsResponseDto?> GetAuthorsAsync(CancellationToken cancellationToken = default)
 	{
