@@ -8,7 +8,6 @@ using PubNet.Frontend;
 using PubNet.Frontend.Services;
 using PubNet.SDK.Abstractions;
 using PubNet.SDK.Extensions;
-using PubNet.SDK.Helpers;
 using PubNet.SDK.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -66,8 +65,7 @@ builder.Services
 	.AddScoped<ApiAuthenticationService>()
 	.AddScoped<OnboardingService>()
 	.AddScoped<ClipboardService>()
-	.AddScoped<AlertService>()
-	.AddTransient(typeof(FetchLock<>));
+	.AddScoped<AlertService>();
 
 var app = builder.Build();
 
