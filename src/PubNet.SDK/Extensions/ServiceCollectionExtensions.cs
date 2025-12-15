@@ -36,15 +36,19 @@ public static class ServiceCollectionExtensions
 				return adapter;
 			});
 
-			services.TryDecorate<IRequestAdapter, ConcurrentRequestBlockingRequestAdapter>();
-
 			services.TryAddScoped<ILoginTokenStorage, TTokenStorage>();
 			services.TryAddTransient<IAuthenticationProvider, LoginTokenAuthenticationProvider>();
 			services.TryAddScoped<PubNetApiClient>();
+
 			services.TryAddScoped<IPackagesService, ApiPackagesService>();
 			services.TryAddScoped<IAnalysisService, ApiAnalysisService>();
 			services.TryAddScoped<IAuthenticationService, ApiAuthenticationService>();
 			services.TryAddScoped<IAuthorService, ApiAuthorService>();
+
+			services.TryDecorate<IRequestAdapter, ConcurrentRequestBlockingRequestAdapter>();
+			services.TryDecorate<IAnalysisService, CachingAnalysisService>();
+			services.TryDecorate<IAuthorService, CachingAuthorService>();
+			services.TryDecorate<IPackagesService, CachingPackagesService>();
 
 			return services;
 		}
