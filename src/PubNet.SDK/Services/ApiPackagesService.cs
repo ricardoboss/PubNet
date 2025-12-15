@@ -4,7 +4,7 @@ using PubNet.SDK.Generated.Models;
 
 namespace PubNet.SDK.Services;
 
-public class ApiPackagesService(PubNetApiClient apiClient) :
+internal sealed class ApiPackagesService(PubNetApiClient apiClient) :
 	IPackagesService
 {
 	private readonly Dictionary<string, PackageDto?> _packages = new();

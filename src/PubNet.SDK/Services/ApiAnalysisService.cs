@@ -4,7 +4,7 @@ using PubNet.SDK.Generated.Models;
 
 namespace PubNet.SDK.Services;
 
-public class ApiAnalysisService(PubNetApiClient apiClient) : IAnalysisService
+internal sealed class ApiAnalysisService(PubNetApiClient apiClient) : IAnalysisService
 {
 	public async Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version,
 		bool includeReadme, CancellationToken cancellationToken = default)
