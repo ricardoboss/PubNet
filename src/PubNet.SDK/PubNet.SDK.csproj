@@ -70,6 +70,7 @@
 		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
 		<PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>
 		<PackageReference Include="Microsoft.Kiota.Serialization.Json"/>
+		<PackageReference Include="Scrutor" />
 	</ItemGroup>
 
 	<ItemGroup>
