@@ -23,12 +23,10 @@ await using (var tempProvider = builder.Services.BuildServiceProvider())
 	builder.Logging.ClearProviders();
 	builder.Logging.AddProvider(tempProvider.GetRequiredService<SimpleConsoleLoggerProvider>());
 	builder.Logging.SetMinimumLevel(LogLevel.Trace);
-	builder.Logging.AddFilter("PubNet.Frontend.Services.FetchLock", LogLevel.None);
-	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
-	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.Routing.Router", LogLevel.Information);
+	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree", LogLevel.Error);
 }
 #else
-builder.Logging.SetMinimumLevel(LogLevel.None);
+builder.Logging.SetMinimumLevel(LogLevel.Error);
 #endif
 
 // API client services
