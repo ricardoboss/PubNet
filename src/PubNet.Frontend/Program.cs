@@ -62,7 +62,6 @@ builder.Services
 // set up common services
 builder.Services
 	.AddSingleton<TextGenerator>()
-	.AddScoped<ApiAuthenticationService>()
 	.AddScoped<OnboardingService>()
 	.AddScoped<ClipboardService>()
 	.AddScoped<AlertService>();
