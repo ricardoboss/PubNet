@@ -5,7 +5,7 @@ using Microsoft.Kiota.Abstractions.Store;
 
 namespace PubNet.SDK.Services;
 
-public class ConcurrentRequestBlockingRequestAdapter(IRequestAdapter innerAdapter, ILogger<ConcurrentRequestBlockingRequestAdapter> logger) : IRequestAdapter, IDisposable
+internal sealed class ConcurrentRequestBlockingRequestAdapter(IRequestAdapter innerAdapter, ILogger<ConcurrentRequestBlockingRequestAdapter> logger) : IRequestAdapter, IDisposable
 {
 	public void EnableBackingStore(IBackingStoreFactory backingStoreFactory) =>
 		innerAdapter.EnableBackingStore(backingStoreFactory);
