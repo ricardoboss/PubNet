@@ -1,6 +1,4 @@
-﻿@using PubNet.SDK.Abstractions
-@using PubNet.SDK.Services
-@inject ApiAuthenticationService Auth
+﻿@inject IAuthenticationService Auth
 @inject NavigationManager Nav
 
 <Bar Mode="BarMode.Horizontal" Shadow="Shadow.Small" CollapseMode="BarCollapseMode.Hide" Display="Display.Flex" Flex="Flex.AlignItems.Stretch">
@@ -79,7 +77,7 @@
 
 		try
 		{
-			UserName = (await Auth.GetSelfAsync()).UserName;
+			UserName = (await Auth.GetSelfAsync())?.UserName;
 		}
 		catch (UnauthenticatedException)
 		{
