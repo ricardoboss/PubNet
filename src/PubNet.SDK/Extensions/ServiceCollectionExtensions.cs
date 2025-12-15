@@ -13,9 +13,10 @@ public static class ServiceCollectionExtensions
 {
 	extension(IServiceCollection services)
 	{
-		public IServiceCollection AddPubNetApi(Action<IServiceProvider, HttpClient> configureClient)
+		public IServiceCollection AddPubNetApiServices<TTokenStorage>(
+			Action<IServiceProvider, HttpClient> configureClient
+		) where TTokenStorage : class, ILoginTokenStorage
 		{
-			services.TryAddTransient<IAuthenticationProvider, LoginTokenAuthenticationProvider>();
 			services.AddHttpClient();
 			services.TryAddScoped<IRequestAdapter>(sp =>
 			{
@@ -34,6 +35,11 @@ public static class ServiceCollectionExtensions
 
 				return adapter;
 			});
+
+			services.TryDecorate<IRequestAdapter, ConcurrentRequestBlockingRequestAdapter>();
+
+			services.TryAddScoped<ILoginTokenStorage, TTokenStorage>();
+			services.TryAddTransient<IAuthenticationProvider, LoginTokenAuthenticationProvider>();
 			services.TryAddScoped<PubNetApiClient>();
 			services.TryAddScoped<IPackagesService, ApiPackagesService>();
 			services.TryAddScoped<IAnalysisService, ApiAnalysisService>();
