@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PubNet.Frontend;
 using PubNet.Frontend.Services;
-using PubNet.SDK.Abstractions;
 using PubNet.SDK.Extensions;
-using PubNet.SDK.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -39,8 +37,7 @@ var bap = new BaseAddressProvider(
 );
 builder.Services.AddSingleton(bap);
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<ILoginTokenStorage, BrowserLoginTokenStorage>();
-builder.Services.AddPubNetApi((sp, c) =>
+builder.Services.AddPubNetApiServices<BrowserLoginTokenStorage>((sp, c) =>
 {
 	var bap = sp.GetRequiredService<BaseAddressProvider>();
 
