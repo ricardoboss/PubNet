@@ -4,7 +4,7 @@ using PubNet.SDK.Generated.Models;
 
 namespace PubNet.SDK.Services;
 
-public class ApiAuthenticationService(
+internal sealed class ApiAuthenticationService(
 	PubNetApiClient apiClient,
 	ILoginTokenStorage loginTokenStorage
 ) : IAuthenticationService

@@ -5,7 +5,7 @@ using PubNet.SDK.Abstractions;
 
 namespace PubNet.SDK.Services;
 
-public class LoginTokenAuthenticationProvider(ILoginTokenStorage loginTokenStorage, ILogger<LoginTokenAuthenticationProvider> logger) : IAuthenticationProvider
+internal sealed class LoginTokenAuthenticationProvider(ILoginTokenStorage loginTokenStorage, ILogger<LoginTokenAuthenticationProvider> logger) : IAuthenticationProvider
 {
 	public async Task AuthenticateRequestAsync(RequestInformation request,
 		Dictionary<string, object>? additionalAuthenticationContext = null,
