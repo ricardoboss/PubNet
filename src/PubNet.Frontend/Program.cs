@@ -22,6 +22,7 @@ await using (var tempProvider = builder.Services.BuildServiceProvider())
 	builder.Logging.AddProvider(tempProvider.GetRequiredService<SimpleConsoleLoggerProvider>());
 	builder.Logging.SetMinimumLevel(LogLevel.Trace);
 	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree", LogLevel.Error);
+	builder.Logging.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Information);
 }
 #else
 builder.Logging.SetMinimumLevel(LogLevel.Error);
