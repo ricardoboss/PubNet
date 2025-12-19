@@ -1,40 +1,37 @@
+using Microsoft.Kiota.Abstractions;
 using PubNet.SDK.Abstractions;
+using PubNet.SDK.Exceptions;
 using PubNet.SDK.Generated;
+using PubNet.SDK.Generated.Authors.Item.Packages;
 using PubNet.SDK.Generated.Models;
+using PubNet.SDK.Generated.Packages;
+using PubNet.SDK.Generated.Packages.Item;
+using PubNet.SDK.Generated.Packages.Item.Versions.Item;
+using PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract;
 
 namespace PubNet.SDK.Services;
 
-internal sealed class ApiPackagesService(PubNetApiClient apiClient) :
-	IPackagesService
+internal sealed class ApiPackagesService(PubNetApiClient apiClient) : IPackagesService
 {
-	private readonly Dictionary<string, PackageDto?> _packages = new();
-
-	private static UnauthorizedAccessException Unauthorized(string message) => new(message);
-
-	private static PackageNotFoundException NotFound(string? message = null) =>
-		new(message ?? "The package you are looking for does not exist");
-
-	private static PackageFetchException Undocumented => new("An undocumented error occurred");
-
 	public async Task<PackageDto?> GetPackageAsync(string name, bool includeAuthor,
 		CancellationToken cancellationToken = default)
 	{
 		try
 		{
-			var package = await apiClient.Packages[name]
+			return await apiClient.Packages[name]
 				.GetAsync(r => r.QueryParameters.IncludeAuthor = includeAuthor, cancellationToken);
-
-			_packages[name] = package;
-
-			return package;
 		}
 		catch (PackageNotFoundErrorDto)
 		{
-			throw NotFound();
+			return null;
 		}
-		catch (Exception)
+		catch (PackageDto401Error e)
 		{
-			throw Undocumented;
+			throw new AuthenticationRequiredException(e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
 		}
 	}
 
@@ -44,22 +41,21 @@ internal sealed class ApiPackagesService(PubNetApiClient apiClient) :
 		{
 			await apiClient.Packages[name].DeleteAsync(cancellationToken: cancellationToken);
 		}
-		catch (PackageNotFoundErrorDto)
+		catch (PackageNotFoundErrorDto e)
 		{
-			throw NotFound("The package you are trying to delete was not found");
+			throw new PackageNotFoundException(name, e);
 		}
-		catch (ForbiddenErrorDto)
+		catch (WithName401Error e)
 		{
-			throw Unauthorized("You are not authorized to delete this package");
+			throw new AuthenticationRequiredException(e);
 		}
-		catch (Exception)
+		catch (ForbiddenErrorDto e)
 		{
-			throw Undocumented;
+			throw new UnauthorizedException("You are not authorized to delete this package", e);
 		}
-		finally
+		catch (ApiException e)
 		{
-			// delete package from cache, regardless of API call result, so it has to be re-fetched
-			_packages.Remove(name);
+			throw new UnexpectedResponseException(e);
 		}
 	}
 
@@ -70,66 +66,72 @@ internal sealed class ApiPackagesService(PubNetApiClient apiClient) :
 		{
 			await apiClient.Packages[name].Versions[version].DeleteAsync(cancellationToken: cancellationToken);
 		}
-		catch (PackageNotFoundErrorDto)
+		catch (PackageVersionNotFoundErrorDto e)
 		{
-			throw NotFound("The package version you are trying to delete was not found");
+			throw new PackageVersionNotFoundException(name, version, e);
 		}
-		catch (ForbiddenErrorDto)
+		catch (WithVersion401Error e)
 		{
-			throw Unauthorized("You are not authorized to delete this package version");
+			throw new AuthenticationRequiredException(e);
 		}
-		catch (Exception)
+		catch (ForbiddenErrorDto e)
 		{
-			throw Undocumented;
+			throw new UnauthorizedException("You are not authorized to delete this package version", e);
 		}
-		finally
+		catch (ApiException e)
 		{
-			if (_packages.TryGetValue(name, out var package) && package?.Versions != null)
-			{
-				var versionIdx = package.Versions.FindIndex(v => v.Version == version);
-
-				package.Versions.RemoveAt(versionIdx);
-			}
+			throw new UnexpectedResponseException(e);
 		}
 	}
 
 	public async Task<PackageVersionDto?> GetPackageVersionAsync(string name, string version,
 		CancellationToken cancellationToken = default)
 	{
-		return (await GetPackageAsync(name, cancellationToken: cancellationToken, includeAuthor: false))?.Versions?.FirstOrDefault(v =>
-			v.Version == version) ?? throw NotFound("The package version you are looking for does not exist");
+		try
+		{
+			return await apiClient.Packages[name].Versions[version].GetAsync(cancellationToken: cancellationToken);
+		}
+		catch (PackageVersionNotFoundErrorDto)
+		{
+			return null;
+		}
+		catch (PackageVersionDto401Error e)
+		{
+			throw new AuthenticationRequiredException(e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
 	}
 
 	public async Task DiscontinuePackageAsync(string name, string? replacement,
 		CancellationToken cancellationToken = default)
 	{
+		var dto = new SetDiscontinuedDto
+		{
+			Replacement = string.IsNullOrWhiteSpace(replacement) ? null : replacement,
+		};
+
 		try
 		{
-			var dto = new SetDiscontinuedDto
-			{
-				Replacement = string.IsNullOrWhiteSpace(replacement) ? null : replacement,
-			};
-
 			_ = await apiClient.Packages[name].Discontinue.PatchAsync(dto, cancellationToken: cancellationToken);
 		}
-		catch (PackageNotFoundErrorDto)
+		catch (PackageNotFoundErrorDto e)
 		{
-			throw NotFound();
+			throw new PackageNotFoundException(name, e);
 		}
-		catch (ForbiddenErrorDto)
+		catch (PackageDto401Error e)
 		{
-			throw Unauthorized("You are not authorized to discontinue this package");
+			throw new AuthenticationRequiredException(e);
 		}
-		catch (Exception)
+		catch (ForbiddenErrorDto e)
 		{
-			throw Undocumented;
+			throw new UnauthorizedException("You are not authorized to discontinue this package", e);
 		}
-		finally
+		catch (ApiException e)
 		{
-			if (_packages.TryGetValue(name, out var package) && package is not null)
-			{
-				package.IsDiscontinued = true;
-			}
+			throw new UnexpectedResponseException(e);
 		}
 	}
 
@@ -140,36 +142,60 @@ internal sealed class ApiPackagesService(PubNetApiClient apiClient) :
 		{
 			await apiClient.Packages[name].Versions[version].Retract.PatchAsync(cancellationToken: cancellationToken);
 		}
-		catch (PackageNotFoundErrorDto)
+		catch (PackageVersionNotFoundErrorDto e)
 		{
-			throw NotFound("The package version you are trying to retract does not exist");
+			throw new PackageVersionNotFoundException(name, version, e);
 		}
-		catch (ForbiddenErrorDto)
+		catch (Retract401Error e)
 		{
-			throw Unauthorized("You are not authorized to retract this package version");
+			throw new AuthenticationRequiredException(e);
 		}
-		catch (Exception)
+		catch (ForbiddenErrorDto e)
 		{
-			throw Undocumented;
+			throw new UnauthorizedException("You are not authorized to retract this package version", e);
 		}
-		finally
+		catch (ApiException e)
 		{
-			if (_packages.TryGetValue(name, out var package))
-			{
-				var dto = package?.Versions?.FirstOrDefault(v => v.Version == version);
-				dto?.Retracted = true;
-			}
+			throw new UnexpectedResponseException(e);
 		}
 	}
 
 	public async Task<AuthorPackagesResponseDto?> GetPackagesByAuthorAsync(string username,
 		CancellationToken cancellationToken = default)
 	{
-		return await apiClient.Authors[username].Packages.GetAsync(cancellationToken: cancellationToken);
+		try
+		{
+			return await apiClient.Authors[username].Packages.GetAsync(cancellationToken: cancellationToken);
+		}
+		catch (AuthorNotFoundErrorDto)
+		{
+			return null;
+		}
+		catch (AuthorPackagesResponseDto401Error e)
+		{
+			throw new AuthenticationRequiredException(e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
 	}
 
-	public async Task<SearchPackagesResponseDto?> SearchPackagesAsync(CancellationToken cancellationToken = default)
+	public async Task<SearchPackagesResponseDto> SearchPackagesAsync(CancellationToken cancellationToken = default)
 	{
-		return await apiClient.Packages.GetAsync(cancellationToken: cancellationToken);
+		try
+		{
+			var response = await apiClient.Packages.GetAsync(cancellationToken: cancellationToken);
+
+			return response ?? throw new UnexpectedResponseException("The response could not be deserialized");
+		}
+		catch (SearchPackagesResponseDto401Error e)
+		{
+			throw new AuthenticationRequiredException(e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
 	}
 }

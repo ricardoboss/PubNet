@@ -22,7 +22,7 @@ internal sealed class LoginTokenAuthenticationProvider(ILoginTokenStorage loginT
 
 		var token = await loginTokenStorage.GetTokenAsync(cancellationToken);
 		if (token is null)
-			throw new UnauthorizedAccessException($"Authentication is required for {request.URI}");
+			return; // let service layer handle 401 rejections from the API
 
 		request.Headers.Add("Authorization", $"Bearer {token}");
 	}
