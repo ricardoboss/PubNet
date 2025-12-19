@@ -84,13 +84,9 @@
 		try
 		{
 			PackageModel = await PackagesService.GetPackageAsync(PackageName, includeAuthor: true);
-		}
-		catch (PackageNotFoundException pnfe)
-		{
-			Error = pnfe.Message;
-			ShowUpstreamLink = true;
 
-			return;
+			if (PackageModel is null)
+				ShowUpstreamLink = true;
 		}
 		catch (Exception e)
 		{

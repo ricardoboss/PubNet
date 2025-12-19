@@ -141,7 +141,7 @@ internal sealed class CachingPackagesService(IPackagesService inner, ILogger<Cac
 		return response;
 	}
 
-	public async Task<SearchPackagesResponseDto?> SearchPackagesAsync(CancellationToken cancellationToken = default)
+	public async Task<SearchPackagesResponseDto> SearchPackagesAsync(CancellationToken cancellationToken = default)
 	{
 		return await inner.SearchPackagesAsync(cancellationToken);
 	}
