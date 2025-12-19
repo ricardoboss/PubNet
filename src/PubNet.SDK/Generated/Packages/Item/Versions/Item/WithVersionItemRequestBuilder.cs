@@ -56,7 +56,7 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion401Error">When receiving a 401 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.ForbiddenErrorDto">When receiving a 403 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageVersionNotFoundErrorDto">When receiving a 404 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion4XXError">When receiving a 4XX status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion500Error">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion5XXError">When receiving a 5XX status code</exception>
@@ -74,7 +74,7 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item
             {
                 { "401", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion401Error.CreateFromDiscriminatorValue },
                 { "403", global::PubNet.SDK.Generated.Models.ForbiddenErrorDto.CreateFromDiscriminatorValue },
-                { "404", global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "404", global::PubNet.SDK.Generated.Models.PackageVersionNotFoundErrorDto.CreateFromDiscriminatorValue },
                 { "4XX", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion4XXError.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion500Error.CreateFromDiscriminatorValue },
                 { "5XX", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.WithVersion5XXError.CreateFromDiscriminatorValue },
@@ -85,7 +85,7 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto401Error">When receiving a 401 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageVersionNotFoundErrorDto">When receiving a 404 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto4XXError">When receiving a 4XX status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto500Error">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto5XXError">When receiving a 5XX status code</exception>
@@ -102,7 +102,7 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
                 { "401", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto401Error.CreateFromDiscriminatorValue },
-                { "404", global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "404", global::PubNet.SDK.Generated.Models.PackageVersionNotFoundErrorDto.CreateFromDiscriminatorValue },
                 { "4XX", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto4XXError.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto500Error.CreateFromDiscriminatorValue },
                 { "5XX", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.PackageVersionDto5XXError.CreateFromDiscriminatorValue },
