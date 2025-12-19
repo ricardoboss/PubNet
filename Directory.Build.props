@@ -17,4 +17,13 @@
 
 	<Import Project="Directory.Tests.props" Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"/>
 
+	<!-- For non-test projects, grant IVT to '<ThisAssembly>.Tests' -->
+	<PropertyGroup>
+		<_FriendTestsName>$(MSBuildProjectName).Tests</_FriendTestsName>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsTestProject)' != 'true'">
+		<InternalsVisibleTo Include="$(_FriendTestsName)"/>
+	</ItemGroup>
+
 </Project>

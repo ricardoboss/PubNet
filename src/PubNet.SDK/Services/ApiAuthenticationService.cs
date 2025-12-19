@@ -1,4 +1,5 @@
 using PubNet.SDK.Abstractions;
+using PubNet.SDK.Exceptions;
 using PubNet.SDK.Generated;
 using PubNet.SDK.Generated.Models;
 
@@ -37,14 +38,14 @@ internal sealed class ApiAuthenticationService(
 	public async Task<AuthorDto?> GetSelfAsync(CancellationToken cancellationToken = default)
 	{
 		if (!await IsAuthenticatedAsync(cancellationToken))
-			throw new UnauthenticatedException("Not authenticated");
+			throw new AuthenticationRequiredException("Not authenticated");
 
 		if (_self is not null)
 			return _self;
 
 		var maybeAuthor = await apiClient.Authentication.Self.GetAsync(cancellationToken: cancellationToken);
 
-		return _self = maybeAuthor ?? throw new UnauthenticatedException("Request failed");
+		return _self = maybeAuthor ?? throw new AuthenticationRequiredException("Request failed");
 	}
 
 	public async Task<bool> IsSelfAsync(string? username, CancellationToken cancellationToken = default)
@@ -59,7 +60,7 @@ internal sealed class ApiAuthenticationService(
 		}
 		catch (Exception e)
 		{
-			if (e is UnauthenticatedException)
+			if (e is AuthenticationRequiredException)
 				await LogoutAsync(CancellationToken.None);
 
 			return false;
