@@ -37,7 +37,7 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract401Error">When receiving a 401 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.ForbiddenErrorDto">When receiving a 403 status code</exception>
-        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto">When receiving a 404 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.PackageVersionNotFoundErrorDto">When receiving a 404 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract4XXError">When receiving a 4XX status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract500Error">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract5XXError">When receiving a 5XX status code</exception>
@@ -55,7 +55,7 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract
             {
                 { "401", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract401Error.CreateFromDiscriminatorValue },
                 { "403", global::PubNet.SDK.Generated.Models.ForbiddenErrorDto.CreateFromDiscriminatorValue },
-                { "404", global::PubNet.SDK.Generated.Models.PackageNotFoundErrorDto.CreateFromDiscriminatorValue },
+                { "404", global::PubNet.SDK.Generated.Models.PackageVersionNotFoundErrorDto.CreateFromDiscriminatorValue },
                 { "4XX", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract4XXError.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract500Error.CreateFromDiscriminatorValue },
                 { "5XX", global::PubNet.SDK.Generated.Packages.Item.Versions.Item.Retract.Retract5XXError.CreateFromDiscriminatorValue },
