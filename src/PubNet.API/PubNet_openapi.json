@@ -2099,7 +2099,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
+                  "$ref": "#/components/schemas/PackageVersionNotFoundErrorDto"
                 }
               }
             }
@@ -2255,7 +2255,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
+                  "$ref": "#/components/schemas/PackageVersionNotFoundErrorDto"
                 }
               }
             }
@@ -2421,7 +2421,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
+                  "$ref": "#/components/schemas/PackageVersionNotFoundErrorDto"
                 }
               }
             }
@@ -2582,7 +2582,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
+                  "$ref": "#/components/schemas/PackageVersionNotFoundErrorDto"
                 }
               }
             }
@@ -2742,7 +2742,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PackageNotFoundErrorDto"
+                  "$ref": "#/components/schemas/PackageVersionNotFoundErrorDto"
                 }
               },
               "application/tar+gzip": { }
@@ -3970,6 +3970,17 @@
           },
           "mirrored": {
             "type": "boolean"
+          }
+        }
+      },
+      "PackageVersionNotFoundErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
           }
         }
       },

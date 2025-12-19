@@ -49,7 +49,8 @@ public class PackagesController(
 		if (before.HasValue)
 		{
 			if (!limit.HasValue)
-				return Error<InvalidQueryErrorDto>(PubNetStatusCodes.Status400BadRequest, "When before is set, a limit must also be set");
+				return Error<InvalidQueryErrorDto>(PubNetStatusCodes.Status400BadRequest,
+					"When before is set, a limit must also be set");
 
 			var publishedAtUpperLimit = DateTimeOffset.FromUnixTimeMilliseconds(before.Value);
 
@@ -93,7 +94,8 @@ public class PackagesController(
 		{
 			var pubDevPackage = await pubDevPackageProvider.TryGetPackage(name, cancellationToken);
 			if (pubDevPackage is null)
-				return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
+				return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+					"Package not found: " + name);
 
 			dto = pubDevPackage;
 		}
@@ -190,7 +192,7 @@ public class PackagesController(
 
 	[HttpGet("{name}/versions/{version}")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionDto))]
-	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageNotFoundErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageVersionNotFoundErrorDto))]
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersion(string name, string version,
 		CancellationToken cancellationToken = default)
@@ -202,18 +204,25 @@ public class PackagesController(
 			.FirstOrDefaultAsync(cancellationToken);
 
 		PackageVersionDto dto;
-		var packageVersion = package?.Versions.FirstOrDefault(v => v.Version == version);
-		if (packageVersion is not null)
-		{
-			dto = PackageVersionDto.FromPackageVersion(packageVersion);
-		}
-		else
+		if (package is null)
 		{
 			var pubDevPackageVersion = await pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
 			if (pubDevPackageVersion is null)
-				return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
+				return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+					"Package not found: " + name);
 
 			dto = pubDevPackageVersion;
+		}
+		else
+		{
+			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
+			if (packageVersion is null)
+			{
+				return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+					$"Package version not found: {name} {version}");
+			}
+
+			dto = PackageVersionDto.FromPackageVersion(packageVersion);
 		}
 
 		Response.Headers.ContentType = "application/vnd.pub.v2+json";
@@ -222,7 +231,7 @@ public class PackagesController(
 
 	[HttpGet("{name}/versions/{version}/analysis")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PackageVersionAnalysisDto))]
-	[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(PackageNotFoundErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageVersionNotFoundErrorDto))]
 	[ResponseCache(VaryByQueryKeys = ["includeReadme"], Duration = 60 * 60, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionAnalysis(string name, string version,
 		[FromQuery] bool includeReadme = false, CancellationToken cancellationToken = default)
@@ -235,7 +244,8 @@ public class PackagesController(
 
 		var packageVersionAnalysis = package?.Versions.FirstOrDefault(v => v.Version == version)?.Analysis;
 		if (packageVersionAnalysis is null)
-			return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package, version or analysis not found: " + name + " version " + version);
+			return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+				"Package, version or analysis not found: " + name + " version " + version);
 
 		return Ok(PackageVersionAnalysisDto.FromPackageVersionAnalysis(packageVersionAnalysis, includeReadme));
 	}
@@ -243,7 +253,7 @@ public class PackagesController(
 	[HttpPatch("{name}/versions/{version}/retract")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(PubNetStatusCodes.Status403Forbidden, Type = typeof(ForbiddenErrorDto))]
-	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageNotFoundErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageVersionNotFoundErrorDto))]
 	public async Task<IActionResult> RetractVersion(string name, string version,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
@@ -254,14 +264,16 @@ public class PackagesController(
 			.Include(p => p.Versions)
 			.FirstOrDefaultAsync(cancellationToken);
 		if (package is null)
-			return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
+			return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+				"Package not found: " + name);
 
 		if (author.Id != package.AuthorId)
 			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 		var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
 		if (packageVersion is null)
-			return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package version not found: " + name + " version " + version);
+			return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+				$"Package version not found: {name} {version}");
 
 		if (package.Latest == packageVersion)
 		{
@@ -289,7 +301,7 @@ public class PackagesController(
 
 	[HttpDelete("{name}/versions/{version}")]
 	[ProducesResponseType(PubNetStatusCodes.Status403Forbidden, Type = typeof(ForbiddenErrorDto))]
-	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageNotFoundErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status404NotFound, Type = typeof(PackageVersionNotFoundErrorDto))]
 	public async Task<IActionResult> DeleteVersion(string name, string version,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
 	{
@@ -307,14 +319,16 @@ public class PackagesController(
 				.Include(nameof(Package.Versions) + "." + nameof(PackageVersion.Analysis))
 				.FirstOrDefaultAsync(cancellationToken);
 			if (package is null)
-				return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
+				return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+					"Package not found: " + name);
 
 			if (author.Id != package.AuthorId)
 				return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
 			if (packageVersion is null)
-				return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package version not found: " + name + " version " + version);
+				return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+					$"Package version not found: {name} {version}");
 
 			if (package.Latest == packageVersion)
 			{
@@ -360,7 +374,8 @@ public class PackagesController(
 	[Produces("application/tar+gzip")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status302Found)]
-	[ProducesResponseType(typeof(PackageNotFoundErrorDto), PubNetStatusCodes.Status404NotFound, "application/json")]
+	[ProducesResponseType(typeof(PackageVersionNotFoundErrorDto), PubNetStatusCodes.Status404NotFound,
+		"application/json")]
 	[ResponseCache(Duration = 60 * 10, Location = ResponseCacheLocation.Any)]
 	public async Task<IActionResult> GetVersionArchive(string name, string version,
 		CancellationToken cancellationToken = default)
@@ -377,18 +392,21 @@ public class PackagesController(
 				FileDownloadName = $"{name}-{version}.tar.gz",
 			};
 		}
+		catch (FileNotFoundException)
+		{
+			var pubDevPackageVersion = await pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
+			if (pubDevPackageVersion is not null)
+				return Redirect(pubDevPackageVersion.ArchiveUrl);
+
+			return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+				$"Package version not found: {name} {version}");
+		}
 		catch (Exception ex)
 		{
-			if (ex is FileNotFoundException)
-			{
-				var pubDevPackageVersion = await pubDevPackageProvider.TryGetVersion(name, version, cancellationToken);
-				if (pubDevPackageVersion is not null)
-					return Redirect(pubDevPackageVersion.ArchiveUrl);
-			}
-
 			logger.LogError(ex, "Error reading archive for package \"{Package}\" version \"{Version}\"", name, version);
 
-			return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
+			return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
+				$"Could not read package archive: {name} {version}");
 		}
 	}
 
