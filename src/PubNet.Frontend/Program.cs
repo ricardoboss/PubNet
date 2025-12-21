@@ -38,19 +38,19 @@ var bap = new BaseAddressProvider(
 );
 builder.Services.AddSingleton(bap);
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddPubNetApiServices<BrowserLoginTokenStorage>((sp, c) =>
-{
-	var bap = sp.GetRequiredService<BaseAddressProvider>();
 
-	c.BaseAddress = bap.BaseUri;
-});
+builder.Services
+	.AddPubNetApiServices<BrowserLoginTokenStorage>(bap.BaseUri)
+	.AddConcurrentRequestPrevention()
+	.AddCaching();
 
 // set up Blazorise
 builder.Services
 	.AddBlazorise(options =>
 	{
 		options.Immediate = true;
-		options.ProductToken = "CjxRBXB/Ngg9UQFwfz01BlEAc3g0CT9TAXB/NQw/bjoNJ2ZdYhBVCCo/DTtRPUsNalV8Al44B2ECAWllMit3cWhZPUsCbFtpDUMkGnxIaVlzLiNoTWIKRDhDD2dTJ3EVD0JqRSdvHgNEYFM8Yg4ZVmdTWQFxfjU1BjxvABtRd08sfRECQGxJPG8MD11nUzF/Fh1aZzZSAHF+CDJTPHMJD1dsXzxvDA9dZ1MxfxYdWmc2UgBMRFpnQCpjFRhMfVs8bwwPXWdTMX8WHVpnNlIAcX4IMlM8ZBMLQG5FJmceEUh5VDxvEwFSa1M8CnB+NTUGLHIwGzdaNRNYFB1XaXpUfQQgX1RmFkUFZWBtYhlcDT08aGEAXSg+Lk9cVGIodlVzbQlTKns8Tms1XC8CblA/MEgKFDAJbQsINyxXc08RBRV6UVRqBxsweDENeQpXIiozbzsgZDEUR1RFNBsQflUNZRZXERRJVDVXRCQPNExlTF8CIGx0OwV7dD1IbWssd3F4MxNJG3ssdnMAeFBEKQoyfUkyAzkKd1NpJ2Iicw==";
+		options.ProductToken =
+			"CjxRBXB/Ngg9UQFwfz01BlEAc3g0CT9TAXB/NQw/bjoNJ2ZdYhBVCCo/DTtRPUsNalV8Al44B2ECAWllMit3cWhZPUsCbFtpDUMkGnxIaVlzLiNoTWIKRDhDD2dTJ3EVD0JqRSdvHgNEYFM8Yg4ZVmdTWQFxfjU1BjxvABtRd08sfRECQGxJPG8MD11nUzF/Fh1aZzZSAHF+CDJTPHMJD1dsXzxvDA9dZ1MxfxYdWmc2UgBMRFpnQCpjFRhMfVs8bwwPXWdTMX8WHVpnNlIAcX4IMlM8ZBMLQG5FJmceEUh5VDxvEwFSa1M8CnB+NTUGLHIwGzdaNRNYFB1XaXpUfQQgX1RmFkUFZWBtYhlcDT08aGEAXSg+Lk9cVGIodlVzbQlTKns8Tms1XC8CblA/MEgKFDAJbQsINyxXc08RBRV6UVRqBxsweDENeQpXIiozbzsgZDEUR1RFNBsQflUNZRZXERRJVDVXRCQPNExlTF8CIGx0OwV7dD1IbWssd3F4MxNJG3ssdnMAeFBEKQoyfUkyAzkKd1NpJ2Iicw==";
 	})
 	.AddBulmaProviders()
 	.AddFontAwesomeIcons();
