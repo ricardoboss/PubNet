@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
 {
 	extension(IServiceCollection services)
 	{
-		public IServiceCollection AddPubNetApiServices<TTokenStorage>(
+		public IPubNetApiServiceBuilder AddPubNetApiServices<TTokenStorage>(
 			Action<IServiceProvider, HttpClient> configureClient
 		) where TTokenStorage : class, ILoginTokenStorage
 		{
@@ -45,12 +45,13 @@ public static class ServiceCollectionExtensions
 			services.TryAddScoped<IAuthenticationService, ApiAuthenticationService>();
 			services.TryAddScoped<IAuthorService, ApiAuthorService>();
 
-			services.TryDecorate<IRequestAdapter, ConcurrentRequestBlockingRequestAdapter>();
-			services.TryDecorate<IAnalysisService, CachingAnalysisService>();
-			services.TryDecorate<IAuthorService, CachingAuthorService>();
-			services.TryDecorate<IPackagesService, CachingPackagesService>();
+			return new DefaultPubNetApiServiceBuilder(services);
+		}
 
-			return services;
+		public IPubNetApiServiceBuilder AddPubNetApiServices<TTokenStorage>(Uri baseAddress)
+			where TTokenStorage : class, ILoginTokenStorage
+		{
+			return services.AddPubNetApiServices<TTokenStorage>((_, c) => c.BaseAddress = baseAddress);
 		}
 	}
 }
