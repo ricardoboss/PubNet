@@ -3,6 +3,9 @@ using PubNet.SDK.Generated.Models;
 
 namespace PubNet.SDK.Abstractions;
 
+/// <summary>
+/// Provides authentication-related services like login or getting the authenticated author model.
+/// </summary>
 public interface IAuthenticationService
 {
 	/// <summary>
@@ -53,12 +56,4 @@ public interface IAuthenticationService
 	/// <exception cref="AuthenticationRequiredException">If the service is not authenticated or the authentication is no longer valid</exception>
 	/// <exception cref="PubNetSdkException">In case anything unexpected happens</exception>
 	Task<AuthorDto> GetSelfAsync(bool forceLoad = false, CancellationToken cancellationToken = default);
-
-	/// <summary>
-	/// Determines if the currently authenticated author has the given <paramref name="username"/>.
-	/// </summary>
-	/// <param name="username">The username to check against</param>
-	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
-	/// <returns><see langword="true"/> if the <paramref name="username"/> matches that of the currently authenticated user (case-sensitive), <see langword="false"/> if not</returns>
-	Task<bool> IsSelfAsync(string username, CancellationToken cancellationToken = default);
 }

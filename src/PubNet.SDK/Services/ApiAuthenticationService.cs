@@ -108,18 +108,4 @@ internal sealed class ApiAuthenticationService(
 			throw new UnexpectedResponseException(e);
 		}
 	}
-
-	public async Task<bool> IsSelfAsync(string username, CancellationToken cancellationToken = default)
-	{
-		try
-		{
-			var self = await GetSelfAsync(cancellationToken: cancellationToken);
-
-			return self.UserName == username;
-		}
-		catch (Exception)
-		{
-			return false;
-		}
-	}
 }
