@@ -1,4 +1,3 @@
-@using System.Diagnostics
 @inject ILoginTokenStorage TokenStore
 @inject IAuthenticationService Auth
 @inject NavigationManager Nav
@@ -18,64 +17,65 @@
 }
 
 <Form @onsubmit="Submit">
-	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="LoginRequest">
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@LoginRequest.Email"
-					          Autocomplete="email">
-						<Feedback>
-							<ValidationError/>
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Validation>
-			<Field Horizontal>
-				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
-				<FieldBody ColumnSize="ColumnSize.Is10">
-					<TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@LoginRequest.Password"
-					          Autocomplete="current-password">
-						<Feedback>
-							<ValidationError/>
-						</Feedback>
-					</TextEdit>
-				</FieldBody>
-			</Field>
-		</Validation>
-		<Field Horizontal>
-			<FieldLabel ColumnSize="ColumnSize.Is2"/>
-			<FieldBody ColumnSize="ColumnSize.Is10">
-				<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
-			</FieldBody>
-		</Field>
-	</Validations>
+	<Field Horizontal>
+		<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+		<FieldBody ColumnSize="ColumnSize.Is10">
+			<TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@Email"
+			          Autocomplete="email">
+				<Feedback>
+					<ValidationError/>
+				</Feedback>
+			</TextEdit>
+		</FieldBody>
+	</Field>
+	<Field Horizontal>
+		<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+		<FieldBody ColumnSize="ColumnSize.Is10">
+			<TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@Password"
+			          Autocomplete="current-password">
+				<Feedback>
+					<ValidationError/>
+				</Feedback>
+			</TextEdit>
+		</FieldBody>
+	</Field>
+	<Field Horizontal>
+		<FieldLabel ColumnSize="ColumnSize.Is2"/>
+		<FieldBody ColumnSize="ColumnSize.Is10">
+			<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
+		</FieldBody>
+	</Field>
 </Form>
 
 @code {
-	private Validations? _validations;
-
-	private LoginRequestDto LoginRequest { get; set; } = new();
-
+	private string Email { get; set; } = string.Empty;
+	private string Password { get; set; } = string.Empty;
 	private string? Error { get; set; }
 	private string? Success { get; set; }
 
 	private async Task Submit()
 	{
-		if (_validations is null || !await _validations.ValidateAll()) return;
-
-		Debug.Assert(LoginRequest.Email is not null);
-		Debug.Assert(LoginRequest.Password is not null);
-
 		Error = null;
 		Success = null;
 
+		if (string.IsNullOrWhiteSpace(Email))
+		{
+			Error = "E-Mail is required";
+
+			return;
+		}
+
+		if (string.IsNullOrWhiteSpace(Password))
+		{
+			Error = "Password is required";
+
+			return;
+		}
+
 		try
 		{
-			var response = await Auth.LoginAsync(LoginRequest);
-			if (response?.Token is null)
+			var response = await Auth.LoginAsync(Email, Password);
+			if (response.Token is null)
 				return;
 
 			await TokenStore.StoreTokenAsync(response.Token);
