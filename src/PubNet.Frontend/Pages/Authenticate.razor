@@ -1,4 +1,4 @@
-﻿@page "/authenticate"
+@page "/authenticate"
 @using PubNet.API.DTO
 @using PubNet.API.DTO.Authentication
 @inject ApiClient Http;
@@ -8,9 +8,9 @@
 
 @if (MessageBoxContent is not null)
 {
-    <Alert Color="Color.Warning" Dismisable Visible>
-        @MessageBoxContent
-    </Alert>
+	<Alert Color="Color.Warning" Dismisable Visible>
+		@MessageBoxContent
+	</Alert>
 }
 
 <Heading Size="HeadingSize.Is1">Login</Heading>
@@ -19,83 +19,109 @@
 
 <Divider/>
 
-@if (_showRegistration)
+@if (Error is not null)
 {
-    <Heading Size="HeadingSize.Is1">Register</Heading>
-
-    <RegisterForm Model="_registration" OnValidSubmit="RegisterAsync" Submitting="_registering"
-                  Error="@_registerError" Success="@_registerSuccess"/>
+	<ExceptionBox Exception="Error"/>
 }
 else
 {
-    <p>
-        Registrations are currently disabled.
-    </p>
+	switch (ShowRegistration)
+	{
+		case true:
+			<Heading Size="HeadingSize.Is1">Register</Heading>
+
+			<RegisterForm Model="_registration" OnValidSubmit="RegisterAsync" Submitting="_registering"
+			              Error="@_registerError" Success="@_registerSuccess"/>
+			break;
+		case null:
+			<p>
+				Checking if registrations are enabled...
+			</p>
+			break;
+		case false:
+			<p>
+				Registrations are currently disabled.
+			</p>
+			break;
+	}
 }
 
 @code {
 
-    private bool _showRegistration;
+	private bool? ShowRegistration { get; set; }
 
-    private bool _registering;
+	private Exception? Error { get; set; }
 
-    private RegisterRequest _registration = new();
+	private bool _registering;
 
-    private string? _registerError;
+	private RegisterRequest _registration = new();
 
-    private string? _registerSuccess;
+	private string? _registerError;
 
-    [Parameter]
-    [SupplyParameterFromQuery(Name = "message")]
-    public string? Message { get; set; }
+	private string? _registerSuccess;
 
-    private string? MessageBoxContent => Message switch {
-        "session-expired" => "Your session has expired. Please log in again.",
-        _ => null,
-    };
+	[Parameter]
+	[SupplyParameterFromQuery(Name = "message")]
+	public string? Message { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
+	private string? MessageBoxContent => Message switch
+	{
+		"session-expired" => "Your session has expired. Please log in again.",
+		_ => null,
+	};
 
-        // there is nothing to log into yet, and the layout only checks this when it is first created, so a
-        // client-side navigation from anywhere else would land here
-        if (await Onboarding.IsPendingAsync())
-        {
-            Nav.NavigateTo("/onboarding");
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
 
-            return;
-        }
+		Error = null;
+		ShowRegistration = null;
 
-        _showRegistration = await Auth.GetRegistrationsEnabledAsync();
-    }
+		// there is nothing to log into yet, and the layout only checks this when it is first created, so a
+		// client-side navigation from anywhere else would land here
+		if (await Onboarding.IsPendingAsync())
+		{
+			Nav.NavigateTo("/onboarding");
 
-    private async Task RegisterAsync()
-    {
-        _registerError = null;
-        _registerSuccess = null;
-        _registering = true;
+			return;
+		}
 
-        try
-        {
-            var response = await Http.PostAsync("authentication/register", _registration);
-            if (!response.IsSuccessStatusCode)
-            {
-                var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+		try
+		{
+			ShowRegistration = await Auth.GetRegistrationsEnabledAsync();
+		}
+		catch (Exception e)
+		{
+			Error = e;
+		}
+	}
 
-                _registerError = message?.Error?.Message ?? "The account could not be created.";
+	private async Task RegisterAsync()
+	{
+		_registerError = null;
+		_registerSuccess = null;
+		_registering = true;
 
-                return;
-            }
+		try
+		{
+			var response = await Http.PostAsync("authentication/register", _registration);
+			if (!response.IsSuccessStatusCode)
+			{
+				var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
 
-            _registration = new();
+				_registerError = message?.Error?.Message ?? "The account could not be created.";
 
-            _registerSuccess = "Registration complete. You can now log in.";
-        }
-        finally
-        {
-            _registering = false;
-        }
-    }
+				return;
+			}
+
+			_registration = new();
+
+			_registerSuccess = "Registration complete. You can now log in.";
+		}
+		finally
+		{
+			_registering = false;
+		}
+	}
 
 }
