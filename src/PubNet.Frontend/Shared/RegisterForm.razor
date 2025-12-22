@@ -1,5 +1,3 @@
-@using PubNet.API.DTO
-@using PubNet.Database.Models
 @inject HttpClient HttpClient
 
 @if (Error is not null)
@@ -90,7 +88,7 @@
 @code {
     private Validations? _validations;
 
-    private RegisterRequest RegisterRequest { get; set; } = new();
+    private RegisterRequestDto RegisterRequest { get; set; } = new();
 
     private string? Error { get; set; }
     private string? Success { get; set; }
@@ -106,7 +104,7 @@
 
         if (response.IsSuccessStatusCode)
         {
-            await response.Content.ReadFromJsonAsync<Author>();
+            await response.Content.ReadFromJsonAsync<AuthorDto>();
 
             RegisterRequest = new();
 
@@ -114,7 +112,8 @@
         }
         else
         {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            // FIXME: move this to a service and handle all error responses properly
+            var message = await response.Content.ReadFromJsonAsync<EmailAlreadyInUseErrorDto>();
 
             Error = message?.Error?.Message;
         }

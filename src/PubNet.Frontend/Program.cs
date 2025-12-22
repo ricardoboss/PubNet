@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PubNet.Frontend;
 using PubNet.Frontend.Services;
+using PubNet.SDK.Extensions;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -20,44 +21,48 @@ await using (var tempProvider = builder.Services.BuildServiceProvider())
 	builder.Logging.ClearProviders();
 	builder.Logging.AddProvider(tempProvider.GetRequiredService<SimpleConsoleLoggerProvider>());
 	builder.Logging.SetMinimumLevel(LogLevel.Trace);
-	builder.Logging.AddFilter("PubNet.Frontend.Services.FetchLock", LogLevel.None);
-	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree.*", LogLevel.None);
-	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.Routing.Router", LogLevel.Information);
+	builder.Logging.AddFilter("Microsoft.AspNetCore.Components.RenderTree", LogLevel.Error);
+	builder.Logging.AddFilter("Microsoft.Extensions.Http.DefaultHttpClientFactory", LogLevel.Information);
 }
 #else
-builder.Logging.SetMinimumLevel(LogLevel.None);
+builder.Logging.SetMinimumLevel(LogLevel.Error);
 #endif
 
 // API client services
-builder.Services.AddScoped<HttpClient>();
-builder.Services.AddScoped<ApiClient>(sp => new(sp.GetRequiredService<HttpClient>(), sp.GetRequiredService<ILogger<ApiClient>>())
-{
+var bap = new BaseAddressProvider(
 #if DEBUG
-	BaseAddress = "https://localhost:7171/api/",
+	"https://localhost:7171/api/"
 #else
-	BaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/",
+	builder.HostEnvironment.BaseAddress.TrimEnd('/') + "/api/"
 #endif
-});
+);
+builder.Services.AddSingleton(bap);
+builder.Services.AddBlazoredLocalStorage();
+
+builder.Services
+	.AddPubNetApiServices<BrowserLoginTokenStorage>(bap.BaseUri)
+	.AddConcurrentRequestPrevention()
+	.AddCaching();
 
 // set up Blazorise
 builder.Services
 	.AddBlazorise(options =>
 	{
 		options.Immediate = true;
-		options.ProductToken = "CjxRBXB/Ngg9UQFwfz01BlEAc3g0CT9TAXB/NQw/bjoNJ2ZdYhBVCCo/DTtRPUsNalV8Al44B2ECAWllMit3cWhZPUsCbFtpDUMkGnxIaVlzLiNoTWIKRDhDD2dTJ3EVD0JqRSdvHgNEYFM8Yg4ZVmdTWQFxfjU1BjxvABtRd08sfRECQGxJPG8MD11nUzF/Fh1aZzZSAHF+CDJTPHMJD1dsXzxvDA9dZ1MxfxYdWmc2UgBMRFpnQCpjFRhMfVs8bwwPXWdTMX8WHVpnNlIAcX4IMlM8ZBMLQG5FJmceEUh5VDxvEwFSa1M8CnB+NTUGLHIwGzdaNRNYFB1XaXpUfQQgX1RmFkUFZWBtYhlcDT08aGEAXSg+Lk9cVGIodlVzbQlTKns8Tms1XC8CblA/MEgKFDAJbQsINyxXc08RBRV6UVRqBxsweDENeQpXIiozbzsgZDEUR1RFNBsQflUNZRZXERRJVDVXRCQPNExlTF8CIGx0OwV7dD1IbWssd3F4MxNJG3ssdnMAeFBEKQoyfUkyAzkKd1NpJ2Iicw==";
+		options.ProductToken =
+			"CjxRBXB/Ngg9UQFwfz01BlEAc3g0CT9TAXB/NQw/bjoNJ2ZdYhBVCCo/DTtRPUsNalV8Al44B2ECAWllMit3cWhZPUsCbFtpDUMkGnxIaVlzLiNoTWIKRDhDD2dTJ3EVD0JqRSdvHgNEYFM8Yg4ZVmdTWQFxfjU1BjxvABtRd08sfRECQGxJPG8MD11nUzF/Fh1aZzZSAHF+CDJTPHMJD1dsXzxvDA9dZ1MxfxYdWmc2UgBMRFpnQCpjFRhMfVs8bwwPXWdTMX8WHVpnNlIAcX4IMlM8ZBMLQG5FJmceEUh5VDxvEwFSa1M8CnB+NTUGLHIwGzdaNRNYFB1XaXpUfQQgX1RmFkUFZWBtYhlcDT08aGEAXSg+Lk9cVGIodlVzbQlTKns8Tms1XC8CblA/MEgKFDAJbQsINyxXc08RBRV6UVRqBxsweDENeQpXIiozbzsgZDEUR1RFNBsQflUNZRZXERRJVDVXRCQPNExlTF8CIGx0OwV7dD1IbWssd3F4MxNJG3ssdnMAeFBEKQoyfUkyAzkKd1NpJ2Iicw==";
 	})
 	.AddBulmaProviders()
 	.AddFontAwesomeIcons();
 
 // set up common services
 builder.Services
-	.AddBlazoredLocalStorage()
-	.AddScoped<AuthenticationService>()
+	.AddSingleton<TextGenerator>()
 	.AddScoped<ClipboardService>()
-	.AddScoped<AlertService>()
-	.AddScoped<PackagesService>()
-	.AddScoped<AnalysisService>()
-	.AddTransient(typeof(FetchLock<>));
+	.AddScoped<AlertService>();
 
 var app = builder.Build();
+
+app.Services.GetRequiredService<ILogger<Program>>().LogInformation("Using base address {BaseAddress}", bap.BaseUri);
+
 await app.RunAsync();

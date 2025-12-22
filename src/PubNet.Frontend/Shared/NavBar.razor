@@ -1,4 +1,4 @@
-﻿@inject AuthenticationService Auth
+﻿@inject IAuthenticationService Auth
 
 <Bar Breakpoint="Breakpoint.Mobile" Shadow="Shadow.Small" >
     <BarBrand>
@@ -71,7 +71,7 @@
         UserName = null;
         Authenticated = await Auth.IsAuthenticatedAsync();
         if (Authenticated == true)
-            UserName = (await Auth.GetSelfAsync()).UserName;
+            UserName = (await Auth.GetSelfAsync())?.UserName;
     }
 
 }
