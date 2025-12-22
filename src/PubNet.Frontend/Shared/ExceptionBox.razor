@@ -1,0 +1,91 @@
+@using System.Text
+<Alert Color="Color.Danger" Visible>
+	<AlertMessage>Error!</AlertMessage>
+	<AlertDescription>
+		@Exception.Message
+
+		@if (Exception.StackTrace is not null)
+		{
+			<Button Size="Size.ExtraSmall"
+			        Color="Color.Light"
+			        Outline
+			        Clicked="@(() => expanded = !expanded)"
+			        Padding="Padding.Is0.OnY"
+			        Margin="Margin.Is1.FromStart">
+				@(expanded ? "Hide details" : "Show details")
+			</Button>
+
+			<Collapse @bind-Visible="expanded" Class="no-padding-collapse" Margin="Margin.Is2.FromTop">
+				<CollapseBody Padding="Padding.Is1"
+				              Shadow="Shadow.None"
+				              Background="Background.Transparent">
+					<Div>
+						<pre style="padding: 0">@ExtendedMessage</pre>
+					</Div>
+
+					<Div Margin="Margin.Is2.FromTop">
+						Stack Trace:
+						<pre style="padding: 0">@Exception.StackTrace</pre>
+					</Div>
+				</CollapseBody>
+			</Collapse>
+		}
+
+	</AlertDescription>
+</Alert>
+
+<style>
+	.no-padding-collapse .card-content {
+		padding: 0 !important;
+	}
+</style>
+
+@code {
+
+	[Parameter, EditorRequired]
+	public required Exception Exception { get; set; }
+
+	private bool expanded { get; set; }
+
+	private IEnumerable<Exception> InnerExceptions
+	{
+		get
+		{
+			var next = Exception.InnerException;
+			while (next is not null)
+			{
+				// MAYBE: different handling for AggregateException?
+				yield return next;
+
+				next = next.InnerException;
+			}
+		}
+	}
+
+	private string ExtendedMessage
+	{
+		get
+		{
+			var sb = new StringBuilder();
+
+			sb.Append(Exception.GetType().Name);
+			sb.Append(": ");
+			sb.AppendLine(Exception.Message);
+
+			var indent = 1;
+			foreach (var inner in InnerExceptions)
+			{
+				sb.Append(new string(' ', indent * 2));
+				sb.Append("\u2937 ");
+				sb.Append(inner.GetType().Name);
+				sb.Append(": ");
+				sb.Append(inner.Message);
+
+				indent++;
+			}
+
+			return sb.ToString();
+		}
+	}
+
+}
