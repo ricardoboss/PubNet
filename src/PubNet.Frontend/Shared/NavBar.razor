@@ -1,4 +1,4 @@
-﻿@inject AuthenticationService Auth
+﻿@inject IAuthenticationService Auth
 
 <Bar Mode="BarMode.Horizontal" Shadow="Shadow.Small" CollapseMode="BarCollapseMode.Hide" Display="Display.Flex" Flex="Flex.AlignItems.Stretch">
 	<BarBrand>
@@ -71,8 +71,20 @@
 
 		UserName = null;
 		Authenticated = await Auth.IsAuthenticatedAsync();
-		if (Authenticated == true)
+		if (Authenticated != true)
+		{
+			return;
+		}
+
+		try
+		{
 			UserName = (await Auth.GetSelfAsync()).UserName;
+		}
+		catch (AuthenticationRequiredException)
+		{
+			// token may be available, but service denied access
+			Authenticated = false;
+		}
 	}
 
 }

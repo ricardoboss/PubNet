@@ -1,6 +1,5 @@
 ﻿@page "/browse/authors"
-@using PubNet.API.DTO
-@inject ApiClient Http
+@inject IAuthorService AuthorService
 
 <PageTitle>Authors</PageTitle>
 
@@ -22,7 +21,7 @@ else
 			</TableRow>
 		</TableHeader>
 		<TableBody>
-		@if (!_authors.Authors.Any())
+		@if (!(_authors.Authors?.Any() ?? false))
 		{
 			<TableRow>
 				<TableRowCell colspan="4" TextAlignment="TextAlignment.Center">
@@ -50,11 +49,10 @@ else
 }
 
 @code {
-	private AuthorsResponse? _authors;
+	private AuthorsResponseDto? _authors;
 
 	protected override async Task OnParametersSetAsync()
 	{
-		_authors = await Http.GetAsync<AuthorsResponse>("authors");
+		_authors = await AuthorService.GetAuthorsAsync();
 	}
-
 }

@@ -1,5 +1,5 @@
 ﻿@page "/authenticate"
-@inject ApiClient Http;
+@inject IAuthenticationService Auth
 
 <Heading Size="HeadingSize.Is1">Login</Heading>
 
@@ -7,28 +7,53 @@
 
 <Divider/>
 
-@if (_showRegistration)
+@if (Error is not null)
 {
-    <Heading Size="HeadingSize.Is1">Register</Heading>
-
-    <RegisterForm/>
+	<ExceptionBox Exception="Error" />
 }
 else
 {
-    <p>
-        Registrations are currently disabled.
-    </p>
+	switch (ShowRegistration)
+	{
+		case true:
+			<Heading Size="HeadingSize.Is1">Register</Heading>
+
+			<RegisterForm/>
+			break;
+		case null:
+			<p>
+				Checking if registrations are enabled...
+			</p>
+			break;
+		case false:
+			<p>
+				Registrations are currently disabled.
+			</p>
+			break;
+	}
 }
 
 @code {
 
-    private bool _showRegistration;
+	private bool? ShowRegistration { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
+	private Exception? Error { get; set; }
 
-        _showRegistration = await Http.GetAsync<bool>("authentication/registrations-enabled");
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		Error = null;
+		ShowRegistration = null;
+
+		try
+		{
+			ShowRegistration = await Auth.GetRegistrationsEnabledAsync();
+		}
+		catch (Exception e)
+		{
+			Error = e;
+		}
+	}
 
 }
