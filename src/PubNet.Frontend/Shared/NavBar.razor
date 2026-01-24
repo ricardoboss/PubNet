@@ -1,77 +1,78 @@
 ﻿@inject AuthenticationService Auth
 
-<Bar Breakpoint="Breakpoint.Mobile" Shadow="Shadow.Small" >
-    <BarBrand>
-        <BarItem>
-            <BarLink To="/">
-                <strong>PubNet</strong>
-            </BarLink>
-        </BarItem>
-        <BarToggler />
-    </BarBrand>
-    <BarMenu>
-        <BarStart>
-            <BarItem>
-                <BarLink To="/browse/packages">
-                    <BarIcon IconName="IconName.List" Margin="Margin.Is2.FromEnd"/>
-                    Packages
-                </BarLink>
-            </BarItem>
-            <BarItem>
-                <BarLink To="/browse/authors">
-                    <BarIcon IconName="IconName.Users" Margin="Margin.Is2.FromEnd"/>
-                    Authors
-                </BarLink>
-            </BarItem>
-        </BarStart>
-        <BarEnd Margin="Margin.Is2.FromEnd">
-            <BarItem Flex="Flex.AlignItems.Center">
-                @switch (Authenticated)
-                {
-                    case true:
-                        <BarDropdown>
-                            <BarDropdownToggle>
-                                @UserName
-                            </BarDropdownToggle>
-                            <BarDropdownMenu>
-                                <BarDropdownItem To="@("/authors/" + UserName)">
-                                    <BarIcon IconName="IconName.UserCircle" Margin="Margin.Is2.FromEnd"/>
-                                    Profile
-                                </BarDropdownItem>
-                                <BarDropdownDivider/>
-                                <BarDropdownItem To="/logout">
-                                    Logout
-                                </BarDropdownItem>
-                            </BarDropdownMenu>
-                        </BarDropdown>
-                        break;
-                    case false:
-                        <Button Type="@ButtonType.Link" To="/authenticate" Color="Color.Primary" Outline>Authenticate</Button>
-                        break;
-                    default:
-                        <em>Please wait...</em>
-                        break;
-                }
-            </BarItem>
-        </BarEnd>
-    </BarMenu>
+<Bar Mode="BarMode.Horizontal" Shadow="Shadow.Small" CollapseMode="BarCollapseMode.Hide" Display="Display.Flex" Flex="Flex.AlignItems.Stretch">
+	<BarBrand>
+		<BarItem>
+			<BarLink To="/">
+				<strong>PubNet</strong>
+			</BarLink>
+		</BarItem>
+	</BarBrand>
+	<BarMenu Display="Display.Flex" Flex="Flex.AlignItems.Stretch.Grow.Is1.Shrink.Is0" Shadow="Shadow.Remove">
+		<BarStart Display="Display.Flex" Flex="Flex.AlignItems.Stretch.JustifyContent.Start" Margin="Margin.IsAuto.FromEnd">
+			<BarItem>
+				<BarLink To="/browse/packages">
+					<BarIcon IconName="IconName.List" Margin="Margin.Is2.FromEnd"/>
+					Packages
+				</BarLink>
+			</BarItem>
+			<BarItem>
+				<BarLink To="/browse/authors">
+					<BarIcon IconName="IconName.Users" Margin="Margin.Is2.FromEnd"/>
+					Authors
+				</BarLink>
+			</BarItem>
+		</BarStart>
+		<BarEnd Display="Display.Flex" Flex="Flex.AlignItems.Stretch.JustifyContent.Start">
+			@switch (Authenticated)
+			{
+				case true:
+					<BarItem>
+						<BarLink To="@("/authors/" + UserName)">
+							<BarIcon IconName="IconName.UserCircle" Margin="Margin.Is2.FromEnd"/>
+							@UserName
+						</BarLink>
+					</BarItem>
+					<BarItem>
+						<BarLink To="/logout">
+							<BarIcon IconName="IconName.Unlock" Margin="Margin.Is2.FromEnd"/>
+							Logout
+						</BarLink>
+					</BarItem>
+					break;
+				case false:
+					<BarItem>
+						<BarLink To="/authenticate">
+							<BarIcon IconName="IconName.Key" Margin="Margin.Is2.FromEnd"/>
+							Authenticate
+						</BarLink>
+					</BarItem>
+					break;
+				default:
+					<BarItem>
+						<em>Please wait...</em>
+					</BarItem>
+					break;
+			}
+		</BarEnd>
+	</BarMenu>
 </Bar>
 
 @code {
 
-    private bool? Authenticated { get; set; }
+	private bool? Authenticated { get; set; }
 
-    private string? UserName { get; set; }
+	private string? UserName { get; set; }
 
-    /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
+	/// <inheritdoc />
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
 
-        UserName = null;
-        Authenticated = await Auth.IsAuthenticatedAsync();
-        if (Authenticated == true)
-            UserName = (await Auth.GetSelfAsync()).UserName;
-    }
+		UserName = null;
+		Authenticated = await Auth.IsAuthenticatedAsync();
+		if (Authenticated == true)
+			UserName = (await Auth.GetSelfAsync()).UserName;
+	}
 
 }
