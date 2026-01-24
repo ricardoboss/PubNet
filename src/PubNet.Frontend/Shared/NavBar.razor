@@ -71,8 +71,20 @@
 
 		UserName = null;
 		Authenticated = await Auth.IsAuthenticatedAsync();
-		if (Authenticated == true)
-			UserName = (await Auth.GetSelfAsync())?.UserName;
+		if (Authenticated != true)
+		{
+			return;
+		}
+
+		try
+		{
+			UserName = (await Auth.GetSelfAsync()).UserName;
+		}
+		catch (AuthenticationRequiredException)
+		{
+			// token may be available, but service denied access
+			Authenticated = false;
+		}
 	}
 
 }
