@@ -5,34 +5,34 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0"/>
-		<PackageVersion Include="Blazorise.Bulma" Version="1.8.7"/>
-		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="1.8.7"/>
+		<PackageVersion Include="Blazorise.Bulma" Version="1.8.9"/>
+		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="1.8.9"/>
 		<PackageVersion Include="CliWrap" Version="3.10.0"/>
 		<PackageVersion Include="coverlet.collector" Version="6.0.4"/>
 		<PackageVersion Include="Humanizer" Version="3.0.1"/>
 		<PackageVersion Include="JetBrains.Annotations" Version="2025.2.4"/>
 		<PackageVersion Include="Markdig" Version="0.44.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.0"/>
-		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.2"/>
+		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.2"/>
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
-		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0"/>
+		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2"/>
 		<PackageVersion Include="Moq" Version="4.20.72"/>
 		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
 		<PackageVersion Include="NUnit" Version="4.4.0"/>
 		<PackageVersion Include="NUnit.Analyzers" Version="4.11.2"/>
-		<PackageVersion Include="NUnit3TestAdapter" Version="5.2.0"/>
+		<PackageVersion Include="NUnit3TestAdapter" Version="6.1.0"/>
 		<PackageVersion Include="Semver" Version="3.0.0"/>
 		<PackageVersion Include="SerilogAnalyzer" Version="0.15.0"/>
 		<PackageVersion Include="Serilog.AspNetCore" Version="10.0.0"/>
@@ -40,15 +40,10 @@
 		<PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.0"/>
 		<PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1"/>
 		<PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0"/>
-		<PackageVersion Include="SharpCompress" Version="0.42.0"/>
-		<PackageVersion Include="Swashbuckle.AspNetCore" Version="10.0.1"/>
+		<PackageVersion Include="SharpCompress" Version="0.44.2"/>
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.0"/>
 		<PackageVersion Include="TRENZ.Lib.RazorMail.MailKit" Version="2.3.0"/>
-		<PackageVersion Include="Vogen" Version="8.0.3"/>
+		<PackageVersion Include="Vogen" Version="8.0.4"/>
 		<PackageVersion Include="YamlDotNet" Version="16.3.0"/>
-	</ItemGroup>
-	<!-- Prevent vulnerable versions from being used -->
-	<ItemGroup>
-		<PackageVersion Include="Microsoft.Build" Version="[17.10.46,)"/>
-		<PackageReference Include="Microsoft.Build" ExcludeAssets="compile;runtime;build;native;contentfiles;analyzers"/>
 	</ItemGroup>
 </Project>
