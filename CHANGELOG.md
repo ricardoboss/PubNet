@@ -1,5 +1,7 @@
 ﻿# Unreleased
 
+* Fixed some small layout issues with navbar/footer
+
 # v1.1.4
 
 * Fixed a startup issue with the previous version
