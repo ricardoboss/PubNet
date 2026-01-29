@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/.config/">
+    <File Path=".config/dotnet-tools.json" />
+  </Folder>
   <Folder Name="/.github/" />
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/docker-publish.yml" />
@@ -26,11 +29,12 @@
     <File Path="src/frontend-appsettings.json" />
     <File Path="src/worker-appsettings.json" />
   </Folder>
+  <Project Path="PubNet.SDK.Tests/PubNet.SDK.Tests.csproj" />
   <Project Path="src/PubNet.API/PubNet.API.csproj" />
   <Project Path="src/PubNet.Common/PubNet.Common.csproj" />
   <Project Path="src/PubNet.Database/PubNet.Database.csproj" />
-  <Project Path="src/PubNet.DTO/PubNet.DTO.csproj" />
   <Project Path="src/PubNet.Frontend/PubNet.Frontend.csproj" />
+  <Project Path="src/PubNet.SDK/PubNet.SDK.csproj" />
   <Project Path="src/PubNet.Worker/PubNet.Worker.csproj" />
   <Project Path="tests/PubNet.Common.Tests/PubNet.Common.Tests.csproj" />
 </Solution>

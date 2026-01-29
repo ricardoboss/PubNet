@@ -1,4 +1,4 @@
-using PubNet.API.DTO;
+using PubNet.API.DTO.Packages;
 
 namespace PubNet.API.Services;
 

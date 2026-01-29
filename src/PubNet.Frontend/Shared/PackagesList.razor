@@ -1,5 +1,4 @@
-﻿@using PubNet.API.DTO
-<Table>
+﻿<Table>
 	<TableHeader>
 		<TableRow>
 			<TableHeaderCell>Name</TableHeaderCell>
@@ -54,7 +53,7 @@
 
 @code {
 	[Parameter]
-	public IEnumerable<SearchResultPackage>? Packages { get; set; }
+	public IEnumerable<SearchResultPackageDto>? Packages { get; set; }
 
 	[Parameter]
 	public bool ShowAuthor { get; set; }

@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PubNet.DTO\PubNet.DTO.csproj"/>
+	  <ProjectReference Include="..\PubNet.SDK\PubNet.SDK.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,90 +1,99 @@
-@using PubNet.API.DTO
-@inject ApiClient ApiClient
-@inject AuthenticationService Auth
+@inject ILoginTokenStorage TokenStore
+@inject IAuthenticationService Auth
 @inject NavigationManager Nav
 
 @if (Error is not null)
 {
-    <Alert Color="Color.Danger" Visible>
-        <strong>That didn't work.</strong> @Error
-    </Alert>
+	<Alert Color="Color.Danger" Visible>
+		<strong>That didn't work.</strong> @Error
+	</Alert>
 }
 
 @if (Success is not null)
 {
-    <Alert Color="Color.Success" Visible>
-        <strong>Success!</strong> @Success
-    </Alert>
+	<Alert Color="Color.Success" Visible>
+		<strong>Success!</strong> @Success
+	</Alert>
 }
 
 <Form @onsubmit="Submit">
-    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="LoginRequest">
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@LoginRequest.Email" Autocomplete="email">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextEdit>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@LoginRequest.Password" Autocomplete="current-password">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextEdit>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Field Horizontal>
-            <FieldLabel ColumnSize="ColumnSize.Is2" />
-            <FieldBody ColumnSize="ColumnSize.Is10">
-                <Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
-            </FieldBody>
-        </Field>
-    </Validations>
+	<Field Horizontal>
+		<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+		<FieldBody ColumnSize="ColumnSize.Is10">
+			<TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@Email"
+			          Autocomplete="email">
+				<Feedback>
+					<ValidationError/>
+				</Feedback>
+			</TextEdit>
+		</FieldBody>
+	</Field>
+	<Field Horizontal>
+		<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+		<FieldBody ColumnSize="ColumnSize.Is10">
+			<TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@Password"
+			          Autocomplete="current-password">
+				<Feedback>
+					<ValidationError/>
+				</Feedback>
+			</TextEdit>
+		</FieldBody>
+	</Field>
+	<Field Horizontal>
+		<FieldLabel ColumnSize="ColumnSize.Is2"/>
+		<FieldBody ColumnSize="ColumnSize.Is10">
+			<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
+		</FieldBody>
+	</Field>
 </Form>
 
 @code {
-    private Validations? _validations;
+	private string Email { get; set; } = string.Empty;
+	private string Password { get; set; } = string.Empty;
+	private string? Error { get; set; }
+	private string? Success { get; set; }
 
-    private LoginRequest LoginRequest { get; set; } = new();
+	private async Task Submit()
+	{
+		Error = null;
+		Success = null;
 
-    private string? Error { get; set; }
-    private string? Success { get; set; }
+		if (string.IsNullOrWhiteSpace(Email))
+		{
+			Error = "E-Mail is required";
 
-    private async Task Submit()
-    {
-        if (_validations is null || !await _validations.ValidateAll()) return;
+			return;
+		}
 
-        Error = null;
-        Success = null;
+		if (string.IsNullOrWhiteSpace(Password))
+		{
+			Error = "Password is required";
 
-        var response = await ApiClient.PostAsync("authentication/login", LoginRequest);
-        if (response.IsSuccessStatusCode)
-        {
-            var token = await response.Content.ReadFromJsonAsync<JwtTokenResponse>();
-            if (token is null)
-                return;
+			return;
+		}
 
-            await Auth.StoreTokenAsync(token.Token);
-            await Auth.GetSelfAsync();
+		try
+		{
+			var response = await Auth.LoginAsync(Email, Password);
+			if (response.Token is null)
+				return;
 
-            Nav.NavigateTo("/?message=welcome-back", true);
-        }
-        else
-        {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+			await TokenStore.StoreTokenAsync(response.Token);
+			await Auth.GetSelfAsync();
 
-            Error = message?.Error?.Message;
-        }
-    }
-
+			Nav.NavigateTo("/?message=welcome-back", true);
+		}
+		catch (EmailNotFoundErrorDto err)
+		{
+			Error = err.Error?.Message ?? "Please check your credentials";
+		}
+		catch (InvalidPasswordErrorDto err)
+		{
+			Error = err.Error?.Message ?? "Please check your credentials";
+		}
+		catch (Exception e)
+		{
+			Error = e.Message;
+		}
+	}
 }

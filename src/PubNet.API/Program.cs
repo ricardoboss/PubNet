@@ -3,21 +3,32 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.OpenApi;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
+using PubNet.API.Helpers;
 using PubNet.API.Interfaces;
 using PubNet.API.Middlewares;
+using PubNet.API.OpenApi;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
 using PubNet.Common.Models;
 using PubNet.Common.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
+using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using TRENZ.Lib.RazorMail.Extensions;
 using TRENZ.Lib.RazorMail.MailKit.Extensions;
+
+const string openApiDocumentName = "openapi";
+
+if (ApiDescriptionToolDetector.IsToolInvocation())
+{
+	HandleApiDescriptionToolInvocation();
+
+	return;
+}
 
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
@@ -29,6 +40,43 @@ try
 {
 	var builder = WebApplication.CreateBuilder(args);
 
+	ConfigureServices(builder);
+
+	var app = builder.Build();
+
+	ConfigureHttpPipeline(app);
+
+	await PubNetContext.RunMigrations(app.Services);
+
+	await app.RunAsync();
+}
+catch (Exception e) when (e is HostAbortedException or OperationCanceledException or TaskCanceledException ||
+e.GetType().Name is "StopTheHostException")
+{
+	Log.Information("Application terminated gracefully");
+}
+catch (Exception e)
+{
+	Log.Fatal(e, "Application terminated unexpectedly");
+}
+finally
+{
+	Log.CloseAndFlush();
+}
+
+return;
+
+void HandleApiDescriptionToolInvocation()
+{
+	var builder = WebApplication.CreateBuilder(args);
+
+	ConfigureServices(builder);
+
+	_ = builder.Build();
+}
+
+void ConfigureServices(WebApplicationBuilder builder)
+{
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
 			.ReadFrom.Services(services)
@@ -113,26 +161,19 @@ try
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
 		});
 
-	builder.Services.AddEndpointsApiExplorer();
-	builder.Services.AddSwaggerGen(o =>
+	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{
-		const string definitionName = "Bearer";
+		o.AddDocumentTransformer<PubNetDocumentTransformer>();
+		o.AddDocumentTransformer<SecurityRequirementsDocumentTransformer>();
+		o.AddDocumentTransformer<NullableRelaxingDocumentTransformer>();
 
-		o.AddSecurityDefinition(definitionName, new OpenApiSecurityScheme
-		{
-			Type = SecuritySchemeType.Http,
-			BearerFormat = "JWT",
-			In = ParameterLocation.Header,
-			Scheme = "Bearer",
-		});
+		o.AddOperationTransformer<CleanupOperationTransformer>();
+		o.AddOperationTransformer<ErrorsOperationTransformer>();
+		o.AddOperationTransformer<AuthMetadataTransformer>();
+		o.AddOperationTransformer<StatusCodeDescriptionOperationTransformer>();
 
-		o.AddSecurityRequirement(d => new()
-		{
-			{
-				new(definitionName, d),
-				[]
-			},
-		});
+		o.AddSchemaTransformer<IntSimplifyingTransformer>();
+		o.AddOperationTransformer<IntSimplifyingTransformer>();
 	});
 
 	builder.Services.AddCors(options =>
@@ -148,11 +189,10 @@ try
 	});
 
 	builder.Services.AddResponseCaching();
+}
 
-	var app = builder.Build();
-
-	await PubNetContext.RunMigrations(app.Services);
-
+void ConfigureHttpPipeline(WebApplication app)
+{
 	app.UsePathBase("/api");
 
 	app.UseSerilogRequestLogging(options =>
@@ -165,18 +205,13 @@ try
 		};
 	});
 
-	// Configure the HTTP request pipeline.
-	if (app.Environment.IsDevelopment())
-	{
-		app.UseSwagger();
-		app.UseSwaggerUI();
-	}
-
 	app.UseHttpsRedirection();
 
 	app.UseCors();
 
 	app.UseResponseCaching();
+
+	app.MapOpenApi("/.well-known/{documentName}.{extension:regex(^(json|ya?ml)$)}");
 
 	app.UseMiddleware<ClientExceptionFormatterMiddleware>();
 	app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
@@ -186,16 +221,16 @@ try
 
 	app.MapControllers();
 
-	await app.RunAsync();
-}
-catch (Exception ex)
-{
-	if (ex is HostAbortedException)
-		Log.Warning("{Message}", ex.Message);
-	else
-		Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-	Log.CloseAndFlush();
+	if (app.Environment.IsDevelopment())
+	{
+		app.MapScalarApiReference(c =>
+		{
+			c.Telemetry = false;
+			c.Theme = ScalarTheme.Saturn;
+			c.DefaultOpenAllTags = true;
+			c.HideClientButton = true;
+			c.ShowDeveloperTools = DeveloperToolsVisibility.Never;
+			c.OpenApiRoutePattern = $"/.well-known/{openApiDocumentName}.json";
+		});
+	}
 }
