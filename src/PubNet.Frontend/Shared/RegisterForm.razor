@@ -22,11 +22,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@RegisterRequest.Email" Autocomplete="email">
+                    <TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@RegisterRequest.Email" Autocomplete="email">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -34,11 +34,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@RegisterRequest.Password" Autocomplete="current-password">
+                    <TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@RegisterRequest.Password" Autocomplete="current-password">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -46,11 +46,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your username" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Username" Autocomplete="username">
+                    <TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Username" Autocomplete="username">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -58,11 +58,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your name" Role="@TextRole.Text" @bind-Text="@RegisterRequest.Name" Autocomplete="name">
+                    <TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Name" Autocomplete="name">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -70,11 +70,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your website" Role="@TextRole.Url" @bind-Text="@RegisterRequest.Website" Autocomplete="url">
+                    <TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@RegisterRequest.Website" Autocomplete="url">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -93,6 +93,7 @@
     private RegisterRequest RegisterRequest { get; set; } = new();
 
     private string? Error { get; set; }
+
     private string? Success { get; set; }
 
     private async Task Submit()
