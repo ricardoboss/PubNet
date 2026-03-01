@@ -1,7 +1,6 @@
 @page "/authenticate"
 @using PubNet.API.DTO
 @using PubNet.API.DTO.Authentication
-@inject ApiClient Http;
 @inject IAuthenticationService Auth
 @inject OnboardingService Onboarding
 @inject NavigationManager Nav
@@ -54,7 +53,7 @@ else
 
 	private bool _registering;
 
-	private RegisterRequest _registration = new();
+	private RegisterRequestDto _registration = new();
 
 	private string? _registerError;
 
@@ -104,24 +103,22 @@ else
 
 		try
 		{
-			var response = await Http.PostAsync("authentication/register", _registration);
-			if (!response.IsSuccessStatusCode)
-			{
-				var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-				_registerError = message?.Error?.Message ?? "The account could not be created.";
-
-				return;
-			}
+			_ = await Auth.RegisterAsync(_registration.Email!, _registration.Name!, _registration.Password!,
+				_registration.Username!, _registration.Website);
 
 			_registration = new();
 
 			_registerSuccess = "Registration complete. You can now log in.";
+		}
+		catch (PubNetSdkException e)
+		{
+			_registerError = e.Message;
 		}
 		finally
 		{
 			_registering = false;
 		}
 	}
+
 
 }
