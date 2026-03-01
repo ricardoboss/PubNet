@@ -23,11 +23,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@LoginRequest.Email" Autocomplete="email">
+                    <TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@LoginRequest.Email" Autocomplete="email">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -35,11 +35,11 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextEdit Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@LoginRequest.Password" Autocomplete="current-password">
+                    <TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@LoginRequest.Password" Autocomplete="current-password">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </FieldBody>
             </Field>
         </Validation>
@@ -58,6 +58,7 @@
     private LoginRequest LoginRequest { get; set; } = new();
 
     private string? Error { get; set; }
+
     private string? Success { get; set; }
 
     private async Task Submit()
