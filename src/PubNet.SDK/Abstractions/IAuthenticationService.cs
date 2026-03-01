@@ -44,6 +44,24 @@ public interface IAuthenticationService
 	Task LogoutAsync(CancellationToken cancellationToken = default);
 
 	/// <summary>
+	/// Registers a new author.
+	/// </summary>
+	/// <param name="email">The e-mail address to register</param>
+	/// <param name="name">The display name for the author</param>
+	/// <param name="password">The password for the new author</param>
+	/// <param name="username">The authors username</param>
+	/// <param name="website">The website of the author</param>
+	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
+	/// <returns>An <see cref="AuthorDto"/> containing the registered author</returns>
+	/// <exception cref="EmailAlreadyRegisteredException">If the given <paramref name="email"/> is already registered</exception>
+	/// <exception cref="MissingRegistrationDataException">In case any required data is not set properly</exception>
+	/// <exception cref="RegistrationsDisabledException">In case registrations are disabled; check using <see cref="GetRegistrationsEnabledAsync"/></exception>
+	/// <exception cref="UsernameAlreadyRegisteredException">If the given <paramref name="username"/> is already registered</exception>
+	/// <exception cref="PubNetSdkException">In case anything unexpected happens</exception>
+	Task<AuthorDto> RegisterAsync(string email, string name, string password, string username, string? website = null,
+		CancellationToken cancellationToken = default);
+
+	/// <summary>
 	/// Gets the currently authenticated author.
 	/// </summary>
 	/// <remarks>
