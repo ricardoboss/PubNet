@@ -81,6 +81,47 @@ internal sealed class ApiAuthenticationService(
 		}
 	}
 
+	public async Task<AuthorDto> RegisterAsync(string email, string name, string password, string username,
+		string? website = null, CancellationToken cancellationToken = default)
+	{
+		var request = new RegisterRequestDto
+		{
+			Email = email,
+			Name = name,
+			Password = password,
+			Username = username,
+			Website = website,
+		};
+
+		try
+		{
+			var response =
+				await apiClient.Authentication.Register.PostAsync(request, cancellationToken: cancellationToken);
+
+			return response ?? throw new UnexpectedResponseException("Unable to deserialize register response");
+		}
+		catch (MissingRegistrationDataErrorDto e)
+		{
+			throw new MissingRegistrationDataException(e);
+		}
+		catch (RegistrationsDisabledErrorDto e)
+		{
+			throw new RegistrationsDisabledException(e);
+		}
+		catch (UsernameAlreadyInUseErrorDto e)
+		{
+			throw new UsernameAlreadyRegisteredException(username, e);
+		}
+		catch (EmailAlreadyInUseErrorDto e)
+		{
+			throw new EmailAlreadyRegisteredException(email, e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
+	}
+
 	public async Task<AuthorDto> GetSelfAsync(bool forceLoad = false, CancellationToken cancellationToken = default)
 	{
 		if (!await IsAuthenticatedAsync(cancellationToken))
