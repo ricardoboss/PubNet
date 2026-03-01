@@ -40,7 +40,7 @@
 		<PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.0"/>
 		<PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1"/>
 		<PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0"/>
-		<PackageVersion Include="SharpCompress" Version="0.44.5"/>
+		<PackageVersion Include="SharpCompress" Version="0.46.4"/>
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.1"/>
 		<PackageVersion Include="TRENZ.Lib.RazorMail.MailKit" Version="2.3.0"/>
 		<PackageVersion Include="Vogen" Version="8.0.4"/>

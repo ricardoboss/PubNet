@@ -4,18 +4,12 @@ namespace PubNet.Common.Utils;
 
 public static class ArchiveHelper
 {
-	public static void UnpackInto(Stream archiveStream, string destinationDirectory)
+	public static async Task UnpackIntoAsync(Stream archiveStream, string destinationDirectory, CancellationToken cancellationToken = default)
 	{
 		Directory.CreateDirectory(destinationDirectory);
 
-		using var reader = ReaderFactory.Open(archiveStream);
+		await using var reader = await ReaderFactory.OpenAsyncReader(archiveStream, cancellationToken: cancellationToken);
 
-		while (reader.MoveToNextEntry())
-			if (!reader.Entry.IsDirectory)
-				reader.WriteEntryToDirectory(destinationDirectory, new()
-				{
-					ExtractFullPath = true,
-					Overwrite = true,
-				});
+		await reader.WriteAllToDirectoryAsync(destinationDirectory, cancellationToken);
 	}
 }
