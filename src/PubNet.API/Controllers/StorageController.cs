@@ -140,7 +140,7 @@ public class StorageController(
 		var unpackedArchivePath = pending.UnpackedArchivePath;
 		await using (var archiveStream = System.IO.File.OpenRead(pending.ArchivePath))
 		{
-			ArchiveHelper.UnpackInto(archiveStream, unpackedArchivePath);
+			await ArchiveHelper.UnpackIntoAsync(archiveStream, unpackedArchivePath, cancellationToken);
 		}
 
 		try

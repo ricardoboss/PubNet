@@ -45,7 +45,7 @@ public class DocumentationGeneratorTask : BaseWorkerTask
 		var archiveFile = await _storageProvider.GetArchiveAsync(_package, _version, cancellationToken);
 		await using (var archiveStream = archiveFile.OpenRead())
 		{
-			ArchiveHelper.UnpackInto(archiveStream, workingDir);
+			await ArchiveHelper.UnpackIntoAsync(archiveStream, workingDir, cancellationToken);
 		}
 
 		try
