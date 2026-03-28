@@ -10,6 +10,6 @@ public static class ArchiveHelper
 
 		await using var reader = await ReaderFactory.OpenAsyncReader(archiveStream, cancellationToken: cancellationToken);
 
-		await reader.WriteAllToDirectoryAsync(destinationDirectory, cancellationToken);
+		await reader.WriteAllToDirectoryAsync(destinationDirectory, cancellationToken: cancellationToken);
 	}
 }
