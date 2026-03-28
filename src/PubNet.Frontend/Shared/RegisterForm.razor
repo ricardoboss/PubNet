@@ -1,124 +1,130 @@
-@using PubNet.API.DTO
-@using PubNet.Database.Models
-@inject HttpClient HttpClient
+@using System.Diagnostics
+@inject IAuthenticationService AuthService
 
 @if (Error is not null)
 {
-    <Alert Color="Color.Danger" Visible>
-        <strong>Oh no!</strong> @Error
-    </Alert>
+	<Alert Color="Color.Danger" Visible>
+		<strong>Oh no!</strong> @Error
+	</Alert>
 }
 
 @if (Success is not null)
 {
-    <Alert Color="Color.Success" Visible>
-        <strong>Great!</strong> @Success
-    </Alert>
+	<Alert Color="Color.Success" Visible>
+		<strong>Great!</strong> @Success
+	</Alert>
 }
 
 <Form @onsubmit="Submit">
-    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@RegisterRequest.Email" Autocomplete="email">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@RegisterRequest.Password" Autocomplete="current-password">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Username" Autocomplete="username">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Name" Autocomplete="name">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@RegisterRequest.Website" Autocomplete="url">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Field Horizontal>
-            <FieldLabel ColumnSize="ColumnSize.Is2" />
-            <FieldBody ColumnSize="ColumnSize.Is10">
-                <Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Register</Button>
-            </FieldBody>
-        </Field>
-    </Validations>
+	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your e-mail address" Role="@TextRole.Email"
+					          @bind-Value="@RegisterRequest.Email" Autocomplete="email">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your password" Role="@TextRole.Password"
+					          @bind-Value="@RegisterRequest.Password" Autocomplete="current-password">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Username"
+					          Autocomplete="username">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Name"
+					          Autocomplete="name">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation>
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@RegisterRequest.Website"
+					          Autocomplete="url">
+						<Feedback>
+							<ValidationError />
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Field Horizontal>
+			<FieldLabel ColumnSize="ColumnSize.Is2"/>
+			<FieldBody ColumnSize="ColumnSize.Is10">
+				<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Register</Button>
+			</FieldBody>
+		</Field>
+	</Validations>
 </Form>
 
 @code {
-    private Validations? _validations;
+	private Validations? _validations;
 
-    private RegisterRequest RegisterRequest { get; set; } = new();
+	private RegisterRequestDto RegisterRequest { get; set; } = new();
 
-    private string? Error { get; set; }
+	private string? Error { get; set; }
 
-    private string? Success { get; set; }
+	private string? Success { get; set; }
 
-    private async Task Submit()
-    {
-        if (_validations is null || !await _validations.ValidateAll()) return;
+	private async Task Submit()
+	{
+		if (_validations is null || !await _validations.ValidateAll())
+			return;
 
-        Error = null;
-        Success = null;
+		Debug.Assert(RegisterRequest.Email is not null);
+		Debug.Assert(RegisterRequest.Name is not null);
+		Debug.Assert(RegisterRequest.Password is not null);
+		Debug.Assert(RegisterRequest.Username is not null);
 
-        var response = await HttpClient.PostAsJsonAsync("authentication/register", RegisterRequest);
+		Error = null;
+		Success = null;
 
-        if (response.IsSuccessStatusCode)
-        {
-            await response.Content.ReadFromJsonAsync<Author>();
+		try
+		{
+			_ = await AuthService.RegisterAsync(RegisterRequest.Email, RegisterRequest.Name, RegisterRequest.Password, RegisterRequest.Username, RegisterRequest.Website);
 
-            RegisterRequest = new();
+			Success = $"Registration complete. You can now log in with your e-mail address {RegisterRequest.Email}";
 
-            Success = "Registration complete. You can now log in.";
-        }
-        else
-        {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-            Error = message?.Error?.Message;
-        }
-    }
+			RegisterRequest = new();
+		}
+		catch (PubNetSdkException e)
+		{
+			Error = e.Message;
+		}
+	}
 
 }

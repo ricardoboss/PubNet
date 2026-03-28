@@ -1,5 +1,5 @@
 @page "/Logout"
-@inject AuthenticationService Auth
+@inject IAuthenticationService Auth
 @inject NavigationManager Nav
 
 <em>Please wait...</em>
@@ -11,7 +11,7 @@
 	{
 		await base.OnParametersSetAsync();
 
-		await Auth.Logout();
+		await Auth.LogoutAsync();
 
 		Nav.NavigateTo("/?message=logged-out", true);
 	}

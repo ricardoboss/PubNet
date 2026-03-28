@@ -1,6 +1,4 @@
-﻿@using PubNet.API.DTO
-
-@inject ApiClient Http
+﻿@inject TextGenerator TextGen
 
 <PageTitle>@Title</PageTitle>
 
@@ -55,10 +53,9 @@
 
 	private string PubspecVersionText => PackageName is null || Version is null
 		? string.Empty
-		: TextGenerator.PubspecVersionText(PackageName, Version.Version, Package?.Mirrored ?? false, Http.BaseAddress);
+		: TextGen.PubspecVersionText(PackageName, Version.Version, Package?.Mirrored ?? false);
 
 	private string Title => PackageName + (Version is null ? string.Empty : $": {Version.Version}");
 
 	private string? AuthorUserName => Package?.Author?.UserName;
-
 }

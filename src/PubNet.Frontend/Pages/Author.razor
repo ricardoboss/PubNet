@@ -1,8 +1,8 @@
 ﻿@page "/author/{Username}"
 @page "/authors/{Username}"
-@using PubNet.API.DTO
-@inject ApiClient Http
-@inject AuthenticationService Auth
+@inject IAuthenticationService Auth
+@inject IAuthorService AuthorService
+@inject IPackagesService Packages
 @inject AlertService Alert
 
 <PageTitle>Package author @Username</PageTitle>
@@ -109,7 +109,7 @@
 	private string? AuthorSuccess { get; set; }
 	private string? AuthorError { get; set; }
 
-	private IEnumerable<SearchResultPackage>? AuthorPackages { get; set; }
+	private IEnumerable<SearchResultPackageDto>? AuthorPackages { get; set; }
 	private string? PackagesError { get; set; }
 
 	protected override async Task OnParametersSetAsync()
@@ -131,7 +131,7 @@
 
 			await FetchAuthorPackages();
 
-			IsSelf = await Auth.IsSelf(Username);
+			IsSelf = await Auth.IsSelfAsync(Username);
 		}
 		catch (Exception e)
 		{
@@ -144,7 +144,7 @@
 		AuthorModel = null;
 		GeneralError = null;
 
-		var author = await Http.GetAsync<AuthorDto>($"authors/{Username}");
+		var author = await AuthorService.GetAuthorAsync(Username);
 		if (author is not null)
 		{
 			AuthorModel = author;
@@ -160,10 +160,18 @@
 		AuthorPackages = null;
 		PackagesError = null;
 
-		var response = await Http.GetAsync<AuthorPackagesResponse>($"authors/{Username}/packages");
+		var response = await Packages.GetPackagesByAuthorAsync(Username);
 		if (response?.Packages is not null)
 		{
-			AuthorPackages = response.Packages.Select(dto => new SearchResultPackage(dto.Name, dto.ReplacedBy, dto.IsDiscontinued, Username, dto.Latest?.Version, dto.Latest?.Published)).ToList();
+			AuthorPackages = response.Packages.Select(dto => new SearchResultPackageDto
+			{
+				Name = dto.Name,
+				ReplacedBy = dto.ReplacedBy,
+				IsDiscontinued = dto.IsDiscontinued,
+				AuthorUserName = Username,
+				LatestVersion = dto.Latest?.Version,
+				LatestPublishedAtUtc = dto.Latest?.Published,
+			}).ToList();
 		}
 		else
 		{
@@ -195,26 +203,20 @@
 		if (string.IsNullOrWhiteSpace(confirmation))
 			return;
 
-		var response = await Http.PostAsync($"authors/{Username}/delete", new DeleteAuthorRequest(confirmation));
-		if (response.IsSuccessStatusCode)
+		try
 		{
-			var successResponse = await response.Content.ReadFromJsonAsync<SuccessResponse>();
-			if (successResponse is null)
+			await AuthorService.DeleteAuthorAsync(Username, new()
 			{
-				AuthorError = "Unable to deserialize";
+				Password = confirmation,
+			});
 
-				return;
-			}
+			AuthorSuccess = "Success";
 
-			AuthorSuccess = successResponse.Success.Message;
-
-			await Auth.Logout();
+			await Auth.LogoutAsync();
 		}
-		else
+		catch (Exception e)
 		{
-			var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-			AuthorError = errorResponse?.Error?.Message ?? "Failed to delete author";
+			AuthorError = e.Message;
 		}
 	}
 }
