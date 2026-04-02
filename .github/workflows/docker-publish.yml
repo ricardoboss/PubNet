@@ -57,7 +57,7 @@ jobs:
 
       - name: Build and push Docker image (${{ matrix.project }})
         id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: src/${{ matrix.project == 'API' && 'PubNet.API' || matrix.project == 'Worker' && 'PubNet.Worker' || 'PubNet.Frontend' }}/Dockerfile
