@@ -17,7 +17,8 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 	{
 	}
 
-	public static async Task RunMigrations(IServiceProvider serviceProvider)
+	public static async Task RunMigrations(IServiceProvider serviceProvider,
+		CancellationToken cancellationToken = default)
 	{
 		var logger = serviceProvider.GetRequiredService<ILogger<PubNetContext>>();
 
@@ -27,25 +28,25 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 
 		var context = startupScope.ServiceProvider.GetRequiredService<PubNetContext>();
 
-		List<string> pending = [.. await context.Database.GetPendingMigrationsAsync()];
+		IReadOnlyCollection<string> pending = [.. await context.Database.GetPendingMigrationsAsync(cancellationToken)];
 		if (pending.Count == 0)
 		{
-			logger.LogInformation("No pending database migrations.");
+			logger.LogInformation("No pending database migrations");
 
 			return;
 		}
 
-		logger.LogInformation("Migrating database...");
+		logger.LogInformation("Migrating database…");
 
 		if (logger.IsEnabled(LogLevel.Debug))
 		{
 			foreach (var migration in pending)
-				logger.LogDebug("Found pending migration: {MigrationName}", migration);
+				logger.LogDebug("Found pending migration: {PendingMigration}", migration);
 		}
 
-		await context.Database.MigrateAsync();
+		await context.Database.MigrateAsync(cancellationToken);
 
-		logger.LogInformation("Done migrating");
+		logger.LogInformation("Done migrating database");
 	}
 
 	public DbSet<Package> Packages { get; set; } = null!;

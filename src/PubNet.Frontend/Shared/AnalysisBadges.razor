@@ -1,7 +1,6 @@
 @inherits BaseComponent
-@using PubNet.API.DTO
-@inject ApiClient Http
-@inject AnalysisService Analysis
+@inject IAnalysisService Analysis
+@inject BaseAddressProvider BaseAddressProvider
 
 <Div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (Mirrored)
@@ -33,7 +32,6 @@
 			}
 			break;
 	}
-
 
 	@switch (IsLatest)
 	{
@@ -78,7 +76,7 @@
 
 	private PackageVersionAnalysisDto? AnalysisDto { get; set; }
 
-	private string? PackageName => PackageDto?.Name ?? PackageVersionDto?.PubSpec.Name;
+	private string? PackageName => PackageDto?.Name ?? PackageVersionDto?.Pubspec?.Name;
 
 	private bool Mirrored => PackageDto?.Mirrored ?? false;
 
@@ -90,7 +88,7 @@
 
 	private static string HrefToReplacement(string name) => "/packages/" + name;
 
-	private string DocumentationUrl(string uri) => Http.BaseAddress!.TrimEnd('/') + '/' + uri.TrimStart('/');
+	private string DocumentationUrl(string uri) => BaseAddressProvider.BaseAddress.TrimEnd('/') + '/' + uri.TrimStart('/');
 
 	/// <inheritdoc />
 	protected override async Task OnInitializedAsync()
@@ -101,7 +99,7 @@
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			AnalysisDto = await Analysis.GetAnalysisForVersion(PackageVersionDto.PubSpec.Name, PackageVersionDto.Version, false);
+			AnalysisDto = await Analysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, includeReadme: false);
 		}
 	}
 
