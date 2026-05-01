@@ -5,7 +5,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0"/>
-		<PackageVersion Include="Blazorise.Bulma" Version="2.0.3"/>
+		<PackageVersion Include="Blazorise.Bulma" Version="2.1.1"/>
 		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="2.0.3"/>
 		<PackageVersion Include="CliWrap" Version="3.10.1"/>
 		<PackageVersion Include="coverlet.collector" Version="8.0.1"/>
