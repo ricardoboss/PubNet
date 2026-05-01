@@ -8,7 +8,7 @@
 		<PackageVersion Include="Blazorise.Bulma" Version="2.0.3"/>
 		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="2.0.3"/>
 		<PackageVersion Include="CliWrap" Version="3.10.1"/>
-		<PackageVersion Include="coverlet.collector" Version="8.0.1"/>
+		<PackageVersion Include="coverlet.collector" Version="10.0.0"/>
 		<PackageVersion Include="Humanizer" Version="3.0.10"/>
 		<PackageVersion Include="JetBrains.Annotations" Version="2025.2.4"/>
 		<PackageVersion Include="Markdig" Version="1.1.2"/>
