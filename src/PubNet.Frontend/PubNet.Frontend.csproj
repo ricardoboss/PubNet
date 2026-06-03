@@ -14,6 +14,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design"/>
+		<PackageReference Include="NuGet.Packaging" />
 	</ItemGroup>
 
 	<ItemGroup>
