@@ -67,6 +67,35 @@ If you want to contribute improvements or bugfixes, fork this repository, create
 When you are ready to deploy `PubNet`, you may want to review the `OpenRegistration` setting in the `backend-appsettings.json` to toggle whether anyone is able to register an account.
 This setting can be changed at runtime.
 
+### Hosted upstream
+
+`PubNet` can fall back to an upstream hosted repository for package metadata and archives that are not stored locally.
+
+- The default upstream is `https://pub.dev/api/`.
+- You can point it at `unpub` by setting `HostedUpstream:BaseUrl` to the upstream API base URL, for example `https://unpub.example.com/api/`.
+- Environment variables override JSON configuration in ASP.NET Core, so Docker deployments can use `HostedUpstream__BaseUrl`.
+- If the configured value is missing or invalid, `PubNet` falls back to `https://pub.dev/api/`.
+
+Example values:
+
+```json
+{
+  "HostedUpstream": {
+    "BaseUrl": "https://unpub.example.com/api/"
+  }
+}
+```
+
+```bash
+export HostedUpstream__BaseUrl="https://unpub.example.com/api/"
+```
+
+Important behavior notes:
+
+- The upstream URL must be the API base URL, not just the site root.
+- `PubNet` still stores and manages its own local packages, authors, and permissions.
+- Only package lookups and archive fallback use the upstream. Package list pages and author data remain local to `PubNet`.
+
 ### Using `docker-compose.yml`
 
 <details>
@@ -94,6 +123,8 @@ services:
   backend:
     image: ghcr.io/ricardoboss/pubnet/api:main
     restart: always
+    environment:
+      HostedUpstream__BaseUrl: "https://unpub.example.com/api/"
     volumes:
       - "./backend-appsettings.json:/app/appsettings.Production.json"
       - "pubnet_packages:/app/packages"
@@ -171,6 +202,9 @@ In case you want a reverse proxy, configure it appropriately (in this case using
   "PackageStorage": {
     "Path": "./packages"
   },
+  "HostedUpstream": {
+    "BaseUrl": "https://pub.dev/api/"
+  },
   "OpenRegistration": true,
   "SmtpAccount": {
     "Host": "localhost",
@@ -205,6 +239,22 @@ Add a `worker-appsettings.json`:
 
 ```
 
+</details>
+
+<details>
+  <summary>Docker environment variable override</summary>
+
+If you do not want to store the upstream in `backend-appsettings.json`, set it directly in the backend container environment:
+
+```yaml
+services:
+  backend:
+    image: ghcr.io/ricardoboss/pubnet/api:main
+    environment:
+      HostedUpstream__BaseUrl: "https://unpub.example.com/api/"
+```
+
+When `HostedUpstream__BaseUrl` is empty, missing, or not a valid absolute `http`/`https` URL, `PubNet` falls back to `https://pub.dev/api/`.
 </details>
 
 Finally, start your own `PubNet` using
