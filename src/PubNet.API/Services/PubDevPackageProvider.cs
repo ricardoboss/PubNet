@@ -17,7 +17,7 @@ public class PubDevPackageProvider(IHttpClientFactory clientFactory)
 
 		try
 		{
-			var dto = await client.GetFromJsonAsync<PackageVersionDto>($"/api/packages/{name}/versions/{version}",
+			var dto = await client.GetFromJsonAsync<PackageVersionDto>($"packages/{name}/versions/{version}",
 				cancellationToken);
 			if (dto is null) return null;
 
@@ -41,7 +41,7 @@ public class PubDevPackageProvider(IHttpClientFactory clientFactory)
 
 		try
 		{
-			var dto = await client.GetFromJsonAsync<PackageDto>($"/api/packages/{name}", cancellationToken);
+			var dto = await client.GetFromJsonAsync<PackageDto>($"packages/{name}", cancellationToken);
 			if (dto is null) return null;
 
 			dto.Mirrored = true;
