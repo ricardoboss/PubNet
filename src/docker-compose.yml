@@ -1,3 +1,5 @@
+name: pubnet
+
 volumes:
   postgres_data:
   seq_data:
@@ -5,13 +7,13 @@ volumes:
 
 services:
   database:
-    image: postgres:17
+    image: postgres:18
     restart: unless-stopped
     environment:
       POSTGRES_USER: "pubnet"
       POSTGRES_PASSWORD: "pubnet"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     ports:
       - "5432:5432"
 
