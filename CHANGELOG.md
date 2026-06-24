@@ -1,5 +1,7 @@
 ﻿# Unreleased
 
+# v1.1.5
+
 * Fixed some small layout issues with navbar/footer
 * Fixed an issue with packages bigger than 30 MB (now allows up to 100 MB)
 
