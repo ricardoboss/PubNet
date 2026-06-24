@@ -4,7 +4,6 @@ using PubNet.API.DTO;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
-using PubNet.Common.Models;
 using PubNet.Common.Services;
 using PubNet.Common.Utils;
 using PubNet.Database;
