@@ -1,7 +1,7 @@
 ﻿@inject ClipboardService Clipboard
 
 <Tooltip Text="@Tooltip" Display="Display.Inline" Placement="TooltipPlacement.Right">
-    <Code CopyToClipboard Style="cursor: pointer">
+    <Code CopyToClipboard Style="cursor: pointer; word-break: break-all">
         @RenderContent
     </Code>
 </Tooltip>
