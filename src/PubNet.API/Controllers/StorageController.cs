@@ -40,7 +40,11 @@ public class StorageController(
 		return Task.FromResult(new UploadEndpointData(url, new()));
 	}
 
+	private const int maxUploadSize = 100 * 1024 * 1024; // 100 MB
+
 	[HttpPost("upload")]
+	// Allow request bodies to be bigger so the response is actually handled by this action, not ASP.NET
+	[RequestSizeLimit(maxUploadSize * 2)]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status411LengthRequired, Type = typeof(ErrorResponse))]
@@ -49,8 +53,6 @@ public class StorageController(
 	{
 		if (!endpointHelper.ValidateSignature(Request.QueryString.ToString()))
 			return BadRequest(ErrorResponse.InvalidSignedUrl);
-
-		const long maxUploadSize = 100_000_000; // 100 MB
 
 		var size = Request.Headers.ContentLength;
 		switch (size)
