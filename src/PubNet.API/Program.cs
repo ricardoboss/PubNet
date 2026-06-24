@@ -181,6 +181,10 @@ try
 	app.UseMiddleware<ClientExceptionFormatterMiddleware>();
 	app.UseMiddleware<ApplicationRequestContextEnricherMiddleware>();
 
+#if DEBUG
+	app.UseMiddleware<RequestResponseLoggingMiddleware>();
+#endif
+
 	app.UseAuthentication();
 	app.UseAuthorization();
 
