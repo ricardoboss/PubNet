@@ -83,13 +83,13 @@ volumes:
 
 services:
   database:
-    image: postgres:17
+    image: postgres:18
     restart: always
     environment:
       POSTGRES_USER: "pubnet"
       POSTGRES_PASSWORD: "pubnet"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
   backend:
     image: ghcr.io/ricardoboss/pubnet/api:main
