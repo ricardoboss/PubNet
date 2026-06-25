@@ -1,7 +1,5 @@
 ﻿# Unreleased
 
-* Worker now has all dependencies to build for linux + Chrome
-
 # v1.1.5
 
 * Fixed some small layout issues with navbar/footer
