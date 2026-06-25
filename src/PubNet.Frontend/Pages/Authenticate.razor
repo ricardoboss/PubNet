@@ -1,6 +1,13 @@
 ﻿@page "/authenticate"
 @inject ApiClient Http;
 
+@if (MessageBoxContent is not null)
+{
+    <Alert Color="Color.Warning" Dismisable Visible>
+        @MessageBoxContent
+    </Alert>
+}
+
 <Heading Size="HeadingSize.Is1">Login</Heading>
 
 <LoginForm/>
@@ -23,6 +30,15 @@ else
 @code {
 
     private bool _showRegistration;
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "message")]
+    public string? Message { get; set; }
+
+    private string? MessageBoxContent => Message switch {
+        "session-expired" => "Your session has expired. Please log in again.",
+        _ => null,
+    };
 
     protected override async Task OnInitializedAsync()
     {

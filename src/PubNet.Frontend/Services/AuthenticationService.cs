@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using Blazored.LocalStorage;
 using PubNet.API.DTO;
@@ -76,6 +77,8 @@ public class AuthenticationService(
 			}
 
 			var response = await apiClient.GetAsync("authentication/self", cancellationToken);
+			if (response.StatusCode == HttpStatusCode.Unauthorized)
+				throw new SessionExpiredException("Session expired");
 			if (!response.IsSuccessStatusCode)
 				throw new UnauthenticatedException("Request failed");
 
@@ -114,3 +117,5 @@ public class AuthenticationService(
 }
 
 public class UnauthenticatedException(string message) : Exception(message);
+
+public class SessionExpiredException(string message) : UnauthenticatedException(message);

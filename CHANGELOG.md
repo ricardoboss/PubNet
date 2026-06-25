@@ -1,5 +1,7 @@
 ﻿# Unreleased
 
+* In case your token expires, you will be redirected to the login page.
+
 # v1.1.5
 
 * Fixed some small layout issues with navbar/footer
