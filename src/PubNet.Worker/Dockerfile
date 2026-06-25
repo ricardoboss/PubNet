@@ -12,9 +12,21 @@ FROM build AS publish
 RUN dotnet publish "PubNet.Worker.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
-WORKDIR /app
 
-RUN apt-get update && apt-get install curl git unzip xz-utils zip libglu1-mesa -y
+RUN apt-get update && apt-get install \
+    clang \
+    cmake \
+    curl \
+    git \
+    ninja-build \
+    pkg-config \
+    unzip \
+    xz-utils \
+    zip \
+    libglu1-mesa \
+    -y --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/* \
+
 WORKDIR /flutter
 RUN git clone https://github.com/flutter/flutter.git -b stable flutter
 ENV PATH="/flutter/flutter/bin/:$PATH"
