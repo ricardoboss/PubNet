@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install \
 
 WORKDIR /flutter
 RUN git clone https://github.com/flutter/flutter.git -b stable flutter
-ENV PATH="/flutter/flutter/bin/:$PATH"
+ENV PATH="/flutter/bin/:$PATH"
 
 WORKDIR /app
 COPY --from=publish /app/publish .
