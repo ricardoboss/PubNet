@@ -13,8 +13,5 @@
   "PackageStorage": {
     "Path": "./packages"
   },
-  "HostedUpstream": {
-    "BaseUrl": "https://pub.dev/api/"
-  },
   "OpenRegistration": true
 }
