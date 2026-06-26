@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
@@ -28,33 +29,6 @@ Log.Logger = new LoggerConfiguration()
 try
 {
 	var builder = WebApplication.CreateBuilder(args);
-	const string defaultHostedUpstreamBaseUrl = "https://pub.dev/api/";
-
-	Uri ResolveHostedUpstreamBaseAddress(IServiceProvider services)
-	{
-		var configuration = services.GetRequiredService<IConfiguration>();
-		var logger = services.GetRequiredService<ILoggerFactory>().CreateLogger("HostedUpstream");
-		var configuredBaseUrl = configuration["HostedUpstream:BaseUrl"];
-
-		if (string.IsNullOrWhiteSpace(configuredBaseUrl))
-			return new(defaultHostedUpstreamBaseUrl);
-
-		if (!Uri.TryCreate(configuredBaseUrl, UriKind.Absolute, out var configuredUri) ||
-		    (configuredUri.Scheme != Uri.UriSchemeHttp && configuredUri.Scheme != Uri.UriSchemeHttps))
-		{
-			logger.LogWarning(
-				"Invalid HostedUpstream:BaseUrl value \"{HostedUpstreamBaseUrl}\". Falling back to default {DefaultHostedUpstreamBaseUrl}",
-				configuredBaseUrl, defaultHostedUpstreamBaseUrl);
-
-			return new(defaultHostedUpstreamBaseUrl);
-		}
-
-		var normalizedBaseUrl = configuredUri.ToString();
-		if (!normalizedBaseUrl.EndsWith('/'))
-			normalizedBaseUrl += "/";
-
-		return new(normalizedBaseUrl);
-	}
 
 	builder.Host.UseSerilog((context, services, configuration) =>
 		configuration.ReadFrom.Configuration(context.Configuration)
@@ -119,13 +93,16 @@ try
 	// package storage
 	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
 	builder.Services.AddPackageStorageProviderOptions();
+	builder.Services.AddHostedUpstreamOptions();
 	builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
 	builder.Services.AddSingleton<EndpointHelper>();
 
 	// mirror for hosted pub upstreams such as pub.dev or unpub
 	builder.Services.AddHttpClient(PubDevPackageProvider.ClientName, (services, options) =>
 	{
-		options.BaseAddress = ResolveHostedUpstreamBaseAddress(services);
+		var upstream = services.GetRequiredService<IOptions<HostedUpstreamOptions>>().Value;
+		var baseUrl = upstream.BaseUrl.EndsWith('/') ? upstream.BaseUrl : upstream.BaseUrl + "/";
+		options.BaseAddress = new Uri(baseUrl);
 		options.DefaultRequestHeaders.Accept.Add(new("application/json"));
 		options.DefaultRequestHeaders.UserAgent.Clear();
 		options.DefaultRequestHeaders.UserAgent.Add(new("pub-net-mirror", "1.0.0"));
