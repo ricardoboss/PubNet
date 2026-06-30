@@ -1,5 +1,7 @@
 ﻿# Unreleased
 
+# v1.2.0
+
 * Added configurable hosted upstream option (`HostedUpstream:BaseUrl`) to allow fallback to alternative package repositories
 * In case your token expires, you will be redirected to the login page.
 
