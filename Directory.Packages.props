@@ -46,6 +46,6 @@
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.3"/>
 		<PackageVersion Include="TRENZ.Lib.RazorMail.MailKit" Version="2.3.1"/>
 		<PackageVersion Include="Vogen" Version="8.0.5"/>
-		<PackageVersion Include="YamlDotNet" Version="18.0.0"/>
+		<PackageVersion Include="YamlDotNet" Version="18.1.0"/>
 	</ItemGroup>
 </Project>
