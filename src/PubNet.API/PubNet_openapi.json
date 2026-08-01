@@ -5565,7 +5565,11 @@
         }
       },
       "Role": {
-        "type": "integer"
+        "enum": [
+          "default",
+          "admin",
+          null
+        ]
       },
       "SearchPackagesResponseDto": {
         "required": [
@@ -5704,7 +5708,12 @@
         }
       },
       "SettingKind": {
-        "type": "integer"
+        "enum": [
+          "text",
+          "boolean",
+          "url",
+          "secret"
+        ]
       },
       "SuccessMessageDto": {
         "required": [

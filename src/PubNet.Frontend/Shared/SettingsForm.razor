@@ -1,0 +1,87 @@
+@* Renders whatever settings the API declares. Shared by onboarding and the admin backend. *@
+
+@foreach (var group in Descriptors.GroupBy(d => d.Group))
+{
+	@if (ShowGroupHeadings)
+	{
+		<Heading Size="HeadingSize.Is4" Margin="Margin.Is4.FromTop">@group.Key</Heading>
+	}
+
+	@foreach (var descriptor in group)
+	{
+		<Field Horizontal>
+			<FieldLabel ColumnSize="ColumnSize.Is4">@descriptor.Label</FieldLabel>
+			<FieldBody ColumnSize="ColumnSize.Is8">
+				@switch (descriptor.Kind)
+				{
+					case SettingKind.Boolean:
+						<Check TValue="bool" Value="@GetBoolean(descriptor)"
+						       ValueChanged="@((bool value) => Set(descriptor, value ? "true" : "false"))">
+							@descriptor.Description
+						</Check>
+						break;
+					case SettingKind.Secret:
+						<TextInput Role="TextRole.Password" Placeholder="@descriptor.Description"
+						           Value="@GetText(descriptor)" ValueChanged="@(value => Set(descriptor, value))"/>
+						break;
+					case SettingKind.Url:
+					case SettingKind.Text:
+					default:
+						<TextInput Role="@(descriptor.Kind == SettingKind.Url ? TextRole.Url : TextRole.Text)"
+						           Placeholder="@descriptor.Description"
+						           Value="@GetText(descriptor)" ValueChanged="@(value => Set(descriptor, value))"/>
+						break;
+				}
+
+				@if (descriptor.Kind != SettingKind.Boolean && descriptor.Description is not null)
+				{
+					<FieldHelp>@descriptor.Description</FieldHelp>
+				}
+			</FieldBody>
+		</Field>
+	}
+}
+
+@code {
+
+	/// <summary>
+	/// The settings to render, as returned by the API.
+	/// </summary>
+	[Parameter]
+	public IEnumerable<SettingDescriptorDto> Descriptors { get; set; } = [];
+
+	/// <summary>
+	/// Receives the values the user changed, keyed by setting key. Mutated in place.
+	/// </summary>
+	[Parameter]
+	public Dictionary<string, string?> Values { get; set; } = [];
+
+	[Parameter]
+	public bool ShowGroupHeadings { get; set; } = true;
+
+	/// <summary>
+	/// Raised after a value changed. Required for the parent to re-render, since mutating
+	/// <see cref="Values"/> is invisible to it.
+	/// </summary>
+	[Parameter]
+	public EventCallback OnChanged { get; set; }
+
+	private string GetText(SettingDescriptorDto descriptor)
+	{
+		return (Values.TryGetValue(descriptor.Key!, out var value) ? value : descriptor.Value) ?? "";
+	}
+
+	private bool GetBoolean(SettingDescriptorDto descriptor)
+	{
+		return bool.TryParse(GetText(descriptor), out var value) && value;
+	}
+
+	private async Task Set(SettingDescriptorDto descriptor, string? value)
+	{
+		// an empty value means "use the value from the configuration files"
+		Values[descriptor.Key!] = string.IsNullOrEmpty(value) ? null : value;
+
+		await OnChanged.InvokeAsync();
+	}
+
+}

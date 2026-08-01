@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -202,7 +203,13 @@ void ConfigureServices(WebApplicationBuilder builder)
 		{
 			options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+			// keeps enums readable in the API contract and lets Kiota generate real enums for the SDK
+			options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 		});
+
+	// the openapi document generator reads these options instead of the MVC ones configured above
+	builder.Services.ConfigureHttpJsonOptions(options =>
+		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
 
 	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{

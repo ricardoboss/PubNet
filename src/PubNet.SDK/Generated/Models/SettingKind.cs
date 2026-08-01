@@ -5,16 +5,24 @@ namespace PubNet.SDK.Generated.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public enum Role
+    public enum SettingKind
     #pragma warning restore CS1591
     {
-        [EnumMember(Value = "default")]
+        [EnumMember(Value = "text")]
         #pragma warning disable CS1591
-        Default,
+        Text,
         #pragma warning restore CS1591
-        [EnumMember(Value = "admin")]
+        [EnumMember(Value = "boolean")]
         #pragma warning disable CS1591
-        Admin,
+        Boolean,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "url")]
+        #pragma warning disable CS1591
+        Url,
+        #pragma warning restore CS1591
+        [EnumMember(Value = "secret")]
+        #pragma warning disable CS1591
+        Secret,
         #pragma warning restore CS1591
     }
 }

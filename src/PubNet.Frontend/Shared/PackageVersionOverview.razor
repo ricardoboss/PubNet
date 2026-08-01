@@ -244,7 +244,9 @@ else
         if (Version is null)
             return;
 
-        ShowPackageAdminTools = !IsMirrored && await Auth.IsSelfAsync(Package.Author.UserName);
+        // admins may manage any package, not just their own
+        ShowPackageAdminTools = !IsMirrored &&
+            (await Auth.IsSelfAsync(Package.Author.UserName) || await Auth.IsAdminAsync());
 
         try
         {
