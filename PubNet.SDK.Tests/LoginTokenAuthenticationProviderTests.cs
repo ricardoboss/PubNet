@@ -65,15 +65,22 @@ public class LoginTokenAuthenticationProviderTests
 		loginTokenStorageMock.VerifyAll();
 	}
 
+	// MIND: these two cases must stub an available token. With a null token no header is attached either
+	// way, so the assertions would hold even if the exemption logic were inverted.
+
 	[Test]
 	[TestCase(Method.POST, "https://example.test/authentication/login")]
 	[TestCase(Method.POST, "https://example.test/authentication/register")]
 	[TestCase(Method.GET, "https://example.test/authentication/registrations-enabled")]
 	[TestCase(Method.POST, "https://example.test/api/authentication/login")] // additional case with "/api" infix
 	[TestCase(Method.POST, "https://example.test/Authentication/Login")] // different casing
-	public void TestOmitsAuthenticationForSpecialEndpoints(Method method, string endpoint)
+	public async Task TestOmitsAuthenticationForSpecialEndpoints(Method method, string endpoint)
 	{
 		var loginTokenStorageMock = new Mock<ILoginTokenStorage>();
+
+		loginTokenStorageMock
+			.Setup(s => s.GetTokenAsync(It.IsAny<CancellationToken>()))
+			.ReturnsAsync("token");
 
 		var request = new RequestInformation
 		{
@@ -86,9 +93,13 @@ public class LoginTokenAuthenticationProviderTests
 			NullLogger<LoginTokenAuthenticationProvider>.Instance
 		);
 
-		Assert.DoesNotThrowAsync(async () => await provider.AuthenticateRequestAsync(request));
+		await provider.AuthenticateRequestAsync(request);
 
-		loginTokenStorageMock.VerifyAll();
+		Assert.That(request.Headers.ContainsKey("Authorization"), Is.False,
+			"an exempt endpoint must not be given a token even when one is available");
+
+		// the exemption should short-circuit before the token store is consulted at all
+		loginTokenStorageMock.Verify(s => s.GetTokenAsync(It.IsAny<CancellationToken>()), Times.Never);
 	}
 
 	[Test]
@@ -96,13 +107,15 @@ public class LoginTokenAuthenticationProviderTests
 	[TestCase(Method.GET, "https://example.test/authentication/register")]
 	[TestCase(Method.POST, "https://example.test/authentication/registrations-enabled")]
 	[TestCase(Method.GET, "https://example.test/authentication/self")]
-	public async Task TestSpecialEndpointsWithDifferentMethodThrow(Method method, string endpoint)
+	[TestCase(Method.POST, "https://example.test/authentication/self")]
+	public async Task TestAuthenticatesSpecialEndpointsWhenMethodDiffers(Method method, string endpoint)
 	{
+		const string token = "token";
 		var loginTokenStorageMock = new Mock<ILoginTokenStorage>();
 
 		loginTokenStorageMock
-			.Setup(s => s.GetTokenAsync())
-			.ReturnsAsync((CancellationToken _) => null)
+			.Setup(s => s.GetTokenAsync(It.IsAny<CancellationToken>()))
+			.ReturnsAsync(token)
 			.Verifiable();
 
 		var request = new RequestInformation
@@ -118,7 +131,8 @@ public class LoginTokenAuthenticationProviderTests
 
 		await provider.AuthenticateRequestAsync(request);
 
-		Assert.That(request.Headers.ContainsKey("Authorization"), Is.False);
+		Assert.That(request.Headers["Authorization"].SingleOrDefault(), Is.EqualTo($"Bearer {token}"),
+			"the exemption only covers one method, so this request must still be authenticated");
 
 		loginTokenStorageMock.VerifyAll();
 	}
