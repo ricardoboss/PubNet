@@ -63,6 +63,10 @@ public class ErrorResponse(ErrorResponseBody? error = null)
 	public static ErrorResponse OnboardingNotPending =>
 		new(new("onboarding-not-pending", "This instance has already been set up"));
 
+	public static ErrorResponse LastAdmin =>
+		new(new("last-admin",
+			"You are the only administrator of this instance. Make someone else an administrator before deleting your account"));
+
 	public static ErrorResponse VersionAlreadyExists(string packageName, string packageVersion)
 	{
 		return new(new("version-already-exists", $"Version {packageVersion} of {packageName} already exists"));
