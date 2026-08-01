@@ -4,6 +4,9 @@
 * Added a first-time setup for the administrator account: new instances ask for one before they can be used, existing installations have their oldest account promoted, and the last administrator can no longer delete their own account ([#98](https://github.com/ricardoboss/PubNet/pull/98))
 * **Breaking:** reading packages and authors now requires authentication, not just publishing. Consumers have to run `dart pub token add <url>` for the instance; anonymous `dart pub get` no longer works. Metadata mirrored from the hosted upstream is authenticated as well, while mirrored archives are still fetched directly from the upstream
 * Updated all dependencies to their latest versions
+* Added an admin backend at `/admin` where administrators change the instance settings and promote or demote authors. The last administrator can no longer be demoted either.
+* Added instance settings: `OpenRegistration` and `HostedUpstream:BaseUrl` are now stored in the database and override `appsettings.json` without a restart.
+* Administrators can now discontinue, retract and delete packages they do not own.
 
 # v1.2.0
 
