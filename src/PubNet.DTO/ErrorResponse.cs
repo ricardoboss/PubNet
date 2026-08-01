@@ -60,6 +60,9 @@ public class ErrorResponse(ErrorResponseBody? error = null)
 	public static ErrorResponse RegistrationsDisabled =>
 		new(new("registrations-disabled", "Registrations are currently disabled"));
 
+	public static ErrorResponse OnboardingNotPending =>
+		new(new("onboarding-not-pending", "This instance has already been set up"));
+
 	public static ErrorResponse VersionAlreadyExists(string packageName, string packageVersion)
 	{
 		return new(new("version-already-exists", $"Version {packageVersion} of {packageName} already exists"));

@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
+using PubNet.API.Authorization;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
 using PubNet.API.Interfaces;
@@ -75,6 +77,13 @@ try
 			};
 		});
 
+	builder.Services.AddAuthorizationBuilder()
+		.AddPolicy(Policies.Admin, policy => policy
+			.RequireAuthenticatedUser()
+			.AddRequirements(new AdminRequirement()));
+
+	builder.Services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
+
 	// used for verifying and creating password hashes
 	builder.Services.TryAddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
 	builder.Services.AddScoped<PasswordManager>();
@@ -86,6 +95,10 @@ try
 	builder.Services.AddRazorMailRenderer();
 	builder.Services.AddMailKitMailClient();
 	builder.Services.AddScoped<INotificationService, MailNotificationService>();
+
+	// account creation, shared by registration and the first-time setup
+	builder.Services.AddScoped<IAuthorRegistrationService, AuthorRegistrationService>();
+	builder.Services.AddScoped<IOnboardingService, OnboardingService>();
 
 	// used to store request-specific data in a single place
 	builder.Services.AddScoped<ApplicationRequestContext>();
