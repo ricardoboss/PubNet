@@ -18,6 +18,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
 		<PackageReference Include="Microsoft.EntityFrameworkCore"/>
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server"/>
+		<!-- Referenced directly (the OpenApi transformers use its types) and to lift the version above the one
+		     Microsoft.AspNetCore.OpenApi pins transitively, which is affected by GHSA-v5pm-xwqc-g5wc -->
+		<PackageReference Include="Microsoft.OpenApi"/>
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
 		<PackageReference Include="Scalar.AspNetCore" />
 		<PackageReference Include="Semver"/>
