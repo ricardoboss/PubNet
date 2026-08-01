@@ -17,40 +17,46 @@
 }
 
 <Form @onsubmit="Submit">
-	<Field Horizontal>
-		<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
-		<FieldBody ColumnSize="ColumnSize.Is10">
-			<TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Text="@Email"
-			           Autocomplete="email">
-				<Feedback>
-					<ValidationError/>
-				</Feedback>
-			</TextInput>
-		</FieldBody>
-	</Field>
-	<Field Horizontal>
-		<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
-		<FieldBody ColumnSize="ColumnSize.Is10">
-			<TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Text="@Password"
-			           Autocomplete="current-password">
-				<Feedback>
-					<ValidationError/>
-				</Feedback>
-			</TextInput>
-		</FieldBody>
-	</Field>
-	<Field Horizontal>
-		<FieldLabel ColumnSize="ColumnSize.Is2"/>
-		<FieldBody ColumnSize="ColumnSize.Is10">
-			<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
-		</FieldBody>
-	</Field>
+	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="LoginRequest">
+		<Validation Validator="@FormValidators.RequiredEmail">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your e-mail address" Role="@TextRole.Email"
+					           @bind-Value="@LoginRequest.Email" Autocomplete="email">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation Validator="@(e => FormValidators.Required(e, "Password"))">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your password" Role="@TextRole.Password"
+					           @bind-Value="@LoginRequest.Password" Autocomplete="current-password">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Field Horizontal>
+			<FieldLabel ColumnSize="ColumnSize.Is2"/>
+			<FieldBody ColumnSize="ColumnSize.Is10">
+				<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
+			</FieldBody>
+		</Field>
+	</Validations>
 </Form>
 
 @code {
-	private string Email { get; set; } = string.Empty;
+	private Validations? _validations;
 
-	private string Password { get; set; } = string.Empty;
+	private LoginRequestDto LoginRequest { get; set; } = new();
 
 	private string? Error { get; set; }
 
@@ -58,26 +64,24 @@
 
 	private async Task Submit()
 	{
+		if (_validations is null || !await _validations.ValidateAll())
+			return;
+
 		Error = null;
 		Success = null;
 
-		if (string.IsNullOrWhiteSpace(Email))
+		// The validators above reject empty values, but they run in the browser and the DTO is nullable,
+		// so this stays as a real check.
+		if (LoginRequest.Email is not { } email || LoginRequest.Password is not { } password)
 		{
-			Error = "E-Mail is required";
-
-			return;
-		}
-
-		if (string.IsNullOrWhiteSpace(Password))
-		{
-			Error = "Password is required";
+			Error = "Please fill in all required fields";
 
 			return;
 		}
 
 		try
 		{
-			var response = await Auth.LoginAsync(Email, Password);
+			var response = await Auth.LoginAsync(email, password);
 			if (response.Token is null)
 				return;
 
