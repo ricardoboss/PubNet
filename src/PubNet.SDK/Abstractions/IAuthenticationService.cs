@@ -74,4 +74,12 @@ public interface IAuthenticationService
 	/// <exception cref="AuthenticationRequiredException">If the service is not authenticated or the authentication is no longer valid</exception>
 	/// <exception cref="PubNetSdkException">In case anything unexpected happens</exception>
 	Task<AuthorDto> GetSelfAsync(bool forceLoad = false, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Drops the cached author returned by <see cref="GetSelfAsync"/>, so the next call loads it again.
+	/// </summary>
+	/// <remarks>
+	/// Called automatically when an author is modified, since that author may be the authenticated one.
+	/// </remarks>
+	void InvalidateSelf();
 }
