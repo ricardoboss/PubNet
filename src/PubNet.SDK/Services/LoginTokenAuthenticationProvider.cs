@@ -32,7 +32,6 @@ internal sealed class LoginTokenAuthenticationProvider(ILoginTokenStorage loginT
 		(Method.POST, "/authentication/login"),
 		(Method.POST, "/authentication/register"),
 		(Method.GET, "/authentication/registrations-enabled"),
-		(Method.POST, "/authentication/self"),
 	];
 
 	private bool ShouldAuthenticate(RequestInformation request)
