@@ -1,0 +1,11 @@
+# Normalise every text file to LF inside the repository, independent of each
+# contributor's core.autocrlf setting.
+* text=auto
+
+# Emitted by the build (dotnet-getdocument and kiota both always write LF).
+# Pinning the working copy to LF as well keeps a build from ever showing these
+# as modified on Windows.
+src/PubNet.API/PubNet_openapi.json text eol=lf
+src/PubNet.SDK/Generated/**        text eol=lf linguist-generated=true
+
+*.png binary
