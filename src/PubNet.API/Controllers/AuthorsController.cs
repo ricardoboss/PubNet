@@ -70,6 +70,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessResponse))]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ErrorResponse))]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(ErrorResponse))]
 	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
 	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequest dto,
 		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
@@ -85,6 +86,17 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 
 			if (!await passwordManager.IsValid(db, author, dto.Password, cancellationToken))
 				return Unauthorized(ErrorResponse.InvalidPasswordConfirmation);
+
+			// an instance without an admin cannot be administered again: onboarding stays closed once it has
+			// been completed, so recovering would mean editing the database by hand
+			if (author.Role == Role.Admin && !await db.Authors
+				    .AnyAsync(a => a.Role == Role.Admin && a.Id != author.Id, cancellationToken))
+			{
+				logger.LogWarning("Refused to delete {Username} (author {AuthorId}), the only admin left",
+					author.UserName, author.Id);
+
+				return Conflict(ErrorResponse.LastAdmin);
+			}
 
 			foreach (var authorPackage in db.Packages.Where(p => p.Author == author))
 				authorPackage.Author = null;
