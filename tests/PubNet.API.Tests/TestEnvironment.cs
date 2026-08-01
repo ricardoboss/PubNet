@@ -22,13 +22,16 @@ internal sealed class TestEnvironment : IDisposable
 			.ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
 			.Options);
 
-		Registration = new AuthorRegistrationService(Db,
-			new(new PasswordHasher<Author>(), NullLogger<PasswordManager>.Instance));
+		Passwords = new(new PasswordHasher<Author>(), NullLogger<PasswordManager>.Instance);
+
+		Registration = new AuthorRegistrationService(Db, Passwords);
 
 		Onboarding = new OnboardingService(Db, Registration);
 	}
 
 	public PubNetContext Db { get; }
+
+	public PasswordManager Passwords { get; }
 
 	public IAuthorRegistrationService Registration { get; }
 
@@ -45,7 +48,8 @@ internal sealed class TestEnvironment : IDisposable
 		};
 	}
 
-	public async Task<Author> AddAuthorAsync(string username, Role role)
+	/// <param name="password">Only needed by tests which have to pass a password confirmation.</param>
+	public async Task<Author> AddAuthorAsync(string username, Role role, string? password = null)
 	{
 		var author = new Author
 		{
@@ -55,6 +59,9 @@ internal sealed class TestEnvironment : IDisposable
 			RegisteredAtUtc = DateTimeOffset.UtcNow,
 			Role = role,
 		};
+
+		if (password is not null)
+			author.PasswordHash = await Passwords.GenerateHashAsync(author, password);
 
 		Db.Authors.Add(author);
 		await Db.SaveChangesAsync();
