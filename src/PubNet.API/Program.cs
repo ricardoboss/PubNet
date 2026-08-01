@@ -171,6 +171,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 	// runtime-configurable settings
 	builder.Services.AddRegistrationOptions(builder.Configuration);
 	builder.Services.AddScoped<ISettingsService, SettingsService>();
+	builder.Services.AddScoped<IAuthorRoleService, AuthorRoleService>();
 
 	// used to store request-specific data in a single place
 	builder.Services.AddScoped<ApplicationRequestContext>();

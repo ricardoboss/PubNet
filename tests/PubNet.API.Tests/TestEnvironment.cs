@@ -32,6 +32,8 @@ internal sealed class TestEnvironment : IDisposable
 
 		PasswordResets = new PasswordResetService(Db, Passwords, NullLogger<PasswordResetService>.Instance);
 
+		Roles = new AuthorRoleService(Db, NullLogger<AuthorRoleService>.Instance);
+
 		Registry = registry ?? new SettingsRegistry().Add(RegistrationOptions.Descriptors);
 		Configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
 		Settings = new SettingsService(Db, Configuration, Registry, NullLogger<SettingsService>.Instance);
@@ -46,6 +48,8 @@ internal sealed class TestEnvironment : IDisposable
 	public IOnboardingService Onboarding { get; }
 
 	public IPasswordResetService PasswordResets { get; }
+
+	public IAuthorRoleService Roles { get; }
 
 	public SettingsRegistry Registry { get; }
 
