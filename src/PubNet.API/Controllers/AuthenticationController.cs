@@ -94,7 +94,10 @@ public class AuthenticationController(
 			logger.LogError(e, "Failed to send welcome notification");
 		}
 
-		return CreatedAtAction("Get", "Authors", new { username = author.UserName }, author);
+		// MIND: must not return the entity itself - Author derives from IdentityUser and would serialize
+		// PasswordHash, SecurityStamp and friends
+		return CreatedAtAction("Get", "Authors", new { username = author.UserName },
+			AuthorDto.FromAuthor(author, true));
 	}
 
 	[Authorize]
