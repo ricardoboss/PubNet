@@ -5,124 +5,150 @@
 
 @if (Error is not null)
 {
-    <Alert Color="Color.Danger" Visible>
-        <strong>Oh no!</strong> @Error
-    </Alert>
+	<Alert Color="Color.Danger" Visible>
+		<strong>Oh no!</strong> @Error
+	</Alert>
 }
 
 @if (Success is not null)
 {
-    <Alert Color="Color.Success" Visible>
-        <strong>Great!</strong> @Success
-    </Alert>
+	<Alert Color="Color.Success" Visible>
+		<strong>Great!</strong> @Success
+	</Alert>
+}
+
+@if (_incomplete is not null)
+{
+	<Alert Color="Color.Danger" Visible>
+		@_incomplete
+	</Alert>
 }
 
 <Form @onsubmit="SubmitAsync">
-    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="Model">
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@Model.Email" Autocomplete="email">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@Model.Password" Autocomplete="new-password">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@Model.Username" Autocomplete="username">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@Model.Name" Autocomplete="name">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation>
-            <Field Horizontal>
-                <FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@Model.Website" Autocomplete="url">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextInput>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Field Horizontal>
-            <FieldLabel ColumnSize="ColumnSize.Is2" />
-            <FieldBody ColumnSize="ColumnSize.Is10">
-                <Button Color="Color.Primary" Clicked="@SubmitAsync" Type="ButtonType.Submit" Disabled="@Submitting">
-                    @SubmitLabel
-                </Button>
-            </FieldBody>
-        </Field>
-    </Validations>
+	<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="Model">
+		<Validation Validator="@FormValidators.RequiredEmail">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@Model.Email"
+					           Autocomplete="email">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation Validator="@(e => FormValidators.Required(e, "Password"))">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@Model.Password"
+					           Autocomplete="new-password">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation Validator="@(e => FormValidators.Required(e, "Username"))">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@Model.Username"
+					           Autocomplete="username">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation Validator="@(e => FormValidators.Required(e, "Name"))">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@Model.Name"
+					           Autocomplete="name">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Validation Validator="@FormValidators.OptionalUrl">
+			<Field Horizontal>
+				<FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
+				<FieldBody ColumnSize="ColumnSize.Is10">
+					<TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@Model.Website"
+					           Autocomplete="url">
+						<Feedback>
+							<ValidationError/>
+						</Feedback>
+					</TextInput>
+				</FieldBody>
+			</Field>
+		</Validation>
+		<Field Horizontal>
+			<FieldLabel ColumnSize="ColumnSize.Is2"/>
+			<FieldBody ColumnSize="ColumnSize.Is10">
+				<Button Color="Color.Primary" Clicked="@SubmitAsync" Type="ButtonType.Submit" Disabled="@Submitting">
+					@SubmitLabel
+				</Button>
+			</FieldBody>
+		</Field>
+	</Validations>
 </Form>
 
 @code {
 
-    private Validations? _validations;
+	private Validations? _validations;
 
-    /// <summary>
-    /// The request the fields are bound to. Mutated in place.
-    /// </summary>
-    [Parameter]
-    public RegisterRequestDto Model { get; set; } = new();
+	private string? _incomplete;
 
-    /// <summary>
-    /// Raised once the fields are valid.
-    /// </summary>
-    [Parameter]
-    public EventCallback OnValidSubmit { get; set; }
+	/// <summary>
+	/// The request the fields are bound to. Mutated in place.
+	/// </summary>
+	[Parameter]
+	public RegisterRequestDto Model { get; set; } = new();
 
-    [Parameter]
-    public string SubmitLabel { get; set; } = "Register";
+	/// <summary>
+	/// Raised once the fields are valid.
+	/// </summary>
+	[Parameter]
+	public EventCallback OnValidSubmit { get; set; }
 
-    [Parameter]
-    public bool Submitting { get; set; }
+	[Parameter]
+	public string SubmitLabel { get; set; } = "Register";
 
-    [Parameter]
-    public string? Error { get; set; }
+	[Parameter]
+	public bool Submitting { get; set; }
 
-    [Parameter]
-    public string? Success { get; set; }
+	[Parameter]
+	public string? Error { get; set; }
 
-    private async Task SubmitAsync()
-    {
-        if (Submitting || _validations is null || !await _validations.ValidateAll()) return;
+	[Parameter]
+	public string? Success { get; set; }
 
-        await OnValidSubmit.InvokeAsync();
-    }
+	private async Task SubmitAsync()
+	{
+		if (Submitting || _validations is null || !await _validations.ValidateAll())
+			return;
+
+		_incomplete = null;
+
+		// The validators above reject empty values, but they run in the browser and the DTO is nullable, so
+		// this stays as a real check rather than a Debug.Assert that disappears in release builds.
+		if (Model.Email is null || Model.Name is null || Model.Password is null || Model.Username is null)
+		{
+			_incomplete = "Please fill in all required fields";
+
+			return;
+		}
+
+		await OnValidSubmit.InvokeAsync();
+	}
 
 }

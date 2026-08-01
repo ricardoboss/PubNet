@@ -1,4 +1,3 @@
-@using System.Diagnostics
 @inject IAuthorService AuthorService
 
 @if (Error is not null)
@@ -19,7 +18,7 @@
 {
 	<Form @onsubmit="Submit">
 		<Validations @ref="_validations" Mode="ValidationMode.Manual" Model="FormModel">
-			<Validation>
+			<Validation Validator="@(e => FormValidators.Required(e, "Name"))">
 				<Field Horizontal>
 					<FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
 					<FieldBody ColumnSize="ColumnSize.Is10">
@@ -31,7 +30,7 @@
 					</FieldBody>
 				</Field>
 			</Validation>
-			<Validation>
+			<Validation Validator="@FormValidators.OptionalUrl">
 				<Field Horizontal>
 					<FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
 					<FieldBody ColumnSize="ColumnSize.Is10">
@@ -98,12 +97,16 @@
 			Error = null;
 			Success = null;
 
-			Debug.Assert(Author is not null);
-			Debug.Assert(FormModel is not null);
+			if (Author?.UserName is not { } username || FormModel is null)
+			{
+				Error = "Nothing to save";
+
+				return;
+			}
 
 			try
 			{
-				await AuthorService.UpdateAuthorAsync(Author.UserName, FormModel);
+				await AuthorService.UpdateAuthorAsync(username, FormModel);
 
 				Success = "Your profile was saved!";
 
