@@ -18,48 +18,25 @@ internal sealed class ConcurrentRequestBlockingRequestAdapter(IRequestAdapter in
 		set => innerAdapter.BaseUrl = value;
 	}
 
-	private readonly ManualResetEventSlim blockFlag = new();
+	// MIND: this has to be a real mutex. A "check the flag, then set it" pair is not atomic, so two callers
+	// can both observe it as free and both proceed.
+	private readonly SemaphoreSlim requestLock = new(1, 1);
 
-	private async Task<IDisposable?> BlockUntilFree(RequestInformation requestInfo, CancellationToken cancellationToken)
+	private async Task<IDisposable> BlockUntilFree(RequestInformation requestInfo, CancellationToken cancellationToken)
 	{
-		if (blockFlag.IsSet)
-		{
+		if (requestLock.CurrentCount == 0)
 			logger.LogTrace("Request {RequestPath} blocked, waiting until free...", requestInfo.UrlTemplate);
 
-			await WaitUntilFree(cancellationToken);
-		}
-
-		if (cancellationToken.IsCancellationRequested)
-			return null;
-
-		blockFlag.Set();
+		await requestLock.WaitAsync(cancellationToken);
 
 		logger.LogTrace("Request {RequestPath} acquired the lock", requestInfo.UrlTemplate);
 
 		return new RequestBlocker(() =>
 		{
-			blockFlag.Reset();
+			requestLock.Release();
 
 			logger.LogTrace("Request {RequestPath} freed the lock", requestInfo.UrlTemplate);
 		});
-	}
-
-	private async Task WaitUntilFree(CancellationToken cancellationToken)
-	{
-		try
-		{
-			do
-			{
-				await Task.Delay(100, cancellationToken);
-			} while (blockFlag.IsSet);
-		}
-		catch (Exception)
-		{
-			if (cancellationToken.IsCancellationRequested)
-				return;
-
-			throw;
-		}
 	}
 
 	public async Task<ModelType?> SendAsync<ModelType>(RequestInformation requestInfo,
@@ -114,11 +91,22 @@ internal sealed class ConcurrentRequestBlockingRequestAdapter(IRequestAdapter in
 
 	public void Dispose()
 	{
-		blockFlag.Dispose();
+		requestLock.Dispose();
 	}
 }
 
-file class RequestBlocker(Action unblock) : IDisposable
+file sealed class RequestBlocker(Action unblock) : IDisposable
 {
-	public void Dispose() => unblock();
+	private bool released;
+
+	// MIND: releasing twice would raise the semaphore's count above its maximum
+	public void Dispose()
+	{
+		if (released)
+			return;
+
+		released = true;
+
+		unblock();
+	}
 }
