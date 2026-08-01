@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
@@ -45,6 +46,8 @@ public class StorageController(
 
 	private const int maxUploadSize = 100 * 1024 * 1024; // 100 MB
 
+	// Authenticated by the signature in the query string, not by a bearer token
+	[AllowAnonymous]
 	[HttpPost("upload")]
 	// Allow request bodies to be bigger so the response is actually handled by this action, not ASP.NET
 	[RequestSizeLimit(maxUploadSize * 2)]
@@ -123,6 +126,8 @@ public class StorageController(
 		return NoContent();
 	}
 
+	// Authenticated by the signature in the query string, not by a bearer token
+	[AllowAnonymous]
 	[HttpGet("finalize")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SuccessMessageDto))]
 	[ProducesResponseType(PubNetStatusCodes.Status403Forbidden, Type = typeof(ForbiddenErrorDto))]

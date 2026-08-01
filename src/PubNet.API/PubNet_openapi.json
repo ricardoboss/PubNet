@@ -166,7 +166,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     },
     "/authentication/register": {
@@ -313,7 +314,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     },
     "/authentication/self": {
@@ -442,7 +444,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -540,7 +544,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     },
     "/authors": {
@@ -702,7 +707,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -852,7 +859,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       },
       "patch": {
@@ -1038,7 +1047,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -1236,7 +1247,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -1386,7 +1399,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -1549,7 +1564,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -1707,7 +1724,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       },
       "delete": {
@@ -1858,7 +1877,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -2056,7 +2077,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -2214,7 +2237,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       },
       "delete": {
@@ -2370,7 +2395,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -2536,7 +2563,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -2697,7 +2726,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -2858,7 +2889,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -2967,7 +3000,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     },
     "/packages/{name}/versions/{version}/docs/{path}": {
@@ -3110,7 +3144,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     },
     "/packages/versions/new": {
@@ -3239,7 +3274,9 @@
           }
         },
         "security": [
-          { }
+          {
+            "Bearer": [ ]
+          }
         ]
       }
     },
@@ -3379,7 +3416,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     },
     "/storage/finalize": {
@@ -3545,7 +3583,8 @@
               }
             }
           }
-        }
+        },
+        "security": [ ]
       }
     }
   },
