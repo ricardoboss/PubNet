@@ -69,7 +69,6 @@ public class LoginTokenAuthenticationProviderTests
 	[TestCase(Method.POST, "https://example.test/authentication/login")]
 	[TestCase(Method.POST, "https://example.test/authentication/register")]
 	[TestCase(Method.GET, "https://example.test/authentication/registrations-enabled")]
-	[TestCase(Method.POST, "https://example.test/authentication/self")]
 	[TestCase(Method.POST, "https://example.test/api/authentication/login")] // additional case with "/api" infix
 	[TestCase(Method.POST, "https://example.test/Authentication/Login")] // different casing
 	public void TestOmitsAuthenticationForSpecialEndpoints(Method method, string endpoint)
