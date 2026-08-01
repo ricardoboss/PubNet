@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject OnboardingService Onboarding
+@inject NavigationManager Nav
 
 <Layout Style="height: auto">
 	<LayoutHeader>
@@ -11,3 +13,22 @@
 		<FooterBar />
 	</LayoutFooter>
 </Layout>
+
+@code {
+
+	private const string OnboardingPath = "/onboarding";
+
+	/// <inheritdoc />
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		// an instance without an admin cannot be used for anything else, so send everyone to the setup
+		if (Nav.ToBaseRelativePath(Nav.Uri).TrimStart('/').StartsWith("onboarding", StringComparison.Ordinal))
+			return;
+
+		if (await Onboarding.IsPendingAsync())
+			Nav.NavigateTo(OnboardingPath);
+	}
+
+}

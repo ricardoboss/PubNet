@@ -1,5 +1,8 @@
-﻿@page "/authenticate"
+@page "/authenticate"
+@using PubNet.API.DTO
 @inject ApiClient Http;
+@inject OnboardingService Onboarding
+@inject NavigationManager Nav
 
 @if (MessageBoxContent is not null)
 {
@@ -18,7 +21,8 @@
 {
     <Heading Size="HeadingSize.Is1">Register</Heading>
 
-    <RegisterForm/>
+    <RegisterForm Model="_registration" OnValidSubmit="RegisterAsync" Submitting="_registering"
+                  Error="@_registerError" Success="@_registerSuccess"/>
 }
 else
 {
@@ -30,6 +34,14 @@ else
 @code {
 
     private bool _showRegistration;
+
+    private bool _registering;
+
+    private RegisterRequest _registration = new();
+
+    private string? _registerError;
+
+    private string? _registerSuccess;
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "message")]
@@ -44,7 +56,44 @@ else
     {
         await base.OnInitializedAsync();
 
+        // there is nothing to log into yet, and the layout only checks this when it is first created, so a
+        // client-side navigation from anywhere else would land here
+        if (await Onboarding.IsPendingAsync())
+        {
+            Nav.NavigateTo("/onboarding");
+
+            return;
+        }
+
         _showRegistration = await Http.GetAsync<bool>("authentication/registrations-enabled");
+    }
+
+    private async Task RegisterAsync()
+    {
+        _registerError = null;
+        _registerSuccess = null;
+        _registering = true;
+
+        try
+        {
+            var response = await Http.PostAsync("authentication/register", _registration);
+            if (!response.IsSuccessStatusCode)
+            {
+                var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+                _registerError = message?.Error?.Message ?? "The account could not be created.";
+
+                return;
+            }
+
+            _registration = new();
+
+            _registerSuccess = "Registration complete. You can now log in.";
+        }
+        finally
+        {
+            _registering = false;
+        }
     }
 
 }

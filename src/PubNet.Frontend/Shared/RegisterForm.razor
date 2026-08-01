@@ -1,6 +1,7 @@
 @using PubNet.API.DTO
-@using PubNet.Database.Models
-@inject HttpClient HttpClient
+
+@* Collects the fields needed to create an account. What submitting means is up to the page: registration
+   posts to authentication/register, the first-time setup to onboarding/complete. *@
 
 @if (Error is not null)
 {
@@ -16,13 +17,13 @@
     </Alert>
 }
 
-<Form @onsubmit="Submit">
-    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="RegisterRequest">
+<Form @onsubmit="SubmitAsync">
+    <Validations @ref="_validations" Mode="ValidationMode.Manual" Model="Model">
         <Validation>
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">E-Mail</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@RegisterRequest.Email" Autocomplete="email">
+                    <TextInput Placeholder="Your e-mail address" Role="@TextRole.Email" @bind-Value="@Model.Email" Autocomplete="email">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -34,7 +35,7 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Password</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@RegisterRequest.Password" Autocomplete="current-password">
+                    <TextInput Placeholder="Your password" Role="@TextRole.Password" @bind-Value="@Model.Password" Autocomplete="new-password">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -46,7 +47,7 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Username</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Username" Autocomplete="username">
+                    <TextInput Placeholder="Your username" Role="@TextRole.Text" @bind-Value="@Model.Username" Autocomplete="username">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -58,7 +59,7 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Name</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@RegisterRequest.Name" Autocomplete="name">
+                    <TextInput Placeholder="Your name" Role="@TextRole.Text" @bind-Value="@Model.Name" Autocomplete="name">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -70,7 +71,7 @@
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2">Website</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10">
-                    <TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@RegisterRequest.Website" Autocomplete="url">
+                    <TextInput Placeholder="Your website" Role="@TextRole.Url" @bind-Value="@Model.Website" Autocomplete="url">
                         <Feedback>
                             <ValidationError />
                         </Feedback>
@@ -81,44 +82,47 @@
         <Field Horizontal>
             <FieldLabel ColumnSize="ColumnSize.Is2" />
             <FieldBody ColumnSize="ColumnSize.Is10">
-                <Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Register</Button>
+                <Button Color="Color.Primary" Clicked="@SubmitAsync" Type="ButtonType.Submit" Disabled="@Submitting">
+                    @SubmitLabel
+                </Button>
             </FieldBody>
         </Field>
     </Validations>
 </Form>
 
 @code {
+
     private Validations? _validations;
 
-    private RegisterRequest RegisterRequest { get; set; } = new();
+    /// <summary>
+    /// The request the fields are bound to. Mutated in place.
+    /// </summary>
+    [Parameter]
+    public RegisterRequest Model { get; set; } = new();
 
-    private string? Error { get; set; }
+    /// <summary>
+    /// Raised once the fields are valid.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
 
-    private string? Success { get; set; }
+    [Parameter]
+    public string SubmitLabel { get; set; } = "Register";
 
-    private async Task Submit()
+    [Parameter]
+    public bool Submitting { get; set; }
+
+    [Parameter]
+    public string? Error { get; set; }
+
+    [Parameter]
+    public string? Success { get; set; }
+
+    private async Task SubmitAsync()
     {
-        if (_validations is null || !await _validations.ValidateAll()) return;
+        if (Submitting || _validations is null || !await _validations.ValidateAll()) return;
 
-        Error = null;
-        Success = null;
-
-        var response = await HttpClient.PostAsJsonAsync("authentication/register", RegisterRequest);
-
-        if (response.IsSuccessStatusCode)
-        {
-            await response.Content.ReadFromJsonAsync<Author>();
-
-            RegisterRequest = new();
-
-            Success = "Registration complete. You can now log in.";
-        }
-        else
-        {
-            var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-
-            Error = message?.Error?.Message;
-        }
+        await OnValidSubmit.InvokeAsync();
     }
 
 }
