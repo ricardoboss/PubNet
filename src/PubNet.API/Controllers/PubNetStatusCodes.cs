@@ -31,6 +31,14 @@ public static class PubNetStatusCodes
 
 	public static string? ToErrorCode(int code) => code switch
 	{
+		Status400BadRequest => "bad-request",
+		Status401Unauthenticated => "unauthenticated",
+		Status403Forbidden => "forbidden",
+		Status404NotFound => "not-found",
+		Status411LengthRequired => "length-required",
+		Status413PayloadTooLarge => "payload-too-large",
+		Status500InternalServerError => "internal-server-error",
+
 		Status460EmailNotFound => "email-not-found",
 		Status461InvalidPassword => "invalid-password",
 		Status462RegistrationsDisabled => "registrations-disabled",
