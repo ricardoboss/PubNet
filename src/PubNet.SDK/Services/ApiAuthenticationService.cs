@@ -77,8 +77,13 @@ internal sealed class ApiAuthenticationService(
 		}
 		finally
 		{
-			_self = null;
+			InvalidateSelf();
 		}
+	}
+
+	public void InvalidateSelf()
+	{
+		_self = null;
 	}
 
 	public async Task<AuthorDto> RegisterAsync(string email, string name, string password, string username,

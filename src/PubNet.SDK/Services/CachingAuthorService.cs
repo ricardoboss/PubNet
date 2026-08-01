@@ -44,23 +44,23 @@ internal sealed class CachingAuthorService(IAuthorService inner, ILogger<Caching
 	{
 		await inner.UpdateAuthorAsync(username, request, cancellationToken);
 
-		if (!cache.ContainsKey(username))
-			return;
-
-		logger.LogTrace("Invalidating cache for author {{ username={AuthorUsername} }}", username);
-
-		cache.Remove(username);
+		PurgeCache(username);
 	}
 
 	public async Task DeleteAuthorAsync(string username, DeleteAuthorRequestDto request, CancellationToken cancellationToken = default)
 	{
 		await inner.DeleteAuthorAsync(username, request, cancellationToken);
 
-		if (!cache.ContainsKey(username))
-			return;
+		PurgeCache(username);
+	}
 
+	private void PurgeCache(string username)
+	{
 		logger.LogTrace("Invalidating cache for author {{ username={AuthorUsername} }}", username);
 
 		cache.Remove(username);
+
+		// the list embeds the same author data, so it goes stale along with the single entry
+		authors = null;
 	}
 }

@@ -4,7 +4,8 @@ using PubNet.SDK.Generated.Models;
 
 namespace PubNet.SDK.Services;
 
-internal sealed class ApiAuthorService(PubNetApiClient apiClient) : IAuthorService
+internal sealed class ApiAuthorService(PubNetApiClient apiClient, IAuthenticationService authenticationService)
+	: IAuthorService
 {
 	public async Task<AuthorsResponseDto?> GetAuthorsAsync(CancellationToken cancellationToken = default)
 	{
@@ -19,10 +20,15 @@ internal sealed class ApiAuthorService(PubNetApiClient apiClient) : IAuthorServi
 	public async Task UpdateAuthorAsync(string username, EditAuthorRequestDto request, CancellationToken cancellationToken = default)
 	{
 		await apiClient.Authors[username].PatchAsync(request, cancellationToken: cancellationToken);
+
+		// the modified author may be the authenticated one, whose model is cached separately
+		authenticationService.InvalidateSelf();
 	}
 
 	public async Task DeleteAuthorAsync(string username, DeleteAuthorRequestDto request, CancellationToken cancellationToken = default)
 	{
 		await apiClient.Authors[username].DeletePath.PostAsync(request, cancellationToken: cancellationToken);
+
+		authenticationService.InvalidateSelf();
 	}
 }

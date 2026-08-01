@@ -40,6 +40,11 @@ internal sealed class CachingPackagesService(IPackagesService inner, ILogger<Cac
 		return package;
 	}
 
+	/// <summary>
+	/// Drops everything that may have been affected by a change to <paramref name="name"/>.
+	/// </summary>
+	/// <param name="name">The name of the package that changed</param>
+	/// <param name="version">The single version that changed, or <see langword="null"/> if the whole package did</param>
 	private void PurgeCache(string name, string? version)
 	{
 		logger.LogTrace("Purging cache for {{ name={PackageName}, version={PackageVersion} }}", name, version);
@@ -48,9 +53,17 @@ internal sealed class CachingPackagesService(IPackagesService inner, ILogger<Cac
 		packagesCache.Remove((name, false));
 
 		if (version is null)
-			return;
+		{
+			// the package as a whole changed, so none of its versions can be trusted either
+			packageVersionsCache.Remove(name);
+		}
+		else if (packageVersionsCache.TryGetValue(name, out var versions))
+		{
+			versions.Remove(version);
+		}
 
-		packageVersionsCache.Remove(name);
+		// author package lists embed package metadata, and the owning author is not known here
+		authorPackagesCache.Clear();
 	}
 
 	public async Task DeletePackageAsync(string name, CancellationToken cancellationToken = default)
