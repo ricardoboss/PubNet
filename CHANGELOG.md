@@ -1,5 +1,7 @@
 ﻿# Unreleased
 
+* Added a first-time setup for the administrator account: new instances ask for one before they can be used, existing installations have their oldest account promoted, and the last administrator can no longer delete their own account ([#98](https://github.com/ricardoboss/PubNet/pull/98))
+
 # v1.2.0
 
 * Added configurable hosted upstream option (`HostedUpstream:BaseUrl`) to allow fallback to alternative package repositories
