@@ -7,7 +7,7 @@
 		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0"/>
 		<PackageVersion Include="Blazorise.Bulma" Version="2.2.1"/>
 		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="2.2.1"/>
-		<PackageVersion Include="CliWrap" Version="3.10.2"/>
+		<PackageVersion Include="CliWrap" Version="3.10.4"/>
 		<PackageVersion Include="coverlet.collector" Version="10.0.1"/>
 		<PackageVersion Include="Humanizer" Version="3.0.10"/>
 		<PackageVersion Include="JetBrains.Annotations" Version="2026.2.0"/>
