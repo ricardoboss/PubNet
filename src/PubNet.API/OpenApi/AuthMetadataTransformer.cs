@@ -24,16 +24,20 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer
 		{
 			case AuthorizeAttribute authorizeAttribute:
 				await AddUnauthenticatedResponseAsync(operation, context, cancellationToken);
-				AddSecurityScheme(operation, authorizeAttribute);
+				AddSecurityScheme(operation, context, authorizeAttribute);
 				break;
 			case AllowAnonymousAttribute:
 				operation.Responses?.Remove("401");
-				operation.Security?.Clear();
+
+				// MIND: an *empty* requirement list is what opts an operation out of the document-level
+				// requirement. Leaving Security null/absent makes it inherit instead.
+				operation.Security = [];
 				break;
 		}
 	}
 
-	private static void AddSecurityScheme(OpenApiOperation operation, AuthorizeAttribute authorizeAttribute)
+	private static void AddSecurityScheme(OpenApiOperation operation, OpenApiOperationTransformerContext context,
+		AuthorizeAttribute authorizeAttribute)
 	{
 		var requiredScheme = authorizeAttribute.AuthenticationSchemes ?? JwtBearerDefaults.AuthenticationScheme;
 
@@ -42,7 +46,9 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer
 			new()
 			{
 				{
-					new(requiredScheme),
+					// MIND: the host document has to be passed, otherwise the reference cannot be resolved
+					// and the whole requirement serializes as an empty object (= no security required).
+					new(requiredScheme, context.Document),
 					[]
 				},
 			}
