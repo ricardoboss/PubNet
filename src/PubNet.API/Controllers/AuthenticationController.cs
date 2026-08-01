@@ -16,6 +16,8 @@ public class AuthenticationController(
 	PubNetContext db,
 	PasswordManager passwordManager,
 	IConfiguration configuration,
+	IAuthorRegistrationService registrationService,
+	IOnboardingService onboardingService,
 	INotificationService notificationService,
 	ILogger<AuthenticationController> logger
 ) : BaseController
@@ -48,38 +50,22 @@ public class AuthenticationController(
 	public async Task<IActionResult> Register([FromBody] RegisterRequest dto,
 		CancellationToken cancellationToken = default)
 	{
-		if (!RegistrationsEnabled())
+		if (!await RegistrationsEnabledAsync(cancellationToken))
 			return BadRequest(ErrorResponse.RegistrationsDisabled);
 
-		if (dto.Username is null || dto.Name is null || dto.Password is null || dto.Email is null)
-			return UnprocessableEntity(ErrorResponse.MissingValues);
-
-		if (db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
-			return UnprocessableEntity(ErrorResponse.UsernameAlreadyInUse);
-
-		if (db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
-			return UnprocessableEntity(ErrorResponse.EmailAlreadyInUse);
-
-		var author = new Author
+		Author author;
+		try
 		{
-			UserName = dto.Username,
-			Email = dto.Email,
-			Name = dto.Name,
-			Website = dto.Website,
-			Inactive = false,
-			RegisteredAtUtc = DateTimeOffset.UtcNow,
-			Packages = new List<Package>(),
-		};
-
-		author.PasswordHash = await passwordManager.GenerateHashAsync(author, dto.Password, cancellationToken);
-
-		db.Authors.Add(author);
-		await db.SaveChangesAsync(cancellationToken);
+			author = await registrationService.RegisterAsync(dto, Role.Default, cancellationToken);
+		}
+		catch (AuthorRegistrationException e)
+		{
+			return UnprocessableEntity(e.Response);
+		}
 
 		try
 		{
-			var referer = Request.Headers.Referer.FirstOrDefault() ?? Request.Host.ToString();
-			await notificationService.SendWelcomeNotificationAsync(author, new(referer), cancellationToken);
+			await notificationService.SendWelcomeNotificationAsync(author, RefererUri, cancellationToken);
 		}
 		catch (Exception e)
 		{
@@ -97,13 +83,17 @@ public class AuthenticationController(
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
-		return Ok(AuthorDto.FromAuthor(author, true));
+		return Ok(AuthorDto.FromAuthor(author, true, true));
 	}
 
 	[HttpGet("registrations-enabled")]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
-	public bool RegistrationsEnabled()
+	public async Task<bool> RegistrationsEnabledAsync(CancellationToken cancellationToken = default)
 	{
+		// until the instance has been set up, the only way to create an account is onboarding
+		if (await onboardingService.IsPendingAsync(cancellationToken))
+			return false;
+
 		return configuration.GetValue<bool?>("OpenRegistration") ?? false;
 	}
 }

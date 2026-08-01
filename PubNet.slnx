@@ -32,5 +32,6 @@
   <Project Path="src/PubNet.DTO/PubNet.DTO.csproj" />
   <Project Path="src/PubNet.Frontend/PubNet.Frontend.csproj" />
   <Project Path="src/PubNet.Worker/PubNet.Worker.csproj" />
+  <Project Path="tests/PubNet.API.Tests/PubNet.API.Tests.csproj" />
   <Project Path="tests/PubNet.Common.Tests/PubNet.Common.Tests.csproj" />
 </Solution>

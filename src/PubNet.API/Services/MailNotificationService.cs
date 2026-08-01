@@ -8,13 +8,32 @@ namespace PubNet.API.Services;
 
 public class MailNotificationService(IMailRenderer mailRenderer, IMailClient mailClient) : INotificationService
 {
-	public async Task SendWelcomeNotificationAsync(Author author, Uri referer, CancellationToken cancellationToken = default)
+	/// <inheritdoc />
+	public Task SendWelcomeNotificationAsync(Author author, Uri referer,
+		CancellationToken cancellationToken = default)
 	{
-		var mailContent = await mailRenderer.RenderAsync("Mails/WelcomeMail", new WelcomeMailModel
+		return SendAsync("Mails/WelcomeMail", new WelcomeMailModel
 		{
 			UserName = author.UserName,
 			FrontendUrl = referer,
-		}, cancellationToken);
+		}, author, cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public Task SendSetupCompletedNotificationAsync(Author author, Uri referer,
+		CancellationToken cancellationToken = default)
+	{
+		return SendAsync("Mails/SetupCompletedMail", new SetupCompletedMailModel
+		{
+			UserName = author.UserName,
+			FrontendUrl = referer,
+		}, author, cancellationToken);
+	}
+
+	private async Task SendAsync<TModel>(string template, TModel model, Author recipient,
+		CancellationToken cancellationToken)
+	{
+		var mailContent = await mailRenderer.RenderAsync(template, model, cancellationToken);
 
 		var mailMessage = new MailMessage
 		{
@@ -22,7 +41,7 @@ public class MailNotificationService(IMailRenderer mailRenderer, IMailClient mai
 			Headers = new()
 			{
 				From = "notifier@pubnet.local",
-				Recipients = [author.Email],
+				Recipients = [recipient.Email],
 			},
 		};
 

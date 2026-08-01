@@ -1,0 +1,17 @@
+@inherits TRENZ.Lib.RazorMail.Core.MailTemplateBase<PubNet.API.Mails.SetupCompletedMailModel>
+
+@{
+    Subject = "Your PubNet instance is ready";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<h1>Your PubNet instance is ready</h1>
+
+<p>
+    The setup of <a href="@Model.FrontendUrl">@Model.FrontendUrl</a> is complete.
+    <strong>@Model.UserName</strong> is now its administrator.
+</p>
+</body>
+</html>
