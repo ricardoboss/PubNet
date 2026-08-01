@@ -1,0 +1,93 @@
+@page "/onboarding"
+@using PubNet.API.DTO
+@inject ApiClient ApiClient
+@inject OnboardingService OnboardingService
+@inject AuthenticationService Auth
+@inject NavigationManager Nav
+
+<PageTitle>Set up PubNet</PageTitle>
+
+@if (_status is null)
+{
+	<p>
+		<em>Please wait...</em>
+	</p>
+}
+else if (!_status.Pending)
+{
+	<Heading Size="HeadingSize.Is1">Already set up</Heading>
+
+	<p>This instance has already been set up. <NavLink href="/authenticate">Log in</NavLink> to continue.</p>
+}
+else
+{
+	<Heading Size="HeadingSize.Is1">Welcome to PubNet!</Heading>
+
+	<Alert Color="Color.Info" Visible>
+		<strong>Nobody administers this instance yet.</strong>
+		Create the admin account below to finish the setup.
+	</Alert>
+
+	<RegisterForm Model="Request" OnValidSubmit="SubmitAsync" SubmitLabel="Finish setup"
+	              Submitting="_submitting" Error="@Error"/>
+}
+
+@code {
+
+	private OnboardingStatusDto? _status;
+
+	private bool _submitting;
+
+	private RegisterRequest Request { get; } = new();
+
+	private string? Error { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		_status = await OnboardingService.GetStatusAsync();
+	}
+
+	private async Task SubmitAsync()
+	{
+		Error = null;
+		_submitting = true;
+
+		try
+		{
+			var response = await ApiClient.PostAsync("onboarding/complete", Request);
+			if (!response.IsSuccessStatusCode)
+			{
+				var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+
+				Error = message?.Error?.Message ?? "The setup could not be completed.";
+
+				return;
+			}
+
+			// log the new admin in right away so they land in a usable instance
+			var login = await ApiClient.PostAsync("authentication/login",
+				new LoginRequest { Email = Request.Email, Password = Request.Password });
+
+			OnboardingService.Invalidate();
+
+			if (login.IsSuccessStatusCode &&
+			    await login.Content.ReadFromJsonAsync<JwtTokenResponse>() is { } token)
+			{
+				await Auth.StoreTokenAsync(token.Token);
+
+				Nav.NavigateTo("/?message=welcome-back", true);
+
+				return;
+			}
+
+			Nav.NavigateTo("/authenticate", true);
+		}
+		finally
+		{
+			_submitting = false;
+		}
+	}
+
+}

@@ -53,6 +53,7 @@ builder.Services
 builder.Services
 	.AddBlazoredLocalStorage()
 	.AddScoped<AuthenticationService>()
+	.AddScoped<OnboardingService>()
 	.AddScoped<ClipboardService>()
 	.AddScoped<AlertService>()
 	.AddScoped<PackagesService>()
