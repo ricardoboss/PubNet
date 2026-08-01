@@ -21,5 +21,7 @@ public class Author : IdentityUser<int>
 
 	public DateTimeOffset RegisteredAtUtc { get; set; }
 
+	public Role Role { get; set; } = Role.Default;
+
 	public ICollection<Package> Packages { get; set; } = new List<Package>();
 }

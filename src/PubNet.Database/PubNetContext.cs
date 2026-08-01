@@ -58,6 +58,8 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 
 	public DbSet<PackageVersionAnalysis> PackageVersionAnalyses { get; set; } = null!;
 
+	public DbSet<Setting> Settings { get; set; } = null!;
+
 	/// <inheritdoc />
 	public PubNetContext CreateDbContext(string[] args)
 	{
