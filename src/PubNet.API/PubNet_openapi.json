@@ -1109,6 +1109,16 @@
               }
             }
           },
+          "480": {
+            "description": "last-admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LastAdminErrorDto"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1403,6 +1413,250 @@
             "Bearer": [ ]
           }
         ]
+      }
+    },
+    "/onboarding/status": {
+      "get": {
+        "tags": [
+          "Onboarding"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingStatusDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "stackTrace": {
+                      "type": [
+                        "null",
+                        "array"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "stackTrace": {
+                      "type": [
+                        "null",
+                        "array"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/complete": {
+      "post": {
+        "tags": [
+          "Onboarding"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MissingRegistrationDataErrorDto"
+                }
+              }
+            }
+          },
+          "463": {
+            "description": "username-in-use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsernameAlreadyInUseErrorDto"
+                }
+              }
+            }
+          },
+          "464": {
+            "description": "email-in-use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailAlreadyInUseErrorDto"
+                }
+              }
+            }
+          },
+          "465": {
+            "description": "onboarding-not-pending",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingNotPendingErrorDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "stackTrace": {
+                      "type": [
+                        "null",
+                        "array"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Default Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "required": [
+                    "error"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "stackTrace": {
+                      "type": [
+                        "null",
+                        "array"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "error": {
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/packages": {
@@ -3612,6 +3866,16 @@
             "type": "string",
             "format": "date-time"
           },
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "packages": {
             "type": [
               "null",
@@ -3816,6 +4080,23 @@
           }
         }
       },
+      "LastAdminErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
       "LengthRequiredErrorDto": {
         "required": [
           "error"
@@ -3869,6 +4150,31 @@
         "properties": {
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "OnboardingNotPendingErrorDto": {
+        "required": [
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "defaultMessage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "error": {
+            "$ref": "#/components/schemas/CodeMessageDto"
+          }
+        }
+      },
+      "OnboardingStatusDto": {
+        "type": "object",
+        "properties": {
+          "pending": {
+            "type": "boolean"
           }
         }
       },
@@ -4234,6 +4540,9 @@
           }
         }
       },
+      "Role": {
+        "type": "integer"
+      },
       "SearchPackagesResponseDto": {
         "required": [
           "packages"
@@ -4407,6 +4716,9 @@
     },
     {
       "name": "Authors"
+    },
+    {
+      "name": "Onboarding"
     },
     {
       "name": "Packages"

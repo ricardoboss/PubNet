@@ -1,19 +1,19 @@
 @page "/onboarding"
-@using PubNet.API.DTO
-@inject ApiClient ApiClient
-@inject OnboardingService OnboardingService
-@inject AuthenticationService Auth
+@inject IOnboardingService OnboardingApi
+@inject OnboardingService OnboardingStatus
+@inject IAuthenticationService Auth
+@inject ILoginTokenStorage TokenStore
 @inject NavigationManager Nav
 
 <PageTitle>Set up PubNet</PageTitle>
 
-@if (_status is null)
+@if (_pending is null)
 {
 	<p>
 		<em>Please wait...</em>
 	</p>
 }
-else if (!_status.Pending)
+else if (!_pending.Value)
 {
 	<Heading Size="HeadingSize.Is1">Already set up</Heading>
 
@@ -34,11 +34,11 @@ else
 
 @code {
 
-	private OnboardingStatusDto? _status;
+	private bool? _pending;
 
 	private bool _submitting;
 
-	private RegisterRequest Request { get; } = new();
+	private RegisterRequestDto Request { get; } = new();
 
 	private string? Error { get; set; }
 
@@ -46,7 +46,7 @@ else
 	{
 		await base.OnInitializedAsync();
 
-		_status = await OnboardingService.GetStatusAsync();
+		_pending = await OnboardingStatus.IsPendingAsync();
 	}
 
 	private async Task SubmitAsync()
@@ -56,33 +56,33 @@ else
 
 		try
 		{
-			var response = await ApiClient.PostAsync("onboarding/complete", Request);
-			if (!response.IsSuccessStatusCode)
-			{
-				var message = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+			_ = await OnboardingApi.CompleteAsync(Request);
 
-				Error = message?.Error?.Message ?? "The setup could not be completed.";
-
-				return;
-			}
+			OnboardingStatus.Invalidate();
 
 			// log the new admin in right away so they land in a usable instance
-			var login = await ApiClient.PostAsync("authentication/login",
-				new LoginRequest { Email = Request.Email, Password = Request.Password });
-
-			OnboardingService.Invalidate();
-
-			if (login.IsSuccessStatusCode &&
-			    await login.Content.ReadFromJsonAsync<JwtTokenResponse>() is { } token)
+			try
 			{
-				await Auth.StoreTokenAsync(token.Token);
+				var token = await Auth.LoginAsync(Request.Email!, Request.Password!);
+				if (token.Token is not null)
+				{
+					await TokenStore.StoreTokenAsync(token.Token);
 
-				Nav.NavigateTo("/?message=welcome-back", true);
+					Nav.NavigateTo("/?message=welcome-back", true);
 
-				return;
+					return;
+				}
+			}
+			catch (PubNetSdkException)
+			{
+				// the account exists either way, so fall through to the login page
 			}
 
 			Nav.NavigateTo("/authenticate", true);
+		}
+		catch (PubNetSdkException e)
+		{
+			Error = e.Message;
 		}
 		finally
 		{

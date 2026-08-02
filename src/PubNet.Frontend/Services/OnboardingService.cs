@@ -1,22 +1,22 @@
-using PubNet.API.DTO;
+using PubNet.SDK.Abstractions;
 
 namespace PubNet.Frontend.Services;
 
 /// <summary>
 /// Caches whether this instance still needs to be set up.
 /// </summary>
-public class OnboardingService(ApiClient apiClient, ILogger<OnboardingService> logger)
+public class OnboardingService(IOnboardingService onboarding, ILogger<OnboardingService> logger)
 {
-	private OnboardingStatusDto? _status;
+	private bool? _pending;
 
-	public async Task<OnboardingStatusDto> GetStatusAsync(CancellationToken cancellationToken = default)
+	public async Task<bool> IsPendingAsync(CancellationToken cancellationToken = default)
 	{
-		if (_status is not null)
-			return _status;
+		if (_pending is { } cached)
+			return cached;
 
 		try
 		{
-			_status = await apiClient.GetAsync<OnboardingStatusDto>("onboarding/status", cancellationToken);
+			_pending = await onboarding.IsPendingAsync(cancellationToken);
 		}
 		catch (Exception e)
 		{
@@ -24,12 +24,7 @@ public class OnboardingService(ApiClient apiClient, ILogger<OnboardingService> l
 			logger.LogWarning(e, "Unable to determine the onboarding status");
 		}
 
-		return _status ??= new();
-	}
-
-	public async Task<bool> IsPendingAsync(CancellationToken cancellationToken = default)
-	{
-		return (await GetStatusAsync(cancellationToken)).Pending;
+		return _pending ??= false;
 	}
 
 	/// <summary>
@@ -37,6 +32,6 @@ public class OnboardingService(ApiClient apiClient, ILogger<OnboardingService> l
 	/// </summary>
 	public void Invalidate()
 	{
-		_status = null;
+		_pending = null;
 	}
 }

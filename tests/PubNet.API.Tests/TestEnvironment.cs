@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging.Abstractions;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Database;
@@ -37,7 +37,7 @@ internal sealed class TestEnvironment : IDisposable
 
 	public IOnboardingService Onboarding { get; }
 
-	public static RegisterRequest ValidRequest()
+	public static RegisterRequestDto ValidRequest()
 	{
 		return new()
 		{

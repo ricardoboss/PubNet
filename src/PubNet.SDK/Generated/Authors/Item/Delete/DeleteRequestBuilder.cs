@@ -41,6 +41,7 @@ namespace PubNet.SDK.Generated.Authors.Item.Delete
         /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto401Error">When receiving a 401 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.ForbiddenErrorDto">When receiving a 403 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Models.InvalidPasswordErrorDto">When receiving a 461 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.LastAdminErrorDto">When receiving a 480 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto4XXError">When receiving a 4XX status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto500Error">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto5XXError">When receiving a 5XX status code</exception>
@@ -61,6 +62,7 @@ namespace PubNet.SDK.Generated.Authors.Item.Delete
                 { "401", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto401Error.CreateFromDiscriminatorValue },
                 { "403", global::PubNet.SDK.Generated.Models.ForbiddenErrorDto.CreateFromDiscriminatorValue },
                 { "461", global::PubNet.SDK.Generated.Models.InvalidPasswordErrorDto.CreateFromDiscriminatorValue },
+                { "480", global::PubNet.SDK.Generated.Models.LastAdminErrorDto.CreateFromDiscriminatorValue },
                 { "4XX", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto4XXError.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto500Error.CreateFromDiscriminatorValue },
                 { "5XX", global::PubNet.SDK.Generated.Authors.Item.Delete.SuccessMessageDto5XXError.CreateFromDiscriminatorValue },

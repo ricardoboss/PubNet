@@ -5,6 +5,7 @@ using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Serialization.Json;
 using PubNet.SDK.Generated.Authentication;
 using PubNet.SDK.Generated.Authors;
+using PubNet.SDK.Generated.Onboarding;
 using PubNet.SDK.Generated.Packages;
 using PubNet.SDK.Generated.Storage;
 using System.Collections.Generic;
@@ -28,6 +29,11 @@ namespace PubNet.SDK.Generated
         public global::PubNet.SDK.Generated.Authors.AuthorsRequestBuilder Authors
         {
             get => new global::PubNet.SDK.Generated.Authors.AuthorsRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The onboarding property</summary>
+        public global::PubNet.SDK.Generated.Onboarding.OnboardingRequestBuilder Onboarding
+        {
+            get => new global::PubNet.SDK.Generated.Onboarding.OnboardingRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The packages property</summary>
         public global::PubNet.SDK.Generated.Packages.PackagesRequestBuilder Packages

@@ -15,5 +15,5 @@ public interface IAuthorRegistrationService
 	/// <exception cref="Services.AuthorRegistrationException">
 	/// The request is incomplete, or the username or e-mail address is already taken.
 	/// </exception>
-	Task<Author> RegisterAsync(RegisterRequest request, Role role, CancellationToken cancellationToken = default);
+	Task<Author> RegisterAsync(RegisterRequestDto request, Role role, CancellationToken cancellationToken = default);
 }
