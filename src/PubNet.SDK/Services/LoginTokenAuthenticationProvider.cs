@@ -5,47 +5,28 @@ using PubNet.SDK.Abstractions;
 
 namespace PubNet.SDK.Services;
 
+/// <remarks>
+/// The token is attached to every request that has one available. Endpoints that do not require
+/// authentication declare so in the OpenAPI document and are annotated <c>[AllowAnonymous]</c> on the
+/// server, so the header is simply never looked at - there is deliberately no allow list of
+/// unauthenticated endpoints to keep in sync here.
+/// </remarks>
 internal sealed class LoginTokenAuthenticationProvider(ILoginTokenStorage loginTokenStorage, ILogger<LoginTokenAuthenticationProvider> logger) : IAuthenticationProvider
 {
 	public async Task AuthenticateRequestAsync(RequestInformation request,
 		Dictionary<string, object>? additionalAuthenticationContext = null,
 		CancellationToken cancellationToken = default)
 	{
-		if (!ShouldAuthenticate(request))
+		var token = await loginTokenStorage.GetTokenAsync(cancellationToken);
+		if (token is null)
 		{
-			logger.LogTrace("Skipping authentication for request {Request}", request.URI);
+			logger.LogTrace("No token available for request {Request}", request.URI);
 
-			return;
+			return; // let service layer handle 401 rejections from the API
 		}
 
 		logger.LogTrace("Authenticating request {Request}", request.URI);
 
-		var token = await loginTokenStorage.GetTokenAsync(cancellationToken);
-		if (token is null)
-			return; // let service layer handle 401 rejections from the API
-
 		request.Headers.Add("Authorization", $"Bearer {token}");
-	}
-
-	private readonly (Method method, string path)[] unauthenticatedEndpoints =
-	[
-		(Method.POST, "/authentication/login"),
-		(Method.POST, "/authentication/register"),
-		(Method.GET, "/authentication/registrations-enabled"),
-	];
-
-	private bool ShouldAuthenticate(RequestInformation request)
-	{
-		logger.LogTrace("Checking if request {Request} should be authenticated", request.URI);
-
-		var path = request.URI.AbsolutePath;
-
-		return !unauthenticatedEndpoints.Any(exemption =>
-		{
-			if (!path.EndsWith(exemption.path, StringComparison.OrdinalIgnoreCase))
-				return false;
-
-			return exemption.method == request.HttpMethod;
-		});
 	}
 }
