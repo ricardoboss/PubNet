@@ -1,17 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<MSBuildWarningsAsMessages>CS0618</MSBuildWarningsAsMessages>
 
 		<ApiProjectFolder>$(MSBuildThisFileDirectory)../PubNet.API/</ApiProjectFolder>
-		<GeneratedClientSpecFile>$(ApiProjectFolder)PubNet_openapi.json</GeneratedClientSpecFile>
-		<GeneratedClientDirectory>$(MSBuildThisFileDirectory)Generated/</GeneratedClientDirectory>
-		<GeneratedClientNamespace>$(RootNamespace).Generated</GeneratedClientNamespace>
-		<GeneratedClientLockFile>$(GeneratedClientDirectory)kiota-lock.json</GeneratedClientLockFile>
+	</PropertyGroup>
+
+	<!--
+		Kiota.MSBuild generates and refreshes Generated/ from the API's openapi document. Everything
+		else it needs matches its defaults: Generated/ as the output folder, $(RootNamespace).Generated
+		as the namespace, the repository's tool manifest, application/json as the structured mime type,
+		the JSON (de)serializers, and excluding backward compatible members.
+	-->
+	<PropertyGroup>
+		<SpecFile>$(ApiProjectFolder)PubNet_openapi.json</SpecFile>
+		<GeneratedClientClassName>PubNetApiClient</GeneratedClientClassName>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Watch Include="$(GeneratedClientSpecFile)"/>
+		<Watch Include="$(SpecFile)"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,59 +29,15 @@
 		</ProjectReference>
 	</ItemGroup>
 
-	<Target Name="EnsureToolsRestored" BeforeTargets="EnsureClientUpdated">
-		<Exec Command="dotnet tool restore" WorkingDirectory="$(MSBuildThisFileDirectory)" />
-	</Target>
-
-	<Target Name="EnsureClientUpdated" BeforeTargets="CoreCompile;CompileDesignTime">
-		<CallTarget Targets="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')"/>
-		<CallTarget Targets="UpdateClient" Condition="Exists('$(GeneratedClientLockFile)')"/>
-	</Target>
-
-	<Target Name="GenerateClient" Condition="!Exists('$(GeneratedClientLockFile)')">
-		<Exec
-			Command="dotnet kiota generate --openapi $(GeneratedClientSpecFile) --language CSharp --output $(GeneratedClientDirectory) --namespace-name $(GeneratedClientNamespace) --class-name PubNetApiClient --exclude-backward-compatible --serializer Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory --deserializer Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory --structured-mime-types application/json"
-			WorkingDirectory="$(MSBuildThisFileDirectory)"
-			EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true;KIOTA_TUTORIAL_ENABLED=false"
-		/>
-
-		<ItemGroup>
-			<Compile Include="$(GeneratedClientDirectory)**/*.cs" KeepDuplicates="false"/>
-		</ItemGroup>
-	</Target>
-
-	<Target Name="UpdateClient" Condition="Exists('$(GeneratedClientLockFile)')">
-		<Exec
-			Command="dotnet kiota update --output $(GeneratedClientDirectory) --clean-output"
-			WorkingDirectory="$(MSBuildThisFileDirectory)"
-			EnvironmentVariables="KIOTA_OFFLINE_ENABLED=true;KIOTA_TUTORIAL_ENABLED=false"
-		/>
-
-		<ItemGroup>
-			<Compile Update="$(GeneratedClientDirectory)**/*.cs" KeepDuplicates="false"/>
-		</ItemGroup>
-	</Target>
-
-	<Target Name="CleanClient" AfterTargets="Clean">
-		<RemoveDir Directories="$(GeneratedClientDirectory)"/>
-
-		<ItemGroup>
-			<Compile Remove="$(GeneratedClientDirectory)**/*.cs"/>
-		</ItemGroup>
-	</Target>
-
 	<ItemGroup>
 		<PackageReference Include="JetBrains.Annotations" />
+		<PackageReference Include="Kiota.MSBuild" PrivateAssets="all"/>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Http" />
 		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
 		<PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>
 		<PackageReference Include="Microsoft.Kiota.Serialization.Json"/>
 		<PackageReference Include="Scrutor" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="$(GeneratedClientDirectory)"/>
 	</ItemGroup>
 
 </Project>
