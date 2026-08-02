@@ -68,6 +68,25 @@ If you want to contribute improvements or bugfixes, fork this repository, create
 When you are ready to deploy `PubNet`, you may want to review the `OpenRegistration` setting in the `backend-appsettings.json` to toggle whether anyone is able to register an account.
 This setting can be changed at runtime.
 
+### Authentication
+
+`PubNet` is a private package host: reading packages and authors requires an account, not just publishing.
+Every package and author endpoint is authenticated, including the version listing and the archive download that `dart pub get` uses.
+
+Consumers therefore need a token for the instance:
+
+```bash
+dart pub token add https://pubnet.example.com
+```
+
+The `dart pub` client handles this on its own: it sends the token when resolving a package, and when it receives a `401` while downloading an archive it retries the request with the token.
+For CI, `dart pub token add <url> --env-var PUB_TOKEN` reads the token from the environment instead of storing it on disk.
+
+> **Note**
+>
+> Because reads are authenticated, closing registrations (`OpenRegistration: false`) is what actually keeps an instance private.
+> The first-time setup creates the administrator account; further accounts are created by registration.
+
 ### Hosted upstream
 
 `PubNet` can fall back to an upstream hosted repository for package metadata and archives that are not stored locally.
@@ -96,6 +115,10 @@ Important behavior notes:
 - The upstream URL must be the API base URL, not just the site root.
 - `PubNet` still stores and manages its own local packages, authors, and permissions.
 - Only package lookups and archive fallback use the upstream. Package list pages and author data remain local to `PubNet`.
+- Mirrored metadata is served by `PubNet` and is authenticated like every other package lookup, so which upstream packages an instance has looked up is not readable without an account.
+- Mirrored **archives** are not: `PubNet` answers the download with a redirect to the upstream, and the client fetches those bytes straight from there without a `PubNet` token.
+  That content is public upstream anyway and is not hosted by `PubNet`, so this only applies to packages that are not stored locally.
+  Archives of locally published packages are served by `PubNet` and stay authenticated.
 
 ### Using `docker-compose.yml`
 
