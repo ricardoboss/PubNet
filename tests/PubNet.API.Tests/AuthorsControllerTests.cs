@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using PubNet.API.Controllers;
-using PubNet.API.DTO.Errors;
+using PubNet.API.DTO;
 using PubNet.API.Services;
 using PubNet.Database.Models;
 

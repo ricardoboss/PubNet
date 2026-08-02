@@ -37,7 +37,7 @@ public class OnboardingController(
 	[ProducesResponseType(PubNetStatusCodes.Status463UsernameAlreadyInUse, Type = typeof(UsernameAlreadyInUseErrorDto))]
 	[ProducesResponseType(PubNetStatusCodes.Status464EmailAlreadyInUse, Type = typeof(EmailAlreadyInUseErrorDto))]
 	[ProducesResponseType(PubNetStatusCodes.Status465OnboardingNotPending, Type = typeof(OnboardingNotPendingErrorDto))]
-	public async Task<IActionResult> CompleteAsync([FromBody] RegisterRequest dto,
+	public async Task<IActionResult> CompleteAsync([FromBody] RegisterRequestDto dto,
 		CancellationToken cancellationToken = default)
 	{
 		try

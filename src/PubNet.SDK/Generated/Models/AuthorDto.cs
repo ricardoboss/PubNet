@@ -34,6 +34,14 @@ namespace PubNet.SDK.Generated.Models
 #endif
         /// <summary>The registeredAt property</summary>
         public DateTimeOffset? RegisteredAt { get; set; }
+        /// <summary>The role property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public global::PubNet.SDK.Generated.Models.Role? Role { get; set; }
+#nullable restore
+#else
+        public global::PubNet.SDK.Generated.Models.Role Role { get; set; }
+#endif
         /// <summary>The userName property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -79,6 +87,7 @@ namespace PubNet.SDK.Generated.Models
                 { "name", n => { Name = n.GetStringValue(); } },
                 { "packages", n => { Packages = n.GetCollectionOfObjectValues<global::PubNet.SDK.Generated.Models.PackageDto>(global::PubNet.SDK.Generated.Models.PackageDto.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "registeredAt", n => { RegisteredAt = n.GetDateTimeOffsetValue(); } },
+                { "role", n => { Role = n.GetObjectValue<global::PubNet.SDK.Generated.Models.Role>(global::PubNet.SDK.Generated.Models.Role.CreateFromDiscriminatorValue); } },
                 { "userName", n => { UserName = n.GetStringValue(); } },
                 { "website", n => { Website = n.GetStringValue(); } },
             };
@@ -94,6 +103,7 @@ namespace PubNet.SDK.Generated.Models
             writer.WriteStringValue("name", Name);
             writer.WriteCollectionOfObjectValues<global::PubNet.SDK.Generated.Models.PackageDto>("packages", Packages);
             writer.WriteDateTimeOffsetValue("registeredAt", RegisteredAt);
+            writer.WriteObjectValue<global::PubNet.SDK.Generated.Models.Role>("role", Role);
             writer.WriteStringValue("userName", UserName);
             writer.WriteStringValue("website", Website);
             writer.WriteAdditionalData(AdditionalData);

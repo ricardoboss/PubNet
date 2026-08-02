@@ -14,7 +14,7 @@ public class AuthorRegistrationService(PubNetContext db, PasswordManager passwor
 	: IAuthorRegistrationService
 {
 	/// <inheritdoc />
-	public async Task<Author> RegisterAsync(RegisterRequest request, Role role,
+	public async Task<Author> RegisterAsync(RegisterRequestDto request, Role role,
 		CancellationToken cancellationToken = default)
 	{
 		if (request.Username is null || request.Name is null || request.Password is null || request.Email is null)

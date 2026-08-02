@@ -1,4 +1,4 @@
-using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication;
 using PubNet.Database.Models;
 
 namespace PubNet.API.Interfaces;
@@ -20,5 +20,5 @@ public interface IOnboardingService
 	/// </summary>
 	/// <exception cref="Services.OnboardingNotPendingException">Onboarding has already been completed.</exception>
 	/// <exception cref="Services.AuthorRegistrationException">The account could not be created.</exception>
-	Task<Author> CompleteAsync(RegisterRequest request, CancellationToken cancellationToken = default);
+	Task<Author> CompleteAsync(RegisterRequestDto request, CancellationToken cancellationToken = default);
 }

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PubNet.API.DTO;
+using PubNet.API.DTO.Authentication;
 using PubNet.API.Interfaces;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -26,7 +26,7 @@ public class OnboardingService(PubNetContext db, IAuthorRegistrationService regi
 	}
 
 	/// <inheritdoc />
-	public async Task<Author> CompleteAsync(RegisterRequest request, CancellationToken cancellationToken = default)
+	public async Task<Author> CompleteAsync(RegisterRequestDto request, CancellationToken cancellationToken = default)
 	{
 		await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
 

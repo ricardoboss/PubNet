@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
 			services.TryAddScoped<IAnalysisService, ApiAnalysisService>();
 			services.TryAddScoped<IAuthenticationService, ApiAuthenticationService>();
 			services.TryAddScoped<IAuthorService, ApiAuthorService>();
+			services.TryAddScoped<IOnboardingService, ApiOnboardingService>();
 
 			return new DefaultPubNetApiServiceBuilder(services);
 		}

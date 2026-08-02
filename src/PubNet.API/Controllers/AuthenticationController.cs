@@ -56,33 +56,19 @@ public class AuthenticationController(
 	public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto,
 		CancellationToken cancellationToken = default)
 	{
-<<<<<<< HEAD
 		if (!await RegistrationsEnabledAsync(cancellationToken))
-			return BadRequest(ErrorResponse.RegistrationsDisabled);
-
-		Author author;
-		try
-=======
-		if (!RegistrationsEnabled())
 			return Error<RegistrationsDisabledErrorDto>(PubNetStatusCodes.Status462RegistrationsDisabled);
 
-		if (dto.Username is null || dto.Name is null || dto.Password is null || dto.Email is null)
-			return Error<MissingRegistrationDataErrorDto>(PubNetStatusCodes.Status400BadRequest, "Missing required values");
-
-		if (db.Authors.Any(a => EF.Functions.ILike(a.UserName, dto.Username)))
-			return Error<UsernameAlreadyInUseErrorDto>(PubNetStatusCodes.Status463UsernameAlreadyInUse);
-
-		if (db.Authors.Any(a => EF.Functions.ILike(a.Email, dto.Email)))
-			return Error<EmailAlreadyInUseErrorDto>(PubNetStatusCodes.Status464EmailAlreadyInUse);
-
-		var author = new Author
->>>>>>> b410f0f (style: ensure all DTOs have the "Dto" suffix via editorconfig)
+		// the incomplete-request and duplicate checks live in the registration service, so that registration
+		// and the first-time setup reject the same things in the same way
+		Author author;
+		try
 		{
 			author = await registrationService.RegisterAsync(dto, Role.Default, cancellationToken);
 		}
 		catch (AuthorRegistrationException e)
 		{
-			return UnprocessableEntity(e.Response);
+			return RegistrationError(e);
 		}
 
 		try
