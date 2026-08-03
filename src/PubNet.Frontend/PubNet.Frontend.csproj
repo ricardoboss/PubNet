@@ -11,10 +11,7 @@
 		<PackageReference Include="Humanizer"/>
 		<PackageReference Include="Markdig"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication"/>
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" PrivateAssets="all"/>
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design"/>
-		<PackageReference Include="NuGet.Packaging" />
 	</ItemGroup>
 
 	<ItemGroup>
