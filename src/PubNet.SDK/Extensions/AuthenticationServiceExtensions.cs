@@ -1,4 +1,5 @@
 using PubNet.SDK.Abstractions;
+using PubNet.SDK.Exceptions;
 
 namespace PubNet.SDK.Extensions;
 
@@ -9,6 +10,11 @@ public static class AuthenticationServiceExtensions
 		/// <summary>
 		/// Determines if the currently authenticated author has the given <paramref name="username"/>.
 		/// </summary>
+		/// <remarks>
+		/// This is a predicate callers use to decide what to show, so it fails closed: when the current author
+		/// cannot be determined - not authenticated, or the API could not be reached - the answer is
+		/// <see langword="false"/> rather than an exception. Cancellation still propagates.
+		/// </remarks>
 		/// <param name="username">The username to check against</param>
 		/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
 		/// <returns><see langword="true"/> if the <paramref name="username"/> matches that of the currently authenticated user (case-sensitive), <see langword="false"/> if not</returns>
@@ -20,7 +26,7 @@ public static class AuthenticationServiceExtensions
 
 				return self.UserName == username;
 			}
-			catch (Exception)
+			catch (PubNetSdkException)
 			{
 				return false;
 			}
