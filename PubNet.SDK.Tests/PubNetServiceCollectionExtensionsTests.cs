@@ -6,7 +6,7 @@ using PubNet.SDK.Generated;
 
 namespace PubNet.SDK.Tests;
 
-public class ServiceCollectionExtensionsTests
+public class PubNetServiceCollectionExtensionsTests
 {
 	private static readonly Uri BaseAddress = new("https://pubnet.example.test/api/");
 
@@ -26,7 +26,7 @@ public class ServiceCollectionExtensionsTests
 		using var provider = BuildProvider();
 
 		var client = provider.GetRequiredService<IHttpClientFactory>()
-			.CreateClient(PubNet.SDK.Extensions.ServiceCollectionExtensions.HttpClientName);
+			.CreateClient(PubNetServiceCollectionExtensions.HttpClientName);
 
 		Assert.Multiple(() =>
 		{

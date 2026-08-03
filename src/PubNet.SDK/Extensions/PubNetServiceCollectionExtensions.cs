@@ -9,7 +9,7 @@ using PubNet.SDK.Services;
 
 namespace PubNet.SDK.Extensions;
 
-public static class ServiceCollectionExtensions
+public static class PubNetServiceCollectionExtensions
 {
 	/// <summary>
 	/// Name of the <see cref="IHttpClientFactory"/> client the SDK sends its requests with.
