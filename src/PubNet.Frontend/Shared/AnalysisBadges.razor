@@ -1,6 +1,7 @@
 @inherits BaseComponent
 @inject IAnalysisService Analysis
 @inject BaseAddressProvider BaseAddressProvider
+@inject ILogger<AnalysisBadges> Logger
 
 <Div style="display: flex; align-items: center; gap: 0.25rem" class="@ClassNames">
 	@if (Mirrored)
@@ -99,7 +100,17 @@
 
 		if (!(PackageDto?.Mirrored ?? false))
 		{
-			AnalysisDto = await Analysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, includeReadme: false);
+			try
+			{
+				AnalysisDto = await Analysis.GetAnalysisForPackageVersionAsync(PackageVersionDto.Pubspec.Name, PackageVersionDto.Version, includeReadme: false);
+			}
+			catch (PubNetSdkException e)
+			{
+				// these badges are decorative; a failed lookup must not take the surrounding page down with
+				// it. Leaving AnalysisDto null renders the same "Not analyzed yet" badge as a missing analysis.
+				Logger.LogWarning(e, "Unable to load the analysis for {PackageName} {PackageVersion}",
+					PackageVersionDto.Pubspec.Name, PackageVersionDto.Version);
+			}
 		}
 	}
 

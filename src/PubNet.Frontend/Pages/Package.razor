@@ -5,6 +5,7 @@
 
 @inject IPackagesService PackagesService
 @inject IAnalysisService AnalysisService
+@inject ILogger<Package> Logger
 
 @if (Error is not null)
 {
@@ -110,12 +111,47 @@
 			}
 		}
 
-		if (!(PackageModel?.Mirrored ?? false))
+		if (!(PackageModel?.Mirrored ?? false) && PackageModel is not null)
 		{
-#pragma warning disable CS4014
-			if (PackageModel?.Versions is not null)
-				Task.WhenAll(PackageModel.Versions.OrderByDescending(v => v.Published).Take(10).Select(v => AnalysisService.GetAnalysisForPackageVersionAsync(PackageName, v.Version, includeReadme: false))).ContinueWith(_ => StateHasChanged());
-#pragma warning restore CS4014
+			// deliberately not awaited: the page is usable without the badges. PrefetchAnalysesAsync handles
+			// its own failures, so this cannot leave an unobserved exception behind.
+			_ = PrefetchAnalysesAsync(PackageModel);
+		}
+	}
+
+	/// <summary>
+	/// Warms the analysis cache so the badges in the version list do not each wait on their own request.
+	/// </summary>
+	private async Task PrefetchAnalysesAsync(PackageDto package)
+	{
+		if (PackageName is null || package.Versions is null)
+			return;
+
+		foreach (var version in package.Versions.OrderByDescending(v => v.Published).Take(10))
+		{
+			if (version.Version is null)
+				continue;
+
+			try
+			{
+				await AnalysisService.GetAnalysisForPackageVersionAsync(PackageName, version.Version,
+					includeReadme: false);
+			}
+			catch (PubNetSdkException e)
+			{
+				// a failed prefetch only costs a cache hit later; the badge falls back to its own lookup
+				Logger.LogWarning(e, "Unable to prefetch the analysis for {PackageName} {PackageVersion}",
+					PackageName, version.Version);
+			}
+		}
+
+		try
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+		catch (ObjectDisposedException)
+		{
+			// navigated away while the prefetch was still running
 		}
 	}
 }
