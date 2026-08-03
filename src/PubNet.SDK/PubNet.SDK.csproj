@@ -6,6 +6,21 @@
 		<ApiProjectFolder>$(MSBuildThisFileDirectory)../PubNet.API/</ApiProjectFolder>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<Description>Client library for the PubNet API. Provides service interfaces over a generated Kiota client, so applications talk to a PubNet instance without speaking HTTP themselves.</Description>
+		<Authors>Ricardo Boss</Authors>
+		<PackageTags>pubnet;pub;dart;package-registry;sdk;api-client</PackageTags>
+		<PackageProjectUrl>https://github.com/ricardoboss/PubNet</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/ricardoboss/PubNet.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+
 	<!--
 		Kiota.MSBuild generates and refreshes Generated/ from the API's openapi document. Everything
 		else it needs matches its defaults: Generated/ as the output folder, $(RootNamespace).Generated
