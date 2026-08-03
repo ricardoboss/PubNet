@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using PubNet.SDK.Abstractions;
@@ -14,7 +15,8 @@ public class ApiAuthenticationServiceTests
 	{
 		var adapter = new ThrowingRequestAdapter(thrownByTheApi);
 
-		return new(new PubNetApiClient(adapter), new Mock<ILoginTokenStorage>().Object);
+		return new(new PubNetApiClient(adapter), new Mock<ILoginTokenStorage>().Object,
+			NullLogger<ApiAuthenticationService>.Instance);
 	}
 
 	// The generated error DTOs never escape the SDK. Callers see PubNetSdkException subclasses instead, so

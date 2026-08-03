@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Kiota.Abstractions;
 using PubNet.SDK.Abstractions;
 using PubNet.SDK.Exceptions;
@@ -9,7 +10,8 @@ namespace PubNet.SDK.Services;
 
 internal sealed class ApiAuthenticationService(
 	PubNetApiClient apiClient,
-	ILoginTokenStorage loginTokenStorage
+	ILoginTokenStorage loginTokenStorage,
+	ILogger<ApiAuthenticationService> logger
 ) : IAuthenticationService
 {
 	private AuthorDto? _self;
@@ -33,8 +35,13 @@ internal sealed class ApiAuthenticationService(
 		{
 			return await loginTokenStorage.GetTokenAsync(cancellationToken) is not null;
 		}
-		catch (Exception)
+		catch (Exception e) when (e is not OperationCanceledException)
 		{
+			// callers treat this as a predicate and use it to decide what to render, so an unreadable store
+			// has to answer "not authenticated" rather than throw. Log it, because otherwise a broken token
+			// store looks exactly like a logged out user.
+			logger.LogWarning(e, "Unable to read the login token, treating the caller as unauthenticated");
+
 			return false;
 		}
 	}

@@ -19,6 +19,10 @@ public interface IAuthenticationService
 	/// <summary>
 	/// Determines if the service is currently authenticated.
 	/// </summary>
+	/// <remarks>
+	/// Fails closed: if the token store cannot be read, the answer is <see langword="false"/> rather than
+	/// an exception, and the failure is logged. Cancellation still propagates.
+	/// </remarks>
 	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
 	/// <returns><see langword="true"/> if the service is authenticated, <see langword="false"/> if not</returns>
 	Task<bool> IsAuthenticatedAsync(CancellationToken cancellationToken = default);

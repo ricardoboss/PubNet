@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Serialization.Json;
@@ -57,7 +58,8 @@ public class SelfCacheInvalidationTests
 	{
 		var adapter = Adapter();
 		var client = new PubNetApiClient(adapter.Object);
-		var auth = new ApiAuthenticationService(client, TokenStorage().Object);
+		var auth = new ApiAuthenticationService(client, TokenStorage().Object,
+			NullLogger<ApiAuthenticationService>.Instance);
 
 		await auth.GetSelfAsync();
 		await auth.GetSelfAsync();
@@ -76,7 +78,8 @@ public class SelfCacheInvalidationTests
 	{
 		var adapter = Adapter();
 		var client = new PubNetApiClient(adapter.Object);
-		var auth = new ApiAuthenticationService(client, TokenStorage().Object);
+		var auth = new ApiAuthenticationService(client, TokenStorage().Object,
+			NullLogger<ApiAuthenticationService>.Instance);
 		var authors = new ApiAuthorService(client, auth);
 
 		await auth.GetSelfAsync();
@@ -94,7 +97,8 @@ public class SelfCacheInvalidationTests
 	{
 		var adapter = Adapter();
 		var client = new PubNetApiClient(adapter.Object);
-		var auth = new ApiAuthenticationService(client, TokenStorage().Object);
+		var auth = new ApiAuthenticationService(client, TokenStorage().Object,
+			NullLogger<ApiAuthenticationService>.Instance);
 		var authors = new ApiAuthorService(client, auth);
 
 		await auth.GetSelfAsync();
