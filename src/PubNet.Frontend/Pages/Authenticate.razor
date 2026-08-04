@@ -84,6 +84,14 @@ else
 			return;
 		}
 
+		// someone who is already logged in has nothing to do here
+		if (await Auth.IsAuthenticatedAsync())
+		{
+			Nav.NavigateTo("/");
+
+			return;
+		}
+
 		try
 		{
 			ShowRegistration = await Auth.GetRegistrationsEnabledAsync();
