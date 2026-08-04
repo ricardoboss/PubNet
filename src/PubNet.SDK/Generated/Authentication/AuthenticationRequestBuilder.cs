@@ -2,9 +2,11 @@
 #pragma warning disable CS0618
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
+using PubNet.SDK.Generated.Authentication.ForgotPassword;
 using PubNet.SDK.Generated.Authentication.Login;
 using PubNet.SDK.Generated.Authentication.Register;
 using PubNet.SDK.Generated.Authentication.RegistrationsEnabled;
+using PubNet.SDK.Generated.Authentication.ResetPassword;
 using PubNet.SDK.Generated.Authentication.Self;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +20,11 @@ namespace PubNet.SDK.Generated.Authentication
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AuthenticationRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The forgotPassword property</summary>
+        public global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPasswordRequestBuilder ForgotPassword
+        {
+            get => new global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPasswordRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The login property</summary>
         public global::PubNet.SDK.Generated.Authentication.Login.LoginRequestBuilder Login
         {
@@ -32,6 +39,11 @@ namespace PubNet.SDK.Generated.Authentication
         public global::PubNet.SDK.Generated.Authentication.RegistrationsEnabled.RegistrationsEnabledRequestBuilder RegistrationsEnabled
         {
             get => new global::PubNet.SDK.Generated.Authentication.RegistrationsEnabled.RegistrationsEnabledRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The resetPassword property</summary>
+        public global::PubNet.SDK.Generated.Authentication.ResetPassword.ResetPasswordRequestBuilder ResetPassword
+        {
+            get => new global::PubNet.SDK.Generated.Authentication.ResetPassword.ResetPasswordRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The self property</summary>
         public global::PubNet.SDK.Generated.Authentication.Self.SelfRequestBuilder Self

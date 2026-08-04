@@ -18,6 +18,7 @@ public static class PubNetStatusCodes
 	public const int Status463UsernameAlreadyInUse = 463;
 	public const int Status464EmailAlreadyInUse = 464;
 	public const int Status465OnboardingNotPending = 465;
+	public const int Status466InvalidPasswordResetToken = 466;
 
 	// Authors (48x)
 	public const int Status480LastAdmin = 480;
@@ -45,6 +46,7 @@ public static class PubNetStatusCodes
 		Status463UsernameAlreadyInUse => "username-in-use",
 		Status464EmailAlreadyInUse => "email-in-use",
 		Status465OnboardingNotPending => "onboarding-not-pending",
+		Status466InvalidPasswordResetToken => "invalid-password-reset-token",
 
 		Status470MissingRequiredData => "missing-required-data",
 		Status471InvalidUploadData => "invalid-upload-data",

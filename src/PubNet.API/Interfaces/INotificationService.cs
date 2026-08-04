@@ -11,4 +11,10 @@ public interface INotificationService
 	/// </summary>
 	Task SendSetupCompletedNotificationAsync(Author author, Uri referer,
 		CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Sends the author a link containing the given password reset token.
+	/// </summary>
+	Task SendPasswordResetNotificationAsync(Author author, string token, Uri referer,
+		CancellationToken cancellationToken = default);
 }

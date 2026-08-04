@@ -21,6 +21,7 @@ public class AuthenticationController(
 	IAuthorRegistrationService registrationService,
 	IOnboardingService onboardingService,
 	INotificationService notificationService,
+	IPasswordResetService passwordResetService,
 	ILogger<AuthenticationController> logger
 ) : BaseController
 {
@@ -84,6 +85,62 @@ public class AuthenticationController(
 		// PasswordHash, SecurityStamp and friends
 		return CreatedAtAction("Get", "Authors", new { username = author.UserName },
 			AuthorDto.FromAuthor(author, true));
+	}
+
+	[AllowAnonymous]
+	[HttpPost("forgot-password")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto dto,
+		CancellationToken cancellationToken = default)
+	{
+		// always answers 204: whether an account exists for an address is none of the caller's business
+		if (string.IsNullOrWhiteSpace(dto.Email))
+			return NoContent();
+
+		var author =
+			await db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
+		if (author is null)
+			return NoContent();
+
+		var token = await passwordResetService.GenerateTokenAsync(author, cancellationToken);
+
+		try
+		{
+			await notificationService.SendPasswordResetNotificationAsync(author, token, RefererUri, cancellationToken);
+		}
+		catch (Exception e)
+		{
+			logger.LogError(e, "Failed to send password reset notification");
+		}
+
+		return NoContent();
+	}
+
+	[AllowAnonymous]
+	[HttpPost("reset-password")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(PubNetStatusCodes.Status461InvalidPassword, Type = typeof(InvalidPasswordErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status466InvalidPasswordResetToken, Type = typeof(InvalidPasswordResetTokenErrorDto))]
+	public async Task<IActionResult> ResetPassword(ResetPasswordRequestDto dto,
+		CancellationToken cancellationToken = default)
+	{
+		if (string.IsNullOrWhiteSpace(dto.Token))
+			return Error<InvalidPasswordResetTokenErrorDto>(PubNetStatusCodes.Status466InvalidPasswordResetToken);
+
+		if (string.IsNullOrWhiteSpace(dto.Password))
+			return Error<InvalidPasswordErrorDto>(PubNetStatusCodes.Status461InvalidPassword,
+				"The new password must not be empty");
+
+		try
+		{
+			await passwordResetService.ResetPasswordAsync(dto.Token, dto.Password, cancellationToken);
+		}
+		catch (InvalidPasswordResetTokenException)
+		{
+			return Error<InvalidPasswordResetTokenErrorDto>(PubNetStatusCodes.Status466InvalidPasswordResetToken);
+		}
+
+		return NoContent();
 	}
 
 	[Authorize]

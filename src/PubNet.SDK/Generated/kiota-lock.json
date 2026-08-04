@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "6D22945D0A84E0EF141D931C745B91BA2316680FF138D75F095760988B1BC809CF066BD17DC16D1CB3A971907EF623A23BD69D7676B5B4584F509369BCC2CEAF",
+  "descriptionHash": "3F3DB60A40FBA2E4222AD8C788CB63AFC63A80A2D56393FA74C21BDD2E27B54ED6BFF11BF70EF71A75F3A6F808AF4D695F7DBF55144085E65468DAC020355ABE",
   "descriptionLocation": "../../PubNet.API/PubNet_openapi.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.34.1",
@@ -22,6 +22,5 @@
   ],
   "includePatterns": [],
   "excludePatterns": [],
-  "disabledValidationRules": [],
-  "allowedExternalOrigins": []
+  "disabledValidationRules": []
 }

@@ -76,6 +76,49 @@ internal sealed class ApiAuthenticationService(
 		}
 	}
 
+	public async Task RequestPasswordResetAsync(string email, CancellationToken cancellationToken = default)
+	{
+		var request = new ForgotPasswordRequestDto
+		{
+			Email = email,
+		};
+
+		try
+		{
+			await apiClient.Authentication.ForgotPassword.PostAsync(request, cancellationToken: cancellationToken);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
+	}
+
+	public async Task ResetPasswordAsync(string token, string password, CancellationToken cancellationToken = default)
+	{
+		var request = new ResetPasswordRequestDto
+		{
+			Token = token,
+			Password = password,
+		};
+
+		try
+		{
+			await apiClient.Authentication.ResetPassword.PostAsync(request, cancellationToken: cancellationToken);
+		}
+		catch (InvalidPasswordResetTokenErrorDto e)
+		{
+			throw new InvalidPasswordResetTokenException(e);
+		}
+		catch (InvalidPasswordErrorDto e)
+		{
+			throw new InvalidPasswordException(e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
+	}
+
 	public async Task LogoutAsync(CancellationToken cancellationToken = default)
 	{
 		try

@@ -90,6 +90,7 @@ error types never escape the SDK. Lookups that simply found nothing return `null
 | `UnauthorizedException` | Authenticated, but the account may not do this |
 | `InvalidLoginCredentialsException` | The e-mail address or password is wrong |
 | `InvalidPasswordException` | An action needing password confirmation got the wrong one |
+| `InvalidPasswordResetTokenException` | The password reset link is invalid, expired or already used |
 | `PackageNotFoundException`, `PackageVersionNotFoundException` | The package or version does not exist |
 | `LastAdminException` | The account is the instance's last administrator |
 | `RegisterException` and subclasses | Registration was rejected |
