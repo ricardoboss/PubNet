@@ -28,14 +28,16 @@
     <File Path="src/backend-appsettings.json" />
     <File Path="src/frontend-appsettings.json" />
     <File Path="src/worker-appsettings.json" />
+    <Project Path="src/PubNet.API/PubNet.API.csproj" />
+    <Project Path="src/PubNet.Common/PubNet.Common.csproj" />
+    <Project Path="src/PubNet.Database/PubNet.Database.csproj" />
+    <Project Path="src/PubNet.Frontend/PubNet.Frontend.csproj" />
+    <Project Path="src/PubNet.SDK/PubNet.SDK.csproj" />
+    <Project Path="src/PubNet.Worker/PubNet.Worker.csproj" />
   </Folder>
-  <Project Path="src/PubNet.API/PubNet.API.csproj" />
-  <Project Path="src/PubNet.Common/PubNet.Common.csproj" />
-  <Project Path="src/PubNet.Database/PubNet.Database.csproj" />
-  <Project Path="src/PubNet.Frontend/PubNet.Frontend.csproj" />
-  <Project Path="src/PubNet.SDK/PubNet.SDK.csproj" />
-  <Project Path="src/PubNet.Worker/PubNet.Worker.csproj" />
-  <Project Path="tests/PubNet.API.Tests/PubNet.API.Tests.csproj" />
-  <Project Path="tests/PubNet.Common.Tests/PubNet.Common.Tests.csproj" />
-  <Project Path="tests/PubNet.SDK.Tests/PubNet.SDK.Tests.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/PubNet.API.Tests/PubNet.API.Tests.csproj" />
+    <Project Path="tests/PubNet.Common.Tests/PubNet.Common.Tests.csproj" />
+    <Project Path="tests/PubNet.SDK.Tests/PubNet.SDK.Tests.csproj" />
+  </Folder>
 </Solution>
