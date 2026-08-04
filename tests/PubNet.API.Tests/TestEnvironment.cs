@@ -28,8 +28,7 @@ internal sealed class TestEnvironment : IDisposable
 
 		Onboarding = new OnboardingService(Db, Registration);
 
-		PasswordResets = new PasswordResetService(Db, Passwords, new SecureTokenGenerator(),
-			NullLogger<PasswordResetService>.Instance);
+		PasswordResets = new PasswordResetService(Db, Passwords, NullLogger<PasswordResetService>.Instance);
 	}
 
 	public PubNetContext Db { get; }

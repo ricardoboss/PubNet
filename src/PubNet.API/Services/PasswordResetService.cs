@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.Interfaces;
 using PubNet.Database;
@@ -5,12 +7,8 @@ using PubNet.Database.Models;
 
 namespace PubNet.API.Services;
 
-public class PasswordResetService(
-	PubNetContext db,
-	PasswordManager passwordManager,
-	SecureTokenGenerator tokenGenerator,
-	ILogger<PasswordResetService> logger
-) : IPasswordResetService
+public class PasswordResetService(PubNetContext db, PasswordManager passwordManager, ILogger<PasswordResetService> logger)
+	: IPasswordResetService
 {
 	/// <summary>
 	/// How long a reset link stays redeemable. Long enough to survive greylisting and a coffee break, short
@@ -21,14 +19,14 @@ public class PasswordResetService(
 	/// <inheritdoc />
 	public async Task<string> GenerateTokenAsync(Author author, CancellationToken cancellationToken = default)
 	{
-		var token = tokenGenerator.GenerateToken();
+		var token = Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(32));
 		var now = DateTimeOffset.UtcNow;
 
 		db.PasswordResetTokens.Add(new()
 		{
 			AuthorId = author.Id,
 			Author = author,
-			TokenHash = tokenGenerator.HashToken(token),
+			TokenHash = HashToken(token),
 			CreatedAtUtc = now,
 			ExpiresAtUtc = now + TokenLifetime,
 		});
@@ -42,7 +40,7 @@ public class PasswordResetService(
 	public async Task<Author> ResetPasswordAsync(string token, string password,
 		CancellationToken cancellationToken = default)
 	{
-		var tokenHash = tokenGenerator.HashToken(token);
+		var tokenHash = HashToken(token);
 
 		var resetToken = await db.PasswordResetTokens
 			.Include(t => t.Author)
@@ -73,4 +71,7 @@ public class PasswordResetService(
 
 		return author;
 	}
+
+	private static string HashToken(string token) =>
+		Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
 }
