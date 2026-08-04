@@ -3975,12 +3975,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -3992,12 +3986,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4020,12 +4008,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4086,12 +4068,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4103,12 +4079,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4159,12 +4129,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4184,12 +4148,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4529,12 +4487,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
@@ -4674,12 +4626,6 @@
         ],
         "type": "object",
         "properties": {
-          "defaultMessage": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
           "error": {
             "$ref": "#/components/schemas/CodeMessageDto"
           }
