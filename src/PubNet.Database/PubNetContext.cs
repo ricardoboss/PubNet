@@ -61,6 +61,8 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 
 	public DbSet<Setting> Settings { get; set; } = null!;
 
+	public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } = null!;
+
 	/// <inheritdoc />
 	public PubNetContext CreateDbContext(string[] args)
 	{
@@ -127,5 +129,15 @@ public class PubNetContext : DbContext, IDesignTimeDbContextFactory<PubNetContex
 		modelBuilder.Entity<PendingArchive>()
 			.Navigation(p => p.Uploader)
 			.AutoInclude();
+
+		modelBuilder.Entity<PasswordResetToken>()
+			.HasIndex(t => t.TokenHash)
+			.IsUnique();
+
+		modelBuilder.Entity<PasswordResetToken>()
+			.HasOne(t => t.Author)
+			.WithMany()
+			.HasForeignKey(t => t.AuthorId)
+			.OnDelete(DeleteBehavior.Cascade);
 	}
 }

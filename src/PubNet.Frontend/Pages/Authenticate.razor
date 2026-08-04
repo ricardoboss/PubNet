@@ -64,6 +64,7 @@ else
 	private string? MessageBoxContent => Message switch
 	{
 		"session-expired" => "Your session has expired. Please log in again.",
+		"password-reset" => "Your password has been reset. You can now log in with it.",
 		_ => null,
 	};
 
@@ -79,6 +80,13 @@ else
 		if (await Onboarding.IsPendingAsync())
 		{
 			Nav.NavigateTo("/onboarding");
+
+			return;
+		}
+
+		if (await Auth.IsAuthenticatedAsync())
+		{
+			Nav.NavigateTo("/");
 
 			return;
 		}

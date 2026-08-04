@@ -41,6 +41,26 @@ public interface IAuthenticationService
 		CancellationToken cancellationToken = default);
 
 	/// <summary>
+	/// Asks the instance to send a password reset link to the given e-mail address.
+	/// </summary>
+	/// <param name="email">The e-mail address to send the reset link to</param>
+	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
+	/// <exception cref="EmailNotFoundException">If no account exists for the given <paramref name="email"/></exception>
+	/// <exception cref="PubNetSdkException">In case anything unexpected happens</exception>
+	Task RequestPasswordResetAsync(string email, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Sets a new password using a reset token obtained via <see cref="RequestPasswordResetAsync"/>.
+	/// </summary>
+	/// <param name="token">The reset token from the link that was e-mailed</param>
+	/// <param name="password">The new password</param>
+	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
+	/// <exception cref="InvalidPasswordResetTokenException">If the token is invalid, expired or has already been used</exception>
+	/// <exception cref="InvalidPasswordException">If the new password was rejected</exception>
+	/// <exception cref="PubNetSdkException">In case anything unexpected happens</exception>
+	Task ResetPasswordAsync(string token, string password, CancellationToken cancellationToken = default);
+
+	/// <summary>
 	/// Removes any authentication from the service.
 	/// </summary>
 	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>

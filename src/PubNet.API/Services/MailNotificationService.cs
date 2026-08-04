@@ -30,6 +30,18 @@ public class MailNotificationService(IMailRenderer mailRenderer, IMailClient mai
 		}, author, cancellationToken);
 	}
 
+	/// <inheritdoc />
+	public Task SendPasswordResetNotificationAsync(Author author, string token, Uri referer,
+		CancellationToken cancellationToken = default)
+	{
+		return SendAsync("Mails/PasswordResetMail", new PasswordResetMailModel
+		{
+			UserName = author.UserName,
+			ResetUrl = new(referer, $"/reset-password?token={Uri.EscapeDataString(token)}"),
+			ValidFor = PasswordResetService.TokenLifetime,
+		}, author, cancellationToken);
+	}
+
 	private async Task SendAsync<TModel>(string template, TModel model, Author recipient,
 		CancellationToken cancellationToken)
 	{

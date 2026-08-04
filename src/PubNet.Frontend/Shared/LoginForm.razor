@@ -47,7 +47,10 @@
 		<Field Horizontal>
 			<FieldLabel ColumnSize="ColumnSize.Is2"/>
 			<FieldBody ColumnSize="ColumnSize.Is10">
-				<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
+				<div class="is-flex is-align-items-center">
+					<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
+					<NavLink class="ml-4" href="/forgot-password">Forgot password?</NavLink>
+				</div>
 			</FieldBody>
 		</Field>
 	</Validations>

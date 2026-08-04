@@ -27,6 +27,8 @@ internal sealed class TestEnvironment : IDisposable
 		Registration = new AuthorRegistrationService(Db, Passwords);
 
 		Onboarding = new OnboardingService(Db, Registration);
+
+		PasswordResets = new PasswordResetService(Db, Passwords, NullLogger<PasswordResetService>.Instance);
 	}
 
 	public PubNetContext Db { get; }
@@ -36,6 +38,8 @@ internal sealed class TestEnvironment : IDisposable
 	public IAuthorRegistrationService Registration { get; }
 
 	public IOnboardingService Onboarding { get; }
+
+	public IPasswordResetService PasswordResets { get; }
 
 	public static RegisterRequestDto ValidRequest()
 	{
