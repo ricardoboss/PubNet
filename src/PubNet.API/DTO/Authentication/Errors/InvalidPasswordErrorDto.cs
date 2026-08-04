@@ -5,5 +5,5 @@ namespace PubNet.API.DTO.Authentication.Errors;
 [PublicAPI]
 public class InvalidPasswordErrorDto : ErrorMessageDto, IHaveDefaultMessage
 {
-	public string DefaultMessage => "Invalid password";
+	public static string DefaultMessage => "Invalid password";
 }

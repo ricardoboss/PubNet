@@ -5,5 +5,5 @@ namespace PubNet.API.DTO.Packages.Errors;
 [PublicAPI]
 public class PackageDiscontinuedErrorDto : ErrorMessageDto, IHaveDefaultMessage
 {
-	public string DefaultMessage => "Package discontinued";
+	public static string DefaultMessage => "Package discontinued";
 }
