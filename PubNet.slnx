@@ -29,7 +29,6 @@
     <File Path="src/frontend-appsettings.json" />
     <File Path="src/worker-appsettings.json" />
   </Folder>
-  <Project Path="PubNet.SDK.Tests/PubNet.SDK.Tests.csproj" />
   <Project Path="src/PubNet.API/PubNet.API.csproj" />
   <Project Path="src/PubNet.Common/PubNet.Common.csproj" />
   <Project Path="src/PubNet.Database/PubNet.Database.csproj" />
@@ -38,4 +37,5 @@
   <Project Path="src/PubNet.Worker/PubNet.Worker.csproj" />
   <Project Path="tests/PubNet.API.Tests/PubNet.API.Tests.csproj" />
   <Project Path="tests/PubNet.Common.Tests/PubNet.Common.Tests.csproj" />
+  <Project Path="tests/PubNet.SDK.Tests/PubNet.SDK.Tests.csproj" />
 </Solution>
