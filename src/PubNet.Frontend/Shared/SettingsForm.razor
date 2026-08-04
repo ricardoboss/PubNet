@@ -12,31 +12,33 @@
 		<Field Horizontal>
 			<FieldLabel ColumnSize="ColumnSize.Is4">@descriptor.Label</FieldLabel>
 			<FieldBody ColumnSize="ColumnSize.Is8">
-				@switch (descriptor.Kind)
-				{
-					case SettingKind.Boolean:
-						<Check TValue="bool" Value="@GetBoolean(descriptor)"
-						       ValueChanged="@((bool value) => Set(descriptor, value ? "true" : "false"))">
-							@descriptor.Description
-						</Check>
-						break;
-					case SettingKind.Secret:
-						<TextInput Role="TextRole.Password" Placeholder="@descriptor.Description"
-						           Value="@GetText(descriptor)" ValueChanged="@(value => Set(descriptor, value))"/>
-						break;
-					case SettingKind.Url:
-					case SettingKind.Text:
-					default:
-						<TextInput Role="@(descriptor.Kind == SettingKind.Url ? TextRole.Url : TextRole.Text)"
-						           Placeholder="@descriptor.Description"
-						           Value="@GetText(descriptor)" ValueChanged="@(value => Set(descriptor, value))"/>
-						break;
-				}
+				@* one inner field per row: side-by-side siblings would become columns in a horizontal field *@
+				<Field>
+					@switch (descriptor.Kind)
+					{
+						case SettingKind.Boolean:
+							<Check TValue="bool" Value="@GetBoolean(descriptor)"
+							       ValueChanged="@((bool value) => Set(descriptor, value ? "true" : "false"))">
+								@descriptor.Description
+							</Check>
+							break;
+						case SettingKind.Secret:
+							<TextInput Role="TextRole.Password"
+							           Value="@GetText(descriptor)" ValueChanged="@(value => Set(descriptor, value))"/>
+							break;
+						case SettingKind.Url:
+						case SettingKind.Text:
+						default:
+							<TextInput Role="@(descriptor.Kind == SettingKind.Url ? TextRole.Url : TextRole.Text)"
+							           Value="@GetText(descriptor)" ValueChanged="@(value => Set(descriptor, value))"/>
+							break;
+					}
 
-				@if (descriptor.Kind != SettingKind.Boolean && descriptor.Description is not null)
-				{
-					<FieldHelp>@descriptor.Description</FieldHelp>
-				}
+					@if (descriptor.Kind != SettingKind.Boolean && descriptor.Description is not null)
+					{
+						<FieldHelp>@descriptor.Description</FieldHelp>
+					}
+				</Field>
 			</FieldBody>
 		</Field>
 	}

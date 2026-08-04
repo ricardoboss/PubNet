@@ -52,12 +52,17 @@ else
 
 				<SettingsForm Descriptors="@_settings" Values="@_changes" OnChanged="@StateHasChanged"/>
 
-				<Button Color="Color.Primary" Clicked="@SaveSettings" Disabled="@(_busy || _changes.Count == 0)">
-					Save settings
-				</Button>
+				<Field Horizontal>
+					<FieldLabel ColumnSize="ColumnSize.Is4"/>
+					<FieldBody ColumnSize="ColumnSize.Is8">
+						<Button Color="Color.Primary" Clicked="@SaveSettings" Disabled="@(_busy || _changes.Count == 0)">
+							Save settings
+						</Button>
+					</FieldBody>
+				</Field>
 			</TabPanel>
 			<TabPanel Name="authors">
-				<Table Margin="Margin.Is3.FromTop" Striped Narrow>
+				<Table Margin="Margin.Is3.FromTop" Striped Narrow Class="is-vcentered-cells">
 					<TableHeader>
 						<TableRow>
 							<TableHeaderCell>Username</TableHeaderCell>
