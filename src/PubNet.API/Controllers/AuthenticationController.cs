@@ -90,28 +90,23 @@ public class AuthenticationController(
 	[AllowAnonymous]
 	[HttpPost("forgot-password")]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(PubNetStatusCodes.Status460EmailNotFound, Type = typeof(EmailNotFoundErrorDto))]
 	public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto dto,
 		CancellationToken cancellationToken = default)
 	{
-		// always answers 204: whether an account exists for an address is none of the caller's business
 		if (string.IsNullOrWhiteSpace(dto.Email))
-			return NoContent();
+			return Error<EmailNotFoundErrorDto>(PubNetStatusCodes.Status460EmailNotFound);
 
 		var author =
 			await db.Authors.FirstOrDefaultAsync(a => EF.Functions.ILike(a.Email, dto.Email), cancellationToken);
 		if (author is null)
-			return NoContent();
+			return Error<EmailNotFoundErrorDto>(PubNetStatusCodes.Status460EmailNotFound);
 
 		var token = await passwordResetService.GenerateTokenAsync(author, cancellationToken);
 
-		try
-		{
-			await notificationService.SendPasswordResetNotificationAsync(author, token, RefererUri, cancellationToken);
-		}
-		catch (Exception e)
-		{
-			logger.LogError(e, "Failed to send password reset notification");
-		}
+		// not swallowed like the welcome mail: this mail is the whole point of the request, so the caller
+		// must not be told everything went fine when it did not
+		await notificationService.SendPasswordResetNotificationAsync(author, token, RefererUri, cancellationToken);
 
 		return NoContent();
 	}

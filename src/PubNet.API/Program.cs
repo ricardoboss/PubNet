@@ -135,6 +135,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 	// used for verifying and creating password hashes
 	builder.Services.TryAddSingleton<IPasswordHasher<Author>, PasswordHasher<Author>>();
 	builder.Services.AddScoped<PasswordManager>();
+	builder.Services.AddSingleton<SecureTokenGenerator>();
 	builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
 	// generates JWT tokens

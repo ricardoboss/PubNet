@@ -37,6 +37,7 @@ namespace PubNet.SDK.Generated.Authentication.ForgotPassword
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword400Error">When receiving a 400 status code</exception>
+        /// <exception cref="global::PubNet.SDK.Generated.Models.EmailNotFoundErrorDto">When receiving a 460 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword4XXError">When receiving a 4XX status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword500Error">When receiving a 500 status code</exception>
         /// <exception cref="global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword5XXError">When receiving a 5XX status code</exception>
@@ -54,6 +55,7 @@ namespace PubNet.SDK.Generated.Authentication.ForgotPassword
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
                 { "400", global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword400Error.CreateFromDiscriminatorValue },
+                { "460", global::PubNet.SDK.Generated.Models.EmailNotFoundErrorDto.CreateFromDiscriminatorValue },
                 { "4XX", global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword4XXError.CreateFromDiscriminatorValue },
                 { "500", global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword500Error.CreateFromDiscriminatorValue },
                 { "5XX", global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPassword5XXError.CreateFromDiscriminatorValue },

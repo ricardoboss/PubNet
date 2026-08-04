@@ -337,6 +337,16 @@
           "204": {
             "description": "No Content"
           },
+          "460": {
+            "description": "email-not-found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailNotFoundErrorDto"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {

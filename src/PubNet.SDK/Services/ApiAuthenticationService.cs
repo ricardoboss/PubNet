@@ -87,6 +87,10 @@ internal sealed class ApiAuthenticationService(
 		{
 			await apiClient.Authentication.ForgotPassword.PostAsync(request, cancellationToken: cancellationToken);
 		}
+		catch (EmailNotFoundErrorDto e)
+		{
+			throw new EmailNotFoundException(email, e);
+		}
 		catch (ApiException e)
 		{
 			throw new UnexpectedResponseException(e);
