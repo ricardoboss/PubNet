@@ -47,8 +47,12 @@
 		<Field Horizontal>
 			<FieldLabel ColumnSize="ColumnSize.Is2"/>
 			<FieldBody ColumnSize="ColumnSize.Is10">
-				<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
-				<NavLink href="/forgot-password">Forgot password?</NavLink>
+				@* Bulma stretches the plain link to the button's height, so without this wrapper its text
+				   sticks to the top edge instead of lining up with the button label *@
+				<div class="is-flex is-align-items-center">
+					<Button Color="Color.Primary" Clicked="@Submit" Type="ButtonType.Submit">Login</Button>
+					<NavLink class="ml-4" href="/forgot-password">Forgot password?</NavLink>
+				</div>
 			</FieldBody>
 		</Field>
 	</Validations>
