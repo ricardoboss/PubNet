@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
@@ -16,7 +18,7 @@ namespace PubNet.API.Controllers;
 
 [ApiController]
 [Route("storage")]
-public class StorageController(
+public partial class StorageController(
 	ILogger<StorageController> logger,
 	PubNetContext db,
 	IPackageStorageProvider storageProvider,
@@ -165,6 +167,10 @@ public class StorageController(
 			if (packageName is null)
 				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package name"));
 
+			if (!ValidPackageNameRegex.IsMatch(packageName))
+				return Error<InvalidPubSpecErrorDto>(PubNetStatusCodes.Status472InvalidPubSpec,
+					"The pubspec.yaml contains an invalid package name");
+
 			var packageVersionId = pubSpec.Version;
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			if (packageVersionId is null)
@@ -263,4 +269,7 @@ public class StorageController(
 
 		return yamlDeser.Deserialize<PubSpec>(pubSpecText);
 	}
+
+	[GeneratedRegex("^[a-z_][a-z0-9_]*$")]
+	private static partial Regex ValidPackageNameRegex { get; }
 }
