@@ -143,7 +143,7 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 		var intendedPath = Path.GetFullPath(name, basePath);
 
 		if (!intendedPath.StartsWith(basePath, StringComparison.Ordinal))
-			throw new UnauthorizedAccessException("Storing packages outisde of package base path is not allowed");
+			throw new UnauthorizedAccessException("Storing packages outside of package base path is not allowed");
 
 		return intendedPath;
 	}
