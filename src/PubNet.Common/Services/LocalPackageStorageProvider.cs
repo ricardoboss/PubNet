@@ -139,7 +139,13 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 
 	private string GetPackageBasePath(string name)
 	{
-		return Path.Combine(GetStorageBasePath(), name);
+		var basePath = GetStorageBasePath();
+		var intendedPath = Path.GetFullPath(name, basePath);
+
+		if (!intendedPath.StartsWith(basePath, StringComparison.Ordinal))
+			throw new UnauthorizedAccessException("Storing packages outisde of package base path is not allowed");
+
+		return intendedPath;
 	}
 
 	private string GetPackageVersionBasePath(string name, string version)
