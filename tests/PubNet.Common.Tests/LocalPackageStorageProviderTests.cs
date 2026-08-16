@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using PubNet.Common.Interfaces;
 using PubNet.Common.Models;
 using PubNet.Common.Services;
 
@@ -19,28 +20,32 @@ public class LocalPackageStorageProviderTests
 	{
 		existingPackageDir.Refresh();
 
-		Assert.That(existingPackageDir.Exists, Is.True, $"Expected directory {existingPackageDir} to exist, but it doesn't");
+		Assert.That(existingPackageDir.Exists, Is.True,
+			$"Expected directory {existingPackageDir} to exist, but it doesn't");
 	}
 
 	private void AssertPackageDirDoesntExist()
 	{
 		existingPackageDir.Refresh();
 
-		Assert.That(existingPackageDir.Exists, Is.False, $"Expected directory {existingPackageDir} to be deleted, but it wasn't");
+		Assert.That(existingPackageDir.Exists, Is.False,
+			$"Expected directory {existingPackageDir} to be deleted, but it wasn't");
 	}
 
 	private void AssertVersionDirExists()
 	{
 		existingVersionDir.Refresh();
 
-		Assert.That(existingVersionDir.Exists, Is.True, $"Expected directory {existingVersionDir} to exist, but it doesn't");
+		Assert.That(existingVersionDir.Exists, Is.True,
+			$"Expected directory {existingVersionDir} to exist, but it doesn't");
 	}
 
 	private void AssertVersionDirDoesntExist()
 	{
 		existingVersionDir.Refresh();
 
-		Assert.That(existingVersionDir.Exists, Is.False, $"Expected directory {existingVersionDir} to be deleted, but it wasn't");
+		Assert.That(existingVersionDir.Exists, Is.False,
+			$"Expected directory {existingVersionDir} to be deleted, but it wasn't");
 	}
 
 	private void AssertDocsDirExists()
@@ -54,21 +59,24 @@ public class LocalPackageStorageProviderTests
 	{
 		existingDocsDir.Refresh();
 
-		Assert.That(existingDocsDir.Exists, Is.False, $"Expected directory {existingDocsDir} to be deleted, but it wasn't");
+		Assert.That(existingDocsDir.Exists, Is.False,
+			$"Expected directory {existingDocsDir} to be deleted, but it wasn't");
 	}
 
 	private void AssertVersionArchiveExists()
 	{
 		existingArchiveFile.Refresh();
 
-		Assert.That(existingArchiveFile.Exists, Is.True, $"Expected file {existingArchiveFile} to exist, but it doesn't");
+		Assert.That(existingArchiveFile.Exists, Is.True,
+			$"Expected file {existingArchiveFile} to exist, but it doesn't");
 	}
 
 	private void AssertVersionArchiveDoesntExist()
 	{
 		existingArchiveFile.Refresh();
 
-		Assert.That(existingArchiveFile.Exists, Is.False, $"Expected file {existingArchiveFile} to be deleted, but it wasn't");
+		Assert.That(existingArchiveFile.Exists, Is.False,
+			$"Expected file {existingArchiveFile} to be deleted, but it wasn't");
 	}
 
 	[OneTimeTearDown]
@@ -217,6 +225,20 @@ public class LocalPackageStorageProviderTests
 
 		var entry = (docsContainer as DirectoryFileContainer)!;
 		Assert.That(entry.Info.FullName, Is.EqualTo(existingDocsDir.FullName));
+	}
+
+	[Test]
+	public void TestRejectsPathsOutsideStorageDir()
+	{
+		var instance = EmitInstance();
+
+		const string evilPackageName = "../../tmp/evil";
+		var fileEntryMock = new Mock<IFileEntry>();
+
+		var ex = Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
+			await instance.StoreArchiveAsync(evilPackageName, "1.0.0", fileEntryMock.Object));
+
+		Assert.That(ex.Message, Does.Contain("Storing packages outside of package base path is not allowed"));
 	}
 
 	// TODO: add tests for storing docs
