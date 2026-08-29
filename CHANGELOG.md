@@ -3,6 +3,8 @@
 * Added a "forgot password" flow: the login form now links to a page that e-mails a single-use reset link, valid for one hour ([#7](https://github.com/ricardoboss/PubNet/issues/7))
 * Added a first-time setup for the administrator account: new instances ask for one before they can be used, existing installations have their oldest account promoted, and the last administrator can no longer delete their own account ([#98](https://github.com/ricardoboss/PubNet/pull/98))
 * Reading packages and authors now requires authentication, not just publishing. Consumers have to run `dart pub token add <url>` for the instance; anonymous `dart pub get` no longer works. Metadata mirrored from the hosted upstream is authenticated as well, while mirrored archives are still fetched directly from the upstream
+* Reject invalid dart package names during upload
+* Ensure package names can't write outside package base path
 * Updated all dependencies to their latest versions
 
 # v1.2.0
