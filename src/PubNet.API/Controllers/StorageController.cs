@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO;
@@ -168,8 +167,8 @@ public partial class StorageController(
 				return UnprocessableEntity(ErrorResponse.InvalidPubspec("The pubspec.yaml is missing a package name"));
 
 			if (!ValidPackageNameRegex.IsMatch(packageName))
-				return Error<InvalidPubSpecErrorDto>(PubNetStatusCodes.Status472InvalidPubSpec,
-					"The pubspec.yaml contains an invalid package name");
+				return UnprocessableEntity(
+					ErrorResponse.InvalidPubspec("The pubspec.yaml contains an invalid package name"));
 
 			var packageVersionId = pubSpec.Version;
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract

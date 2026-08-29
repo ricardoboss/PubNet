@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using PubNet.API.Controllers;
-using PubNet.API.DTO.Packages.Errors;
+using PubNet.API.DTO;
 using PubNet.API.Services;
 using PubNet.Common.Interfaces;
 using PubNet.Common.Models;
@@ -81,8 +81,10 @@ public class StorageControllerTests
 			{
 				Assert.That(result, Is.InstanceOf<ObjectResult>());
 				Assert.That((result as ObjectResult)?.StatusCode,
-					Is.EqualTo(PubNetStatusCodes.Status472InvalidPubSpec));
-				Assert.That((result as ObjectResult)?.Value, Is.InstanceOf<InvalidPubSpecErrorDto>());
+					Is.EqualTo(StatusCodes.Status422UnprocessableEntity));
+				Assert.That((result as ObjectResult)?.Value, Is.InstanceOf<ErrorResponse>());
+				Assert.That(((result as ObjectResult)?.Value as ErrorResponse)?.Error,
+					Is.EqualTo(ErrorResponse.InvalidPubspec("The pubspec.yaml contains an invalid package name").Error));
 				Assert.That(await env.Db.Packages.AnyAsync(), Is.False);
 				packageStorageProviderMock.Verify(
 					p => p.StoreArchiveAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IFileEntry>(),
