@@ -1,5 +1,13 @@
 ﻿# Unreleased
 
+# v1.2.1
+
+> [!Warning]
+> This release contains a fix for a security vulnerability. Please update immediately.
+
+* Reject invalid dart package names during upload
+* Ensure package names can't write outside package base path
+
 # v1.2.0
 
 * Added configurable hosted upstream option (`HostedUpstream:BaseUrl`) to allow fallback to alternative package repositories
