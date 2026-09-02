@@ -23,6 +23,10 @@ public static class PubNetStatusCodes
 	// Authors (48x)
 	public const int Status480LastAdmin = 480;
 
+	// Settings (49x)
+	public const int Status490UnknownSetting = 490;
+	public const int Status491InvalidSettingValue = 491;
+
 	// Package Upload (47x)
 	public const int Status470MissingRequiredData = 470;
 	public const int Status471InvalidUploadData = 471;
@@ -55,6 +59,9 @@ public static class PubNetStatusCodes
 		Status474VersionConflict => "version-conflict",
 
 		Status480LastAdmin => "last-admin",
+
+		Status490UnknownSetting => "unknown-setting",
+		Status491InvalidSettingValue => "invalid-setting-value",
 
 		_ => null,
 	};
