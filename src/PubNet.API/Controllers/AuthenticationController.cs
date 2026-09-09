@@ -172,12 +172,12 @@ public class AuthenticationController(
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 		
-		if (string.IsNullOrWhiteSpace(dto.NewPassword))
-			return Error<InvalidNewPasswordErrorDto>(PubNetStatusCodes.Status467InvalidNewPassword);
-
 		if (!await passwordManager.IsValid(db, author, dto.OldPassword, cancellationToken))
 			return Error<InvalidPasswordErrorDto>(PubNetStatusCodes.Status461InvalidPassword);
 		
+		if (string.IsNullOrWhiteSpace(dto.NewPassword))
+			return Error<InvalidNewPasswordErrorDto>(PubNetStatusCodes.Status467InvalidNewPassword);
+
 		if (dto.NewPassword == dto.OldPassword)
 			return Error<InvalidNewPasswordErrorDto>(PubNetStatusCodes.Status467InvalidNewPassword);
 
