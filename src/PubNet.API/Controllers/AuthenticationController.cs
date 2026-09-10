@@ -182,6 +182,9 @@ public class AuthenticationController(
 			return Error<InvalidNewPasswordErrorDto>(PubNetStatusCodes.Status467InvalidNewPassword);
 
 		author.PasswordHash = await passwordManager.GenerateHashAsync(author, dto.NewPassword, cancellationToken);
+
+		await passwordResetService.ConsumeOutstandingTokensAsync(author.Id, DateTimeOffset.UtcNow, cancellationToken);
+
 		await db.SaveChangesAsync(cancellationToken);
 
 		return Ok();
