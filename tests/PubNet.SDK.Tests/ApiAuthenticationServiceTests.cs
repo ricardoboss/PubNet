@@ -58,4 +58,53 @@ public class ApiAuthenticationServiceTests
 		Assert.ThrowsAsync<UnexpectedResponseException>(
 			() => Service(new ApiException("boom")).LoginAsync("someone@example.test", "hunter2"));
 	}
+
+
+	[Test]
+	public void TestChangePasswordMapsInvalidPassword()
+	{
+		var api = new InvalidPasswordErrorDto
+		{
+			Error = new() { Code = "invalid-password", Message = "nope" }
+		};
+
+		var e = Assert.ThrowsAsync<InvalidPasswordException>(
+			() => Service(api).ChangePasswordAsync("wrong-password", "new-password"));
+
+		Assert.That(e?.InnerException, Is.SameAs(api));
+	}
+
+	[Test]
+	public void TestChangePasswordMapsInvalidNewPassword()
+	{
+		var api = new InvalidNewPasswordErrorDto
+		{
+			Error = new() { Code = "invalid-new-password", Message = "nope" }
+		};
+
+		var e = Assert.ThrowsAsync<InvalidNewPasswordException>(
+			() => Service(api).ChangePasswordAsync("hunter2", "hunter2"));
+
+		Assert.That(e?.InnerException, Is.SameAs(api));
+	}
+
+	[Test]
+	public void TestChangePasswordMapsUnexpectedApiErrors()
+	{
+		Assert.ThrowsAsync<UnexpectedResponseException>(
+			() => Service(new ApiException("boom"))
+				.ChangePasswordAsync("hunter2", "new-password"));
+	}
+
+	[Test]
+	public async Task TestChangePasswordSucceeds()
+	{
+		var adapter = new SuccessfulRequestAdapter();
+		var service = new ApiAuthenticationService(
+			new PubNetApiClient(adapter),
+			new Mock<ILoginTokenStorage>().Object,
+			NullLogger<ApiAuthenticationService>.Instance);
+
+		await service.ChangePasswordAsync("hunter2", "new-password");
+	}
 }

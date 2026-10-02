@@ -20,4 +20,12 @@ public interface IPasswordResetService
 	/// If the token is unknown, expired or has already been used.
 	/// </exception>
 	Task<Author> ResetPasswordAsync(string token, string password, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// </summary>
+	/// Consumes all outstanding password reset tokens for the specified author.
+	/// <param name="authorId">The ID of the author</param>
+	/// <param name="now">The timestamp at which the tokens are consumed</param>
+	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
+	Task ConsumeOutstandingTokensAsync(int authorId, DateTimeOffset now, CancellationToken cancellationToken = default);
 }

@@ -106,4 +106,19 @@ public interface IAuthenticationService
 	/// Called automatically when an author is modified, since that author may be the authenticated one.
 	/// </remarks>
 	void InvalidateSelf();
+
+	/// <summary>
+	/// Changes the password of the currently authenticated author.
+	/// </summary>
+	/// <param name="currentPassword">The current password</param>
+	/// <param name="newPassword">The new password</param>
+	/// <param name="cancellationToken">A token to cancel the asynchronous request</param>
+	/// <exception cref="InvalidPasswordException">If the current password was rejected</exception>
+	/// <exception cref="InvalidNewPasswordException">If the new password was rejected</exception>
+	/// <exception cref="AuthenticationRequiredException">If the service is not authenticated</exception>
+	/// <exception cref="PubNetSdkException">In case anything unexpected happens</exception>
+	Task ChangePasswordAsync(
+		string currentPassword,
+		string newPassword,
+		CancellationToken cancellationToken = default);
 }

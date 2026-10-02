@@ -2,6 +2,7 @@
 #pragma warning disable CS0618
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
+using PubNet.SDK.Generated.Authentication.ChangePassword;
 using PubNet.SDK.Generated.Authentication.ForgotPassword;
 using PubNet.SDK.Generated.Authentication.Login;
 using PubNet.SDK.Generated.Authentication.Register;
@@ -20,6 +21,11 @@ namespace PubNet.SDK.Generated.Authentication
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class AuthenticationRequestBuilder : BaseRequestBuilder
     {
+        /// <summary>The changePassword property</summary>
+        public global::PubNet.SDK.Generated.Authentication.ChangePassword.ChangePasswordRequestBuilder ChangePassword
+        {
+            get => new global::PubNet.SDK.Generated.Authentication.ChangePassword.ChangePasswordRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The forgotPassword property</summary>
         public global::PubNet.SDK.Generated.Authentication.ForgotPassword.ForgotPasswordRequestBuilder ForgotPassword
         {

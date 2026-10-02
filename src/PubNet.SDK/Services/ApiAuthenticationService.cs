@@ -208,4 +208,35 @@ internal sealed class ApiAuthenticationService(
 			throw new UnexpectedResponseException(e);
 		}
 	}
+
+	public async Task ChangePasswordAsync(
+		string currentPassword,
+		string newPassword,
+		CancellationToken cancellationToken = default)
+	{
+		var request = new ChangePasswordRequestDto
+		{
+			OldPassword = currentPassword,
+			NewPassword = newPassword,
+		};
+
+		try
+		{
+			await apiClient.Authentication.ChangePassword.PostAsync(
+				request,
+				cancellationToken: cancellationToken);
+		}
+		catch (InvalidPasswordErrorDto e)
+		{
+			throw new InvalidPasswordException(e);
+		}
+		catch (InvalidNewPasswordErrorDto e)
+		{
+			throw new InvalidNewPasswordException(e);
+		}
+		catch (ApiException e)
+		{
+			throw new UnexpectedResponseException(e);
+		}
+	}
 }
