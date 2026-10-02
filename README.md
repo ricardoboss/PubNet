@@ -12,6 +12,8 @@ Self-hosted pub.dev alternative.
   - [Debugging](#debugging)
 - [Contributions](#contributions)
 - [Hosting](#hosting)
+  - [Administration](#administration)
+  - [Instance settings](#instance-settings)
   - [Using `docker-compose.yml`](#using-docker-composeyml)
   - [Other approaches](#other-approaches)
 - [License](#license)
@@ -66,7 +68,42 @@ If you want to contribute improvements or bugfixes, fork this repository, create
 > In case you only need a simple, privately hosted pub package API, the API project alone is sufficient.
 
 When you are ready to deploy `PubNet`, you may want to review the `OpenRegistration` setting in the `backend-appsettings.json` to toggle whether anyone is able to register an account.
-This setting can be changed at runtime.
+This setting, and the other [instance settings](#instance-settings), can also be changed at runtime in the admin backend.
+
+### Administration
+
+Admins get an `Administration` entry in the navigation bar, leading to `/admin`, where they can change the
+[instance settings](#instance-settings) and promote or demote authors.
+The same operations are available on the API:
+
+| Endpoint                           | Description                                |
+|------------------------------------|--------------------------------------------|
+| `GET /api/admin/settings`          | The settings and their effective values    |
+| `PATCH /api/admin/settings`        | Change settings                            |
+| `GET /api/admin/authors`           | All authors, including their roles         |
+| `POST /api/admin/authors/{u}/role` | Promote (`1337`) or demote (`0`) an author |
+
+Admins may also discontinue, retract and delete packages they do not own, using the regular package endpoints.
+
+The last remaining admin cannot be demoted or delete their account — promote someone else first.
+Since the first-time setup cannot be repeated, an instance without admins could never be administered again.
+
+Roles are checked against the database on every request, so a demotion takes effect immediately instead of when
+the author's token expires.
+
+### Instance settings
+
+Settings changed in the admin backend are stored in the database and take precedence over `appsettings.json`
+and environment variables. They apply immediately, without a restart, and currently are:
+
+| Key                      | Description                                   |
+|--------------------------|-----------------------------------------------|
+| `OpenRegistration`       | Whether anyone is able to register an account |
+| `HostedUpstream:BaseUrl` | See [Hosted upstream](#hosted-upstream)       |
+
+Everything else — connection strings, `Jwt:*`, `AllowedOrigins`, the package storage path — stays deployment
+configuration and can only be changed in the configuration files or the environment.
+Clearing a setting in the admin backend deletes its row and falls back to the value from the configuration files.
 
 ### Authentication
 

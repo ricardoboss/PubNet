@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using PubNet.API.Configuration;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
@@ -15,7 +17,7 @@ namespace PubNet.API.Tests;
 /// </summary>
 internal sealed class TestEnvironment : IDisposable
 {
-	public TestEnvironment()
+	public TestEnvironment(SettingsRegistry? registry = null)
 	{
 		Db = new TestPubNetContext(new DbContextOptionsBuilder<PubNetContext>()
 			.UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -29,6 +31,12 @@ internal sealed class TestEnvironment : IDisposable
 		Onboarding = new OnboardingService(Db, Registration);
 
 		PasswordResets = new PasswordResetService(Db, Passwords, NullLogger<PasswordResetService>.Instance);
+
+		Roles = new AuthorRoleService(Db, NullLogger<AuthorRoleService>.Instance);
+
+		Registry = registry ?? new SettingsRegistry().Add(RegistrationOptions.Descriptors);
+		Configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
+		Settings = new SettingsService(Db, Configuration, Registry, NullLogger<SettingsService>.Instance);
 	}
 
 	public PubNetContext Db { get; }
@@ -40,6 +48,14 @@ internal sealed class TestEnvironment : IDisposable
 	public IOnboardingService Onboarding { get; }
 
 	public IPasswordResetService PasswordResets { get; }
+
+	public IAuthorRoleService Roles { get; }
+
+	public SettingsRegistry Registry { get; }
+
+	public IConfigurationRoot Configuration { get; }
+
+	public ISettingsService Settings { get; }
 
 	public static RegisterRequestDto ValidRequest()
 	{

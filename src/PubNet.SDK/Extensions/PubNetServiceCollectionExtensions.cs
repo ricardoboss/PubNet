@@ -57,6 +57,7 @@ public static class PubNetServiceCollectionExtensions
 			services.TryAddScoped<IAuthenticationService, ApiAuthenticationService>();
 			services.TryAddScoped<IAuthorService, ApiAuthorService>();
 			services.TryAddScoped<IOnboardingService, ApiOnboardingService>();
+			services.TryAddScoped<IAdminService, ApiAdminService>();
 
 			return new DefaultPubNetApiServiceBuilder(services);
 		}

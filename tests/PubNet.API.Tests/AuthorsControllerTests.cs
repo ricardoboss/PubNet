@@ -89,7 +89,7 @@ public class AuthorsControllerTests
 		};
 
 		// the author is already resolved, so the action does not go looking for a bearer token
-		return controller.Delete(author.UserName, new(password), new() { Author = author });
+		return controller.Delete(author.UserName, new(password), new() { Author = author }, env.Roles);
 	}
 
 	private static string? ErrorCodeOf(IActionResult result)

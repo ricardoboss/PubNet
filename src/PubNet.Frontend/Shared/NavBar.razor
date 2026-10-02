@@ -28,6 +28,14 @@
 			@switch (Authenticated)
 			{
 				case true:
+					<OnlyAdmin>
+						<BarItem>
+							<BarLink To="/admin">
+								<BarIcon IconName="IconName.Settings" Margin="Margin.Is2.FromEnd"/>
+								Administration
+							</BarLink>
+						</BarItem>
+					</OnlyAdmin>
 					<BarItem>
 						<BarLink To="@("/authors/" + UserName)">
 							<BarIcon IconName="IconName.UserCircle" Margin="Margin.Is2.FromEnd"/>

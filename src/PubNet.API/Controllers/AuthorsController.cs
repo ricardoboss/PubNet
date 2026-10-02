@@ -7,6 +7,7 @@ using PubNet.API.DTO.Authors;
 using PubNet.API.DTO.Authors.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Errors;
+using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Database;
 using PubNet.Database.Models;
@@ -77,7 +78,8 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 	[ProducesResponseType(PubNetStatusCodes.Status480LastAdmin, Type = typeof(LastAdminErrorDto))]
 	[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
 	public async Task<IActionResult> Delete([FromRoute] string username, [FromBody] DeleteAuthorRequestDto dto,
-		[FromServices] ApplicationRequestContext context, CancellationToken cancellationToken = default)
+		[FromServices] ApplicationRequestContext context, [FromServices] IAuthorRoleService authorRoleService,
+		CancellationToken cancellationToken = default)
 	{
 		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
 
@@ -89,8 +91,7 @@ public class AuthorsController(ILogger<AuthorsController> logger, PubNetContext 
 
 		// an instance without an admin cannot be administered again: onboarding stays closed once it has
 		// been completed, so recovering would mean editing the database by hand
-		if (author.Role == Role.Admin && !await db.Authors
-			    .AnyAsync(a => a.Role == Role.Admin && a.Id != author.Id, cancellationToken))
+		if (await authorRoleService.IsLastAdminAsync(author, cancellationToken))
 		{
 			logger.LogWarning("Refused to delete {Username} (author {AuthorId}), the only admin left",
 				author.UserName, author.Id);
