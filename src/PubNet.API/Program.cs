@@ -1,6 +1,8 @@
+using System.Net;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -156,6 +158,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 	builder.Services.AddScoped<IUploadEndpointGenerator, StorageController>();
 	builder.Services.AddPackageStorageProviderOptions();
 	builder.Services.AddHostedUpstreamOptions();
+	builder.Services.AddFrontendOptions();
 	builder.Services.AddSingleton<IPackageStorageProvider, LocalPackageStorageProvider>();
 	builder.Services.AddSingleton<EndpointHelper>();
 
@@ -206,10 +209,25 @@ void ConfigureServices(WebApplicationBuilder builder)
 	});
 
 	builder.Services.AddResponseCaching();
+
+	// only proxies listed here (plus loopback) may override scheme, host and client IP via X-Forwarded-* headers
+	builder.Services.Configure<ForwardedHeadersOptions>(options =>
+	{
+		options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto |
+		                           ForwardedHeaders.XForwardedHost;
+
+		var section = builder.Configuration.GetSection("ForwardedHeaders");
+		foreach (var proxy in section.GetSection("KnownProxies").Get<string[]>() ?? [])
+			options.KnownProxies.Add(IPAddress.Parse(proxy));
+		foreach (var network in section.GetSection("KnownNetworks").Get<string[]>() ?? [])
+			options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse(network));
+	});
 }
 
 void ConfigureHttpPipeline(WebApplication app)
 {
+	app.UseForwardedHeaders();
+
 	app.UsePathBase("/api");
 
 	app.UseSerilogRequestLogging(options =>

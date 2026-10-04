@@ -8,11 +8,6 @@ namespace PubNet.API.Controllers;
 
 public abstract class BaseController : ControllerBase
 {
-	/// <summary>
-	/// Where the caller came from, used to point mails back at the frontend they used.
-	/// </summary>
-	protected Uri RefererUri => new(Request.Headers.Referer.FirstOrDefault() ?? Request.Host.ToString());
-
 	[NonAction]
 	protected ObjectResult Error<T>(int status) where T : ErrorMessageDto, IHaveDefaultMessage, new() =>
 		StatusCode(status, StatusToDto<T>(status, T.DefaultMessage));

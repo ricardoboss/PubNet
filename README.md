@@ -215,6 +215,13 @@ In case you want a reverse proxy, configure it appropriately (in this case using
   "AllowedOrigins": [
     "http://localhost"
   ],
+  "Frontend": {
+    "BaseUrl": "http://localhost"
+  },
+  "ForwardedHeaders": {
+    "KnownProxies": [],
+    "KnownNetworks": []
+  },
   "ConnectionStrings": {
     "PubNet": "Host=database;Database=pubnet;Username=pubnet;Password=pubnet"
   },
@@ -240,6 +247,10 @@ In case you want a reverse proxy, configure it appropriately (in this case using
 }
 
 ```
+
+`Frontend:BaseUrl` is the public URL of the frontend. Links in e-mails (e.g. password resets) point there, so it is required.
+
+`ForwardedHeaders` lists the reverse proxies whose `X-Forwarded-*` headers are trusted (IP addresses in `KnownProxies`, CIDR ranges in `KnownNetworks`); headers from anyone else are ignored. Only loopback is trusted by default, so add your proxy here, e.g. `"KnownNetworks": ["172.16.0.0/12"]` when it runs in the same Docker network.
 
 </details>
 
