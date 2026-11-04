@@ -3,6 +3,7 @@
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Serialization.Json;
+using PubNet.SDK.Generated.Admin;
 using PubNet.SDK.Generated.Authentication;
 using PubNet.SDK.Generated.Authors;
 using PubNet.SDK.Generated.Onboarding;
@@ -20,6 +21,11 @@ namespace PubNet.SDK.Generated
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class PubNetApiClient : BaseRequestBuilder
     {
+        /// <summary>The admin property</summary>
+        public global::PubNet.SDK.Generated.Admin.AdminRequestBuilder Admin
+        {
+            get => new global::PubNet.SDK.Generated.Admin.AdminRequestBuilder(PathParameters, RequestAdapter);
+        }
         /// <summary>The authentication property</summary>
         public global::PubNet.SDK.Generated.Authentication.AuthenticationRequestBuilder Authentication
         {

@@ -6,6 +6,9 @@
 * Reject invalid dart package names during upload
 * Ensure package names can't write outside package base path
 * Updated all dependencies to their latest versions
+* Added an admin backend at `/admin` where administrators change the instance settings and promote or demote authors. The last administrator can no longer be demoted either.
+* Added instance settings: `OpenRegistration` and `HostedUpstream:BaseUrl` are now stored in the database and override `appsettings.json` without a restart.
+* Administrators can now discontinue, retract and delete packages they do not own.
 
 # v1.2.0
 

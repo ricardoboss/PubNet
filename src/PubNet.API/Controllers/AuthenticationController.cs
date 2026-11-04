@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using PubNet.API.DTO.Authentication;
 using PubNet.API.DTO.Authentication.Errors;
 using PubNet.API.DTO.Authors;
@@ -17,7 +18,7 @@ public class AuthenticationController(
 	JwtTokenGenerator tokenGenerator,
 	PubNetContext db,
 	PasswordManager passwordManager,
-	IConfiguration configuration,
+	IOptionsMonitor<RegistrationOptions> registrationOptions,
 	IAuthorRegistrationService registrationService,
 	IOnboardingService onboardingService,
 	INotificationService notificationService,
@@ -158,6 +159,6 @@ public class AuthenticationController(
 		if (await onboardingService.IsPendingAsync(cancellationToken))
 			return false;
 
-		return configuration.GetValue<bool?>("OpenRegistration") ?? false;
+		return registrationOptions.CurrentValue.OpenRegistration;
 	}
 }

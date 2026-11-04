@@ -59,3 +59,8 @@
 .loading-progress-text:after {
 	content: var(--blazor-load-percentage-text, "Loading");
 }
+
+/* rows containing buttons grow taller than their text; without this the text hugs the top edge */
+table.is-vcentered-cells td {
+	vertical-align: middle;
+}

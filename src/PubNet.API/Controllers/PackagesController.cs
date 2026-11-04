@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PubNet.API.DTO.Authentication.Errors;
 using PubNet.API.DTO.Packages;
 using PubNet.API.DTO.Packages.Errors;
+using PubNet.API.Extensions;
 using PubNet.API.Interfaces;
 using PubNet.API.Services;
 using PubNet.Common.Extensions;
@@ -120,7 +121,7 @@ public class PackagesController(
 		if (package is null)
 			return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
 
-		if (author.Id != package.AuthorId)
+		if (!author.CanManage(package))
 			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 		package.IsDiscontinued = true;
@@ -149,7 +150,7 @@ public class PackagesController(
 		if (package is null)
 			return Error<PackageNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound, "Package not found: " + name);
 
-		if (author.Id != package.AuthorId)
+		if (!author.CanManage(package))
 			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 		// decouple analyses from versions
@@ -267,7 +268,7 @@ public class PackagesController(
 			return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
 				"Package not found: " + name);
 
-		if (author.Id != package.AuthorId)
+		if (!author.CanManage(package))
 			return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 		var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);
@@ -322,7 +323,7 @@ public class PackagesController(
 				return Error<PackageVersionNotFoundErrorDto>(PubNetStatusCodes.Status404NotFound,
 					"Package not found: " + name);
 
-			if (author.Id != package.AuthorId)
+			if (!author.CanManage(package))
 				return Error<ForbiddenErrorDto>(PubNetStatusCodes.Status403Forbidden, "You don't own this package");
 
 			var packageVersion = package.Versions.FirstOrDefault(v => v.Version == version);

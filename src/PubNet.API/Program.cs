@@ -1,3 +1,4 @@
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using PubNet.API.Authorization;
+using PubNet.API.Configuration;
 using PubNet.API.Controllers;
 using PubNet.API.Converter;
 using PubNet.API.Helpers;
@@ -51,6 +53,9 @@ try
 
 	await PubNetContext.RunMigrations(app.Services);
 
+	// the settings table only exists after the migrations ran, so pick up stored settings now
+	app.ReloadSettings();
+
 	await app.RunAsync();
 }
 catch (Exception e) when (e is HostAbortedException or OperationCanceledException or TaskCanceledException ||
@@ -87,6 +92,21 @@ void ConfigureServices(WebApplicationBuilder builder)
 			.Enrich.FromLogContext()
 			.WriteTo.Console()
 	);
+
+	// settings which admins may change at runtime; anything not declared here stays deployment-level
+	// configuration and can only be changed in appsettings.json or the environment
+	var settingsRegistry = new SettingsRegistry()
+		.Add(RegistrationOptions.Descriptors)
+		.Add(HostedUpstreamOptions.Descriptors);
+
+	builder.Services.AddSingleton(settingsRegistry);
+
+	// the host is not built yet, so the configuration provider cannot resolve a logger from it
+	var configurationLoggerFactory = LoggerFactory.Create(logging => logging.AddSerilog());
+
+	// added last so stored settings take precedence over the files and the environment
+	builder.Configuration.AddDatabaseConfiguration(settingsRegistry,
+		builder.Configuration.GetConnectionString("PubNet"), configurationLoggerFactory);
 
 	builder.Services.AddDbContext<PubNetContext>(
 		options => options.UseNpgsql(builder.Configuration.GetConnectionString("PubNet"), o =>
@@ -149,6 +169,11 @@ void ConfigureServices(WebApplicationBuilder builder)
 	builder.Services.AddScoped<IAuthorRegistrationService, AuthorRegistrationService>();
 	builder.Services.AddScoped<IOnboardingService, OnboardingService>();
 
+	// runtime-configurable settings
+	builder.Services.AddRegistrationOptions(builder.Configuration);
+	builder.Services.AddScoped<ISettingsService, SettingsService>();
+	builder.Services.AddScoped<IAuthorRoleService, AuthorRoleService>();
+
 	// used to store request-specific data in a single place
 	builder.Services.AddScoped<ApplicationRequestContext>();
 
@@ -162,7 +187,8 @@ void ConfigureServices(WebApplicationBuilder builder)
 	// mirror for hosted pub upstreams such as pub.dev or unpub
 	builder.Services.AddHttpClient(PubDevPackageProvider.ClientName, (services, options) =>
 	{
-		var upstream = services.GetRequiredService<IOptions<HostedUpstreamOptions>>().Value;
+		// monitored so a change made in the admin backend applies to clients created afterwards
+		var upstream = services.GetRequiredService<IOptionsMonitor<HostedUpstreamOptions>>().CurrentValue;
 		var baseUrl = upstream.BaseUrl.EndsWith('/') ? upstream.BaseUrl : upstream.BaseUrl + "/";
 		options.BaseAddress = new Uri(baseUrl);
 		options.DefaultRequestHeaders.Accept.Add(new("application/json"));
@@ -177,7 +203,13 @@ void ConfigureServices(WebApplicationBuilder builder)
 		{
 			options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 			options.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+			// keeps enums readable in the API contract and lets Kiota generate real enums for the SDK
+			options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 		});
+
+	// the openapi document generator reads these options instead of the MVC ones configured above
+	builder.Services.ConfigureHttpJsonOptions(options =>
+		options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
 
 	builder.Services.AddOpenApi(openApiDocumentName, o =>
 	{

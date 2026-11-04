@@ -1,0 +1,22 @@
+@inject IAuthenticationService Auth
+
+@if (RenderContent)
+{
+	@ChildContent
+}
+
+@code {
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	private bool RenderContent { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		RenderContent = await Auth.IsAdminAsync();
+	}
+
+}

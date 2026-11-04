@@ -1,0 +1,220 @@
+@page "/admin"
+@inject IAdminService AdminService
+@inject IAuthenticationService Auth
+@inject AlertService Alerts
+@inject NavigationManager Nav
+
+<PageTitle>Administration</PageTitle>
+
+@if (_loading)
+{
+	<p>
+		<em>Please wait...</em>
+	</p>
+}
+else if (!_isAdmin)
+{
+	<Heading Size="HeadingSize.Is1">Administration</Heading>
+
+	<Alert Color="Color.Warning" Visible>
+		You need to be an admin to see this page.
+	</Alert>
+}
+else
+{
+	<Heading Size="HeadingSize.Is1">Administration</Heading>
+
+	@if (Error is not null)
+	{
+		<Alert Color="Color.Danger" Dismisable Visible>
+			<strong>That didn't work.</strong> @Error
+		</Alert>
+	}
+
+	@if (Success is not null)
+	{
+		<Alert Color="Color.Success" Dismisable Visible>
+			@Success
+		</Alert>
+	}
+
+	<Tabs SelectedTab="@_selectedTab" SelectedTabChanged="@(name => _selectedTab = name)">
+		<Items>
+			<Tab Name="settings">Settings</Tab>
+			<Tab Name="authors">Authors</Tab>
+		</Items>
+		<Content>
+			<TabPanel Name="settings">
+				<Paragraph Margin="Margin.Is3.FromTop" TextColor="TextColor.Muted">
+					These settings are stored in the database and take precedence over the configuration files.
+					Clearing a field falls back to the configured value.
+				</Paragraph>
+
+				<SettingsForm Descriptors="@_settings" Values="@_changes" OnChanged="@StateHasChanged"/>
+
+				<Field Horizontal>
+					<FieldLabel ColumnSize="ColumnSize.Is4"/>
+					<FieldBody ColumnSize="ColumnSize.Is8">
+						<Button Color="Color.Primary" Clicked="@SaveSettings" Disabled="@(_busy || _changes.Count == 0)">
+							Save settings
+						</Button>
+					</FieldBody>
+				</Field>
+			</TabPanel>
+			<TabPanel Name="authors">
+				<Table Margin="Margin.Is3.FromTop" Striped Narrow Class="is-vcentered-cells">
+					<TableHeader>
+						<TableRow>
+							<TableHeaderCell>Username</TableHeaderCell>
+							<TableHeaderCell>Name</TableHeaderCell>
+							<TableHeaderCell>Registered</TableHeaderCell>
+							<TableHeaderCell>Role</TableHeaderCell>
+							<TableHeaderCell/>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						@foreach (var author in _authors)
+						{
+							<TableRow>
+								<TableRowCell>
+									<AuthorLink Username="@author.UserName"/>
+								</TableRowCell>
+								<TableRowCell>@author.Name</TableRowCell>
+								<TableRowCell>@author.RegisteredAt.Humanize()</TableRowCell>
+								<TableRowCell>
+									@if (author.Role == Role.Admin)
+									{
+										<Badge Color="Color.Primary">Admin</Badge>
+									}
+									else
+									{
+										<Badge Color="Color.Light">Default</Badge>
+									}
+								</TableRowCell>
+								<TableRowCell>
+									@if (author.Role == Role.Admin)
+									{
+										<Button Size="Size.Small" Color="Color.Warning" Disabled="@_busy"
+										        Clicked="@(() => SetRole(author, Role.Default))">
+											Demote
+										</Button>
+									}
+									else
+									{
+										<Button Size="Size.Small" Color="Color.Primary" Disabled="@_busy"
+										        Clicked="@(() => SetRole(author, Role.Admin))">
+											Promote to admin
+										</Button>
+									}
+								</TableRowCell>
+							</TableRow>
+						}
+					</TableBody>
+				</Table>
+			</TabPanel>
+		</Content>
+	</Tabs>
+}
+
+@code {
+
+	private bool _loading = true;
+
+	private bool _isAdmin;
+
+	private bool _busy;
+
+	private string _selectedTab = "settings";
+
+	private IReadOnlyList<SettingDescriptorDto> _settings = [];
+
+	private readonly Dictionary<string, string?> _changes = [];
+
+	private IReadOnlyList<AuthorDto> _authors = [];
+
+	private string? Error { get; set; }
+
+	private string? Success { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		_isAdmin = await Auth.IsAdminAsync();
+		if (_isAdmin)
+			await Reload();
+
+		_loading = false;
+	}
+
+	private async Task Reload()
+	{
+		_settings = await AdminService.GetSettingsAsync() ?? [];
+		_authors = (await AdminService.GetAuthorsAsync())?.Authors ?? [];
+
+		_changes.Clear();
+	}
+
+	private async Task SaveSettings()
+	{
+		Error = null;
+		Success = null;
+		_busy = true;
+
+		try
+		{
+			await AdminService.UpdateSettingsAsync(_changes);
+
+			Success = "Settings saved.";
+
+			await Reload();
+		}
+		catch (PubNetSdkException e)
+		{
+			Error = e.Message;
+		}
+		finally
+		{
+			_busy = false;
+		}
+	}
+
+	private async Task SetRole(AuthorDto author, Role role)
+	{
+		var action = role == Role.Admin ? "promote" : "demote";
+		if (!await Alerts.Confirm($"Really {action} {author.UserName}?"))
+			return;
+
+		var demotingSelf = role != Role.Admin && await Auth.IsSelfAsync(author.UserName!);
+
+		Error = null;
+		Success = null;
+		_busy = true;
+
+		try
+		{
+			await AdminService.SetAuthorRoleAsync(author.UserName!, role);
+
+			// an admin demoting themselves loses access to this page; reload so the cached profile is refetched
+			if (demotingSelf)
+			{
+				Nav.NavigateTo("/", true);
+
+				return;
+			}
+
+			Success = $"{author.UserName} is now {(role == Role.Admin ? "an admin" : "a regular author")}.";
+
+			await Reload();
+		}
+		catch (PubNetSdkException e)
+		{
+			Error = e.Message;
+		}
+		finally
+		{
+			_busy = false;
+		}
+	}
+
+}
