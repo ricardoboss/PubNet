@@ -160,4 +160,33 @@ public class AuthenticationController(
 
 		return configuration.GetValue<bool?>("OpenRegistration") ?? false;
 	}
+
+	[Authorize]
+	[HttpPost("change-password")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(PubNetStatusCodes.Status461InvalidPassword, Type = typeof(InvalidPasswordErrorDto))]
+	[ProducesResponseType(PubNetStatusCodes.Status467InvalidNewPassword, Type = typeof(InvalidNewPasswordErrorDto))]
+	public async Task<IActionResult> ChangePassword(ApplicationRequestContext context,
+		ChangePasswordRequestDto dto,
+		CancellationToken cancellationToken = default)
+	{
+		var author = await context.RequireAuthorAsync(User, db, cancellationToken);
+		
+		if (!await passwordManager.IsValid(db, author, dto.OldPassword, cancellationToken))
+			return Error<InvalidPasswordErrorDto>(PubNetStatusCodes.Status461InvalidPassword);
+		
+		if (string.IsNullOrWhiteSpace(dto.NewPassword))
+			return Error<InvalidNewPasswordErrorDto>(PubNetStatusCodes.Status467InvalidNewPassword);
+
+		if (dto.NewPassword == dto.OldPassword)
+			return Error<InvalidNewPasswordErrorDto>(PubNetStatusCodes.Status467InvalidNewPassword);
+
+		author.PasswordHash = await passwordManager.GenerateHashAsync(author, dto.NewPassword, cancellationToken);
+
+		await passwordResetService.ConsumeOutstandingTokensAsync(author.Id, DateTimeOffset.UtcNow, cancellationToken);
+
+		await db.SaveChangesAsync(cancellationToken);
+
+		return Ok();
+	}
 }

@@ -58,18 +58,26 @@ public class PasswordResetService(PubNetContext db, PasswordManager passwordMana
 		// whoever holds the reset link owns the mailbox, so a lockout from old failed attempts is moot
 		author.AccessFailedCount = 0;
 
-		var outstandingTokens = await db.PasswordResetTokens
-			.Where(t => t.AuthorId == author.Id && t.ConsumedAtUtc == null)
-			.ToListAsync(cancellationToken);
-
-		foreach (var outstandingToken in outstandingTokens)
-			outstandingToken.ConsumedAtUtc = now;
+		await ConsumeOutstandingTokensAsync(author.Id, now, cancellationToken);
 
 		await db.SaveChangesAsync(cancellationToken);
 
 		logger.LogInformation("Password was reset for {@Author}", author);
 
 		return author;
+	}
+
+	public async Task ConsumeOutstandingTokensAsync(
+		int authorId,
+		DateTimeOffset now,
+		CancellationToken cancellationToken = default)
+	{
+		var outstandingTokens = await db.PasswordResetTokens
+			.Where(t => t.AuthorId == authorId && t.ConsumedAtUtc == null)
+			.ToListAsync(cancellationToken);
+
+		foreach (var outstandingToken in outstandingTokens)
+			outstandingToken.ConsumedAtUtc = now;
 	}
 
 	private static string HashToken(string token) =>
