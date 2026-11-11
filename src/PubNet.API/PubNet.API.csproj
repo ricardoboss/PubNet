@@ -12,6 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- Held on 4.x: TRENZ.Lib.RazorMail.MailKit is compiled against MimeKit 4, MailKit 5 ships MimeKit.Core instead -->
 		<PackageReference Include="MailKit" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google"/>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
