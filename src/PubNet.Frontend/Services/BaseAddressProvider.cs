@@ -4,5 +4,5 @@ public class BaseAddressProvider(string baseAddress)
 {
 	public string BaseAddress => baseAddress;
 
-	public Uri BaseUri => new Uri(baseAddress);
+	public Uri BaseUri => new(baseAddress);
 }

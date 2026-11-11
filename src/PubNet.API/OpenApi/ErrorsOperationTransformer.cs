@@ -10,9 +10,9 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 		CancellationToken cancellationToken) => new()
 		{
 			Description = "Internal Server Error",
-			Content = new Dictionary<string, OpenApiMediaType>
+			Content = new Dictionary<string, IOpenApiMediaType>
 			{
-				["application/json"] = new()
+				["application/json"] = new OpenApiMediaType
 				{
 					Schema = await context.GetOrCreateSchemaAsync(typeof(InternalServerErrorDto),
 					cancellationToken: cancellationToken),
@@ -24,9 +24,9 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 		CancellationToken cancellationToken) => new()
 		{
 			Description = "Default Error",
-			Content = new Dictionary<string, OpenApiMediaType>
+			Content = new Dictionary<string, IOpenApiMediaType>
 			{
-				["application/json"] = new()
+				["application/json"] = new OpenApiMediaType
 				{
 					Schema = await context.GetOrCreateSchemaAsync(typeof(StacktraceErrorDto),
 					cancellationToken: cancellationToken),
@@ -38,9 +38,9 @@ public class ErrorsOperationTransformer : IOpenApiOperationTransformer
 		CancellationToken cancellationToken) => new()
 		{
 			Description = "Bad Request",
-			Content = new Dictionary<string, OpenApiMediaType>
+			Content = new Dictionary<string, IOpenApiMediaType>
 			{
-				["application/json"] = new()
+				["application/json"] = new OpenApiMediaType
 				{
 					Schema = await context.GetOrCreateSchemaAsync(typeof(ValidationErrorsDto),
 					cancellationToken: cancellationToken),

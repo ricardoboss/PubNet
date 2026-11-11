@@ -148,8 +148,10 @@ namespace PubNet.SDK.Generated.Packages.Item
         public partial class WithNameItemRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+            #pragma warning disable CS1591
             [QueryParameter("includeAuthor")]
             public bool? IncludeAuthor { get; set; }
+            #pragma warning restore CS1591
         }
     }
 }

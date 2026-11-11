@@ -61,9 +61,9 @@ public class AuthMetadataTransformer : IOpenApiOperationTransformer
 		var unauthenticatedResponse = new OpenApiResponse
 		{
 			Description = "Unauthenticated",
-			Content = new Dictionary<string, OpenApiMediaType>
+			Content = new Dictionary<string, IOpenApiMediaType>
 			{
-				["application/json"] = new()
+				["application/json"] = new OpenApiMediaType
 				{
 					Schema = await context.GetOrCreateSchemaAsync(typeof(MissingAuthenticationErrorDto),
 						cancellationToken: cancellationToken),

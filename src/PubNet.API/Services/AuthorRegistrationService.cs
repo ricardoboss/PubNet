@@ -35,7 +35,7 @@ public class AuthorRegistrationService(PubNetContext db, PasswordManager passwor
 			Inactive = false,
 			RegisteredAtUtc = DateTimeOffset.UtcNow,
 			Role = role,
-			Packages = new List<Package>(),
+			Packages = [],
 		};
 
 		author.PasswordHash = await passwordManager.GenerateHashAsync(author, request.Password, cancellationToken);

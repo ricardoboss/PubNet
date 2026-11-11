@@ -14,30 +14,20 @@ public static class WorkerTaskResultExtensions
 	{
 		public bool IsSuccess()
 		{
-			switch (result)
+			return result switch
 			{
-				case WorkerTaskResult.Done:
-				case WorkerTaskResult.Requeue:
-					return true;
-				case WorkerTaskResult.FailedRecoverable:
-				case WorkerTaskResult.Failed:
-				default:
-					return false;
-			}
+				WorkerTaskResult.Done or WorkerTaskResult.Requeue => true,
+				_ => false,
+			};
 		}
 
 		public bool IndicatesRequeue()
 		{
-			switch (result)
+			return result switch
 			{
-				case WorkerTaskResult.Requeue:
-				case WorkerTaskResult.FailedRecoverable:
-					return true;
-				case WorkerTaskResult.Done:
-				case WorkerTaskResult.Failed:
-				default:
-					return false;
-			}
+				WorkerTaskResult.Requeue or WorkerTaskResult.FailedRecoverable => true,
+				_ => false,
+			};
 		}
 	}
 }

@@ -94,8 +94,10 @@ namespace PubNet.SDK.Generated.Storage.Upload
         public partial class UploadRequestBuilderPostQueryParameters 
         #pragma warning restore CS1591
         {
+            #pragma warning disable CS1591
             [QueryParameter("authorId")]
             public int? AuthorId { get; set; }
+            #pragma warning restore CS1591
         }
     }
 }

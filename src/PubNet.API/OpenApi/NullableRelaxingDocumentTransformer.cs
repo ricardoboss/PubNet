@@ -31,7 +31,7 @@ public sealed class NullableRelaxingDocumentTransformer : IOpenApiDocumentTransf
 		return Task.CompletedTask;
 	}
 
-	private static void RewriteContent(IDictionary<string, OpenApiMediaType>? content)
+	private static void RewriteContent(IDictionary<string, IOpenApiMediaType>? content)
 	{
 		if (content == null)
 			return;
@@ -52,11 +52,11 @@ public sealed class NullableRelaxingDocumentTransformer : IOpenApiDocumentTransf
 			var nonNull = oneOf.First(s => s.Type != JsonSchemaType.Null);
 
 			schema.OneOf = null;
-			schema.AnyOf = new List<IOpenApiSchema>
-			{
+			schema.AnyOf =
+			[
 				nonNull,
 				new OpenApiSchema { Type = JsonSchemaType.Null },
-			};
+			];
 		}
 
 		// recurse into properties / items

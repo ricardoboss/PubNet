@@ -48,7 +48,7 @@ public class ConcurrentRequestBlockingRequestAdapterTests
 		var inner = new ConcurrencyTrackingRequestAdapter { ThrowOnCall = 1 };
 		using var adapter = Adapter(inner);
 
-		Assert.ThrowsAsync<InvalidOperationException>(async () =>
+		await Assert.ThrowsAsync<InvalidOperationException>(async () =>
 			await adapter.SendAsync(Request(), TestModel.CreateFromDiscriminatorValue));
 
 		// would deadlock (or time out) if the failed request never released the lock
@@ -76,7 +76,7 @@ public class ConcurrentRequestBlockingRequestAdapterTests
 
 		await cts.CancelAsync();
 
-		Assert.CatchAsync<OperationCanceledException>(async () => await blocked);
+		await Assert.CatchAsync<OperationCanceledException>(async () => await blocked);
 
 		inner.Gate.Set();
 		await holder;

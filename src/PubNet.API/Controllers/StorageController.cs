@@ -42,7 +42,7 @@ public partial class StorageController(
 
 		url = endpointHelper.SignEndpoint(url);
 
-		return Task.FromResult(new UploadEndpointDataDto(url, new()));
+		return Task.FromResult(new UploadEndpointDataDto(url, []));
 	}
 
 	private const int maxUploadSize = 100 * 1024 * 1024; // 100 MB
@@ -212,7 +212,7 @@ public partial class StorageController(
 				{
 					Author = pending.Uploader,
 					Name = packageName,
-					Versions = new List<PackageVersion>(),
+					Versions = [],
 					IsDiscontinued = false,
 					ReplacedBy = null,
 					Latest = null,

@@ -70,13 +70,11 @@ public class LocalPackageStorageProvider : IPackageStorageProvider
 			await inFileStream.CopyToAsync(outFileStream, cancellationToken);
 		}
 
-		await using (var fileStream = File.OpenRead(path))
-		using (var hash = SHA256.Create())
-		{
-			var rawHash = Convert.ToHexString(await hash.ComputeHashAsync(fileStream, cancellationToken));
+		await using var fileStream = File.OpenRead(path);
+		using var hash = SHA256.Create();
+		var rawHash = Convert.ToHexString(await hash.ComputeHashAsync(fileStream, cancellationToken));
 
-			return Sha256Hash.From(rawHash);
-		}
+		return Sha256Hash.From(rawHash);
 	}
 
 	/// <inheritdoc />

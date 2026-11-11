@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -7,7 +7,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends libgssapi-krb5-2 \
     && rm -rf /var/lib/apt/lists/*
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 
 COPY ["src/PubNet.API/PubNet.API.csproj", "src/PubNet.API/"]
@@ -20,7 +20,7 @@ COPY . .
 WORKDIR "/src/src/PubNet.API"
 RUN dotnet build "PubNet.API.csproj" -c Release -o /app/build
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS publish
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS publish
 WORKDIR /src
 COPY --from=build /src .
 WORKDIR "/src/src/PubNet.API"

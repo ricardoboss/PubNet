@@ -46,7 +46,7 @@ The solution consists of a few projects, three of them compose the whole PubNet 
 
 ### Debugging
 
-You can use any IDE you want, as long as it supports debugging .NET 10 or higher.
+You can use any IDE you want, as long as it supports debugging .NET 11 or higher.
 
 For the `PubNet.Frontend` project, it is recommended to run it using `dotnet watch` to hot-reload changes.
 

@@ -23,5 +23,5 @@ public class Author : IdentityUser<int>
 
 	public Role Role { get; set; } = Role.Default;
 
-	public ICollection<Package> Packages { get; set; } = new List<Package>();
+	public ICollection<Package> Packages { get; set; } = [];
 }

@@ -38,10 +38,7 @@ public abstract class BaseController : ControllerBase
 	[NonAction]
 	private static T StatusToDto<T>(int status, string errorMessage) where T : ErrorMessageDto, new()
 	{
-		var errorCode = PubNetStatusCodes.ToErrorCode(status);
-		if (errorCode is null)
-			throw new NotImplementedException("No error code defined for status code: " + status);
-
+		var errorCode = PubNetStatusCodes.ToErrorCode(status) ?? throw new NotImplementedException("No error code defined for status code: " + status);
 		return new()
 		{
 			Error = new()

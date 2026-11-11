@@ -6,7 +6,7 @@ namespace PubNet.SDK.Services;
 
 internal sealed class CachingAuthorService(IAuthorService inner, ILogger<CachingAuthorService> logger) : IAuthorService
 {
-	private readonly Dictionary<string, AuthorDto> cache = new();
+	private readonly Dictionary<string, AuthorDto> cache = [];
 	private AuthorsResponseDto? authors;
 
 	public async Task<AuthorsResponseDto?> GetAuthorsAsync(CancellationToken cancellationToken = default)

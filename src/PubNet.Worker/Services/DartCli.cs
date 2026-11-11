@@ -31,10 +31,7 @@ public class DartCli(ILogger<DartCli> logger)
 				Arguments = dartBin,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,
-			});
-
-			if (process is null) throw new($"Unable to search {dartBin}");
-
+			}) ?? throw new($"Unable to search {dartBin}");
 			await process.WaitForExitAsync(cancellationToken);
 
 			var errors = await process.StandardError.ReadToEndAsync(cancellationToken);
@@ -42,9 +39,7 @@ public class DartCli(ILogger<DartCli> logger)
 
 			if (errors.Length > 0) throw new(errors);
 
-			var binPath = await process.StandardOutput.ReadLineAsync(cancellationToken);
-			if (binPath is null) throw new("Unable to determine binary path");
-
+			var binPath = await process.StandardOutput.ReadLineAsync(cancellationToken) ?? throw new("Unable to determine binary path");
 			return binPath;
 		}
 	}
@@ -72,9 +67,7 @@ public class DartCli(ILogger<DartCli> logger)
 
 		logger.LogTrace("Invoking dart binary with {Command} in {WorkingDirectory}", command, workingDirectory);
 
-		using var proc = Process.Start(psi);
-		if (proc is null) throw new("Unable to start dart process");
-
+		using var proc = Process.Start(psi) ?? throw new("Unable to start dart process");
 		await proc.WaitForExitAsync(cancellationToken);
 
 		return proc.ExitCode;
