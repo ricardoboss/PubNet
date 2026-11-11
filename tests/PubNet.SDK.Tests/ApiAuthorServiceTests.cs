@@ -25,52 +25,52 @@ public class ApiAuthorServiceTests
 	}
 
 	[Test]
-	public void TestGetAuthorMapsUnauthenticated()
+	public async Task TestGetAuthorMapsUnauthenticated()
 	{
-		Assert.ThrowsAsync<AuthenticationRequiredException>(
+		await Assert.ThrowsAsync<AuthenticationRequiredException>(
 			() => Service(new AuthorDto401Error()).GetAuthorAsync("someone"));
 	}
 
 	[Test]
-	public void TestGetAuthorsMapsUnauthenticated()
+	public async Task TestGetAuthorsMapsUnauthenticated()
 	{
-		Assert.ThrowsAsync<AuthenticationRequiredException>(
+		await Assert.ThrowsAsync<AuthenticationRequiredException>(
 			() => Service(new AuthorsResponseDto401Error()).GetAuthorsAsync());
 	}
 
 	[Test]
-	public void TestUpdateAuthorMapsForbidden()
+	public async Task TestUpdateAuthorMapsForbidden()
 	{
-		Assert.ThrowsAsync<UnauthorizedException>(
+		await Assert.ThrowsAsync<UnauthorizedException>(
 			() => Service(new ForbiddenErrorDto()).UpdateAuthorAsync("someone", new()));
 	}
 
 	[Test]
-	public void TestDeleteAuthorMapsInvalidPassword()
+	public async Task TestDeleteAuthorMapsInvalidPassword()
 	{
-		Assert.ThrowsAsync<InvalidPasswordException>(
+		await Assert.ThrowsAsync<InvalidPasswordException>(
 			() => Service(new InvalidPasswordErrorDto()).DeleteAuthorAsync("someone", new()));
 	}
 
 	[Test]
-	public void TestDeleteAuthorMapsLastAdmin()
+	public async Task TestDeleteAuthorMapsLastAdmin()
 	{
-		Assert.ThrowsAsync<LastAdminException>(
+		await Assert.ThrowsAsync<LastAdminException>(
 			() => Service(new LastAdminErrorDto()).DeleteAuthorAsync("someone", new()));
 	}
 
 	[Test]
-	public void TestDeleteAuthorMapsUnauthenticated()
+	public async Task TestDeleteAuthorMapsUnauthenticated()
 	{
-		Assert.ThrowsAsync<AuthenticationRequiredException>(
+		await Assert.ThrowsAsync<AuthenticationRequiredException>(
 			() => Service(new SuccessMessageDto401Error()).DeleteAuthorAsync("someone", new()));
 	}
 
 	// anything the SDK does not model must still surface as an SDK exception, never as a generated type
 	[Test]
-	public void TestMapsUnexpectedApiErrors()
+	public async Task TestMapsUnexpectedApiErrors()
 	{
-		Assert.ThrowsAsync<UnexpectedResponseException>(
+		await Assert.ThrowsAsync<UnexpectedResponseException>(
 			() => Service(new ApiException("boom")).GetAuthorAsync("someone"));
 	}
 }

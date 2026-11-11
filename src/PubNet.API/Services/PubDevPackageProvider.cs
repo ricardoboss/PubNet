@@ -6,7 +6,7 @@ public class PubDevPackageProvider(IHttpClientFactory clientFactory)
 {
 	public const string ClientName = "PubDev";
 
-	private readonly Dictionary<string, PackageDto> _packageCache = new();
+	private readonly Dictionary<string, PackageDto> _packageCache = [];
 
 	public async Task<PackageVersionDto?> TryGetVersion(string name, string version,
 		CancellationToken cancellationToken = default)

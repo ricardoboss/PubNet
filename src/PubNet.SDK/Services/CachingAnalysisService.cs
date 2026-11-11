@@ -7,7 +7,7 @@ namespace PubNet.SDK.Services;
 internal sealed class CachingAnalysisService(IAnalysisService inner, ILogger<CachingAnalysisService> logger) : IAnalysisService
 {
 	private readonly Dictionary<(string name, string version, bool includeReadme), PackageVersionAnalysisDto>
-		cache = new();
+		cache = [];
 
 	public async Task<PackageVersionAnalysisDto?> GetAnalysisForPackageVersionAsync(string name, string version,
 		bool includeReadme, CancellationToken cancellationToken = default)

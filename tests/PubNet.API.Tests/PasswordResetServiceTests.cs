@@ -51,7 +51,7 @@ public class PasswordResetServiceTests
 
 		await env.AddAuthorAsync("alice", Role.Default, "hunter2");
 
-		Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
+		await Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
 			() => env.PasswordResets.ResetPasswordAsync("not-a-token", "irrelevant"));
 	}
 
@@ -67,7 +67,7 @@ public class PasswordResetServiceTests
 		stored.ExpiresAtUtc = DateTimeOffset.UtcNow - TimeSpan.FromSeconds(1);
 		await env.Db.SaveChangesAsync();
 
-		Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
+		await Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
 			() => env.PasswordResets.ResetPasswordAsync(token, "irrelevant"));
 
 		Assert.That(await env.Passwords.IsValid(env.Db, author, "hunter2"), Is.True);
@@ -83,7 +83,7 @@ public class PasswordResetServiceTests
 
 		await env.PasswordResets.ResetPasswordAsync(token, "first reset");
 
-		Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
+		await Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
 			() => env.PasswordResets.ResetPasswordAsync(token, "second reset"));
 
 		Assert.That(await env.Passwords.IsValid(env.Db, author, "first reset"), Is.True);
@@ -100,7 +100,7 @@ public class PasswordResetServiceTests
 
 		await env.PasswordResets.ResetPasswordAsync(secondToken, "new password");
 
-		Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
+		await Assert.ThrowsAsync<InvalidPasswordResetTokenException>(
 			() => env.PasswordResets.ResetPasswordAsync(firstToken, "should not work"));
 	}
 

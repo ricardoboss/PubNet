@@ -5,49 +5,49 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="Blazored.LocalStorage" Version="4.5.0"/>
-		<PackageVersion Include="Blazorise.Bulma" Version="2.4.1"/>
-		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="2.4.1"/>
+		<PackageVersion Include="Blazorise.Bulma" Version="2.4.3"/>
+		<PackageVersion Include="Blazorise.Icons.FontAwesome" Version="2.4.3"/>
 		<PackageVersion Include="CliWrap" Version="3.10.5"/>
 		<PackageVersion Include="coverlet.collector" Version="10.1.0"/>
 		<PackageVersion Include="Humanizer" Version="3.0.10"/>
 		<PackageVersion Include="JetBrains.Annotations" Version="2026.2.0"/>
 		<PackageVersion Include="Kiota.MSBuild" Version="1.1.0"/>
-		<PackageVersion Include="MailKit" Version="4.18.2"/>
-		<PackageVersion Include="Markdig" Version="1.5.1"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.11"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10"/>
-		<PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.2"/>
-		<PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.22.2"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="1.22.2"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.22.2"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.22.2"/>
-		<PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.22.2"/>
-		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1"/>
-		<PackageVersion Include="Microsoft.OpenApi" Version="2.11.0"/>
-		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2"/>
-		<PackageVersion Include="Moq" Version="4.20.72"/>
+		<PackageVersion Include="MailKit" Version="5.0.0"/>
+		<PackageVersion Include="Markdig" Version="1.6.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.15"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.15"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15"/>
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.15"/>
+		<PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Http" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Options" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="11.0.0"/>
+		<PackageVersion Include="Microsoft.Kiota.Abstractions" Version="2.1.6"/>
+		<PackageVersion Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="2.1.6"/>
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Form" Version="2.1.6"/>
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="2.1.6"/>
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="2.1.6"/>
+		<PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="2.1.6"/>
+		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.1"/>
+		<PackageVersion Include="Microsoft.OpenApi" Version="3.11.0"/>
+		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.3"/>
+		<PackageVersion Include="Moq" Version="4.21.0"/>
 		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3"/>
-		<PackageVersion Include="NuGet.Packaging" Version="7.6.0"/>
-		<PackageVersion Include="NUnit" Version="4.6.1"/>
-		<PackageVersion Include="NUnit.Analyzers" Version="4.14.0"/>
-		<PackageVersion Include="NUnit3TestAdapter" Version="6.2.0"/>
-		<PackageVersion Include="Scalar.AspNetCore" Version="2.16.17"/>
+		<PackageVersion Include="NuGet.Packaging" Version="8.0.0"/>
+		<PackageVersion Include="NUnit" Version="5.0.0"/>
+		<PackageVersion Include="NUnit.Analyzers" Version="4.15.0"/>
+		<PackageVersion Include="NUnit3TestAdapter" Version="6.3.1"/>
+		<PackageVersion Include="Scalar.AspNetCore" Version="2.20.0"/>
 		<PackageVersion Include="Scrutor" Version="7.0.0"/>
 		<PackageVersion Include="Semver" Version="3.0.0"/>
 		<PackageVersion Include="SerilogAnalyzer" Version="0.15.0"/>
@@ -56,8 +56,8 @@
 		<PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1"/>
 		<PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1"/>
 		<PackageVersion Include="Serilog.Sinks.Seq" Version="9.1.0"/>
-		<PackageVersion Include="SharpCompress" Version="0.50.3"/>
-		<PackageVersion Include="TRENZ.Lib.RazorMail.MailKit" Version="2.3.1"/>
+		<PackageVersion Include="SharpCompress" Version="0.50.8"/>
+		<PackageVersion Include="TRENZ.Lib.RazorMail.MailKit" Version="2.4.2"/>
 		<PackageVersion Include="Vogen" Version="8.0.7"/>
 		<PackageVersion Include="YamlDotNet" Version="18.1.0"/>
 	</ItemGroup>

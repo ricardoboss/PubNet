@@ -21,8 +21,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<!-- Referenced directly (the OpenApi transformers use its types) and to lift the version above the one
-		     Microsoft.AspNetCore.OpenApi pins transitively, which is affected by GHSA-v5pm-xwqc-g5wc -->
+		<!-- Referenced directly: the OpenApi transformers use its types -->
 		<PackageReference Include="Microsoft.OpenApi"/>
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
 		<PackageReference Include="Scalar.AspNetCore" />

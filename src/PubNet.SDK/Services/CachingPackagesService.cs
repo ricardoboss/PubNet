@@ -6,12 +6,12 @@ namespace PubNet.SDK.Services;
 
 internal sealed class CachingPackagesService(IPackagesService inner, ILogger<CachingPackagesService> logger) : IPackagesService
 {
-	private readonly Dictionary<(string name, bool includeAuthor), PackageDto> packagesCache = new();
+	private readonly Dictionary<(string name, bool includeAuthor), PackageDto> packagesCache = [];
 
 	private readonly Dictionary<string, Dictionary<string, PackageVersionDto>>
-		packageVersionsCache = new();
+		packageVersionsCache = [];
 
-	private readonly Dictionary<string, AuthorPackagesResponseDto> authorPackagesCache = new();
+	private readonly Dictionary<string, AuthorPackagesResponseDto> authorPackagesCache = [];
 
 	public async Task<PackageDto?> GetPackageAsync(string name, bool includeAuthor,
 		CancellationToken cancellationToken = default)
@@ -96,7 +96,7 @@ internal sealed class CachingPackagesService(IPackagesService inner, ILogger<Cac
 
 			if (!packageVersionsCache.TryGetValue(name, out packageVersions))
 			{
-				packageVersions = new();
+				packageVersions = [];
 				packageVersionsCache[name] = packageVersions;
 			}
 

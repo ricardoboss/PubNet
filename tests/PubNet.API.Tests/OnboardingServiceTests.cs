@@ -62,7 +62,7 @@ public class OnboardingServiceTests
 		request.Username = "second";
 		request.Email = "second@example.com";
 
-		Assert.ThrowsAsync<OnboardingNotPendingException>(() => env.Onboarding.CompleteAsync(request));
+		await Assert.ThrowsAsync<OnboardingNotPendingException>(() => env.Onboarding.CompleteAsync(request));
 	}
 
 	[Test]

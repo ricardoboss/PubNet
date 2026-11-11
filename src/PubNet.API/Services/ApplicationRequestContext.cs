@@ -26,10 +26,7 @@ public class ApplicationRequestContext
 		if (idStr is null || !int.TryParse(idStr, out var id))
 			throw MissingAuthentication;
 
-		var author = await db.Authors.FindAsync([id], cancellationToken);
-		if (author is null)
-			throw MissingAuthentication;
-
+		var author = await db.Authors.FindAsync([id], cancellationToken) ?? throw MissingAuthentication;
 		return Author = author;
 	}
 }

@@ -3,16 +3,12 @@ using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
 
-public class FlutterUpgradeTask : BaseScheduledWorkerTask
+/// <inheritdoc />
+public class FlutterUpgradeTask(TimeSpan interval) : BaseScheduledWorkerTask(interval, DateTime.Now, nameof(FlutterUpgradeTask), true)
 {
 	private static readonly TimeSpan MaxBackOffInterval = TimeSpan.FromDays(3);
 
 	private ILogger<FlutterUpgradeTask>? _logger;
-
-	/// <inheritdoc />
-	public FlutterUpgradeTask(TimeSpan interval) : base(interval, DateTime.Now, nameof(FlutterUpgradeTask), true)
-	{
-	}
 
 	/// <inheritdoc />
 	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services, CancellationToken cancellationToken = default)

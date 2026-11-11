@@ -91,8 +91,10 @@ namespace PubNet.SDK.Generated.Packages.Item.Versions.Item.Analysis
         public partial class AnalysisRequestBuilderGetQueryParameters 
         #pragma warning restore CS1591
         {
+            #pragma warning disable CS1591
             [QueryParameter("includeReadme")]
             public bool? IncludeReadme { get; set; }
+            #pragma warning restore CS1591
         }
     }
 }

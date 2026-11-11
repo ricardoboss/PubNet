@@ -24,7 +24,7 @@ public class JwtTokenGenerator
 
 		var secretKey = GetSecretKey(configuration);
 		var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-		_jwtHeader = new(credentials);
+		_jwtHeader = [with(credentials)];
 
 		_tokenLifetimeInSeconds = GetLifetimeInSeconds(configuration);
 		_issuer = GetIssuer(configuration);

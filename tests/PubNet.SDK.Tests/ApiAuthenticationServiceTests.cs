@@ -22,11 +22,11 @@ public class ApiAuthenticationServiceTests
 	// The generated error DTOs never escape the SDK. Callers see PubNetSdkException subclasses instead, so
 	// catching the DTOs further up (as the login form used to) is dead code.
 	[Test]
-	public void TestLoginMapsEmailNotFoundToInvalidCredentials()
+	public async Task TestLoginMapsEmailNotFoundToInvalidCredentials()
 	{
 		var api = new EmailNotFoundErrorDto { Error = new() { Code = "email-not-found", Message = "nope" } };
 
-		var e = Assert.ThrowsAsync<InvalidLoginCredentialsException>(
+		var e = await Assert.ThrowsAsync<InvalidLoginCredentialsException>(
 			() => Service(api).LoginAsync("someone@example.test", "hunter2"));
 
 		Assert.Multiple(() =>
@@ -38,11 +38,11 @@ public class ApiAuthenticationServiceTests
 	}
 
 	[Test]
-	public void TestLoginMapsInvalidPasswordToInvalidCredentials()
+	public async Task TestLoginMapsInvalidPasswordToInvalidCredentials()
 	{
 		var api = new InvalidPasswordErrorDto { Error = new() { Code = "invalid-password", Message = "nope" } };
 
-		var e = Assert.ThrowsAsync<InvalidLoginCredentialsException>(
+		var e = await Assert.ThrowsAsync<InvalidLoginCredentialsException>(
 			() => Service(api).LoginAsync("someone@example.test", "hunter2"));
 
 		Assert.Multiple(() =>
@@ -53,9 +53,9 @@ public class ApiAuthenticationServiceTests
 	}
 
 	[Test]
-	public void TestLoginMapsUnexpectedApiErrorsToUnexpectedResponse()
+	public async Task TestLoginMapsUnexpectedApiErrorsToUnexpectedResponse()
 	{
-		Assert.ThrowsAsync<UnexpectedResponseException>(
+		await Assert.ThrowsAsync<UnexpectedResponseException>(
 			() => Service(new ApiException("boom")).LoginAsync("someone@example.test", "hunter2"));
 	}
 }

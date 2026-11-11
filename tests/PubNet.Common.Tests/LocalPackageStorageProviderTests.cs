@@ -171,7 +171,7 @@ public class LocalPackageStorageProviderTests
 	}
 
 	[Test]
-	public void TestFallsBackToAppDataPath()
+	public async Task TestFallsBackToAppDataPath()
 	{
 		var expectedPath = Path.Combine(
 			Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -187,7 +187,7 @@ public class LocalPackageStorageProviderTests
 			Path = null,
 		});
 
-		var exception = Assert.ThrowsAsync<FileNotFoundException>(async () =>
+		var exception = await Assert.ThrowsAsync<FileNotFoundException>(async () =>
 			await instance.GetArchiveAsync(existingPackageName, existingPackageVersion));
 
 		Assert.That(exception.FileName, Is.EqualTo(expectedPath));
@@ -228,14 +228,14 @@ public class LocalPackageStorageProviderTests
 	}
 
 	[Test]
-	public void TestRejectsPathsOutsideStorageDir()
+	public async Task TestRejectsPathsOutsideStorageDir()
 	{
 		var instance = EmitInstance();
 
 		const string evilPackageName = "../../tmp/evil";
 		var fileEntryMock = new Mock<IFileEntry>();
 
-		var ex = Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
+		var ex = await Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
 			await instance.StoreArchiveAsync(evilPackageName, "1.0.0", fileEntryMock.Object));
 
 		Assert.That(ex.Message, Does.Contain("Storing packages outside of package base path is not allowed"));

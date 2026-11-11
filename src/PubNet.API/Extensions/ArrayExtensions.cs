@@ -6,6 +6,6 @@ public static class ArrayExtensions
 	{
 		first = list.First();
 		second = list.Skip(1).First();
-		rest = list.Skip(2).ToArray();
+		rest = [.. list.Skip(2)];
 	}
 }

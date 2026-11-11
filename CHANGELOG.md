@@ -6,6 +6,7 @@
 * Reject invalid dart package names during upload
 * Ensure package names can't write outside package base path
 * Updated all dependencies to their latest versions
+* Migrated to .NET 11; the API description is now emitted as OpenAPI 3.2
 
 # v1.2.0
 

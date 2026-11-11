@@ -198,8 +198,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 	{
 		options.AddDefaultPolicy(policy =>
 		{
-			policy.WithOrigins(builder.Configuration.GetRequiredSection("AllowedOrigins").GetChildren()
-				.Select(s => s.Value!).ToArray());
+			policy.WithOrigins([.. builder.Configuration.GetRequiredSection("AllowedOrigins").GetChildren().Select(s => s.Value!)]);
 			policy.AllowCredentials();
 			policy.AllowAnyHeader();
 			policy.AllowAnyMethod();

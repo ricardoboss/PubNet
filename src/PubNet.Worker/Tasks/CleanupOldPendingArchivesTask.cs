@@ -4,16 +4,12 @@ using PubNet.Worker.Models;
 
 namespace PubNet.Worker.Tasks;
 
-public class CleanupOldPendingArchivesTask : BaseScheduledWorkerTask
+/// <inheritdoc />
+public class CleanupOldPendingArchivesTask(TimeSpan interval) : BaseScheduledWorkerTask(interval, DateTime.Now)
 {
 	private IConfiguration? _configuration;
 	private PubNetContext? _db;
 	private ILogger<CleanupOldPendingArchivesTask>? _logger;
-
-	/// <inheritdoc />
-	public CleanupOldPendingArchivesTask(TimeSpan interval) : base(interval, DateTime.Now)
-	{
-	}
 
 	/// <inheritdoc />
 	protected override async Task<WorkerTaskResult> InvokeScheduled(IServiceProvider services,

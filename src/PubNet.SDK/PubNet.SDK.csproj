@@ -47,7 +47,6 @@
 	<ItemGroup>
 		<PackageReference Include="JetBrains.Annotations" />
 		<PackageReference Include="Kiota.MSBuild" PrivateAssets="all"/>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Http" />
 		<PackageReference Include="Microsoft.Kiota.Abstractions"/>
 		<PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary"/>

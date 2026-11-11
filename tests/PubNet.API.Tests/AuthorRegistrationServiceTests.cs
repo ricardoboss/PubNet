@@ -22,14 +22,14 @@ public class AuthorRegistrationServiceTests
 	}
 
 	[Test]
-	public void RegisterAsync_Throws_ForAnIncompleteRequest()
+	public async Task RegisterAsync_Throws_ForAnIncompleteRequest()
 	{
 		using var env = new TestEnvironment();
 
 		var request = TestEnvironment.ValidRequest();
 		request.Password = null;
 
-		var e = Assert.ThrowsAsync<AuthorRegistrationException>(
+		var e = await Assert.ThrowsAsync<AuthorRegistrationException>(
 			() => env.Registration.RegisterAsync(request, Role.Default));
 
 		Assert.That(e?.Code, Is.EqualTo("missing-values"));

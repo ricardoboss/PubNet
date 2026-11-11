@@ -22,17 +22,17 @@ public class ApiAnalysisServiceTests
 	}
 
 	[Test]
-	public void TestMapsUnauthenticated()
+	public async Task TestMapsUnauthenticated()
 	{
-		Assert.ThrowsAsync<AuthenticationRequiredException>(
+		await Assert.ThrowsAsync<AuthenticationRequiredException>(
 			() => Service(new PackageVersionAnalysisDto401Error())
 				.GetAnalysisForPackageVersionAsync("pkg", "1.0.0", includeReadme: false));
 	}
 
 	[Test]
-	public void TestMapsUnexpectedApiErrors()
+	public async Task TestMapsUnexpectedApiErrors()
 	{
-		Assert.ThrowsAsync<UnexpectedResponseException>(
+		await Assert.ThrowsAsync<UnexpectedResponseException>(
 			() => Service(new ApiException("boom"))
 				.GetAnalysisForPackageVersionAsync("pkg", "1.0.0", includeReadme: false));
 	}

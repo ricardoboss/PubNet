@@ -12,7 +12,7 @@ public class Package
 
 	public PackageVersion? Latest { get; set; }
 
-	public ICollection<PackageVersion> Versions { get; set; } = new List<PackageVersion>();
+	public ICollection<PackageVersion> Versions { get; set; } = [];
 
 	public int? AuthorId { get; set; }
 
