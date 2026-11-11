@@ -6,3 +6,4 @@ riderModule.iml
 **/*.user
 /packages/
 .vs/
+.vscode/
