@@ -74,7 +74,7 @@ public class AuthenticationController(
 
 		try
 		{
-			await notificationService.SendWelcomeNotificationAsync(author, RefererUri, cancellationToken);
+			await notificationService.SendWelcomeNotificationAsync(author, cancellationToken);
 		}
 		catch (Exception e)
 		{
@@ -106,7 +106,7 @@ public class AuthenticationController(
 
 		// not swallowed like the welcome mail: this mail is the whole point of the request, so the caller
 		// must not be told everything went fine when it did not
-		await notificationService.SendPasswordResetNotificationAsync(author, token, RefererUri, cancellationToken);
+		await notificationService.SendPasswordResetNotificationAsync(author, token, cancellationToken);
 
 		return NoContent();
 	}

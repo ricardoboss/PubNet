@@ -50,7 +50,7 @@ public class OnboardingController(
 
 			try
 			{
-				await notificationService.SendSetupCompletedNotificationAsync(author, RefererUri, cancellationToken);
+				await notificationService.SendSetupCompletedNotificationAsync(author, cancellationToken);
 			}
 			catch (Exception e)
 			{

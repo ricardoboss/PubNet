@@ -5,6 +5,9 @@
   "ConnectionStrings": {
     "PubNet": "Host=database;Database=pubnet;Username=pubnet;Password=pubnet"
   },
+  "Frontend": {
+    "BaseUrl": "http://localhost"
+  },
   "Jwt": {
     "Issuer": "http://localhost",
     "Audience": "http://localhost",

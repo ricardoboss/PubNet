@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using PubNet.API.Interfaces;
 using PubNet.API.Mails;
 using PubNet.Database.Models;
@@ -6,38 +7,44 @@ using TRENZ.Lib.RazorMail.Models;
 
 namespace PubNet.API.Services;
 
-public class MailNotificationService(IMailRenderer mailRenderer, IMailClient mailClient) : INotificationService
+public class MailNotificationService(
+	IMailRenderer mailRenderer,
+	IMailClient mailClient,
+	IOptions<FrontendOptions> frontendOptions
+) : INotificationService
 {
+	private Uri FrontendUrl => new(frontendOptions.Value.BaseUrl);
+
 	/// <inheritdoc />
-	public Task SendWelcomeNotificationAsync(Author author, Uri referer,
+	public Task SendWelcomeNotificationAsync(Author author,
 		CancellationToken cancellationToken = default)
 	{
 		return SendAsync("Mails/WelcomeMail", new WelcomeMailModel
 		{
 			UserName = author.UserName,
-			FrontendUrl = referer,
+			FrontendUrl = FrontendUrl,
 		}, author, cancellationToken);
 	}
 
 	/// <inheritdoc />
-	public Task SendSetupCompletedNotificationAsync(Author author, Uri referer,
+	public Task SendSetupCompletedNotificationAsync(Author author,
 		CancellationToken cancellationToken = default)
 	{
 		return SendAsync("Mails/SetupCompletedMail", new SetupCompletedMailModel
 		{
 			UserName = author.UserName,
-			FrontendUrl = referer,
+			FrontendUrl = FrontendUrl,
 		}, author, cancellationToken);
 	}
 
 	/// <inheritdoc />
-	public Task SendPasswordResetNotificationAsync(Author author, string token, Uri referer,
+	public Task SendPasswordResetNotificationAsync(Author author, string token,
 		CancellationToken cancellationToken = default)
 	{
 		return SendAsync("Mails/PasswordResetMail", new PasswordResetMailModel
 		{
 			UserName = author.UserName,
-			ResetUrl = new(referer, $"/reset-password?token={Uri.EscapeDataString(token)}"),
+			ResetUrl = new(FrontendUrl, $"/reset-password?token={Uri.EscapeDataString(token)}"),
 			ValidFor = PasswordResetService.TokenLifetime,
 		}, author, cancellationToken);
 	}
